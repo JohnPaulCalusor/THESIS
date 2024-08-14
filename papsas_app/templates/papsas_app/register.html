@@ -1,0 +1,70 @@
+{% extends 'papsas_app/layout.html' %}
+
+{% block title %}
+    Registration
+{% endblock %}
+
+{% block body %}
+    {% if message %}
+        <div>
+            {{ message }}
+        </div>
+    {% endif %}
+    <form action="{% url 'register' %}" method="post">
+        {% csrf_token %}
+        <div>
+            <label for="email">Email</label>
+            <input type="text" name="email">
+        </div>
+        <div>
+            <label for="password">Password</label>
+            <input type="password" name="password">
+        </div>
+        <div>
+            <label for="fName">First Name</label>
+            <input type="text" name="fName">
+        </div>
+        <div>
+            <label for="lName">Last Name</label>
+            <input type="text" name="lName">
+        </div>
+        <div>
+            <label for="mobileNum">Mobile Number</label>
+            <input type="text" name="mobileNum">
+        </div>
+        <div>
+            <label for="region">Region</label>
+            <select name="region">
+                <option value="">
+                    Region 4A
+                </option>
+                <option value="">Region 3</option>
+            </select>
+        </div>
+        <div>
+            <label for="address">Address</label>
+            <input type="text" name="address">
+        </div>
+        <div>
+            <label for="occupation">Occupation</label>
+            <input type="text" name="occupation">
+        </div>
+        <div>
+            <label for="age">Age</label>
+            <input type="number" name="age">
+        </div>
+        <div>
+            <label for="memType">Membership Type</label>
+            <select name="memType">
+                <option value="">Regular Membership</option>
+                <option value="">Premium Membership</option>
+            </select>
+        </div>
+        <div>
+            <label for="birthDate">Birth Date</label>
+            <input type="date" name="birthDate">
+        </div>
+
+        <button>Submit</button>
+    </form>
+{% endblock %}
