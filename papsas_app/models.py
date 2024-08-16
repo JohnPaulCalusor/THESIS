@@ -7,7 +7,7 @@ class User(AbstractUser):
     mobileNum = models.CharField(max_length=16)
     region = models.CharField(max_length=32)
     address = models.CharField(max_length=32)
-    occupation = models.CharField(max_length=16)
+    occupation = models.CharField(max_length=32)
     age = models.IntegerField(null=True)
     memType = models.CharField(max_length=32)
     birthdate = models.DateField(null=True)
