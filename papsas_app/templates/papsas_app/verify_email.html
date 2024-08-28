@@ -1,0 +1,6 @@
+<form method="post">
+    {% csrf_token %}
+    <input type="hidden" name="user_id" value="{{ user.id }}">
+    <input type="text" name="code" placeholder="Enter verification code">
+    <button type="submit">Verify Email</button>
+</form>

@@ -78,11 +78,11 @@ WSGI_APPLICATION = 'papsas.wsgi.application'
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql_psycopg2",
-        "NAME": "macbookairm1",
+        "NAME": "papsas_db",
         "USER": "postgres",
-        "PASSWORD": "password",
+        "PASSWORD": "admin123",
         "HOST": "localhost",
-        "PORT": "",
+        "PORT": "5432",
     }
 
     # add new postgresql database
@@ -132,3 +132,11 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+#EMAIL Verification
+
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'badingbading1122@gmail.com'
+EMAIL_HOST_PASSWORD = 'dunr pfko qdcw patb'

@@ -4,6 +4,10 @@ from django.contrib.auth import login, logout, authenticate
 from .models import User
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
+from django.core.mail import send_mail
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
+import random
 
 # Create your views here.
 
@@ -37,11 +41,25 @@ def register(request):
                                         memType = memType,
                                         birthdate = birthDate)
         user.save()
-        login(request, user)
-        return render(request, 'papsas_app/index.html', {
-            'user' : request.user,
-            'message' : 'Registered Successfully'
-        })
+
+        # Generate 6-digit verification code
+        verification_code = random.randint(100000, 999999)
+
+        # Save verification code to user's profile
+        user.verification_code = verification_code
+        user.save()
+
+       # Send verification email
+        subject = 'Verify your email address'
+        message = f'Dear {user.first_name},\n\nYour verification code is: {verification_code}\n\nPlease enter this code to verify your email address.\n\nBest regards,\nTite'
+        send_mail(subject, message, 'your_email@example.com', [user.email])
+
+        # Set user as inactive until email is verified
+        user.is_active = False
+        user.save()
+
+        # Redirect to email verification page
+        return redirect('verify_email', user_id=user.id)
     else:
         return render(request, 'papsas_app/register.html')
 
@@ -49,18 +67,36 @@ def logout_view(request):
     logout(request)
     return redirect('login')
 
-
 def login_view(request):
     if request.method == 'POST':
         username = request.POST['email']
         password = request.POST['password']
         user = authenticate(request, username=username, password=password)
         if user is not None:
-            login(request, user)
-            return HttpResponseRedirect(reverse("index"))
+            if user.email_verified:
+                login(request, user)
+                return HttpResponseRedirect(reverse("index"))
+            else:
+                return render(request, 'papsas_app/login.html', {
+                    'message' : 'Please verify your email address before logging in.'
+                })
         else:
             return render(request, 'papsas_app/login.html', {
                 'message' : 'Invalid Credentials'
                 })
     else:
         return render(request, 'papsas_app/login.html')
+
+def verify_email(request, user_id):
+    user = User.objects.get(id=user_id)
+    if request.method == 'POST':
+        code = request.POST['code']
+        if user.verification_code == int(code):
+            user.email_verified = True
+            user.is_active = True
+            user.save()
+            return render(request, 'papsas_app/layout.html', {'message': 'Email successfully verified!'})
+        else:
+            return HttpResponse('Invalid verification code')
+    else:
+        return render(request, 'papsas_app/verify_email.html', {'user_id': user_id})
