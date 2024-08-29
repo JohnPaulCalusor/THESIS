@@ -1,0 +1,23 @@
+{% extends 'papsas_app/layout.html' %}
+
+{% block body %}
+    <div>
+        <h3>Profile</h3>
+        {% if viewUser.profilePic %}
+            <!-- show the profilepic -->
+             <img src="{{ viewUser.profilePic.url }}" alt="profilePic" id="profile">
+
+        {% else %}
+            <form action="" method="post">
+                {% csrf_token %}
+                <!-- enable user to upload a profile picture -->
+                <input type="file" name="profile_picture" accept="image/*">
+                <button type="submit">Submit</button>
+            </form>
+        {% endif %}
+
+        <h4>
+            {{ user.first_name }} {{user.last_name}}
+        </h4>
+    </div>
+{% endblock %}

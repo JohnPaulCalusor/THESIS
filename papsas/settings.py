@@ -28,8 +28,10 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # Application definition
+
 
 INSTALLED_APPS = [
     'papsas_app',
@@ -60,6 +62,7 @@ TEMPLATES = [
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
+                'papsas_app.context_processors.is_officer',
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
@@ -78,11 +81,11 @@ WSGI_APPLICATION = 'papsas.wsgi.application'
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql_psycopg2",
-        "NAME": "papsas_db",
+        "NAME": "macbookairm1",
         "USER": "postgres",
-        "PASSWORD": "admin123",
+        "PASSWORD": "password",
         "HOST": "localhost",
-        "PORT": "5432",
+        "PORT": "",
     }
 
     # add new postgresql database
@@ -138,5 +141,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'badingbading1122@gmail.com'
-EMAIL_HOST_PASSWORD = 'dunr pfko qdcw patb'
+EMAIL_HOST_USER = 'bienjoshua23@gmail.com'
+EMAIL_HOST_PASSWORD = 'zlxz hqgx vuth brhv'

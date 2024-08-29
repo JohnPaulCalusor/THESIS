@@ -1,0 +1,76 @@
+{% extends 'papsas_app/layout.html' %}
+
+{% block title %}
+    Election
+{% endblock %}
+
+{% block body %}
+    {% for election in openElection %}
+        <h2> {{ election.electionDate.year }} Officer Election</h2>
+        <p> {{ election.electionDate}} </p>
+    {% endfor %}
+
+    <div>
+        <h2>
+            Candidates
+        </h2>
+
+        {% for candidate in candidates %}
+            <div>
+                <p>
+                    {{ candidate.candidate.first_name }}
+                </p>
+                <form action="{% url 'profile' candidate.candidate.id %}">
+                    <button type="submit">View Profile</button>
+                </form>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div>
+        <h2>
+            Cast your Vote
+        </h2>
+
+        <div>
+            <form action="" id="voteContainer">
+                {% for candidate in candidates %}
+                <div>
+                    <input id="apple" type="checkbox" name="apple" />
+                    <label for="apple"> 
+                        <div>
+                            <p>
+                                {{ candidate.candidate.first_name }} 
+                            </p>
+                        </div>
+                    </label>
+                </div>
+                {% endfor %}
+
+                <button type="submit"> Cast Vote </button>
+            </form>
+        </div>
+    </div>
+
+    <div>
+        <h2>
+            Declare Candidacy
+        </h2>
+
+        <form action="">
+            <div>
+                <label for="bio">Bio:</label>
+                <input type="text" name="bio">
+            </div>
+            <div>
+                <label for="platform">Platform:</label>
+                <input type="text" name="platform">
+            </div>
+            <button type="submit">Submit Candidacy</button>
+        </form>
+    </div>
+<!-- show the ongoing election -->
+<!-- create an interface that allows user to submit candidacy -->
+<!-- candidacy must be approved? -->
+<!-- after approve or submitted, show all candidates in vote page with vote button that only allows user to vote atleast 5 -->
+{% endblock %}

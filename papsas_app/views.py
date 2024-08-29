@@ -1,13 +1,14 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, logout, authenticate
-from .models import User
+from .models import User, Officer, Candidacy, Election
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 import random
+from datetime import date
 
 # Create your views here.
 
@@ -51,7 +52,7 @@ def register(request):
 
        # Send verification email
         subject = 'Verify your email address'
-        message = f'Dear {user.first_name},\n\nYour verification code is: {verification_code}\n\nPlease enter this code to verify your email address.\n\nBest regards,\nTite'
+        message = f'Dear {user.first_name},\n\nYour verification code is: {verification_code}\n\nPlease enter this code to verify your email address.\n\nBest regards,\nPhilippine Association of Practioners of Student Affairs and Services'
         send_mail(subject, message, 'your_email@example.com', [user.email])
 
         # Set user as inactive until email is verified
@@ -68,6 +69,9 @@ def logout_view(request):
     return redirect('login')
 
 def login_view(request):
+    if request.user.is_authenticated:
+        return redirect('index')
+    
     if request.method == 'POST':
         username = request.POST['email']
         password = request.POST['password']
@@ -95,8 +99,68 @@ def verify_email(request, user_id):
             user.email_verified = True
             user.is_active = True
             user.save()
-            return render(request, 'papsas_app/layout.html', {'message': 'Email successfully verified!'})
+            # return render(request, 'papsas_app/layout.html', {'message': 'Email successfully verified!'})
+            login(request, user)
+            return HttpResponseRedirect(reverse("index"))
         else:
-            return HttpResponse('Invalid verification code')
+            # if user input wrong verification code, just bring them back to the 'verify_email'
+            return render(request, 'papsas_app/verify_email.html', {
+                'message' : 'Invalid Verification Code'
+                })
+            # return HttpResponse('Invalid verification code')
     else:
         return render(request, 'papsas_app/verify_email.html', {'user_id': user_id})
+    
+def election(request):
+    # provide a table that provides all election
+    # provide an option to start an election
+    electionList = Election.objects.all()
+    ongoingElection = Election.objects.filter(electionStatus = True)
+    if request.method == 'POST':
+        newElection = Election(electionStatus = True, startDate = date.today())
+        newElection.save()
+    
+    today = date.today()
+    user = request.user
+    if user.is_authenticated:
+        try:
+            candidacy = Candidacy.objects.filter( candidate = user).latest('id')
+            officer = Officer.objects.filter( candidateID = candidacy ).latest('id')
+        except (Officer.DoesNotExist, Candidacy.DoesNotExist):
+            officer = None
+    else:
+        officer = None
+    
+    # to ensure only valid officers can access this page
+    # if user is not an officer, how can i avoid this.
+
+    if officer is not None and officer.termEnd > today:
+        return render(request, "papsas_app/election.html", {
+            'electionList' : electionList,
+            'ongoingElection' : ongoingElection,
+        })
+    else:
+        return render(request, 'papsas_app/index.html')
+
+        
+
+def manage_election(request, id):
+    if request.method == 'POST':
+        election = Election.objects.get(id = id)
+        if (election.electionStatus == True):
+            election.electionStatus = False
+            election.save()
+            return redirect('election')
+        
+def vote(request):
+    ongoingElection = Election.objects.filter( electionStatus = True ).latest('id')
+    candidates = Candidacy.objects.filter( election = ongoingElection )
+    return render(request, 'papsas_app/vote.html', {
+        'candidates' : candidates,
+    })
+
+def profile(request, id):
+    user = User.objects.get( id = id)
+    return render(request, 'papsas_app/profile.html/', {
+        'viewUser' : user,
+    })

@@ -1,0 +1,4 @@
+# put this directory to gitignore papsas_app/__pycache__/
+
+papsas_app/__pycache__/
+papsas_app/migrations/

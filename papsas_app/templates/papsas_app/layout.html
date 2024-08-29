@@ -5,25 +5,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'papsas_app/style.css' %}">
     <title>{% block title %} PAPSAS {% endblock %}</title>
 </head>
 <body>
     <nav>
-        <a href="{% url 'index' %}">Home</a>
-        <a href="">About Us</a>
-        <a href="">Event</a>
-        <a href="">Member</a>
-        {% if not user.is_authenticated %}
-            <a href="{% url 'login' %}">Log In</a>
+        {% if user.is_authenticated %}
+            <!-- if user is an officer -->
+             <div>
+                 {% if officer is not None %}
+                     {% if officer.termEnd > today %}
+                         <a href="">Dashboard</a>
+                         <a href="">Records</a>
+                         <a href="{% url 'election' %}">Election</a>
+                         <a href="{% url 'logout' %}">Logout</a>
+                     {% endif%}
+                 {% else %}
+                     <a href="{% url 'index' %}">Home</a>
+                     <a href="">About Us</a>
+                     <a href="">Event and Calendar</a>
+                 {% for election in openElection %}
+                     {% if election is not None%}
+                         <a href="{% url 'vote' %}">Election</a>
+                     {% endif %}
+                 {% endfor %}
+                 <a href="{% url 'logout' %}">Logout</a>
+                 {% endif %}
+             </div>
+            <div>
+                {% if user.profilePic %}
+                    <a href="{% url 'profile' user.id %}">
+                        <img src="{{ user.profilePic.url }}" alt="profilePic" id="navProfile">
+                    </a>
+                {% endif %}
+            </div>
         {% else %}
-            <a href="{% url 'logout' %}">Logout</a>
+            <!-- if user is not logged in -->
+            <a href="{% url 'index' %}">Home</a>
+            <a href="">About Us</a>
+            <a href="">National Conference</a>
+            <a href="">Become a Member</a>
+            <a href="">News and Offers</a>
+            <a href="{% url 'login' %}">Login</a>
         {% endif %}
     </nav>
-    
     {% if user.is_authenticated %}
-        <div>
-            <p>Welcome, {{ user.first_name }}!</p>
-        </div>
+    <div>
+        <p>Welcome, <a href="">{{ user.first_name }}</a>!</p>
+    </div>
     {% endif %}
     {% block body %}
     {% endblock %}

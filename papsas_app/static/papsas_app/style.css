@@ -1,0 +1,27 @@
+#voteContainer input[type=checkbox]{
+    display: none;
+}
+
+#voteContainer label>div {
+    border: black 1px solid;
+}
+
+#voteContainer input:checked ~ label>div{
+    border: solid 2px black;
+}
+
+nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+#navProfile {
+    width: 50px;
+    /* make the shape circle */
+    border-radius: 50%;
+}
+
+#profile {
+    width: 200px;
+}

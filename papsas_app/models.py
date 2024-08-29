@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib import admin
 from django.contrib.auth.models import AbstractUser
 
 # Create your models here.
@@ -13,3 +14,47 @@ class User(AbstractUser):
     birthdate = models.DateField(null=True)
     verification_code = models.IntegerField(null=True, blank=True)
     email_verified = models.BooleanField(default=False)
+    profilePic = models.ImageField(upload_to="papsas_app/profilePic", null=True)
+
+class Membership(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    membershipType = models.CharField(max_length=32)
+    membershipDate = models.DateField()
+    membershipExpireDate = models.DateField()
+    membershipStatus = models.CharField(max_length=32)
+    membershipPrice = models.DecimalField(max_digits=10, decimal_places=2)
+
+class Election(models.Model):
+    startDate = models.DateField(null=True)
+    endDate = models.DateField(null=True)
+    electionStatus = models.BooleanField()
+
+    def __str__(self):
+        return f'Election {self.id}'
+
+class Candidacy(models.Model):
+    candidate = models.ForeignKey(User, on_delete=models.CASCADE, related_name="candidate")
+    candidacyStatus = models.BooleanField(null=True)
+    election = models.ForeignKey(Election, on_delete=models.CASCADE, related_name="elections")
+    
+    def __str__(self):
+        return f"{self.id} {self.candidate.first_name} ran candidacy for officer"
+    
+class Vote(models.Model):
+    candidateID = models.ForeignKey(Candidacy, on_delete=models.CASCADE, related_name="candidates")
+    voterID = models.ForeignKey(User, on_delete=models.CASCADE, related_name="voter")
+    voteDate = models.DateField()
+
+class Officer(models.Model):
+    candidateID = models.ForeignKey(Candidacy, on_delete=models.CASCADE, related_name="officers")
+    position = models.CharField(max_length=32, choices=[
+        ('President', 'President'),
+        ('Secretary', 'Secretary'),
+        ('Regular', 'Regular')
+    ], null=True)
+    termStart = models.DateField(null=True)
+    termEnd = models.DateField(null=True)
+    
+    def __str__(self):
+        return f"{self.candidateID.candidate.first_name} - {self.candidateID.candidate.id} is appointed as {self.position}"
+
