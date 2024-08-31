@@ -69,3 +69,4 @@ class Event(models.Model):
     pubmat = models.ImageField(null=True)
     startTime = models.TimeField(null=True)
     endTime = models.TimeField(null=True)
+    audience = models.ManyToManyField(User, null=True, related_name="spectator")
