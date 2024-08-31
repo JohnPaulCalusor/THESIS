@@ -83,9 +83,9 @@ DATABASES = {
         "ENGINE": "django.db.backends.postgresql_psycopg2",
         "NAME": "papsas_db",
         "USER": "postgres",
-        "PASSWORD": "admin123",
+        "PASSWORD": "password",
         "HOST": "localhost",
-        "PORT": "",
+        "PORT": "5433",
     }
 
     # add new postgresql database

@@ -9,7 +9,9 @@
     <title>{% block title %} PAPSAS {% endblock %}</title>
 </head>
 <body>
+    <div class="hero">
     <nav>
+        
         {% if user.is_authenticated %}
             <!-- if user is an officer -->
              <div>
@@ -42,12 +44,20 @@
             </div>
         {% else %}
             <!-- if user is not logged in -->
-            <a href="{% url 'index' %}">Home</a>
-            <a href="">About Us</a>
-            <a href="">National Conference</a>
-            <a href="">Become a Member</a>
-            <a href="">News and Offers</a>
-            <a href="{% url 'login' %}">Login</a>
+            <div class="hero">
+                <nav>
+            <img src="/media/papsas_app/images/papsas.png" class="logo">
+            <ul>
+                <li><a href="{% url 'index' %}">Home</a></li>
+                <li><a href="">About Us</a></li>
+                <li><a href="">Become a Member</a></li>
+                <li><a href="">News and Offers</a></li>
+            </ul>
+            <div class="login-container">
+                <a href="{% url 'login' %}">Login</a>
+            </div>
+        </nav>
+        </div>
         {% endif %}
     </nav>
     {% if user.is_authenticated %}
@@ -57,5 +67,6 @@
     {% endif %}
     {% block body %}
     {% endblock %}
+</div>
 </body>
 </html>
