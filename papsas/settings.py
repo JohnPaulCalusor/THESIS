@@ -81,7 +81,7 @@ WSGI_APPLICATION = 'papsas.wsgi.application'
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql_psycopg2",
-        "NAME": "macbookairm1",
+        "NAME": "papsas_db",
         "USER": "postgres",
         "PASSWORD": "password",
         "HOST": "localhost",

@@ -1,7 +1,1 @@
 # put this directory to gitignore papsas_app/__pycache__/
-
-papsas_app/__pycache__/
-papsas_app/migrations/
-papsas_app/__pycache__/urls.cpython-312.pyc
-papsas_app/__pycache__/models.cpython-312.pyc
-papsas_app/__pycache__/views.cpython-312.pyc

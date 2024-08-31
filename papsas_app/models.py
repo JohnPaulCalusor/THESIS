@@ -59,11 +59,13 @@ class Officer(models.Model):
         return f"{self.candidateID.candidate.first_name} - {self.candidateID.candidate.id} is appointed as {self.position}"
 
 class Event(models.Model):
-    eventDate = models.DateField()
-    venue = models.CharField(max_length=64)
-    address = models.CharField(max_length=128)
-    eventDescription = models.TextField(max_length=256)
+    eventName = models.CharField(max_length=32, null=True)
+    startDate = models.DateField(null=True)
+    endDate = models.DateField(null=True)
+    venue = models.CharField(max_length=64, null=True)
+    address = models.CharField(max_length=128, null=True)
+    eventDescription = models.TextField(max_length=256, null=True)
     eventStatus = models.BooleanField(default=True)
-    pubmat = models.ImageField()
-    startTime = models.TimeField()
-    endTime = models.TimeField()
+    pubmat = models.ImageField(null=True)
+    startTime = models.TimeField(null=True)
+    endTime = models.TimeField(null=True)
