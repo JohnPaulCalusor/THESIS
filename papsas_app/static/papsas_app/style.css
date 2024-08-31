@@ -48,11 +48,7 @@ nav {
     font-weight: 300;
 }
 .feature-img{
-    width: 43%;
-    position: absolute;
-    bottom: 0;
-    right: 10%;
-    top: 14%;
+    width: 43%; 
 }
 .logo{
     width: 250px;
@@ -152,4 +148,10 @@ nav ul li a{
 
 .card .btn:hover {
     background-color: #ff0000;
+}
+
+.content-container {
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
 }
