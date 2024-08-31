@@ -58,3 +58,12 @@ class Officer(models.Model):
     def __str__(self):
         return f"{self.candidateID.candidate.first_name} - {self.candidateID.candidate.id} is appointed as {self.position}"
 
+class Event(models.Model):
+    eventDate = models.DateField()
+    venue = models.CharField(max_length=64)
+    address = models.CharField(max_length=128)
+    eventDescription = models.TextField(max_length=256)
+    eventStatus = models.BooleanField(default=True)
+    pubmat = models.ImageField()
+    startTime = models.TimeField()
+    endTime = models.TimeField()

@@ -14,4 +14,5 @@ urlpatterns = [
     path('manageElection/<int:id>', views.manage_election, name="manage_election"),
     path('vote', views.vote, name="vote"),
     path('profile/<int:id>', views.profile, name="profile"),
+    path('event', views.event, name="event")
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

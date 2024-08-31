@@ -164,3 +164,6 @@ def profile(request, id):
     return render(request, 'papsas_app/profile.html/', {
         'viewUser' : user,
     })
+
+def event(request):
+    return render(request, 'papsas_app/event_management.html')

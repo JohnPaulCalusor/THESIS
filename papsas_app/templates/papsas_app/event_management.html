@@ -1,0 +1,26 @@
+{% extends 'papsas_app/layout.html' %}
+
+{% block body %}
+    <h3>
+        Event Management
+    </h3>
+    <form action="">
+        <div>
+            <label for="eventName">Event Name</label>
+            <input type="text" name="eventName">
+        </div>
+        <div>
+            <label for="desc">Description</label>
+            <input type="text" name="desc">
+        </div>
+        <div>
+            <label for="date">Date</label>
+            <input type="date" name="date">
+        </div>
+        <div>
+            <label for="desc">Description</label>
+            <input type="text" name="desc">
+        </div>
+        <button type="submit">Submit</button>
+    </form>
+{% endblock %}
