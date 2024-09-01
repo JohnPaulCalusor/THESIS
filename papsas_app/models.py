@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib import admin
 from django.contrib.auth.models import AbstractUser
-
+from django import forms
 # Create your models here.
 
 class User(AbstractUser):
@@ -67,6 +67,26 @@ class Event(models.Model):
     eventDescription = models.TextField(max_length=256, null=True)
     eventStatus = models.BooleanField(default=True)
     pubmat = models.ImageField(null=True)
+    price = models.DecimalField(max_digits=10, decimal_places=2, null=True)
     startTime = models.TimeField(null=True)
     endTime = models.TimeField(null=True)
-    audience = models.ManyToManyField(User, null=True, related_name="spectator")
+    audience = models.ManyToManyField(User, blank=True, related_name="spectator")
+
+
+class Attendance(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    event = models.ForeignKey(Event, on_delete=models.CASCADE)
+    attended = models.BooleanField(default=False)
+    date_attended = models.DateField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user.username} - {self.event.eventName}"
+
+class EventRegistration(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    event = models.ForeignKey(Event, on_delete=models.CASCADE)
+    receipt = models.BinaryField(null=True, blank=True) 
+    registered_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user.username} registered for {self.event.eventName} at {self.event.venue}"

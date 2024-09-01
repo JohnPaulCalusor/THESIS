@@ -1,0 +1,14 @@
+{% block content %}
+  <h1>Attendance Form</h1>
+  <form method="post">
+    {% csrf_token %}
+    <label for="id">Enter your ID:</label>
+    <input type="text" id="id" name="id">
+    <button type="submit">Submit</button>
+  </form>
+  {% if user_data %}
+    <h2>User Data:</h2>
+    <p>Name: {{ user_data.name }}</p>
+    <p>Picture: <img src="{{ user_data.picture }}" alt="User Picture"></p>
+  {% endif %}
+{% endblock %}
