@@ -18,7 +18,6 @@ class EventRegistrationForm(forms.ModelForm):
     def __init__(self, user, event, *args, **kwargs):
         super(EventRegistrationForm, self).__init__(*args, **kwargs)
         self.fields['start_date_of_event'] = forms.DateField(initial=event.startDate, disabled=True)
-        self.fields['end_date_of_event'] = forms.DateField(initial=event.endDate, disabled=True)
 
         # Add additional fields
         self.fields['membership_id'] = forms.CharField(initial=user.id, disabled=True)
