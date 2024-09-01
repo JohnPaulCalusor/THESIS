@@ -36,7 +36,7 @@ nav {
 .content{
     margin-top: 3%;
     max-width: 600px;
-    margin-left: 8%;
+    margin-right: 5%;
 }
 .content h1{
     font-size: 40px;
@@ -49,6 +49,7 @@ nav {
 }
 .feature-img{
     width: 43%; 
+    margin-top: 40px;
 }
 .logo{
     width: 250px;
@@ -98,7 +99,7 @@ nav ul li a{
     color: #ff0000;
     font-size: 2em;
     margin-bottom: 50px;
-    margin-top: 150px;
+    margin-top: 100px;
 }
 
 .cards {
@@ -111,7 +112,7 @@ nav ul li a{
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     overflow: hidden;
-    width: 30%;
+    width: 29%;
     height: 550px
 }
 
@@ -154,4 +155,54 @@ nav ul li a{
     display: flex;
     justify-content: center;
     flex-direction: row;
+}
+.footer {
+    background-color: #fff;
+    padding: 30px;
+    text-align: left;
+    margin-left: 2%;
+    margin-bottom: 50px;
+    border-top: 1px solid #ccc;
+    margin-top: 50px;
+    display: flex;
+}
+
+.footer img {
+    height: 120px;
+    margin-left: 100px;
+}
+.footer p{
+    color: #ff0000;
+    margin-top: 100px;
+    margin-left: -185px;
+    margin-right: 150px;
+}
+
+.footer .details {
+    display: flex;
+    justify-content: right;
+    align-items: right;
+    gap: 150px;
+    margin-top: 30px;
+    
+}
+
+.footer .details div {
+
+    color: #ff0000;
+}
+
+.footer .details div p {
+    margin: 0;
+    font-size: 14px;
+}
+
+.footer .details div a {
+    color: #ff0000;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.footer .details div i {
+    margin-right: 10px;
 }
