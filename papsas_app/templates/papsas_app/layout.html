@@ -6,7 +6,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{% static 'papsas_app/style.css' %}">
-    
+    <link href='https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css' rel='stylesheet'>
+
     <title>{% block title %} PAPSAS {% endblock %}</title>
 </head>
 <body>
@@ -45,20 +46,39 @@
             </div>
         {% else %}
             <!-- if user is not logged in -->
-            <div class="hero">
-                <nav>
-            <img src="/media/papsas_app/images/papsas.png" class="logo">
-            <ul>
-                <li><a href="{% url 'index' %}">Home</a></li>
-                <li><a href="">About Us</a></li>
-                <li><a href="">Become a Member</a></li>
-                <li><a href="">News and Offers</a></li>
-            </ul>
-            <div class="login-container">
-                <a href="{% url 'login' %}">Login</a>
-            </div>
-        </nav>
-        </div>
+        <header class="header">
+            <nav class="nav container">
+                <img src="/media/papsas_app/images/papsas.png" class="logo">
+                <div class="nav__menu" id="nav-menu">
+                    <ul class="nav__list">
+                        <li class="nav__item">
+                            <a href="{% url 'index' %}" class="nav__link">Home</a>
+                        </li>
+                        <li class="nav__item">
+                            <a href="#" class="nav__link">About Us</a>
+                        </li>
+                        <li class="nav__item">
+                            <a href="#" class="nav__link">Become a Member</a>
+                        </li>
+                        <li class="nav__item">
+                            <a href="#" class="nav__link">News and Offers</a>
+                        </li>
+                        <div class="login-container">
+                            <a href="{% url 'login' %}">Login</a>
+                        </div>
+                    </ul>
+
+                    <div class="nav__close" id="nav-close">
+                        <i class='bx bx-x'></i>
+                    </div>
+                </div>
+
+                <!-- Toggle button -->
+                <div class="nav__toggle" id="nav-toggle">
+                    <i class='bx bx-grid-alt'></i>
+                </div>
+            </nav>
+        </header>
         {% endif %}
     </nav>
     {% if user.is_authenticated %}
@@ -69,5 +89,8 @@
     {% block body %}
     {% endblock %}
 </div>
+
+<script src="static/papsas_app/js/scrollreveal.min.js"></script>
+<script src="static/papsas_app/js/main.js"></script>
 </body>
 </html>
