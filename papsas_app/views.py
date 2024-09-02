@@ -8,7 +8,7 @@ from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 import random
-from .forms import AttendanceForm, EventRegistrationForm
+from .forms import AttendanceForm, EventRegistrationForm, EventForm
 from datetime import date
 
 
@@ -168,7 +168,16 @@ def profile(request, id):
     })
 
 def event(request):
-    return render(request, 'papsas_app/event_management.html')
+    if request.method == 'POST':
+        form = EventForm(request.POST)
+
+        if form.is_valid():
+            eventName = form.cleaned_data["eventName"]
+    else:     
+        form = EventForm
+        return render(request, 'papsas_app/event_management.html', {
+            'form' : form
+        })
 
 def attendance_form(request):
     if request.method == 'POST':

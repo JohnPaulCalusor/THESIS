@@ -14,7 +14,7 @@ class User(AbstractUser):
     birthdate = models.DateField(null=True)
     verification_code = models.IntegerField(null=True, blank=True)
     email_verified = models.BooleanField(default=False)
-    profilePic = models.ImageField(null=True, blank=True) 
+    profilePic = models.ImageField(null=True, blank=True, upload_to="papsas_app/profilePic") 
 
 class Membership(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -66,7 +66,7 @@ class Event(models.Model):
     address = models.CharField(max_length=128, null=True)
     eventDescription = models.TextField(max_length=256, null=True)
     eventStatus = models.BooleanField(default=True)
-    pubmat = models.ImageField(null=True)
+    pubmat = models.ImageField(upload_to="papsas_app/pubmat", null=True)
     price = models.DecimalField(max_digits=10, decimal_places=2, null=True)
     startTime = models.TimeField(null=True)
     endTime = models.TimeField(null=True)
@@ -84,7 +84,7 @@ class Attendance(models.Model):
 class EventRegistration(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
-    receipt = models.ImageField(null=True, blank=True) 
+    receipt = models.ImageField(upload_to="papsas_app/reciept", null=True, blank=True) 
     registered_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

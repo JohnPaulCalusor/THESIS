@@ -8,6 +8,11 @@ class AttendanceForm(forms.ModelForm):
         model = Attendance
         fields = ('user', 'event', 'attended')
 
+class EventForm(forms.ModelForm):
+    class Meta:
+        model = Event
+        fields = ('eventName', 'startDate', 'endDate', 'venue', 'address', 'eventDescription', 'pubmat', 'price', 'startTime', 'endTime')
+
 class EventRegistrationForm(forms.ModelForm):
     receipt_file = forms.FileField(required=True)
 
