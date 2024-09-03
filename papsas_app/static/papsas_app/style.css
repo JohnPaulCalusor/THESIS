@@ -267,7 +267,6 @@ img {
 @media screen and (min-width: 767px) {
   .nav {
     height: calc(var(--header-height) + 1.5rem);
-    
   }
   .nav__toggle, 
   .nav__close {
@@ -456,7 +455,6 @@ img {
     background-color: #ffffff;
     color: #000000;
     padding: 2rem 0;
-
 }
 
 .footer__container {
@@ -537,7 +535,6 @@ img {
         align-items: flex-start;
         text-align: left;
     }
-
     .footer__socials {
         margin-bottom: 0;
     }
@@ -648,8 +645,8 @@ img {
 .resources {
   padding: 2rem 1rem;
   margin-top: 100px;
-  background-color: #f4f4f4;
-  height: 40rem;
+  background-color: #ffffff;
+  height: 38rem;
   text-align: center; /* Center content within the resources section */
 
 }
@@ -682,7 +679,7 @@ img {
 
 /* Individual resource box */
 .resources__box {
-  background-color: #fff;
+  background-color: #ffffff;
   border-radius: 10px;
   height: 26rem;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -748,6 +745,7 @@ img {
   .resources__container {
       grid-template-columns: repeat(2, 300px); /* Two centered columns with fixed width */
       justify-content: center; /* Center the grid items */
+      
   }
 
   .resources__title {
