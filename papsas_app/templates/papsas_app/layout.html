@@ -12,80 +12,76 @@
 </head>
 <body>
     <div class="hero">
-    <nav>
-        
-        {% if user.is_authenticated %}
-            <!-- if user is an officer -->
-             <div>
-                 {% if officer is not None %}
-                     {% if officer.termEnd > today %}
-                         <a href="">Dashboard</a>
-                         <a href="">Records</a>
-                         <a href="{% url 'election' %}">Election</a>
-                         <a href="{% url 'event' %}">Event Management</a>
-                         <a href="{% url 'logout' %}">Logout</a>
-                     {% endif%}
-                 {% else %}
-                     <a href="{% url 'index' %}">Home</a>
-                     <a href="">About Us</a>
-                     <a href="">Event and Calendar</a>
-                 {% for election in openElection %}
-                     {% if election is not None%}
-                         <a href="{% url 'vote' %}">Election</a>
-                     {% endif %}
-                 {% endfor %}
-                    <a href="{% url 'logout' %}">Logout</a>
-                 {% endif %}
-             </div>
-            <div>
-                {% if user.profilePic %}
-                    <a href="{% url 'profile' user.id %}">
-                        <img src="{{ user.profilePic.url }}" alt="profilePic" id="navProfile">
-                    </a>
-                {% endif %}
-            </div>
-        {% else %}
+        <nav>
+            <header class="header">
+                <div class="nav container">
+                    <img src="/media/papsas_app/images/papsas.png" class="logo">
+        <!-- start -->
+                {% if user.is_authenticated %}
+                    <!-- if user is an officer -->
+                    <div>
+                        {% if officer is not None %}
+                            {% if officer.termEnd > today %}
+                                <a href="">Dashboard</a>
+                                <a href="">Records</a>
+                                <a href="{% url 'election' %}">Election</a>
+                                <a href="{% url 'event' %}">Event Management</a>
+                                <a href="{% url 'logout' %}">Logout</a>
+                            {% endif%}
+                        {% else %}
+                            <a href="{% url 'index' %}">Home</a>
+                            <a href="{% url 'about' %}">About Us</a>
+                            <a href="">Event and Calendar</a>
+                        {% for election in openElection %}
+                            {% if election is not None%}
+                                <a href="{% url 'vote' %}">Election</a>
+                            {% endif %}
+                        {% endfor %}
+                            <a href="{% url 'logout' %}">Logout</a>
+                        {% endif %}
+                    </div>
+                    <div>
+                        {% if user.profilePic %}
+                            <a href="{% url 'profile' user.id %}">
+                                <img src="{{ user.profilePic.url }}" alt="profilePic" id="navProfile">
+                            </a>
+                        {% endif %}
+                    </div>
+                {% else %}
+            <!-- end -->
             <!-- if user is not logged in -->
-        <header class="header">
-            <nav class="nav container">
-                <img src="/media/papsas_app/images/papsas.png" class="logo">
-                <div class="nav__menu" id="nav-menu">
-                    <ul class="nav__list">
-                        <li class="nav__item">
-                            <a href="{% url 'index' %}" class="nav__link">Home</a>
-                        </li>
-                        <li class="nav__item">
-                            <a href="#" class="nav__link">About Us</a>
-                        </li>
-                        <li class="nav__item">
-                            <a href="#" class="nav__link">Become a Member</a>
-                        </li>
-                        <li class="nav__item">
-                            <a href="#" class="nav__link">News and Offers</a>
-                        </li>
-                        <div class="login-container">
-                            <a href="{% url 'login' %}">Login</a>
-                        </div>
-                    </ul>
+                    <div class="nav__menu" id="nav-menu">
+                        <ul class="nav__list">
+                            <li class="nav__item">
+                                <a href="{% url 'index' %}" class="nav__link">Home</a>
+                            </li>
+                            <li class="nav__item">
+                                <a href="{% url 'about' %}" class="nav__link">About Us</a>
+                            </li>
+                            <li class="nav__item">
+                                <a href="{% url 'become_member' %}" class="nav__link">Become a Member</a>
+                            </li>
+                            <li class="nav__item">
+                                <a href="{% url 'news_offers' %}" class="nav__link">News and Offers</a>
+                            </li>
+                            <div class="login-container">
+                                <a href="{% url 'login' %}">Login</a>
+                            </div>
+                        </ul>
 
-                    <div class="nav__close" id="nav-close">
-                        <i class='bx bx-x'></i>
+                        <div class="nav__close" id="nav-close">
+                            <i class='bx bx-x'></i>
+                        </div>
+                    </div>
+
+                    <!-- Toggle button -->
+                    <div class="nav__toggle" id="nav-toggle">
+                        <i class='bx bx-grid-alt'></i>
                     </div>
                 </div>
-
-                <!-- Toggle button -->
-                <div class="nav__toggle" id="nav-toggle">
-                    <i class='bx bx-grid-alt'></i>
-                </div>
-            </nav>
-        </header>
-        {% endif %}
-    </nav>
-    {% if user.is_authenticated %}
-    <div>
-        <p>Welcome, <a href="">{{ user.first_name }}</a>!</p>
-    </div>
-    {% endif %}
+            </header>
+                {% endif %}
+        </nav>
     {% block body %}
     {% endblock %}
 </div>

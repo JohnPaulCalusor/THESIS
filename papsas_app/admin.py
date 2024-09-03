@@ -6,11 +6,13 @@ from django.contrib.auth.admin import UserAdmin
 from .models import User, Membership, Vote, Candidacy, Officer, Election, Event, EventRegistration
 
 class UserAdmin(admin.ModelAdmin):
-    list_display = ('username','email_verified')
+    list_display = ('id' ,'first_name', 'username','email_verified')
+    # disables admin to change anything
+    # readonly_fields = ('password',)
 
 # register user
 
-admin.site.register(User, UserAdmin) 
+admin.site.register(User, UserAdmin)
 admin.site.register(Membership)
 admin.site.register(Vote)
 admin.site.register(Candidacy)

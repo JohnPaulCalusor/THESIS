@@ -68,7 +68,7 @@ def register(request):
 
 def logout_view(request):
     logout(request)
-    return redirect('login')
+    return redirect('index')
 
 def login_view(request):
     if request.user.is_authenticated:
@@ -172,7 +172,13 @@ def event(request):
         form = EventForm(request.POST)
 
         if form.is_valid():
-            eventName = form.cleaned_data["eventName"]
+            form.save()
+            return redirect('event')
+        else:
+            return render(request, 'papsas/event_management.html', {
+                'form' : form
+            })
+
     else:     
         form = EventForm
         return render(request, 'papsas_app/event_management.html', {
@@ -231,3 +237,12 @@ def event_registration_view(request, event_id):
     else:
         form = EventRegistrationForm(user=request.user, event=event)
     return render(request, 'papsas_app/event_registration_form.html', {'form': form, 'event': event})
+
+def about(request):
+    return render(request, 'papsas_app/about_us.html')
+
+def become_member(request):
+    return render(request, 'papsas_app/become_member.html')
+
+def news_offers(request):
+    return render(request, 'papsas_app/news_offers.html')

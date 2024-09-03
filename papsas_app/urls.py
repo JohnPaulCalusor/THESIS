@@ -17,4 +17,7 @@ urlpatterns = [
     path('event', views.event, name="event"),
     path('attendance_form/', views.attendance_form, name='attendance_form'),
     path('event/<int:event_id>/register/', views.event_registration_view, name='event_registration_view'),
+    path('about_us', views.about, name="about"),
+    path('become_member', views.become_member, name="become_member"),
+    path('news_offers', views.news_offers, name="news_offers"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

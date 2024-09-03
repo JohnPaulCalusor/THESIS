@@ -16,6 +16,9 @@ class User(AbstractUser):
     email_verified = models.BooleanField(default=False)
     profilePic = models.ImageField(null=True, blank=True, upload_to="papsas_app/profilePic") 
 
+    def __str__(self):
+        return f'{self.id} - {self.first_name}'
+
 class Membership(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     membershipType = models.CharField(max_length=32)
