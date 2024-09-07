@@ -11,14 +11,7 @@
                 {{ message }}
             </div>
         {% endif %}
-        <div>
-            <label for="email">Email</label>
-            <input type="email" name="email">
-        </div>
-        <div>
-            <label for="password">Password</label>
-            <input type="password" name="password">
-        </div>
+        {{ form }}
         <button type="submit">Login</button>
     </form>
     Not a member yet? Register<a href="{% url 'register' %}"> here.</a>

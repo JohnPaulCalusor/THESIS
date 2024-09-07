@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib import admin
 from django.contrib.auth.models import AbstractUser
 from django import forms
+from django.db.models import F
 # Create your models here.
 
 Regions = [
@@ -23,12 +24,6 @@ Regions = [
     ('Caraga', 'Region XIII'),
     ('Bangsamoro Autonomous Region in Muslim Mindanao', 'BARMM')
 ]
-Types = [
-    ('Regular', 'Regular'),
-    ('Special', 'Special'),
-    ('Affliate', 'Affliate'),
-    ('Lifetime', 'Lifetime'),
-]
 
 class User(AbstractUser):
     mobileNum = models.CharField(max_length=16)
@@ -36,7 +31,6 @@ class User(AbstractUser):
     address = models.CharField(max_length=32)
     occupation = models.CharField(max_length=16)
     age = models.IntegerField(null=True)
-    memType = models.CharField(max_length=32)
     birthdate = models.DateField(null=True)
     verification_code = models.IntegerField(null=True, blank=True)
     email_verified = models.BooleanField(default=False)
@@ -46,12 +40,18 @@ class User(AbstractUser):
         return f'{self.id} - {self.first_name}'
 
 class MembershipTypes(models.Model):
-    type = models.CharField(max_length=16, choices=Types, null=True)
+    type = models.CharField(max_length=16, null=True)
     duration = models.DurationField(null=True, blank=True)
     fee = models.DecimalField(max_digits=10, decimal_places=2)
 
     def __str__(self):
         return f'{self.id} - {self.type}'
+    
+class UserMembership(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    membership = models.ForeignKey(MembershipTypes, on_delete=models.CASCADE)
+    registrationDate = models.DateField(auto_now_add=True)
+    expirationDate = models.DateField(null=True, blank=True)
 
 class Election(models.Model):
     startDate = models.DateField(null=True)

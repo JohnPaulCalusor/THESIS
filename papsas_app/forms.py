@@ -17,6 +17,19 @@ class RegistrationForm(forms.ModelForm):
         if '@' not in email or not email.endswith('.edu.ph'):
             raise ValidationError("Please enter a valid .edu.ph email address.")
         return email
+    
+class LoginForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ('email', 'password')
+        widgets = {
+            'password' : forms.PasswordInput(render_value=True),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(LoginForm, self).__init__(*args, **kwargs)
+        self.fields['email'].label = 'Email'
+    
 
 class ProfileForm(forms.ModelForm):
     class Meta:

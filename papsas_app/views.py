@@ -8,7 +8,7 @@ from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 import random
-from .forms import AttendanceForm, EventRegistrationForm, EventForm, ProfileForm, RegistrationForm
+from .forms import AttendanceForm, EventRegistrationForm, EventForm, ProfileForm, RegistrationForm, LoginForm
 from datetime import date
 
 
@@ -24,20 +24,20 @@ def index(request):
 
 def register(request):
     form = RegistrationForm()
+
     if request.method == 'POST':
         form = RegistrationForm(request.POST)
         if form.is_valid():
             username = form.cleaned_data['email']
             password = form.cleaned_data['password']
-            fname = form.cleaned_data['fName']
-            lname = form.cleaned_data['lName']
+            fname = form.cleaned_data['first_name']
+            lname = form.cleaned_data['last_name']
             mobileNum = form.cleaned_data['mobileNum']
             region = form.cleaned_data['region']
             address = form.cleaned_data['address']
             occupation = form.cleaned_data['occupation']
             age = form.cleaned_data['age']
-            memType = form.cleaned_data['memType']
-            birthDate = form.cleaned_data['birthDate']
+            birthDate = form.cleaned_data['birthdate']
 
             user = User.objects.create_user(username = username,
                                         email= username, 
@@ -49,7 +49,6 @@ def register(request):
                                         address = address,
                                         occupation = occupation,
                                         age = age,
-                                        memType = memType,
                                         birthdate = birthDate)
             user.save()
             # Generate 6-digit verification code
@@ -70,6 +69,11 @@ def register(request):
 
             # Redirect to email verification page
             return redirect('verify_email', user_id=user.id)
+        else:
+            return render(request, 'papsas_app/register.html', {
+                'form': form,
+                'message' : 'Invalid form data'
+        })          
     else:
         return render(request, 'papsas_app/register.html', {
             'form': form,
@@ -80,6 +84,7 @@ def logout_view(request):
     return redirect('index')
 
 def login_view(request):
+    form = LoginForm()
     if request.user.is_authenticated:
         return redirect('index')
     
@@ -100,7 +105,9 @@ def login_view(request):
                 'message' : 'Invalid Credentials'
                 })
     else:
-        return render(request, 'papsas_app/login.html')
+        return render(request, 'papsas_app/login.html', {
+            'form' : form
+        })
 
 def verify_email(request, user_id):
     user = User.objects.get(id=user_id)
