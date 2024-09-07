@@ -20,4 +20,6 @@ urlpatterns = [
     path('about_us', views.about, name="about"),
     path('become_member', views.become_member, name="become_member"),
     path('news_offers', views.news_offers, name="news_offers"),
+    path('record', views.record, name="record"),
+    path('membership_registration/<int:mem_id>', views.membership_registration, name="membership_registration"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

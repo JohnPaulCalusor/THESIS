@@ -8,11 +8,13 @@
              <img src="{{ viewUser.profilePic.url }}" alt="profilePic" id="profile">
 
         {% else %}
-            <form action="{% url 'profile' user.id  %}" method="post" enctype="multipart/form-data">
-                {% csrf_token %}
-                {{ form }}
-                <button type="submit">Submit</button>
-            </form>
+            {% if user.id == viewUser.id %}
+                <form action="{% url 'profile' user.id  %}" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {{ form }}
+                    <button type="submit">Submit</button>
+                </form>
+            {% endif %}
         {% endif %}
 
         <h4>

@@ -33,38 +33,24 @@
     </div>
     <div class="container">
         <div class="membership_grid">
-            <div class="membership_item">
-                <img src="media/papsas_app/images/regular.jpg" alt="Signed IRR RA 11053 Anti Hazing Act of 2018">
-                <h2>REGULAR MEMBER</h2>
-                <p>SAS practitioner currently holding positions covered in the CMO 9s. 2013. <br><br><br><br>Membership Fee: Php 500.00
-                    <br>Duration: 1 year</p>
-                <p></p>
-                <button class="membership__button_1"><a href="{% url 'login' %}">Register</a></button>
-            </div>
-            <div class="membership_item">
-                <img src="media/papsas_app/images/special.jpg" alt="CMO No. 11 s. 2021 Amendments to Section 6 and 12 of CMO No. 8 series of 2019">
-                <h2>SPECIAL MEMBER</h2>
-                <p>SAS practitioner currently holding positions covered in the CMO 9s. 2013.<br><br><br><br>Membership Fee: Php 800.00
-                    <br>Duration: 2 year</p>
-                <p></p>
-                <button class="membership__button_1"><a href="{% url 'login' %}">Register</a></button>
-            </div>
-            <div class="membership_item">
-                <img src="media/papsas_app/images/affiliate.jpg" alt="CMO No. 9 s. 2021 Revised Policies and Guidelines Higher Education Institutions in the Philippines">
-                <h2>AFFILIATE</h2>
-                <p>Former SAS Practitioner who became officers in the Regional Chapters and National Board for at least 3 years and /or Active members for at least 5 years.<br> <br></bre>Membership Fee: Php 500.00
-                    <br> Duration: 1 year</p>
-                <p></p>
-                <button class="membership__button"><a href="{% url 'login' %}">Register</a></button>
-            </div>
-            <div class="membership_item">
-                <img src="media/papsas_app/images/lifetime.jpg" alt="CMO No. 9 s. 2021 Annex A CHEDRO Eval. Annex A">
-                <h2>LIFETIME</h2>
-                <p>PAPSAS Officers (Regional and National) who have served for at least 9 years or Active Members for at least 15 years. <br><br><br>Membership Fee: Php 5000.00
-                    <br> Duration: 1 year</p>
-                <p></p>
-                <button class="membership__button_3"><a href="{% url 'login' %}">Register</a></button>
-            </div>
+            {% for mem in memType %}
+                <div class="membership_item">
+                    <img src="{{ mem.pubmat.url }}" alt="Signed IRR RA 11053 Anti Hazing Act of 2018">
+                    <h2>{{ mem.type }} </h2>
+                    <p>{{mem.description}}. <br><br><br><br>Membership Fee: Php {{mem.fee}}
+                        {% if mem.duration is None %}
+                            <br>Duration: Lifetime</p>
+                        {% else %}
+                            {% if mem.duration.days == 365 %}
+                                <br>Duration: 1 year</p>
+                            {% elif mem.duration.days == 730 %}
+                                <br>Duration: 2 years</p>
+                            {% endif %}
+                        {% endif %}
+                    <p></p>
+                    <button class="membership__button_1"><a href="{% url 'membership_registration' mem.id %}">Register</a></button>
+                </div>
+            {% endfor %}
         </div>
     </div>
 </section>

@@ -1,14 +1,14 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, logout, authenticate
-from .models import User, Officer, Candidacy, Election, Event, Attendance, EventRegistration 
+from .models import User, Officer, Candidacy, Election, Event, Attendance, EventRegistration, MembershipTypes
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 import random
-from .forms import AttendanceForm, EventRegistrationForm, EventForm, ProfileForm, RegistrationForm, LoginForm
+from .forms import AttendanceForm, EventRegistrationForm, EventForm, ProfileForm, RegistrationForm, LoginForm, MembershipRegistration
 from datetime import date
 
 
@@ -101,8 +101,10 @@ def login_view(request):
                     'message' : 'Please verify your email address before logging in.'
                 })
         else:
+            form = LoginForm(request.POST)
             return render(request, 'papsas_app/login.html', {
-                'message' : 'Invalid Credentials'
+                'message' : 'Invalid Credentials',
+                'form' : form
                 })
     else:
         return render(request, 'papsas_app/login.html', {
@@ -269,7 +271,24 @@ def about(request):
     return render(request, 'papsas_app/about_us.html')
 
 def become_member(request):
-    return render(request, 'papsas_app/become_member.html')
+    memType = MembershipTypes.objects.all()
+    return render(request, 'papsas_app/become_member.html', {
+        'memType' : memType
+    })
 
 def news_offers(request):
     return render(request, 'papsas_app/news_offers.html')
+
+def record(request):
+    userRecord = User.objects.all()
+    return render(request, 'papsas_app/record.html', {
+        'userRecord' : userRecord
+    })
+
+def membership_registration(request, mem_id):
+    form = MembershipRegistration(request.user, mem_id)
+    membership = mem_id
+    return render(request, 'papsas_app/membership_registration.html', {
+        'form' : form,
+        'membership' : membership
+    })

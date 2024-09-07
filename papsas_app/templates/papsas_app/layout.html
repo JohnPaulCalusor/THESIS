@@ -24,21 +24,27 @@
                         {% if officer is not None %}
                             {% if officer.termEnd > today %}
                                 <a href="">Dashboard</a>
-                                <a href="">Records</a>
+                                <a href="{% url 'record' %}">Records</a>
                                 <a href="{% url 'election' %}">Election</a>
-                                <a href="{% url 'event' %}">Event Management</a>
+                                <a href="{% url 'event' %}">Compose</a>
+                                <!-- Drop down 
+                                Event
+                                Achievement
+                                News and Offers
+                                -->
                                 <a href="{% url 'logout' %}">Logout</a>
                             {% endif%}
                         {% else %}
-                            <a href="{% url 'index' %}">Home</a>
-                            <a href="{% url 'about' %}">About Us</a>
-                            <a href="">Event and Calendar</a>
-                        {% for election in openElection %}
-                            {% if election is not None%}
-                                <a href="{% url 'vote' %}">Election</a>
-                            {% endif %}
-                        {% endfor %}
-                            <a href="{% url 'logout' %}">Logout</a>
+                            <a href="{% url 'index' %}" class="nav__link">Home</a>
+                            <a href="{% url 'about' %}" class="nav__link">About Us</a>
+                            <a href="" class="nav__link">Highlights</a>
+                            {% for election in openElection %}
+                                {% if election is not None%}
+                                    <a href="{% url 'vote' %}" class="nav__link">Election</a>
+                                {% endif %}
+                            {% endfor %}
+                            <a href="{% url 'become_member' %}" class="nav__link">Become a Member</a>
+                            <a href="{% url 'logout' %}" class="nav__link">Logout</a>
                         {% endif %}
                     </div>
                     <div>
@@ -69,8 +75,12 @@
                             <li class="nav__item">
                                 <a href="{% url 'become_member' %}" class="nav__link">Become a Member</a>
                             </li>
-                            <li class="nav__item">
-                                <a href="{% url 'news_offers' %}" class="nav__link">News and Offers</a>
+                            <li class="nav__item dropdown">
+                                <a href="{% url 'news_offers' %}" class="nav__link">Highlights<i class='bx bx-chevron-down dropdown__icon'></i></a>
+                                <ul class="dropdown-content">
+                                    <li><a href="#">Achievements</a></li>
+                                    <li><a href="#">News and Offers</a></li>
+                                </ul>
                             </li>
                             <div class="login-container">
                                 <a href="{% url 'login' %}">Login</a>

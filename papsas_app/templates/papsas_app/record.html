@@ -1,0 +1,39 @@
+{% extends 'papsas_app/layout.html' %}
+
+{% block body %}
+    <div>
+        <h1>User Records</h1>
+        <table>
+            <tr>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>email</th>
+                <th>Mobile Number</th>
+                <th>Region</th>
+                <th>Address</th>
+                <th>Occupation</th>
+                <th>Age</th>
+                <th>Birth Date</th>
+                <th>Email Verified</th>
+                <th>Profile Picture</th>
+                <th>Edit</th>
+            </tr>
+            {% for user in userRecord  %}
+                <tr>
+                    <td>{{user.first_name}}</td>
+                    <td>{{user.last_name}}</td>
+                    <td>{{user.email}}</td>
+                    <td>{{user.mobileNum}}</td>
+                    <td>{{user.region}}</td>
+                    <td>{{user.address}}</td>
+                    <td>{{user.occupation}}</td>
+                    <td>{{user.age}}</td>
+                    <td>{{user.birthdate}}</td>
+                    <td>{{user.email_verified}}</td>
+                    <td><a href="{% url 'profile' user.id %}">View Profile</a></td>
+                    <td><a href="">Edit</a></td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+{% endblock %}

@@ -6,17 +6,15 @@
 {% block body %}
     <form action="{% url 'login' %}" method="post" class="login-body">
         {% csrf_token %}
-        {% if message %}
-
-        {% endif %}
-
         <div class="login-box">      
             <div class="login-header">
                 <img src="/media/papsas_app/images/papsas.png" class="login-icon">
             </div>
-            <div class="invalid-text">
-                {{ message }}
-            </div>
+            {% if message %}
+                <div class="invalid-text">
+                    {{ message }}
+                </div>
+            {% endif %}
             <div class="input-box">
                 {{ form.email }}
             </div>
@@ -31,4 +29,4 @@
             </div>
         </div>
     </form>
-{% endblock %}
+    {% endblock %}

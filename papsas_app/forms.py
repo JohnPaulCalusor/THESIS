@@ -1,5 +1,5 @@
 from django import forms
-from .models import Attendance, EventRegistration, Event, User
+from .models import Attendance, EventRegistration, Event, User, UserMembership, MembershipTypes
 from django.core.exceptions import ValidationError
 from django.forms import ModelForm, TextInput, EmailInput
 
@@ -24,15 +24,14 @@ class LoginForm(forms.ModelForm):
         model = User
         fields = ('email', 'password')
         widgets = {
-            'password' : forms.PasswordInput(render_value=True),
-            'email' : TextInput(attrs={
+            'password' : forms.PasswordInput(render_value=True, attrs={
+                'placeholder': 'Password',
+                'class': 'input-field'
+            }),
+            'email' : EmailInput(attrs={
                 'placeholder': 'Email',
                 'class': 'input-field'
             }),
-            'password' : TextInput(attrs={
-                'placeholder': 'Password',
-                'class': 'input-field'
-            })
         }
 
     def __init__(self, *args, **kwargs):
@@ -84,3 +83,13 @@ class EventRegistrationForm(forms.ModelForm):
         if commit:
             event_registration.save()
         return event_registration
+    
+class MembershipRegistration(forms.ModelForm):
+    class Meta:
+        model = UserMembership
+        fields = ('user' , 'membership', 'receipt')
+    
+    def __init__(self, user, membership, *args, **kwargs):
+        super(MembershipRegistration, self).__init__(*args, **kwargs)
+        self.fields['user'] = forms.CharField(initial=user.id, disabled=True)
+        self.fields['membership'] = forms.ModelChoiceField(queryset = MembershipTypes.objects.all(), initial=membership)
