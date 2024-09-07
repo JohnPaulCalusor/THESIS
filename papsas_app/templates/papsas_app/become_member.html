@@ -18,7 +18,7 @@
                 Shipping Fee for ID Card shall be charged to the Member
             </p>
             <!-- Added Button -->
-            <a href="#membership" class="home__button">Join Now</a>
+            <a href="{% url 'login' %}" class="home__button">Join Now</a>
         </div>
         <div class="member-img">
         <img src="media/papsas_app/images/member.jpg" class="member-img">  
@@ -26,5 +26,91 @@
     </div>
 </div>
 </section>
+
+<section class="membership">
+    <div class="membership_title">
+        <h1>MEMBERSHIP TYPES</h1>
+    </div>
+    <div class="container">
+        <div class="membership_grid">
+            <div class="membership_item">
+                <img src="media/papsas_app/images/regular.jpg" alt="Signed IRR RA 11053 Anti Hazing Act of 2018">
+                <h2>REGULAR MEMBER</h2>
+                <p>SAS practitioner currently holding positions covered in the CMO 9s. 2013. <br><br><br><br>Membership Fee: Php 500.00
+                    <br>Duration: 1 year</p>
+                <p></p>
+                <button class="membership__button_1"><a href="{% url 'login' %}">Register</a></button>
+            </div>
+            <div class="membership_item">
+                <img src="media/papsas_app/images/special.jpg" alt="CMO No. 11 s. 2021 Amendments to Section 6 and 12 of CMO No. 8 series of 2019">
+                <h2>SPECIAL MEMBER</h2>
+                <p>SAS practitioner currently holding positions covered in the CMO 9s. 2013.<br><br><br><br>Membership Fee: Php 800.00
+                    <br>Duration: 2 year</p>
+                <p></p>
+                <button class="membership__button_1"><a href="{% url 'login' %}">Register</a></button>
+            </div>
+            <div class="membership_item">
+                <img src="media/papsas_app/images/affiliate.jpg" alt="CMO No. 9 s. 2021 Revised Policies and Guidelines Higher Education Institutions in the Philippines">
+                <h2>AFFILIATE</h2>
+                <p>Former SAS Practitioner who became officers in the Regional Chapters and National Board for at least 3 years and /or Active members for at least 5 years.<br> <br></bre>Membership Fee: Php 500.00
+                    <br> Duration: 1 year</p>
+                <p></p>
+                <button class="membership__button"><a href="{% url 'login' %}">Register</a></button>
+            </div>
+            <div class="membership_item">
+                <img src="media/papsas_app/images/lifetime.jpg" alt="CMO No. 9 s. 2021 Annex A CHEDRO Eval. Annex A">
+                <h2>LIFETIME</h2>
+                <p>PAPSAS Officers (Regional and National) who have served for at least 9 years or Active Members for at least 15 years. <br><br><br>Membership Fee: Php 5000.00
+                    <br> Duration: 1 year</p>
+                <p></p>
+                <button class="membership__button_3"><a href="{% url 'login' %}">Register</a></button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="membership">
+    <div class="membership_title">
+        <h1>INSTITUTIONAL MEMBERSHIP</h1>
+    </div>
+    <div class="container">
+    <div class="institutional">
+        <img src="media/papsas_app/images/institutional.jpg" alt="Placeholder Image" class="institutional-image">
+        <div class="institutional-text">
+            <h2>Institutional members will receive the following benefits:</h2>
+            <p>Individual Membership for the Authorized Student Affairs and Services Representative
+                <br><br>The institution, through the authorized representative, will be provided with advance information on the learning sessions, conferences and programs, and services of PAPSAS
+                <br><br>The SAS practitioners will be given priority in attending the programs and activities of PAPSAS
+                <br><br>The institution will be given priority access to materials and resources related to SAS coming from PAPSAS’ partner organization (i.e., AOSSA, IASAS).
+                <br><br>The institution will be considered as a possible partner in the delivery of programs and activities of PAPSAS
+                <br><br>Maximum of 10 participants coming from the institutional member school may avail of the discounted rate of members during PAPSAS programs and activities</p>
+        </div>
+    </div>
+</div>
+</section>
+<footer class="footer">
+    <div class="footer__container container">
+        <div class="footer__content">
+            <h3 class="footer__title">Philippines Association of Practitioners of Student Affairs and Services, Inc.</h3>
+            <p class="footer__description">
+                Dedicated to the pursuit of excellence in student affairs and services work.
+            </p>
+            <ul class="footer__links">
+                <li><a href="#" class="footer__link">(043) 778 0656</a></li>
+                <li><a href="#" class="footer__link">/papsasinc</a></li>
+                <li><a href="#" class="footer__link">papsasinc.national@gmail.com</a></li>
+                <li><a href="bit.ly/papsasinc" class="footer__link">bit.ly/papsasinc</a></li>
+            </ul>
+        </div>
+        <div class="footer__socials">
+            <a href="#" class="footer__social"><i class="fab fa-facebook-f"></i></a>
+            <a href="#" class="footer__social"><i class="fab fa-twitter"></i></a>
+            <a href="#" class="footer__social"><i class="fab fa-instagram"></i></a>
+        </div>
+    </div>
+    <div class="footer__bottom">
+        <p>&copy; 2024 PAPSAS, Inc. All Rights Reserved.</p>
+    </div>
+</footer>
 
 {% endblock %}

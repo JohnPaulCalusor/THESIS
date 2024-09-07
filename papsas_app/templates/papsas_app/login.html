@@ -4,14 +4,19 @@
     Login
 {% endblock %}
 {% block body %}
-    <form action="{% url 'login' %}" method="post">
+    <form action="{% url 'login' %}" method="post" class="login-body">
         {% csrf_token %}
         {% if message %}
-            <div>
+
+        {% endif %}
+
+        <div class="login-box">      
+            <div class="login-header">
+                <img src="/media/papsas_app/images/papsas.png" class="login-icon">
+            </div>
+            <div class="invalid-text">
                 {{ message }}
             </div>
-        {% endif %}
-        <div class="login-box">
             <div class="input-box">
                 {{ form.email }}
             </div>
@@ -22,7 +27,7 @@
                 <button type="submit" class="submit-btn">Login</button>
             </div>
             <div class="sign-up-link">
-                Not a member yet? Register<a href="{% url 'register' %}"> here.</a>
+                Not a member yet? <a href="{% url 'register' %}"> Register here.</a>
             </div>
         </div>
     </form>

@@ -44,3 +44,5 @@ sr.reveal(`.memo`, {origin: 'top', delay: 400})
 sr.reveal(`.services`, {origin: 'bottom', delay: 400})
 sr.reveal(`.partners`, {origin: 'bottom', delay: 400})
 sr.reveal(`.member-img`, {origin: 'top', delay: 400})
+sr.reveal(`.membership`, {origin: 'top', delay: 400})
+

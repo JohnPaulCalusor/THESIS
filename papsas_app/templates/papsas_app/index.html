@@ -21,19 +21,19 @@
                 <img src="media/papsas_app/images/IYF.jpg" alt="Service 1" class="service__img">
                 <h3 class="service__title">Interactive Youth Forum</h3>
                 <p class="service__description">System and Anticipatory Thinking for Sustainable Student Activities and Stewardship</p>
-                <button class="service__button">Learn More</button>
+                <button class="service__button"><a href="{% url 'login' %}">Learn More</a></button>
             </div>
             <div class="service__box">
                 <img src="media/papsas_app/images/rls.jpg" alt="Service 2" class="service__img">
                 <h3 class="service__title">Regional Leader Summit</h3>
                 <p class="service__description">This is a description for Event 2. It highlights the main features and benefits of the service.</p>
-                <button class="service__button">Learn More</button>
+                <button class="service__button"><a href="{% url 'login' %}">Learn More</a></button>
             </div>
             <div class="service__box">
                 <img src="media/papsas_app/images/rc.png" alt="Service 3" class="service__img">
                 <h3 class="service__title">Research Conference</h3>
                 <p class="service__description">You may have the oppurtunity to be published in the  Asia Pacific Journal for Student Affairs</p>
-                <button class="service__button">Learn More</button>
+                <button class="service__button"><a href="{% url 'login' %}">Learn More</a></button>
             </div>
             {% if user.is_authenticated %}
                 {% for event in events %}
