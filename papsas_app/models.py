@@ -40,7 +40,9 @@ class User(AbstractUser):
         return f'{self.id} - {self.first_name}'
 
 class MembershipTypes(models.Model):
+    pubmat = models.ImageField(upload_to="papsas_app/pubmat/event", null=True)
     type = models.CharField(max_length=16, null=True)
+    description = models.CharField(max_length=512, null=True)
     duration = models.DurationField(null=True, blank=True)
     fee = models.DecimalField(max_digits=10, decimal_places=2)
 
@@ -52,6 +54,7 @@ class UserMembership(models.Model):
     membership = models.ForeignKey(MembershipTypes, on_delete=models.CASCADE)
     registrationDate = models.DateField(auto_now_add=True)
     expirationDate = models.DateField(null=True, blank=True)
+    receipt = models.ImageField(upload_to="papsas_app/reciept", null=True, blank=True) 
 
 class Election(models.Model):
     startDate = models.DateField(null=True)
@@ -95,7 +98,7 @@ class Event(models.Model):
     address = models.CharField(max_length=128, null=True)
     eventDescription = models.TextField(max_length=256, null=True)
     eventStatus = models.BooleanField(default=True)
-    pubmat = models.ImageField(upload_to="papsas_app/pubmat", null=True)
+    pubmat = models.ImageField(upload_to="papsas_app/pubmat/event", null=True)
     price = models.DecimalField(max_digits=10, decimal_places=2, null=True)
     startTime = models.TimeField(null=True)
     endTime = models.TimeField(null=True)
