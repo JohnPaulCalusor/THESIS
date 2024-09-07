@@ -34,8 +34,17 @@
                 <h3 class="service__title">Research Conference</h3>
                 <p class="service__description">You may have the oppurtunity to be published in the  Asia Pacific Journal for Student Affairs</p>
                 <button class="service__button">Learn More</button>
-
             </div>
+            {% if user.is_authenticated %}
+                {% for event in events %}
+                    <div class="service__box">
+                        <img src="{{ event.pubmat.url }}" alt="Service 3" class="service__img">
+                        <h3 class="service__title"> {{ event.eventName }} </h3>
+                        <p class="service__description"> {{ event.eventDescription}} </p>
+                        <button class="service__button">Learn More</button>
+                    </div>
+                {% endfor %}
+            {% endif %}
         </div>
     </section>
     <footer class="footer">

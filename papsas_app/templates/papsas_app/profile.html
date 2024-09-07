@@ -8,10 +8,9 @@
              <img src="{{ viewUser.profilePic.url }}" alt="profilePic" id="profile">
 
         {% else %}
-            <form action="" method="post">
+            <form action="{% url 'profile' user.id  %}" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
-                <!-- enable user to upload a profile picture -->
-                <input type="file" name="profile_picture" accept="image/*">
+                {{ form }}
                 <button type="submit">Submit</button>
             </form>
         {% endif %}

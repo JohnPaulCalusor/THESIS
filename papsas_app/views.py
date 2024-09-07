@@ -8,30 +8,38 @@ from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 import random
-from .forms import AttendanceForm, EventRegistrationForm, EventForm
+from .forms import AttendanceForm, EventRegistrationForm, EventForm, ProfileForm, RegistrationForm
 from datetime import date
 
 
 # Create your views here.
 
 def index(request):
-    return render(request, 'papsas_app/index.html')
+    today = date.today()
+    events = Event.objects.all()
+    upcoming_events = [event for event in events if event.startDate > today]
+    return render(request, 'papsas_app/index.html', {
+        'events' : upcoming_events,
+    })
 
 def register(request):
+    form = RegistrationForm()
     if request.method == 'POST':
-        username = request.POST['email']
-        password = request.POST['password']
-        fname = request.POST['fName']
-        lname = request.POST['lName']
-        mobileNum = request.POST['mobileNum']
-        region = request.POST['region']
-        address = request.POST['address']
-        occupation = request.POST['occupation']
-        age = request.POST['age']
-        memType = request.POST['memType']
-        birthDate = request.POST['birthDate']
-        
-        user = User.objects.create_user(username = username,
+        form = RegistrationForm(request.POST)
+        if form.is_valid():
+            username = form.cleaned_data['email']
+            password = form.cleaned_data['password']
+            fname = form.cleaned_data['fName']
+            lname = form.cleaned_data['lName']
+            mobileNum = form.cleaned_data['mobileNum']
+            region = form.cleaned_data['region']
+            address = form.cleaned_data['address']
+            occupation = form.cleaned_data['occupation']
+            age = form.cleaned_data['age']
+            memType = form.cleaned_data['memType']
+            birthDate = form.cleaned_data['birthDate']
+
+            user = User.objects.create_user(username = username,
                                         email= username, 
                                         password=password, 
                                         first_name=fname, 
@@ -43,28 +51,29 @@ def register(request):
                                         age = age,
                                         memType = memType,
                                         birthdate = birthDate)
-        user.save()
+            user.save()
+            # Generate 6-digit verification code
+            verification_code = random.randint(100000, 999999)
 
-        # Generate 6-digit verification code
-        verification_code = random.randint(100000, 999999)
+            # Save verification code to user's profile
+            user.verification_code = verification_code
+            user.save()
 
-        # Save verification code to user's profile
-        user.verification_code = verification_code
-        user.save()
+        # Send verification email
+            subject = 'Verify your email address'
+            message = f'Dear {user.first_name},\n\nYour verification code is: {verification_code}\n\nPlease enter this code to verify your email address.\n\nBest regards,\nPhilippine Association of Practioners of Student Affairs and Services'
+            send_mail(subject, message, 'your_email@example.com', [user.email])
 
-       # Send verification email
-        subject = 'Verify your email address'
-        message = f'Dear {user.first_name},\n\nYour verification code is: {verification_code}\n\nPlease enter this code to verify your email address.\n\nBest regards,\nPhilippine Association of Practioners of Student Affairs and Services'
-        send_mail(subject, message, 'your_email@example.com', [user.email])
+            # Set user as inactive until email is verified
+            user.is_active = False
+            user.save()
 
-        # Set user as inactive until email is verified
-        user.is_active = False
-        user.save()
-
-        # Redirect to email verification page
-        return redirect('verify_email', user_id=user.id)
+            # Redirect to email verification page
+            return redirect('verify_email', user_id=user.id)
     else:
-        return render(request, 'papsas_app/register.html')
+        return render(request, 'papsas_app/register.html', {
+            'form': form,
+        })
 
 def logout_view(request):
     logout(request)
@@ -163,8 +172,19 @@ def vote(request):
 
 def profile(request, id):
     user = User.objects.get( id = id)
+    form = ProfileForm()
+
+    if request.method =='POST':
+        # save the image as profilePic from 
+        form = ProfileForm(request.POST, request.FILES)
+        if form.is_valid():
+            profilePic = form.cleaned_data['profilePic']
+            user.profilePic = profilePic
+            user.save()
+            return redirect('profile', id = id)
     return render(request, 'papsas_app/profile.html/', {
         'viewUser' : user,
+        'form' : form
     })
 
 def event(request):
@@ -175,7 +195,7 @@ def event(request):
             form.save()
             return redirect('event')
         else:
-            return render(request, 'papsas/event_management.html', {
+            return render(request, 'papsas_app/event_management.html', {
                 'form' : form
             })
 

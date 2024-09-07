@@ -4,7 +4,7 @@
     <h3>
         Event Management?
     </h3>
-    <form action="{% url 'event' %}" method="post" id="eventForm">
+    <form action="{% url 'event' %}" method="post" id="eventForm" enctype="multipart/form-data">
         {% csrf_token %}
         {{ form }}
         <button type="submit">Submit</button>

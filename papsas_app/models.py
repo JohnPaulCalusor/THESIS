@@ -4,9 +4,35 @@ from django.contrib.auth.models import AbstractUser
 from django import forms
 # Create your models here.
 
+Regions = [
+    ('National Capital Region', 'NCR'),
+    ('Cordillera Administrative Region', 'CAR'),
+    ('Ilocos Region', 'Region I'),
+    ('Cagayan Valley', 'Region II'),
+    ('Central Luzon', 'Region III'),
+    ('Calabarzon', 'Region IV-A'),
+    ('Mimaropa', 'Region IV-B'),
+    ('Bicol Region', 'Region V'),
+    ('Western Visayas', 'Region VI'),
+    ('Central Visayas', 'Region VII'),
+    ('Eastern Visayas', 'Region VIII'),
+    ('Zamboanga Peninsula', 'Region IX'),
+    ('Northern Mindanao', 'Region X'),
+    ('Davao Region', 'Region XI'),
+    ('Soccsksargen', 'Region XII'),
+    ('Caraga', 'Region XIII'),
+    ('Bangsamoro Autonomous Region in Muslim Mindanao', 'BARMM')
+]
+Types = [
+    ('Regular', 'Regular'),
+    ('Special', 'Special'),
+    ('Affliate', 'Affliate'),
+    ('Lifetime', 'Lifetime'),
+]
+
 class User(AbstractUser):
     mobileNum = models.CharField(max_length=16)
-    region = models.CharField(max_length=32)
+    region = models.CharField(max_length=64, choices=Regions)
     address = models.CharField(max_length=32)
     occupation = models.CharField(max_length=16)
     age = models.IntegerField(null=True)
@@ -19,13 +45,13 @@ class User(AbstractUser):
     def __str__(self):
         return f'{self.id} - {self.first_name}'
 
-class Membership(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    membershipType = models.CharField(max_length=32)
-    membershipDate = models.DateField()
-    membershipExpireDate = models.DateField()
-    membershipStatus = models.CharField(max_length=32)
-    membershipPrice = models.DecimalField(max_digits=10, decimal_places=2)
+class MembershipTypes(models.Model):
+    type = models.CharField(max_length=16, choices=Types, null=True)
+    duration = models.DurationField(null=True, blank=True)
+    fee = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def __str__(self):
+        return f'{self.id} - {self.type}'
 
 class Election(models.Model):
     startDate = models.DateField(null=True)

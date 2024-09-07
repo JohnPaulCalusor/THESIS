@@ -7,7 +7,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{% static 'papsas_app/style.css' %}">
     <link href='https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css' rel='stylesheet'>
-
+    {% block head %}
+    {% endblock %}
     <title>{% block title %} PAPSAS {% endblock %}</title>
 </head>
 <body>
@@ -45,6 +46,8 @@
                             <a href="{% url 'profile' user.id %}">
                                 <img src="{{ user.profilePic.url }}" alt="profilePic" id="navProfile">
                             </a>
+                        {% else %}
+                            <a href="{% url 'profile' user.id %}">Profile</a>
                         {% endif %}
                     </div>
                 {% else %}

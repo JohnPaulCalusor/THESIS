@@ -1,7 +1,27 @@
 from django import forms
-from .models import Attendance
-from .models import EventRegistration
-from .models import Event
+from .models import Attendance, EventRegistration, Event, User
+from django.core.exceptions import ValidationError
+
+class RegistrationForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ('email', 'password', 'first_name', 'last_name','mobileNum', 'region', 'address', 'occupation', 'age', 'birthdate')
+        widgets = {
+            'email' : forms.EmailInput(),
+            'password' : forms.PasswordInput(render_value=True),
+            'birthdate' : forms.DateInput(attrs={'type': 'date'}),
+        }
+
+    def clean_email(self):
+        email = self.cleaned_data['email']
+        if '@' not in email or not email.endswith('.edu.ph'):
+            raise ValidationError("Please enter a valid .edu.ph email address.")
+        return email
+
+class ProfileForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ('profilePic',)
 
 class AttendanceForm(forms.ModelForm):
     class Meta:
@@ -12,7 +32,13 @@ class EventForm(forms.ModelForm):
     class Meta:
         model = Event
         fields = ('eventName', 'startDate', 'endDate', 'venue', 'address', 'eventDescription', 'pubmat', 'price', 'startTime', 'endTime')
-
+        widgets = {
+            'startDate': forms.DateInput(attrs={'type': 'date'}),
+            'endDate': forms.DateInput(attrs={'type': 'date'}),
+            'startTime': forms.DateInput(attrs={'type': 'time'}),
+            'endTime': forms.DateInput(attrs={'type': 'time'}),
+        }
+        # required_fields = [list] to make the fields required
 class EventRegistrationForm(forms.ModelForm):
     receipt_file = forms.FileField(required=True)
 
