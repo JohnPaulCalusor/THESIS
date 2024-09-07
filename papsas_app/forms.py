@@ -1,6 +1,7 @@
 from django import forms
 from .models import Attendance, EventRegistration, Event, User
 from django.core.exceptions import ValidationError
+from django.forms import ModelForm, TextInput, EmailInput
 
 class RegistrationForm(forms.ModelForm):
     class Meta:
@@ -24,6 +25,12 @@ class LoginForm(forms.ModelForm):
         fields = ('email', 'password')
         widgets = {
             'password' : forms.PasswordInput(render_value=True),
+            'email' : TextInput(attrs={
+                'class': 'input-field'
+            }),
+            'password' : TextInput(attrs={
+                'class': 'input-field'
+            })
         }
 
     def __init__(self, *args, **kwargs):
