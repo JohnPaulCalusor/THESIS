@@ -87,9 +87,10 @@ class EventRegistrationForm(forms.ModelForm):
 class MembershipRegistration(forms.ModelForm):
     class Meta:
         model = UserMembership
-        fields = ('user' , 'membership', 'receipt')
+        fields = ('membership', 'verificationID', 'receipt')
     
     def __init__(self, user, membership, *args, **kwargs):
         super(MembershipRegistration, self).__init__(*args, **kwargs)
-        self.fields['user'] = forms.CharField(initial=user.id, disabled=True)
+        self.user = user
         self.fields['membership'] = forms.ModelChoiceField(queryset = MembershipTypes.objects.all(), initial=membership)
+        self.fields['verificationID'].label = 'Identification'

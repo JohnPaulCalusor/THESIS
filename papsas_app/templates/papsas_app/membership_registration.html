@@ -1,7 +1,7 @@
 {% extends 'papsas_app/layout.html' %}
 
 {% block body %}
-    <form action="" method="post">
+    <form action="{% url 'membership_registration' membership %}" method="post" enctype="multipart/form-data">
         {% csrf_token %}
         {{form}}
         <button type="submit">Submit</button>

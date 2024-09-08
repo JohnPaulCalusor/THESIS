@@ -288,7 +288,30 @@ def record(request):
 def membership_registration(request, mem_id):
     form = MembershipRegistration(request.user, mem_id)
     membership = mem_id
-    return render(request, 'papsas_app/membership_registration.html', {
-        'form' : form,
-        'membership' : membership
-    })
+
+    if request.method == 'POST':
+        memType = MembershipTypes.objects.get( id = mem_id )
+        form = MembershipRegistration(request.user, mem_id, data=request.POST, files = request.FILES)
+        if form.is_valid():
+            user_membership = form.save(commit=False)
+            user_membership.user = request.user
+            user_membership.membership_type = memType
+            user_membership.save()
+
+            if memType.duration is not None:
+                user_membership.expirationDate = user_membership.registrationDate + memType.duration
+            else:
+                user_membership.expirationDate = None
+            user_membership.save()
+            return redirect('index')
+        else:
+            return render(request, 'papsas_app/membership_registration.html', {
+            'form' : form,
+            'membership' : membership
+        })
+
+    else:
+        return render(request, 'papsas_app/membership_registration.html', {
+            'form' : form,
+            'membership' : membership
+        })

@@ -55,6 +55,7 @@ class UserMembership(models.Model):
     registrationDate = models.DateField(auto_now_add=True)
     expirationDate = models.DateField(null=True, blank=True)
     receipt = models.ImageField(upload_to="papsas_app/reciept", null=True, blank=True) 
+    verificationID = models.ImageField(upload_to="papsas_app/verificationID", null=True, blank=True) 
 
 class Election(models.Model):
     startDate = models.DateField(null=True)
