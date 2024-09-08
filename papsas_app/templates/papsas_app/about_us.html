@@ -1,5 +1,8 @@
 {% extends 'papsas_app/layout.html' %}
-
+{% load static %}
+{% block head %}
+    <link rel="stylesheet" href="{% static 'papsas_app/about_us.css' %}">
+{% endblock %}
 {% block body %}
     <div class="officer">
         <h1>NATIONAL BOARD OF TRUSTEES</h1>

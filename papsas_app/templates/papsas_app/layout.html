@@ -34,29 +34,48 @@
                                 -->
                                 <a href="{% url 'logout' %}">Logout</a>
                             {% endif%}
+                            </div>
                         {% else %}
-                            <a href="{% url 'index' %}" class="nav__link">Home</a>
-                            <a href="{% url 'about' %}" class="nav__link">About Us</a>
+                        <div class="nav__menu" id="nav-menu">
+                            <ul class="nav__list">
+                                <li class="nav__item"><a href="{% url 'index' %}" class="nav__link">Home</a></li>
+                                <li class="nav__item dropdown">
+                                    <a href="{% url 'about' %}" class="nav__link">About Us<i class='bx bx-chevron-down dropdown__icon'></i></a>
+                                    <ul class="dropdown-content">
+                                        <li><a href="#section-1">Officers</a></li>
+                                        <li><a href="#section-2">Resources</a></li>
+                                        <li><a href="#section-3">Partners</a></li>
+                                    </ul>
+                                </li>
                             {% for election in openElection %}
                             {% if election is not None%}
-                            <a href="{% url 'vote' %}" class="nav__link">Election</a>
+                            <li class="nav__item"><a href="{% url 'vote' %}" class="nav__link">Election</a></li>
                             {% endif %}
                             {% endfor %}
-                            <a href="{% url 'become_member' %}" class="nav__link">Become a Member</a>
-                            <a href="" class="nav__link">Highlights</a>
-                            <a href="{% url 'logout' %}" class="nav__link">Logout</a>
+                            <li class="nav__item"><a href="{% url 'become_member' %}" class="nav__link">Become a Member</a></li>
+                            <li class="nav__item"><a href="" class="nav__link">Highlights</a></li>
+                            <li class="nav__item"><a href="{% url 'logout' %}" class="nav__link">Logout</a></li>
                         {% endif %}
-                    </div>
-                    <div>
+                    
                         {% if user.profilePic %}
-                            <a href="{% url 'profile' user.id %}">
-                                <img src="{{ user.profilePic.url }}" alt="profilePic" id="navProfile">
-                            </a>
-                        {% else %}
-                            <a href="{% url 'profile' user.id %}">Profile</a>
-                        {% endif %}
-                    </div>
+                            <li class="nav__item"><a href="{% url 'profile' user.id %}">
+                                    <img src="{{ user.profilePic.url }}" alt="profilePic" id="navProfile">
+                                </a></li>
+                            {% else %}
+                            <div class="login-container"> <a href="{% url 'profile' user.id %}">Profile</a></div>
+                            {% endif %}
+                        </ul>
+                        <div class="nav__close" id="nav-close">
+                            <i class='bx bx-x'></i>
+                        </div>
+
+
+                </div>
+                <div class="nav__toggle" id="nav-toggle">
+                    <i class='bx bx-grid-alt'></i>
+                </div>
                 {% else %}
+            
             <!-- end -->
             <!-- if user is not logged in -->
                     <div class="nav__menu" id="nav-menu">
