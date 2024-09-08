@@ -61,7 +61,7 @@
 
 
 body {
-  /* padding-top: 100px; */
+  padding-top: 100px;
   font-family: var(--body-font);
   font-size: var(--normal-font-size);
   font-weight: 500;

@@ -1,4 +1,8 @@
 {% extends 'papsas_app/layout.html' %}
+{% load static %}
+{% block head %}
+    <link rel="stylesheet" href="{% static 'papsas_app/register.css' %}">
+{% endblock %}
 
 {% block title %}
     Registration
@@ -10,9 +14,41 @@
             {{ message }}
         </div>
     {% endif %}
-    <form action="{% url 'register' %}" method="post">
+    <form action="{% url 'register' %}" method="post" class="form-box">
         {% csrf_token %}
-        {{ form }}
-        <button>Submit</button>
+        <div class="login-container">
+            <div class="two-forms">
+                <div class="input-box">
+                    {{ form.first_name }}
+                </div>
+                <div class="input-box">
+                    {{ form.last_name }}
+                </div>
+            </div>
+            <div class="input-box">
+                {{ form.email }}
+            </div>
+            <div class="input-box">
+                {{ form.password }}
+            </div>
+            <div class="input-box">
+                {{ form.mobileNum }}
+            </div>
+            <div class="input-box">
+                {{ form.region }}
+            </div>
+            <div class="input-box">
+                {{ form.address }}
+            </div>
+            <div class="input-box">
+                {{ form.occupation }}
+            </div>
+            <div class="input-box">
+                {{ form.birthdate }}
+            </div>
+            <div class="input-box">
+                <button class="submit">Submit</button>
+            </div>
+        </div>
     </form>
 {% endblock %}

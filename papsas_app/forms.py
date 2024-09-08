@@ -19,10 +19,13 @@ class RegistrationForm(forms.ModelForm):
             raise ValidationError("Please enter a valid .edu.ph email address.")
         return email
     
+# gawing basis
 class LoginForm(forms.ModelForm):
     class Meta:
         model = User
+        # ito names ng fields  magagamit yan pagtinawag mo {{ forms.email }} ->
         fields = ('email', 'password')
+        # ganto maglagay ng class at placeholder ->
         widgets = {
             'password' : forms.PasswordInput(render_value=True, attrs={
                 'placeholder': 'Password',
