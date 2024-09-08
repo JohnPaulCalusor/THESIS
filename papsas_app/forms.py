@@ -8,9 +8,38 @@ class RegistrationForm(forms.ModelForm):
         model = User
         fields = ('email', 'password', 'first_name', 'last_name','mobileNum', 'region', 'address', 'occupation', 'age', 'birthdate')
         widgets = {
-            'email' : forms.EmailInput(),
-            'password' : forms.PasswordInput(render_value=True),
-            'birthdate' : forms.DateInput(attrs={'type': 'date'}),
+            'email' : forms.EmailInput(attrs={
+                'placeholder' : 'Email'
+            }),
+            'password' : forms.PasswordInput(render_value=True, attrs={
+                'placeholder' : 'Password'
+            }),
+            'birthdate' : forms.DateInput(attrs={
+                'type': 'date',
+                'placeholder' : 'Birth Date'
+            }),
+            'first_name' : forms.TextInput(attrs={
+                'placeholder' : 'First Name'
+            }),
+            'last_name' : forms.TextInput(attrs={
+                'placeholder' : 'Last Name'
+            }),
+            'mobileNum' : forms.TextInput(attrs={
+                'placeholder' : 'Mobile Number'
+            }),
+            'region' : forms.TextInput(attrs={
+                'placeholder' : 'Region'
+            }),
+            'address' : forms.TextInput(attrs={
+                'placeholder' : 'Address'
+            }),
+            'occupation' : forms.TextInput(attrs={
+                'placeholder' : 'Occupation'
+            }),
+            'age' : forms.NumberInput(attrs={
+                'placeholder' : 'Age'
+            }),
+
         }
 
     def clean_email(self):
