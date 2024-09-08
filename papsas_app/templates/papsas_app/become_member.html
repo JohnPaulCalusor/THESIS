@@ -48,7 +48,7 @@
                             {% endif %}
                         {% endif %}
                     <p></p>
-                    <button class="membership__button_1"><a href="{% url 'membership_registration' mem.id %}">Register</a></button>
+                    <a href="{% url 'membership_registration' mem.id %}"><button class="membership__button_1">Register</button></a>
                 </div>
             {% endfor %}
         </div>

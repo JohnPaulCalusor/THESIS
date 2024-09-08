@@ -37,13 +37,13 @@
                         {% else %}
                             <a href="{% url 'index' %}" class="nav__link">Home</a>
                             <a href="{% url 'about' %}" class="nav__link">About Us</a>
-                            <a href="" class="nav__link">Highlights</a>
                             {% for election in openElection %}
-                                {% if election is not None%}
-                                    <a href="{% url 'vote' %}" class="nav__link">Election</a>
-                                {% endif %}
+                            {% if election is not None%}
+                            <a href="{% url 'vote' %}" class="nav__link">Election</a>
+                            {% endif %}
                             {% endfor %}
                             <a href="{% url 'become_member' %}" class="nav__link">Become a Member</a>
+                            <a href="" class="nav__link">Highlights</a>
                             <a href="{% url 'logout' %}" class="nav__link">Logout</a>
                         {% endif %}
                     </div>
