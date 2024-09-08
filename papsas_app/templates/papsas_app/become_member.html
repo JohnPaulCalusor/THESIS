@@ -35,9 +35,12 @@
         <div class="membership_grid">
             {% for mem in memType %}
                 <div class="membership_item">
-                    <img src="{{ mem.pubmat.url }}" alt="Signed IRR RA 11053 Anti Hazing Act of 2018">
-                    <h2>{{ mem.type }} </h2>
-                    <p>{{mem.description}}. <br><br><br><br>Membership Fee: Php {{mem.fee}}
+                    <div class="titleContainer">
+                        <img src="{{ mem.pubmat.url }}" alt="Signed IRR RA 11053 Anti Hazing Act of 2018">
+                        <h2>{{ mem.type }} </h2>
+                        <p>{{mem.description}}. 
+                    </div>
+                        <br><br><br><br>Membership Fee: Php {{mem.fee}}
                         {% if mem.duration is None %}
                             <br>Duration: Lifetime</p>
                         {% else %}

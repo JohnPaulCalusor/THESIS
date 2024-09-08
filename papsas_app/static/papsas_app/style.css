@@ -61,6 +61,7 @@
 
 
 body {
+  /* padding-top: 100px; */
   font-family: var(--body-font);
   font-size: var(--normal-font-size);
   font-weight: 500;
@@ -1000,9 +1001,14 @@ img {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: space-between;
   border: 1px solid #ddd;
   border-radius: 20px;
   box-sizing: border-box;
+}
+
+.titleContainer {
+  height: 325px;
 }
 
 .membership_item h2{
