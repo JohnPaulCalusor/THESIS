@@ -9,35 +9,45 @@ class RegistrationForm(forms.ModelForm):
         fields = ('email', 'password', 'first_name', 'last_name','mobileNum', 'region', 'address', 'occupation', 'age', 'birthdate')
         widgets = {
             'email' : forms.EmailInput(attrs={
-                'placeholder' : 'Email'
+                'placeholder' : 'Email',
+                'class': 'input-field'
             }),
             'password' : forms.PasswordInput(render_value=True, attrs={
-                'placeholder' : 'Password'
+                'placeholder' : 'Password',
+                'class': 'input-field'
             }),
             'birthdate' : forms.DateInput(attrs={
                 'type': 'date',
-                'placeholder' : 'Birth Date'
+                'placeholder' : 'Birth Date',
+                'class': 'input-field'
             }),
             'first_name' : forms.TextInput(attrs={
-                'placeholder' : 'First Name'
+                'placeholder' : 'First Name',
+                'class': 'input-field'
             }),
             'last_name' : forms.TextInput(attrs={
-                'placeholder' : 'Last Name'
+                'placeholder' : 'Last Name',
+                'class': 'input-field'
             }),
             'mobileNum' : forms.TextInput(attrs={
-                'placeholder' : 'Mobile Number'
+                'placeholder' : 'Mobile Number',
+                'class': 'input-field'
             }),
             'region' : forms.TextInput(attrs={
-                'placeholder' : 'Region'
+                'placeholder' : 'Region',
+                'class': 'input-field'
             }),
             'address' : forms.TextInput(attrs={
-                'placeholder' : 'Address'
+                'placeholder' : 'Address',
+                'class': 'input-field'
             }),
             'occupation' : forms.TextInput(attrs={
-                'placeholder' : 'Occupation'
+                'placeholder' : 'Occupation',
+                'class': 'input-field'
             }),
             'age' : forms.NumberInput(attrs={
-                'placeholder' : 'Age'
+                'placeholder' : 'Age',
+                'class': 'input-field'
             }),
 
         }

@@ -158,7 +158,11 @@ img {
     box-shadow: 0 2px 4px hsla(38, 4%, 15%, .15);
     transition: .4s;
   }
+  .logo{
+    margin-top: 5px;
+  }
 }
+
 
 .nav__list {
   text-align: center;

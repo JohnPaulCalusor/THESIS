@@ -8,10 +8,23 @@
     border-radius: 20px;
     background-color: #ffffff;
     box-shadow: 0px 7px 12px 1px rgba(0,0,0, 0.05);
+    
   }
   .login-header{
     text-align: center;
     margin-top: -100px;
+  }
+  .register-border{
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    width: 500px;
+    height: 690px;
+    padding: 30px;
+    border-radius: 20px;
+    background-color: #ffffff;
+    box-shadow: 0px 7px 12px 1px rgba(0,0,0, 0.05);
+    
   }
   .input-box .input-field{
     width: 100%;
@@ -25,6 +38,8 @@
     outline: none;
     transition: .3s;
   }
+
+
   ::placeholder{
     font-weight: 300;
     color: #222;
@@ -86,3 +101,17 @@
     text-align: center;
     color: #ff0000;
   }
+  
+.two-forms {
+  display: flex;
+  gap: 20px;
+}
+@media (max-width: 768px) {
+  .login-header{
+      text-align: center;
+      margin-bottom: -30px;
+    }
+    .register-border{
+      box-shadow: none;
+    }
+}

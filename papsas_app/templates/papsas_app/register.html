@@ -3,7 +3,7 @@
 <!-- eto need para magamit separate css -->
 {% load static %}
 {% block head %}
-    <link rel="stylesheet" href="{% static 'papsas_app/register.css' %}">
+    <link rel="stylesheet" href="{% static 'papsas_app/login.css' %}">
     <link rel="stylesheet" href="{% static 'papsas_app/style.css' %}">
 {% endblock %}
 
@@ -17,11 +17,11 @@
             {{ message }}
         </div>
     {% endif %}
-    <div class="register-body">
-    <form action="{% url 'register' %}" method="post" class="form-box">
-        <div class="wrapper">
+
+    <form action="{% url 'register' %}" method="post" class="login-body">
         {% csrf_token %}
-        <div class="login_container">
+        <div class="register-border">
+        <div class="login_box">
             <div class="login-header">
                 <img src="/media/papsas_app/images/papsas.png" class="login-icon">
             </div>
@@ -32,7 +32,6 @@
                 <div class="input-box">
                     {{ form.last_name }}
                 </div>
-
             </div>
             <div class="input-box">
                 {{ form.email }}
@@ -40,29 +39,33 @@
             <div class="input-box">
                 {{ form.password }}
             </div>
+
+            <div class="two-forms">
             <div class="input-box">
-                {{ form.mobileNum }}
-                
+                {{ form.mobileNum }}  
             </div>
-            
             <div class="input-box">
                 {{ form.region }}
             </div>
+        </div>
+        <div class="two-forms">
             <div class="input-box">
                 {{ form.address }}
             </div>
             <div class="input-box">
                 {{ form.occupation }}
             </div>
+        </div>
             <div class="input-box">
                 {{ form.birthdate }}
             </div>
-            <div class="input-box">
-                <button class="submit-register">Register</button>
+            <div class="input-submit">
+                <button class="submit-btn">Register</button>
             </div>
         </div>
+    </div>
 </div>
     </form>
-</div>
+
 
 {% endblock %}

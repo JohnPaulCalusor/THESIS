@@ -16,7 +16,7 @@
         <nav>
             <header class="header">
                 <div class="nav container">
-                    <img src="/media/papsas_app/images/papsas.png" class="logo">
+                    <a href="{% url 'index' %}"><img src="/media/papsas_app/images/papsas.png" class="logo"></a> 
         <!-- start -->
                 {% if user.is_authenticated %}
                     <!-- if user is an officer -->
