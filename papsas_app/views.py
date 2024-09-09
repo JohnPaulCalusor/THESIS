@@ -39,36 +39,43 @@ def register(request):
             age = form.cleaned_data['age']
             birthDate = form.cleaned_data['birthdate']
 
-            user = User.objects.create_user(username = username,
-                                        email= username, 
-                                        password=password, 
-                                        first_name=fname, 
-                                        last_name= lname,
-                                        mobileNum= mobileNum,
-                                        region = region,
-                                        address = address,
-                                        occupation = occupation,
-                                        age = age,
-                                        birthdate = birthDate)
-            user.save()
-            # Generate 6-digit verification code
-            verification_code = random.randint(100000, 999999)
+            if region == 'Region':
+                return render(request, 'papsas_app/register.html', {
+                'form': form,
+                'message' : 'Please input a region'
+            })          
+            else:
 
-            # Save verification code to user's profile
-            user.verification_code = verification_code
-            user.save()
+                user = User.objects.create_user(username = username,
+                                            email= username, 
+                                            password=password, 
+                                            first_name=fname, 
+                                            last_name= lname,
+                                            mobileNum= mobileNum,
+                                            region = region,
+                                            address = address,
+                                            occupation = occupation,
+                                            age = age,
+                                            birthdate = birthDate)
+                user.save()
+                # Generate 6-digit verification code
+                verification_code = random.randint(100000, 999999)
 
-        # Send verification email
-            subject = 'Verify your email address'
-            message = f'Dear {user.first_name},\n\nYour verification code is: {verification_code}\n\nPlease enter this code to verify your email address.\n\nBest regards,\nPhilippine Association of Practioners of Student Affairs and Services'
-            send_mail(subject, message, 'your_email@example.com', [user.email])
+                # Save verification code to user's profile
+                user.verification_code = verification_code
+                user.save()
 
-            # Set user as inactive until email is verified
-            user.is_active = False
-            user.save()
+            # Send verification email
+                subject = 'Verify your email address'
+                message = f'Dear {user.first_name},\n\nYour verification code is: {verification_code}\n\nPlease enter this code to verify your email address.\n\nBest regards,\nPhilippine Association of Practioners of Student Affairs and Services'
+                send_mail(subject, message, 'your_email@example.com', [user.email])
 
-            # Redirect to email verification page
-            return redirect('verify_email', user_id=user.id)
+                # Set user as inactive until email is verified
+                user.is_active = False
+                user.save()
+
+                # Redirect to email verification page
+                return redirect('verify_email', user_id=user.id)
         else:
             return render(request, 'papsas_app/register.html', {
                 'form': form,

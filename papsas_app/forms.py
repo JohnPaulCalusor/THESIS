@@ -58,6 +58,7 @@ class RegistrationForm(forms.ModelForm):
         super(RegistrationForm, self).__init__(*args, **kwargs)
         self.fields['birthdate'].label = 'Date of Birth'
         self.fields['region'].widget.attrs['class'] = 'input-field'
+
 # gawing basis
 class LoginForm(forms.ModelForm):
     class Meta:

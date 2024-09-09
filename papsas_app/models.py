@@ -6,6 +6,7 @@ from django.db.models import F
 # Create your models here.
 
 Regions = [
+    ('Region', 'Region'),
     ('National Capital Region', 'NCR'),
     ('Cordillera Administrative Region', 'CAR'),
     ('Ilocos Region', 'Region I'),
