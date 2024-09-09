@@ -1,0 +1,36 @@
+{% extends 'papsas_app/layout.html' %}
+
+{% block body %}
+    <table>
+        <tr>
+            <th>Member</th>
+            <th>Membership</th>
+            <th>Registration Date</th>
+            <th>Expiration Date</th>
+            <th>Receipt</th>
+            <th>Verification ID</th>
+            <th>Verification Status</th>
+            <th>Action</th>
+        </tr>
+        {% for row in record %}
+        <tr>
+            <td><a href="">{{ row.user.id }}</a></td>
+            <td>{{ row.membership }}</td>
+            <td>{{ row.registrationDate }}</td>
+            <td>{{ row.expirationDate }}</td>
+            <td>{{ row.receipt }}</td>
+            <td>{{ row.verificationID }}</td>
+            <td>{{ row.membershipVerification }}</td>
+            <td>
+                <form action="{% url 'approve_membership' row.user.id %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit">Approve</button>
+                </form>
+                <form action="">
+                    <button type="submit">Decline</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

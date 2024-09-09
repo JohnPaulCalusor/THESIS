@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, logout, authenticate
-from .models import User, Officer, Candidacy, Election, Event, Attendance, EventRegistration, MembershipTypes
+from .models import User, Officer, Candidacy, Election, Event, Attendance, EventRegistration, MembershipTypes, UserMembership
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from django.core.mail import send_mail
@@ -139,8 +139,6 @@ def verify_email(request, user_id):
         return render(request, 'papsas_app/verify_email.html', {'user_id': user_id})
     
 def election(request):
-    # provide a table that provides all election
-    # provide an option to start an election
     electionList = Election.objects.all()
     ongoingElection = Election.objects.filter(electionStatus = True)
     if request.method == 'POST':
@@ -157,9 +155,6 @@ def election(request):
             officer = None
     else:
         officer = None
-    
-    # to ensure only valid officers can access this page
-    # if user is not an officer, how can i avoid this.
 
     if officer is not None and officer.termEnd > today:
         return render(request, "papsas_app/election.html", {
@@ -332,3 +327,20 @@ def membership_registration(request, mem_id):
     
 def check_membership_validity(request):
     pass
+
+def membership_record(request):
+    record = UserMembership.objects.all()
+
+    return render(request, 'papsas_app/membership_record.html', {
+        'record' : record,
+    })
+
+def approve_membership(request, id):
+    userID = id
+    if request.method == 'POST':
+        user_membership = UserMembership.objects.get(user=userID)
+        user_membership.membershipVerification = True
+        user_membership.save()
+        return redirect('membership_record')
+    else:
+        return render(request, 'papsas_app/index.html')
