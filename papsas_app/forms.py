@@ -18,7 +18,7 @@ class RegistrationForm(forms.ModelForm):
             }),
             'birthdate' : forms.DateInput(attrs={
                 'type': 'date',
-                'placeholder' : 'Birth Date',
+                'placeholder' : 'Date of Birth',
                 'class': 'input-field'
             }),
             'first_name' : forms.TextInput(attrs={
@@ -31,10 +31,6 @@ class RegistrationForm(forms.ModelForm):
             }),
             'mobileNum' : forms.TextInput(attrs={
                 'placeholder' : 'Mobile Number',
-                'class': 'input-field'
-            }),
-            'region' : forms.TextInput(attrs={
-                'placeholder' : 'Region',
                 'class': 'input-field'
             }),
             'address' : forms.TextInput(attrs={
@@ -58,6 +54,10 @@ class RegistrationForm(forms.ModelForm):
             raise ValidationError("Please enter a valid .edu.ph email address.")
         return email
     
+    def __init__(self, *args, **kwargs):
+        super(RegistrationForm, self).__init__(*args, **kwargs)
+        self.fields['birthdate'].label = 'Date of Birth'
+        self.fields['region'].widget.attrs['class'] = 'input-field'
 # gawing basis
 class LoginForm(forms.ModelForm):
     class Meta:

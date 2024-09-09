@@ -27,7 +27,7 @@ Regions = [
 
 class User(AbstractUser):
     mobileNum = models.CharField(max_length=16)
-    region = models.CharField(max_length=64, choices=Regions)
+    region = models.CharField(max_length=64, choices=Regions, default = 'Region',)
     address = models.CharField(max_length=32)
     occupation = models.CharField(max_length=16)
     age = models.IntegerField(null=True)
