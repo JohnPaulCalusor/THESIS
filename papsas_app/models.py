@@ -48,16 +48,19 @@ class MembershipTypes(models.Model):
     fee = models.DecimalField(max_digits=10, decimal_places=2)
 
     def __str__(self):
-        return f'{self.id} - {self.type}'
+        return f'{self.type}'
     
 class UserMembership(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='member')
     membership = models.ForeignKey(MembershipTypes, on_delete=models.CASCADE)
     registrationDate = models.DateField(auto_now_add=True)
     expirationDate = models.DateField(null=True, blank=True)
     receipt = models.ImageField(upload_to="papsas_app/reciept", null=True, blank=True) 
     verificationID = models.ImageField(upload_to="papsas_app/verificationID", null=True, blank=True) 
     membershipVerification = models.BooleanField(default=False)
+
+    def __str__ (self):
+        return f'{self.membership}'
 
 class Election(models.Model):
     startDate = models.DateField(null=True)
@@ -108,7 +111,7 @@ class Event(models.Model):
 
 
 class Attendance(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='audience')
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
     attended = models.BooleanField(default=False)
     date_attended = models.DateField(auto_now_add=True)

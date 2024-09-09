@@ -16,3 +16,12 @@ def is_officer(request):
         officer = None
 
     return {'officer' : officer, 'today' : today, 'openElection': openElection}
+
+def is_member(request):
+    user = request.user
+    try:
+        is_member = user.member.get()
+    except:
+        is_member = None
+    
+    return {'is_member' : is_member}

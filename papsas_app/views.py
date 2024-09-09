@@ -293,8 +293,14 @@ def record(request):
     })
 
 def membership_registration(request, mem_id):
+    user = request.user
     form = MembershipRegistration(request.user, mem_id)
     membership = mem_id
+
+    try:
+        is_member = user.member.get()
+    except:
+        is_member = None
 
     if request.method == 'POST':
         memType = MembershipTypes.objects.get( id = mem_id )
@@ -320,5 +326,9 @@ def membership_registration(request, mem_id):
     else:
         return render(request, 'papsas_app/membership_registration.html', {
             'form' : form,
-            'membership' : membership
+            'membership' : membership,
+            'is_member' : is_member
         })
+    
+def check_membership_validity(request):
+    pass
