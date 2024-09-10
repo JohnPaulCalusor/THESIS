@@ -53,18 +53,21 @@
                 {{ form.address }}
             </div>
             <div class="input-box">
+                {{ form.age }}
+            </div>
+        </div>
+        {{ form.birthdate.label_tag }} 
+        <div class="input-box">
+            {{ form.birthdate }}
+        </div>
+            <div class="input-box">
                 {{ form.occupation }}
             </div>
-        </div>
-            {{ form.birthdate.label_tag }} 
-            <div class="input-box">
-                {{ form.birthdate }}
-            </div>
-            <div class="input-submit">
-                <button class="submit-btn">Register</button>
-            </div>
+        <div class="input-submit">
+            <button class="submit-btn">Register</button>
         </div>
     </div>
+</div>
 </div>
     </form>
 
