@@ -144,7 +144,18 @@ def election(request):
     if request.method == 'POST':
         newElection = Election(electionStatus = True, startDate = date.today())
         newElection.save()
-    
+
+    if is_officer(request):
+        return render(request, "papsas_app/election.html", {
+            'electionList' : electionList,
+            'ongoingElection' : ongoingElection,
+        })
+    else:
+        return redirect('index')
+
+
+def is_officer(request):
+    # check if user is officer
     today = date.today()
     user = request.user
     if user.is_authenticated:
@@ -157,12 +168,10 @@ def election(request):
         officer = None
 
     if officer is not None and officer.termEnd > today:
-        return render(request, "papsas_app/election.html", {
-            'electionList' : electionList,
-            'ongoingElection' : ongoingElection,
-        })
+        return True
+
     else:
-        return render(request, 'papsas_app/index.html')
+        return False
 
         
 
@@ -330,11 +339,12 @@ def check_membership_validity(request):
 
 def membership_record(request):
     record = UserMembership.objects.all()
-
-    return render(request, 'papsas_app/membership_record.html', {
-        'record' : record,
-    })
-
+    if is_officer(request):
+        return render(request, 'papsas_app/membership_record.html', {
+            'record' : record,
+        })
+    else:
+        return redirect('index')
 def approve_membership(request, id):
     userID = id
     if request.method == 'POST':
@@ -344,3 +354,10 @@ def approve_membership(request, id):
         return redirect('membership_record')
     else:
         return render(request, 'papsas_app/index.html')
+    
+def decline_membership(request, id):
+    userID = id
+    if request.method == 'POST':
+        user_membership = UserMembership.objects.get(user=userID)
+        user_membership.delete()
+        return redirect('membership_record')
