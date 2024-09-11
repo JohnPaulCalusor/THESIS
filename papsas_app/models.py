@@ -35,7 +35,7 @@ class User(AbstractUser):
     birthdate = models.DateField(null=True)
     verification_code = models.IntegerField(null=True, blank=True)
     email_verified = models.BooleanField(default=False)
-    profilePic = models.ImageField(null=True, blank=True, upload_to="papsas_app/profilePic") 
+    profilePic = models.ImageField(null=True, blank=True, upload_to="papsas_app/profilePic", default="papsas_app/profilePic/default_dp.jpeg") 
 
     def __str__(self):
         return f'{self.id} - {self.first_name}'

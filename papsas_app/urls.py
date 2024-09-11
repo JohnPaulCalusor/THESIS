@@ -23,5 +23,6 @@ urlpatterns = [
     path('record', views.record, name="record"),
     path('membership_registration/<int:mem_id>', views.membership_registration, name="membership_registration"),
     path('membership_record', views.membership_record, name="membership_record"),
-    path('approve_membership/<int:id>', views.approve_membership, name="approve_membership"),
+    path('membership_record/approve_membership/<int:id>', views.approve_membership, name="approve_membership"),
+    path('membership_record/decline_membership/<int:id>', views.decline_membership, name="decline_membership"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
