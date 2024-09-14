@@ -27,7 +27,7 @@ Regions = [
 ]
 
 class User(AbstractUser):
-    mobileNum = models.CharField(max_length=16)
+    mobileNum = models.CharField(max_length=11)
     region = models.CharField(max_length=64, choices=Regions, default = 'Region',)
     address = models.CharField(max_length=32)
     occupation = models.CharField(max_length=16)
@@ -96,19 +96,23 @@ class Officer(models.Model):
     def __str__(self):
         return f"{self.candidateID.candidate.first_name} - {self.candidateID.candidate.id} is appointed as {self.position}"
 
+class Venue(models.Model):
+    name = models.CharField(max_length=32, null=True)
+    address = models.CharField(max_length=64, null=True)
+    capacity = models.IntegerField()
+
+
 class Event(models.Model):
     eventName = models.CharField(max_length=32, null=True)
     startDate = models.DateField(null=True)
     endDate = models.DateField(null=True)
-    venue = models.CharField(max_length=64, null=True)
-    address = models.CharField(max_length=128, null=True)
+    venue = models.ForeignKey(Venue, on_delete=models.CASCADE, null=True)
     eventDescription = models.TextField(max_length=256, null=True)
     eventStatus = models.BooleanField(default=True)
     pubmat = models.ImageField(upload_to="papsas_app/pubmat/event", null=True)
     price = models.DecimalField(max_digits=10, decimal_places=2, null=True)
     startTime = models.TimeField(null=True)
     endTime = models.TimeField(null=True)
-
 
 class Attendance(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='audience')
@@ -127,3 +131,4 @@ class EventRegistration(models.Model):
 
     def __str__(self):
         return f"{self.user.username} registered for {self.event.eventName} at {self.event.venue}"
+    
