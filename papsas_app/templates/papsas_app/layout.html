@@ -18,7 +18,7 @@
                 <div class="nav container">
                     <a href="{% url 'index' %}"><img src="/media/papsas_app/images/papsas.png" class="logo" alt='papsas_logo'></a> 
                     {% if user.is_authenticated %}
-                    <div>
+                    <div class="nav__menu" id="nav-menu">
                         {% if officer is not None %}
                         <!-- if user is an officer -->
                             {% if officer.termEnd > today %}
@@ -30,9 +30,12 @@
                              Election
                               -->
                             <a href="{% url 'election' %}">Election</a>
+                            <a href="">Event</a>
+                            <!-- Dropdown
+                             Venue
+                              -->
                             <a href="{% url 'event' %}">Compose</a>
                             <!-- Drop down 
-                            Event
                             Achievement
                             News and Offers
                             -->
