@@ -2,13 +2,13 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, logout, authenticate
 from .models import User, Officer, Candidacy, Election, Event, Attendance, EventRegistration, MembershipTypes, UserMembership
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.urls import reverse
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 import random
-from .forms import AttendanceForm, EventRegistrationForm, EventForm, ProfileForm, RegistrationForm, LoginForm, MembershipRegistration
+from .forms import AttendanceForm, EventRegistrationForm, EventForm, ProfileForm, RegistrationForm, LoginForm, MembershipRegistration, Attendance
 from datetime import date
 
 
@@ -173,8 +173,6 @@ def is_officer(request):
     else:
         return False
 
-        
-
 def manage_election(request, id):
     if request.method == 'POST':
         election = Election.objects.get(id = id)
@@ -184,10 +182,13 @@ def manage_election(request, id):
             return redirect('election')
         
 def vote(request):
+    user = request.user
+    attended_event = Attendance.objects.filter( user = user, attended = True )
     ongoingElection = Election.objects.filter( electionStatus = True ).latest('id')
     candidates = Candidacy.objects.filter( election = ongoingElection )
     return render(request, 'papsas_app/vote.html', {
         'candidates' : candidates,
+        'attended_event' : attended_event,
     })
 
 def profile(request, id):
@@ -297,14 +298,8 @@ def record(request):
     })
 
 def membership_registration(request, mem_id):
-    user = request.user
     form = MembershipRegistration(request.user, mem_id)
     membership = mem_id
-
-    try:
-        is_member = user.member.get()
-    except:
-        is_member = None
 
     if request.method == 'POST':
         memType = MembershipTypes.objects.get( id = mem_id )
@@ -331,7 +326,6 @@ def membership_registration(request, mem_id):
         return render(request, 'papsas_app/membership_registration.html', {
             'form' : form,
             'membership' : membership,
-            'is_member' : is_member
         })
     
 def check_membership_validity(request):
@@ -361,3 +355,17 @@ def decline_membership(request, id):
         user_membership = UserMembership.objects.get(user=userID)
         user_membership.delete()
         return redirect('membership_record')
+
+def get_user_info(request, id):
+    user = User.objects.get(id = id)
+    user_data = {
+        'username' : user.email,
+        'name' : f'{user.first_name} {user.last_name}',
+        'mobileNum' : user.mobileNum,
+        'region' : user.region,
+        'address' : user.address,
+        'occupation' : user.occupation,
+        'age' : user.age,
+        'birthdate' : user.birthdate,
+    }
+    return JsonResponse (user_data)

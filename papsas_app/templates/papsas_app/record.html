@@ -1,5 +1,5 @@
 {% extends 'papsas_app/layout.html' %}
-
+{% load static %}
 {% block body %}
     <div>
         <h1>User Records</h1>
@@ -30,10 +30,19 @@
                     <td>{{user.age}}</td>
                     <td>{{user.birthdate}}</td>
                     <td>{{user.email_verified}}</td>
-                    <td><a href="{% url 'profile' user.id %}">View Profile</a></td>
-                    <td><a href="">Edit</a></td>
+                    <td><a href="{% url 'profile' user.id %}">View</a></td>
+                    <td><a href="">Edit</a>
+                        <button id="view_button" data-id="{{ user.id }}">View</button>
+                        <a href="">Delete</a></td>
                 </tr>
             {% endfor %}
         </table>
     </div>
+    <div id='popup_container'>
+        <!-- popup -->     
+    </div>
+{% endblock %}
+
+{% block script %}
+<script src="{% static 'papsas_app/js/user_record.js' %}"></script>
 {% endblock %}

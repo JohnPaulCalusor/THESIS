@@ -101,6 +101,9 @@ class Venue(models.Model):
     address = models.CharField(max_length=64, null=True)
     capacity = models.IntegerField()
 
+    def __str__(self):
+        return f'{self.name}'
+
 
 class Event(models.Model):
     eventName = models.CharField(max_length=32, null=True)
@@ -114,6 +117,9 @@ class Event(models.Model):
     startTime = models.TimeField(null=True)
     endTime = models.TimeField(null=True)
 
+    def __str__(self):
+        return f'{self.id} - {self.eventName}'
+
 class EventRegistration(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
@@ -121,7 +127,7 @@ class EventRegistration(models.Model):
     registered_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.user.username} registered for {self.event.eventName} at {self.event.venue}"
+        return f"{self.user.username} - {self.event.eventName} at {self.event.venue}"
 
 class Attendance(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='audience')
@@ -130,5 +136,5 @@ class Attendance(models.Model):
     date_attended = models.DateField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.user.username} - {self.event.eventName}"
+        return f"{self.user.username} - {self.event.event}"
     

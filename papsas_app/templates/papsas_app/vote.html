@@ -53,10 +53,11 @@
     </div>
 
     <div>
+        {{ attended_event }}
+        {% if attended_event.count >= 2 %}
         <h2>
             Declare Candidacy
         </h2>
-
         <form action="">
             <div>
                 <label for="bio">Bio:</label>
@@ -68,9 +69,11 @@
             </div>
             <button type="submit">Submit Candidacy</button>
         </form>
+        {% else %}
+        <p> You are not eligible to run candidacy. <a href="">Click here</a>  to view eligibility to run candidacy.</p>
+        {% endif %}
     </div>
 <!-- show the ongoing election -->
 <!-- create an interface that allows user to submit candidacy -->
-<!-- candidacy must be approved? -->
 <!-- after approve or submitted, show all candidates in vote page with vote button that only allows user to vote atleast 5 -->
 {% endblock %}

@@ -25,4 +25,6 @@ urlpatterns = [
     path('membership_record', views.membership_record, name="membership_record"),
     path('membership_record/approve_membership/<int:id>', views.approve_membership, name="approve_membership"),
     path('membership_record/decline_membership/<int:id>', views.decline_membership, name="decline_membership"),
+    # ganto nalang dapat url, - not _
+    path('get-user-info/<int:id>/', views.get_user_info, name='get_user_info'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
