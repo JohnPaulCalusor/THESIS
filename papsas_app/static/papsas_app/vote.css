@@ -1,0 +1,40 @@
+#voteContainer {
+    display: flex;
+    gap: 15px;
+}
+
+.candidateContainer {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid black;
+    border-radius: 16px;
+}
+
+.candidateContainer img {
+    width: 300px;
+    border-radius: 14px;
+}
+
+/* Try */
+.hidden-checkbox {
+    display: none;
+}
+
+/* Styling the label when the corresponding checkbox is checked */
+.hidden-checkbox:checked + .candidate-label .candidateContainer {
+    border: 3px solid blue; /* Add an outline when selected */
+    border-radius: 10px;
+}
+
+/* Default style for the candidate container */
+.candidateContainer {
+    border: 1px solid #ccc;
+    padding: 10px;
+    transition: border 0.3s ease;
+    cursor: pointer;
+}
+
+/* Hover effect for better user experience */
+.candidate-label:hover .candidateContainer {
+    border: 2px solid black;
+}

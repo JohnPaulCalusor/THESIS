@@ -79,7 +79,7 @@ class Candidacy(models.Model):
         return f"{self.id} {self.candidate.first_name} ran candidacy for officer"
     
 class Vote(models.Model):
-    candidateID = models.ForeignKey(Candidacy, on_delete=models.CASCADE, related_name="candidates")
+    candidateID = models.ForeignKey(Candidacy, on_delete=models.CASCADE, related_name="nominee")
     voterID = models.ForeignKey(User, on_delete=models.CASCADE, related_name="voter")
     voteDate = models.DateField()
 

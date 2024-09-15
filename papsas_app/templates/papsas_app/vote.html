@@ -1,9 +1,14 @@
 {% extends 'papsas_app/layout.html' %}
 
+{% load static %}
+
 {% block title %}
     Election
 {% endblock %}
 
+{% block head %}
+<link rel="stylesheet" href="{% static 'papsas_app/vote.css' %}">
+{% endblock %}
 {% block body %}
     {% for election in openElection %}
         <h2> {{ election.electionDate.year }} Officer Election</h2>
@@ -33,26 +38,30 @@
         </h2>
 
         <div>
-            <form action="" id="voteContainer">
-                {% for candidate in candidates %}
-                <div>
-                    <input id="apple" type="checkbox" name="apple" />
-                    <label for="apple"> 
-                        <div>
-                            <p>
-                                {{ candidate.candidate.first_name }} 
-                            </p>
-                        </div>
-                    </label>
+            <!-- vote form -->
+            <form action="">
+                <div id="voteContainer">
+                    {% for candidate in candidates %}
+                    <div>
+                        <input id="candidate-{{ candidate.id }}" type="checkbox" name="candidate" class="hidden-checkbox" />
+                        <label for="candidate-{{candidate.id}}" class="candidate-label"> 
+                            <div class="candidateContainer">
+                                <img src="{{ candidate.candidate.profilePic.url }}" alt="" srcset="">
+                                <p>
+                                    {{ candidate.candidate.first_name }} 
+                                </p>
+                            </div>
+                        </label>
+                    </div>
+                    {% endfor %}
                 </div>
-                {% endfor %}
-
                 <button type="submit"> Cast Vote </button>
             </form>
         </div>
     </div>
 
     <div>
+        <!-- candidacy form -->
         {{ attended_event }}
         {% if attended_event.count >= 2 %}
         <h2>
