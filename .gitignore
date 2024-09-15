@@ -4,9 +4,9 @@ __pycache__/
 *.pyc
 *.pyo
 *.pyd
-settings.py
 media/papsas_app/profilePic/
 media/papsas_app/reciept/
 media/papsas_app/pubmat/
 media/papsas_app/verificationID/
+papsas/papsas/settings.py
 papsas/settings.py
