@@ -47,12 +47,6 @@ class RegistrationForm(forms.ModelForm):
             }),
 
         }
-
-    def clean_email(self):
-        email = self.cleaned_data['email']
-        if '@' not in email or not email.endswith('.edu.ph'):
-            raise ValidationError("Please enter a valid .edu.ph email address.")
-        return email
     
     def __init__(self, *args, **kwargs):
         super(RegistrationForm, self).__init__(*args, **kwargs)
