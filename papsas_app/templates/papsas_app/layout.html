@@ -37,11 +37,9 @@
                             </li>
                               <li class="nav__item"> <a href="{% url 'election' %}"class="nav__link">Election</a></li>
                               <li class="nav__item dropdown"><a href=""class="nav__link">Event<i class='bx bx-chevron-down dropdown__icon'></i></a>
-                                <ul class="dropdown-content">
-                                    
+                                <ul class="dropdown-content"> 
                                     <li><a href="">Calendar</a></li>
                                 </ul>
-                            
                             </li>
 
                             <li class="nav__item dropdown"><a href="{% url 'event' %}"class="nav__link">Compose<i class='bx bx-chevron-down dropdown__icon'></i></a>
@@ -53,6 +51,14 @@
                             </li>
                             <li class="nav__item"><a href="{% url 'logout' %}"class="nav__link">Logout</a></li>
                             {% endif%}
+                            {% if user.profilePic %}
+                            <li class="nav__item"><a href="{% url 'profile' user.id %}">
+                                    <img src="{{ user.profilePic.url }}" alt="profilePic" id="navProfile">
+                                </a>
+                            </li>
+                            {% else %}
+                            <div class="login-container"> <a href="{% url 'profile' user.id %}">Profile</a></div>
+                            {% endif %}
                         </ul>
                         <div class="nav__close" id="nav-close">
                             <i class='bx bx-x'></i>
@@ -87,8 +93,6 @@
                                     <li class="nav__item"><a href="" class="nav__link">Achievements</a></li>
                                     <li class="nav__item"><a href="" class="nav__link">News and Offers</a></li>
                                     <li class="nav__item"><a href="{% url 'logout' %}" class="nav__link">Logout</a></li>
-
-                        {% endif %}
                                 {% if user.profilePic %}
                                 <li class="nav__item"><a href="{% url 'profile' user.id %}">
                                         <img src="{{ user.profilePic.url }}" alt="profilePic" id="navProfile">
@@ -97,9 +101,9 @@
                                 {% else %}
                                 <div class="login-container"> <a href="{% url 'profile' user.id %}">Profile</a></div>
                                 {% endif %}
-                        
                             </ul>
                         </div>
+                        {% endif %}
                     {% else %}
                     <!-- if user is not logged in -->
                         <div class="nav__menu" id="nav-menu">
