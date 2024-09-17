@@ -21,28 +21,44 @@
                     <a href="{% url 'index' %}"><img src="/media/papsas_app/images/papsas.png" class="logo" alt='papsas_logo'></a> 
                     {% if user.is_authenticated %}
                     <div class="nav__menu" id="nav-menu">
+                        <ul class="nav__list">
                         {% if officer is not None %}
                         <!-- if user is an officer -->
                             {% if officer.termEnd > today %}
-                            <a href="">Dashboard</a>
-                            <a href="{% url 'record' %}">Records</a>
-                            <!-- Drop Down
-                             Members
-                             Event
-                             Election
-                              -->
-                            <a href="{% url 'election' %}">Election</a>
-                            <a href="">Event</a>
-                            <!-- Dropdown
-                             Venue
-                              -->
-                            <a href="{% url 'event' %}">Compose</a>
-                            <!-- Drop down 
-                            Achievement
-                            News and Offers
-                            -->
-                            <a href="{% url 'logout' %}">Logout</a>
+                            <li class="nav__item"><a href=""class="nav__link">Dashboard</a></li>
+                            <li class="nav__item dropdown">
+                                    <a href="{% url 'record' %}" class="nav__link">Records<i class='bx bx-chevron-down dropdown__icon'></i></a>
+                                    <ul class="dropdown-content">
+                                        <li><a href="">Members</a></li>
+                                        <li><a href="">Event</a></li>
+                                        <li><a href="">Election</a></li>
+                                    </ul>
+                            </li>
+                            </li>
+                              <li class="nav__item"> <a href="{% url 'election' %}"class="nav__link">Election</a></li>
+                              <li class="nav__item dropdown"><a href=""class="nav__link">Event<i class='bx bx-chevron-down dropdown__icon'></i></a>
+                                <ul class="dropdown-content">
+                                    <li><a href="">Venue</a></li>
+                                </ul>
+                            
+                            </li>
+
+                            <li class="nav__item dropdown"><a href="{% url 'event' %}"class="nav__link">Compose<i class='bx bx-chevron-down dropdown__icon'></i></a>
+                                <ul class="dropdown-content">
+                                    <li><a href="">Achievement</a></li>
+                                    <li><a href="">News and Offers</a></li>
+                                </ul>
+                            </li>
+                            <li class="nav__item"><a href="{% url 'logout' %}"class="nav__link">Logout</a></li>
                             {% endif%}
+                        </ul>
+                        <div class="nav__close" id="nav-close">
+                            <i class='bx bx-x'></i>
+                        </div>
+                        
+                    </div>
+                    <div class="nav__toggle" id="nav-toggle">
+                        <i class='bx bx-grid-alt'></i>
                     </div>
                         {% else %}
                         <!-- if user is not an officer -->
@@ -73,18 +89,13 @@
                                 {% if user.profilePic %}
                                 <li class="nav__item"><a href="{% url 'profile' user.id %}">
                                         <img src="{{ user.profilePic.url }}" alt="profilePic" id="navProfile">
-                                    </a></li>
+                                    </a>
+                                </li>
                                 {% else %}
                                 <div class="login-container"> <a href="{% url 'profile' user.id %}">Profile</a></div>
                                 {% endif %}
-                            </ul>
-                            <div class="nav__close" id="nav-close">
-                                <i class='bx bx-x'></i>
-                            </div>
                         </div>
-                        <div class="nav__toggle" id="nav-toggle">
-                            <i class='bx bx-grid-alt'></i>
-                        </div>
+                    
                     {% else %}
                     <!-- if user is not logged in -->
                         <div class="nav__menu" id="nav-menu">
@@ -124,7 +135,7 @@
                             <i class='bx bx-grid-alt'></i>
                         </div>
                     {% endif %}
-                    </div>
+                </div>
             </header>
         </nav>
     {% block body %}
