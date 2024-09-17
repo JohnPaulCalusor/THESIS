@@ -10,8 +10,8 @@ from django.utils.html import strip_tags
 import random
 from .forms import AttendanceForm, EventRegistrationForm, EventForm, ProfileForm, RegistrationForm, LoginForm, MembershipRegistration, Attendance
 from datetime import date
-
-
+from django.contrib.auth.forms import PasswordResetForm
+from django.contrib.auth.views import PasswordResetView
 # Create your views here.
 
 def index(request):
@@ -369,3 +369,54 @@ def get_user_info(request, id):
         'birthdate' : user.birthdate,
     }
     return JsonResponse (user_data)
+
+def event_calendar(request):
+    events = Event.objects.all().order_by('startDate')
+    data = []
+    for event in events:
+        data.append({
+            'title': event.eventName,
+            'start': event.startDate,
+            'end': event.endDate
+        })
+    return render(request, 'papsas_app/event_calendar.html', {'events': data})
+
+def password_reset_request(request):
+    if request.method == 'POST':
+        form = PasswordResetForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data['email']
+            user = User.objects.get(email=email)
+            verification_code = random.randint(100000, 999999)
+            user.verification_code = verification_code
+            user.save()
+            subject = 'Password Reset Verification Code'
+            message = f'Dear {user.first_name},\n\nYour verification code is: {verification_code}\n\nPlease enter this code to reset your password.\n\nBest regards,\nPhilippine Association of Practioners of Student Affairs and Services'
+            send_mail(subject, message, 'your_email@example.com', [user.email])
+            return redirect('password_reset_verify', user_id=user.id)
+    else:
+        form = PasswordResetForm()
+    return render(request, 'papsas_app/password_reset.html', {'form': form})
+
+def password_reset_verify(request, user_id):
+    user = User.objects.get(id=user_id)
+    if request.method == 'POST':
+        code = request.POST['code']
+        if user.verification_code == int(code):
+            return redirect('password_reset_confirm', user_id=user.id)
+        else:
+            return render(request, 'papsas_app/password_reset_verify.html', {'message': 'Invalid Verification Code'})
+    return render(request, 'papsas_app/password_reset_verify.html', {'user_id': user_id})
+
+def password_reset_confirm(request, user_id):
+    user = User.objects.get(id=user_id)
+    if request.method == 'POST':
+        password1 = request.POST['password1']
+        password2 = request.POST['password2']
+        if password1 == password2:
+            user.set_password(password1)
+            user.save()
+            return redirect('login')
+        else:
+            return render(request, 'papsas_app/password_reset_confirm.html', {'message': 'Passwords do not match'})
+    return render(request, 'papsas_app/password_reset_confirm.html', {'user_id': user_id})

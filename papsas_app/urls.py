@@ -27,4 +27,9 @@ urlpatterns = [
     path('membership_record/decline_membership/<int:id>', views.decline_membership, name="decline_membership"),
     # ganto nalang dapat url, - not _
     path('get-user-info/<int:id>/', views.get_user_info, name='get_user_info'),
+    path('approve_membership/<int:id>', views.approve_membership, name="approve_membership"),
+    path('event_calendar/', views.event_calendar, name='event_calendar'),
+    path('password_reset/', views.password_reset_request, name='password_reset'),
+    path('password_reset_verify/<int:user_id>/', views.password_reset_verify, name='password_reset_verify'),
+    path('password_reset_confirm/<int:user_id>/', views.password_reset_confirm, name='password_reset_confirm'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
