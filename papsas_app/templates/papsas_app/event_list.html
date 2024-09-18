@@ -1,0 +1,21 @@
+{% extends 'papsas_app/layout.html' %}
+{% load static %}
+
+{% block head %}
+<link rel="stylesheet" href="{% static 'papsas_app/event.css' %}">
+{% endblock %}
+
+{% block body %}
+<div id="event_container">
+    <h1> Event List</h1>
+    {% for event in events %}
+    <div>
+        <img src="{{ event.pubmat.url }}" alt="">
+        <h3>{{ event.eventName }}</h3>
+        <pre>{{ event.eventDescription }}</pre>
+        <p> {{ event.startDate }} - {{ event.endDate }} </p>
+    </div>
+    <hr>
+    {% endfor %}
+</div>
+{% endblock %}

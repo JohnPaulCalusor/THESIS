@@ -1,0 +1,10 @@
+{% extends 'papsas_app/layout.html' %}
+
+{% block body %}
+<h2> Venue Form</h2>
+<form action="{% url 'compose_venue' %}" method="post">
+    {% csrf_token %}
+    {{form}}
+    <button type="submit">Submit</button>
+</form>
+{% endblock %}

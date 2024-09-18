@@ -21,58 +21,59 @@
     <form action="{% url 'register' %}" method="post" class="login-body">
         {% csrf_token %}
         <div class="register-border">
-        <div class="login_box">
-            <div class="login-header">
-                <img src="/media/papsas_app/images/papsas.png" class="login-icon">
-            </div>
-            <div class="two-forms">
-                <div class="input-box">
-                    {{ form.first_name }}
+            <div class="login_box">
+                <div class="login-header">
+                    <img src="/media/papsas_app/images/papsas.png" class="login-icon">
+                </div>
+                <div class="two-forms">
+                    <div class="input-box">
+                        {{ form.first_name }}
+                    </div>
+                    <div class="input-box">
+                        {{ form.last_name }}
+                    </div>
                 </div>
                 <div class="input-box">
-                    {{ form.last_name }}
+                    {{ form.email }}
+                </div>
+                <div class="input-box">
+                    {{ form.password }}
+                </div>
+                <div class="two-forms">
+                    <div class="input-box">
+                        {{ form.mobileNum }}  
+                    </div>
+                    <div class="input-box">
+                        {{ form.region }}
+                    </div>
+                </div>
+                <div class="two-forms">
+                    <div class="input-box">
+                        {{ form.address }}
+                    </div>
+                    <div class="input-box">
+                        {{ form.age }}
+                    </div>
+                </div>
+                <div class="birth_tag">
+                    {{ form.birthdate.label_tag }}
+                </div> 
+                <div class="two-forms">
+                    <div class="input-box">
+                        {{ form.birthdate }}
+                    </div>
+                    <div class="input-box">
+                        {{ form.occupation }}
+                    </div>
+                </div>
+                <div class="input-box">
+                    {{ form.institution }}
+                </div>
+                <div class="input-submit">
+                    <button class="submit-btn">Register</button>
                 </div>
             </div>
-            <div class="input-box">
-                {{ form.email }}
-            </div>
-            <div class="input-box">
-                {{ form.password }}
-            </div>
-
-            <div class="two-forms">
-            <div class="input-box">
-                {{ form.mobileNum }}  
-            </div>
-            <div class="input-box">
-                {{ form.region }}
-            </div>
         </div>
-        <div class="two-forms">
-            <div class="input-box">
-                {{ form.address }}
-            </div>
-            <div class="input-box">
-                {{ form.age }}
-            </div>
-        </div>
-        <div class="birth_tag">
-        {{ form.birthdate.label_tag }}
-    </div> 
-        <div class="two-forms">
-        <div class="input-box">
-            {{ form.birthdate }}
-        </div>
-            <div class="input-box">
-                {{ form.occupation }}
-            </div>
-        </div>
-        <div class="input-submit">
-            <button class="submit-btn">Register</button>
-        </div>
-    </div>
-</div>
-</div>
     </form>
 
 
