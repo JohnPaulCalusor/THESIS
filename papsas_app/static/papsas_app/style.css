@@ -197,6 +197,7 @@ img {
   background-color: var(--first-color);
   padding: 9rem 0 2rem;
   height: 50vh;
+  margin-top: -100px;
   display: grid;
    
 }
@@ -274,7 +275,7 @@ img {
 }
 
 /* For medium devices */
-@media screen and (min-width: 767px) {
+@media screen and (min-width: 768px) {
   .nav {
     height: calc(var(--header-height) + 1.5rem);
   }
@@ -286,6 +287,7 @@ img {
     flex-direction: row;
     column-gap: 3.5rem;
   }
+
 }
 
 /* For large devices */
@@ -718,4 +720,91 @@ img {
   }
 
 }
+.video_title{
+  text-align: center;
+  padding: 20px;
+}
+.video-feed-container {
+  display: flex;
+  flex-direction: row; /* Set to row to align videos horizontally */
+  gap: 20px;
+  margin-top: 250px;
+  margin-bottom: 100px;
+}
 
+
+
+/* Video post structure */
+.video-post {
+  background-color: #f9f9f9;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  width: 48%;
+}
+
+/* Video wrapper */
+.video-wrapper {
+  position: relative;
+  padding-bottom: 56.25%; /* 16:9 aspect ratio */
+  height: 0;
+  overflow: hidden;
+  border-radius: 8px;
+  background-color: #000;
+}
+
+.video-wrapper video {
+  width: 100%; /* Ensure video takes full width of the container */
+  height: auto;
+  border-radius: 8px;
+}
+
+/* Video content (title and caption) */
+.video-content {
+  margin-top: 10px;
+}
+
+.video-title {
+  font-size: 20px;
+  margin-bottom: 5px;
+}
+
+.video-caption {
+  font-size: 16px;
+  color: #666;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .video-feed-container {
+    flex-direction: column; /* Stack videos in a column layout */
+    padding: 0 10px;
+    margin-top: 40rem;
+    margin-bottom: -20px;
+  }
+
+  .video-post {
+    width: 100%; /* Full width for each video in column layout */
+    margin-bottom: 20px; /* Space between video posts */
+  }
+}
+
+/* Further adjustments for very small screens (mobile devices) */
+@media (max-width: 480px) {
+  .video-title {
+    font-size: 16px;
+  }
+  
+  .video-caption {
+    font-size: 12px;
+  }
+
+  .video-feed-container {
+    margin-top: 20px; /* Reduced margin for small screens */
+    margin-bottom: 20px;
+  }
+}
+
+.video-papsas {
+  margin-top: 100px;
+}

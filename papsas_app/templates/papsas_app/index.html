@@ -1,4 +1,5 @@
 {% extends 'papsas_app/layout.html' %}
+{% load static %}
 
 {% block body %}
 <main class="main">
@@ -14,39 +15,44 @@
         </div>
 
     </section>
-    <section class="services">
-        <h1 class="services__title">Upcoming Event</h1>
-        <div class="services__container container">
-            <div class="service__box">
-                <img src="media/papsas_app/images/IYF.jpg" alt="Service 1" class="service__img">
-                <h3 class="service__title">Interactive Youth Forum</h3>
-                <p class="service__description">System and Anticipatory Thinking for Sustainable Student Activities and Stewardship</p>
-                <button class="service__button"><a href="{% url 'login' %}">Learn More</a></button>
-            </div>
-            <div class="service__box">
-                <img src="media/papsas_app/images/rls.jpg" alt="Service 2" class="service__img">
-                <h3 class="service__title">Regional Leader Summit</h3>
-                <p class="service__description">This is a description for Event 2. It highlights the main features and benefits of the service.</p>
-                <button class="service__button"><a href="{% url 'login' %}">Learn More</a></button>
-            </div>
-            <div class="service__box">
-                <img src="media/papsas_app/images/rc.png" alt="Service 3" class="service__img">
-                <h3 class="service__title">Research Conference</h3>
-                <p class="service__description">You may have the oppurtunity to be published in the  Asia Pacific Journal for Student Affairs</p>
-                <button class="service__button"><a href="{% url 'login' %}">Learn More</a></button>
-            </div>
-            {% if user.is_authenticated %}
-                {% for event in events %}
-                    <div class="service__box">
-                        <img src="{{ event.pubmat.url }}" alt="Service 3" class="service__img">
-                        <h3 class="service__title"> {{ event.eventName }} </h3>
-                        <p class="service__description"> {{ event.eventDescription}} </p>
-                        <button class="service__button">Learn More</button>
+    <section class="video-papsas">
+        <div class="container">
+            <div class="video-feed-container">
+                <!-- First video post -->
+                <div class="video-post">
+                    <!-- Video section -->
+                    <div class="video-wrapper">
+                        <video controls>
+                            <source src="media/papsas_app/videos/test.mp4" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
                     </div>
-                {% endfor %}
-            {% endif %}
+                    <!-- Title and caption section -->
+                    <div class="video-content">
+                        <h3 class="video-title">Interactive Youth Forum</h3>
+                        <p class="video-caption">This is a thrilling experience of a lifetime!</p>
+                    </div>
+                </div>
+                
+                <!-- Second video post -->
+                <div class="video-post">
+                    <!-- Video section -->
+                    <div class="video-wrapper">
+                        <video controls>
+                            <source src="media/papsas_app/videos/test.mp4" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                    <!-- Title and caption section -->
+                    <div class="video-content">
+                        <h3 class="video-title">Annual Conference</h3>
+                        <p class="video-caption">Join us for this amazing event!</p>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
+    
     <footer class="footer">
         <div class="footer__container container">
             <div class="footer__content">

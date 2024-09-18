@@ -45,4 +45,5 @@ sr.reveal(`.services`, {origin: 'top', delay: 400})
 sr.reveal(`.partners`, {origin: 'top', delay: 400})
 sr.reveal(`.member-img`, {origin: 'top', delay: 400})
 sr.reveal(`.membership`, {origin: 'top', delay: 400})
+sr.reveal(`.video-papsas`, {origin: 'top', delay: 400})
 
