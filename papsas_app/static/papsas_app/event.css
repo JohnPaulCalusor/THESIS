@@ -1,0 +1,7 @@
+#event_container div{
+    width: 50vw;
+}
+div pre {
+    text-wrap: wrap;
+    text-align: justify;
+}
