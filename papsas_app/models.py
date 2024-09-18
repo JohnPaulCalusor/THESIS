@@ -36,6 +36,7 @@ class User(AbstractUser):
     verification_code = models.IntegerField(null=True, blank=True)
     email_verified = models.BooleanField(default=False)
     profilePic = models.ImageField(null=True, blank=True, upload_to="papsas_app/profilePic", default="papsas_app/profilePic/default_dp.jpeg") 
+    institution = models.CharField(max_length=128, null=True)
 
     def __str__(self):
         return f'{self.id} - {self.first_name}'
@@ -114,7 +115,7 @@ class Event(models.Model):
     startDate = models.DateField(null=True)
     endDate = models.DateField(null=True)
     venue = models.ForeignKey(Venue, on_delete=models.CASCADE, null=True)
-    eventDescription = models.TextField(max_length=256, null=True)
+    eventDescription = models.TextField(max_length=9999, null=True)
     eventStatus = models.BooleanField(default=True)
     pubmat = models.ImageField(upload_to="papsas_app/pubmat/event", null=True)
     price = models.DecimalField(max_digits=10, decimal_places=2, null=True)

@@ -1,12 +1,12 @@
 from django import forms
-from .models import Attendance, EventRegistration, Event, User, UserMembership, MembershipTypes, Vote, Election, Candidacy
+from .models import Attendance, EventRegistration, Event, User, UserMembership, MembershipTypes, Venue
 from django.core.exceptions import ValidationError
 from django.forms import ModelForm, TextInput, EmailInput
 
 class RegistrationForm(forms.ModelForm):
     class Meta:
         model = User
-        fields = ('email', 'password', 'first_name', 'last_name','mobileNum', 'region', 'address', 'occupation', 'age', 'birthdate')
+        fields = ('email', 'password', 'first_name', 'last_name','mobileNum', 'region', 'address', 'occupation', 'age', 'birthdate', 'institution')
         widgets = {
             'email' : forms.EmailInput(attrs={
                 'placeholder' : 'Email',
@@ -45,7 +45,10 @@ class RegistrationForm(forms.ModelForm):
                 'placeholder' : 'Age',
                 'class': 'input-field'
             }),
-
+            'institution' : forms.TextInput(attrs={
+                'placeholder' : 'Institution',
+                'class': 'input-field'
+            }),
         }
     
     def __init__(self, *args, **kwargs):
@@ -131,3 +134,11 @@ class MembershipRegistration(forms.ModelForm):
         self.user = user
         self.fields['membership'] = forms.ModelChoiceField(queryset = MembershipTypes.objects.all(), initial=membership)
         self.fields['verificationID'].label = 'Identification'
+
+class VenueForm(forms.ModelForm):
+    class Meta:
+        model = Venue
+        fields = ('name', 'address', 'capacity')
+
+# class AchievementForm(forms.ModelForm):
+
