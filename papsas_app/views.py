@@ -8,7 +8,8 @@ from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 import random
-from .forms import AttendanceForm, EventRegistrationForm, EventForm, ProfileForm, RegistrationForm, LoginForm, MembershipRegistration, Attendance
+# Imported Forms
+from .forms import AttendanceForm, EventRegistrationForm, EventForm, ProfileForm, RegistrationForm, LoginForm, MembershipRegistration, Attendance, VenueForm
 from datetime import date
 from django.contrib.auth.forms import PasswordResetForm
 from django.contrib.auth.views import PasswordResetView
@@ -463,3 +464,21 @@ def count_vote(request, id):
     num_votes = candidate.vote_set.count()
 
     return num_votes
+
+def compose_venue(request):
+    form = VenueForm()
+
+    if request.method == 'POST':
+        form = VenueForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('compose_venue')
+    return render(request, 'papsas_app/compose_venue.html', {
+        'form': form,
+    })
+
+def event_list(request):
+    events = Event.objects.all()
+    return render(request, 'papsas_app/event_list.html', {
+        'events': events,
+    })
