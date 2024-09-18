@@ -434,6 +434,8 @@ def password_reset_request(request):
             return redirect('password_reset_verify', user_id=user.id)
     else:
         form = PasswordResetForm()
+        form.fields['email'].widget.attrs['placeholder'] = 'Enter your email address'
+        form.fields['email'].widget.attrs['class'] = 'password-reset'
     return render(request, 'papsas_app/password_reset.html', {'form': form})
 
 def password_reset_verify(request, user_id):
