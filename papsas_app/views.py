@@ -464,7 +464,13 @@ def password_reset_request(request):
 def password_reset_verify(request, user_id):
     user = User.objects.get(id=user_id)
     if request.method == 'POST':
-        code = request.POST['code']
+        code_1 = request.POST.get('code-1')
+        code_2 = request.POST.get('code-2')
+        code_3 = request.POST.get('code-3')
+        code_4 = request.POST.get('code-4')
+        code_5 = request.POST.get('code-5')
+        code_6 = request.POST.get('code-6')
+        code = ''.join([code_1, code_2, code_3, code_4, code_5, code_6])
         if user.verification_code == int(code):
             return redirect('password_reset_confirm', user_id=user.id)
         else:

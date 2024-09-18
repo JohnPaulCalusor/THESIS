@@ -37,7 +37,7 @@ urlpatterns = [
     path('password_reset_confirm/<int:user_id>/', views.password_reset_confirm, name='password_reset_confirm'),
     # compose
     path('compose/event', views.event, name="event"),
-    path('compose/venue', views.compose_venue, name="compose_venue")
+    path('compose/venue', views.compose_venue, name="compose_venue"),
     path('email_not_verified/<int:user_id>/', views.email_not_verified, name='email_not_verified'),
     path('resend_verification_code/<int:user_id>/', views.resend_verification_code, name='resend_verification_code'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
