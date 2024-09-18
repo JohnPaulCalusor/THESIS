@@ -1,7 +1,7 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_list_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, logout, authenticate
-from .models import User, Officer, Candidacy, Election, Event, Attendance, EventRegistration, MembershipTypes, UserMembership
+from .models import User, Officer, Candidacy, Election, Event, Attendance, EventRegistration, MembershipTypes, UserMembership, Vote
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.urls import reverse
 from django.core.mail import send_mail
@@ -12,12 +12,13 @@ from .forms import AttendanceForm, EventRegistrationForm, EventForm, ProfileForm
 from datetime import date
 from django.contrib.auth.forms import PasswordResetForm
 from django.contrib.auth.views import PasswordResetView
+from django.db.models import Count
 # Create your views here.
 
 def index(request):
     today = date.today()
     events = Event.objects.all()
-    upcoming_events = [event for event in events if event.startDate > today]
+    upcoming_events = [event for event in events if event.startDate >= today]
     return render(request, 'papsas_app/index.html', {
         'events' : upcoming_events,
     })
@@ -139,6 +140,7 @@ def verify_email(request, user_id):
         return render(request, 'papsas_app/verify_email.html', {'user_id': user_id})
     
 def election(request):
+    
     electionList = Election.objects.all()
     ongoingElection = Election.objects.filter(electionStatus = True)
     if request.method == 'POST':
@@ -181,15 +183,48 @@ def manage_election(request, id):
             election.save()
             return redirect('election')
         
+def get_winner(num_winners):
+    ongoingElection = Election.objects.get(electionStatus=True)
+    candidates = Candidacy.objects.filter(election=ongoingElection).annotate(vote_count=Count('nominee')).order_by('-vote_count')[:num_winners]
+    return candidates
+        
 def vote(request):
     user = request.user
+    ongoingElection = Election.objects.get( electionStatus = True )
     attended_event = Attendance.objects.filter( user = user, attended = True )
-    ongoingElection = Election.objects.filter( electionStatus = True ).latest('id')
-    candidates = Candidacy.objects.filter( election = ongoingElection )
-    return render(request, 'papsas_app/vote.html', {
-        'candidates' : candidates,
-        'attended_event' : attended_event,
-    })
+    # candidates = Candidacy.objects.filter( election = ongoingElection )
+    candidates = Candidacy.objects.filter(election=ongoingElection).annotate(vote_count=Count('nominee'))
+
+
+    if request.POST:
+        selected_candidates = request.POST.getlist('candidate')
+
+        if not selected_candidates:
+            return HttpResponse("No candidate selected!" , status=400)
+        try:
+            user_voted = Vote.objects.filter( voterID = user, election = ongoingElection)
+        except Vote.DoesNotExist:
+            user_voted = None
+        if user_voted:
+            return HttpResponse("You have already voted!" , status=400)
+
+        vote = Vote.objects.create(voterID=user, election = ongoingElection)
+    
+        for candidate_id in selected_candidates:
+            try:
+                candidate_obj = Candidacy.objects.get(id = candidate_id, election = ongoingElection)
+                vote.candidateID.add(candidate_obj)
+            except Candidacy.DoesNotExist:
+                # handle the case where the candidate does not exist
+                return HttpResponse("Invalid candidate!", status=400)
+        return redirect('index')
+    else:
+        return render(request, 'papsas_app/vote.html', {
+            'candidates' : candidates,
+            'attended_event' : attended_event,
+            'votes' : Vote.objects.filter( voterID = user, election = ongoingElection),
+
+        })
 
 def profile(request, id):
     user = User.objects.get( id = id)
@@ -210,14 +245,16 @@ def profile(request, id):
 
 def event(request):
     if request.method == 'POST':
-        form = EventForm(request.POST)
+        form = EventForm(request.POST, request.FILES)
 
         if form.is_valid():
             form.save()
-            return redirect('event')
+            return redirect('index')
         else:
+            message = form.errors
             return render(request, 'papsas_app/event_management.html', {
-                'form' : form
+                'form' : form,
+                'message' : message
             })
 
     else:     
@@ -420,3 +457,9 @@ def password_reset_confirm(request, user_id):
         else:
             return render(request, 'papsas_app/password_reset_confirm.html', {'message': 'Passwords do not match'})
     return render(request, 'papsas_app/password_reset_confirm.html', {'user_id': user_id})
+
+def count_vote(request, id):
+    candidate = Candidacy.objects.get(id= id)  # replace with the actual candidate id
+    num_votes = candidate.vote_set.count()
+
+    return num_votes

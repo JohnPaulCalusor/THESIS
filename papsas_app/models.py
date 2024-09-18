@@ -76,12 +76,16 @@ class Candidacy(models.Model):
     election = models.ForeignKey(Election, on_delete=models.CASCADE, related_name="elections")
     
     def __str__(self):
-        return f"{self.id} {self.candidate.first_name} ran candidacy for officer"
+        return f"{self.id} - {self.candidate.first_name} : officer"
     
 class Vote(models.Model):
-    candidateID = models.ForeignKey(Candidacy, on_delete=models.CASCADE, related_name="nominee")
+    candidateID = models.ManyToManyField(Candidacy, related_name="nominee")
     voterID = models.ForeignKey(User, on_delete=models.CASCADE, related_name="voter")
-    voteDate = models.DateField()
+    voteDate = models.DateField(auto_now_add=True)
+    election = models.ForeignKey(Election, on_delete=models.CASCADE, null=True)
+
+    def __str__(self):
+        return f'{self.candidateID.all()}'
 
 class Officer(models.Model):
     candidateID = models.ForeignKey(Candidacy, on_delete=models.CASCADE, related_name="officers")

@@ -1,5 +1,5 @@
 from django import forms
-from .models import Attendance, EventRegistration, Event, User, UserMembership, MembershipTypes
+from .models import Attendance, EventRegistration, Event, User, UserMembership, MembershipTypes, Vote, Election, Candidacy
 from django.core.exceptions import ValidationError
 from django.forms import ModelForm, TextInput, EmailInput
 

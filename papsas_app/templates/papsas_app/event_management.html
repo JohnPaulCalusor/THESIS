@@ -23,4 +23,7 @@
         {% endfor %} {% endcomment %}
         <button type="submit">Submit</button>
     </form>
+    {% if message %}
+    <p>{{ message }}</p>
+    {% endif %}
 {% endblock %}

@@ -29,7 +29,7 @@
                             <li class="nav__item dropdown">
                                     <a href="{% url 'record' %}" class="nav__link">Records<i class='bx bx-chevron-down dropdown__icon'></i></a>
                                     <ul class="dropdown-content">
-                                        <li><a href="">Members</a></li>
+                                        <li><a href="{% url 'membership_record' %}">Members</a></li>
                                         <li><a href="">Event</a></li>
                                         <li><a href="">Election</a></li>
                                     </ul>
@@ -42,11 +42,12 @@
                                 </ul>
                             </li>
 
-                            <li class="nav__item dropdown"><a href="{% url 'event' %}"class="nav__link">Compose<i class='bx bx-chevron-down dropdown__icon'></i></a>
+                            <li class="nav__item dropdown"><a href=""class="nav__link">Compose<i class='bx bx-chevron-down dropdown__icon'></i></a>
                                 <ul class="dropdown-content">
+                                    <li><a href="{% url 'event' %}">Event</a></li>
+                                    <li><a href="">Venue</a></li>
                                     <li><a href="">Achievement</a></li>
                                     <li><a href="">News and Offers</a></li>
-                                    <li><a href="">Venue</a></li>
                                 </ul>
                             </li>
                             <li class="nav__item"><a href="{% url 'logout' %}"class="nav__link">Logout</a></li>
