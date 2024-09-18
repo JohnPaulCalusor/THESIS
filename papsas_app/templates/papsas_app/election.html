@@ -1,49 +1,52 @@
 {% extends 'papsas_app/layout.html' %}
-
+{% load static %}
+{% block head %}
+    <link rel="stylesheet" href="{% static 'papsas_app/election.css' %}">
+    <link rel="stylesheet" href="{% static 'papsas_app/login.css' %}">
+{% endblock %}
 {% block title %}
     Election
 {% endblock %}
 
 {% block body %}
-    <div>
-        <h1>Election</h1>
-        <!-- div for all elections -->
-        <div>        
-            <h3>Election List</h3>
-            <div>
-                {% for election in electionList %}
+<div class="container">
+<div class="election-dashboard">
+    <div class="past-elections">
+        <h3>Election List</h3>
+        <div class="election-list">
+            {% for election in electionList %}
+                <div class="election-item">
                     <p> {{ election }} </p>
-                {% endfor %}
                 </div>
-                <hr>
-            </div>
+            {% endfor %}
+        </div>
+    </div>
 
+    <div class="new-election">
         <!-- if there is no ongoing election, provide an option to start one -->
         {% if not ongoingElection %}
-        <div>
-            <h3>
-                Election
-            </h3>
-            <form action="{% url 'election' %}" method="post">
+            <h3>Start New Election</h3>
+            <form action="{% url 'election' %}" method="post" >
                 {% csrf_token %}
-                <button type="submit">Start Election</button>
+                <input type="text" name="election_name" placeholder="Election Name" required>
+                
+                <button type="submit"class="submit-btn">Start Election</button>
             </form>
-        </div>
         {% else %}
-        <div>
             <h3>Ongoing Election</h3>
-            <div>  
+            <div>
                 {% for election in electionList %}
                     {% if election.electionStatus == True %}
-                        <p> {{ election }} </p>
-                        <form action="{% url 'manage_election' election.id %}" method="post">
+                        <p>{{ election.name }}</p>
+                        <form action="{% url 'manage_election' election.id %}" method="post" >
                             {% csrf_token %}
-                            <button type="submit">Stop Election</button>
+                            <button type="submit" class="submit-btn">Stop Election</button>
                         </form>
                     {% endif %}
                 {% endfor %}
             </div>
-        </div>
         {% endif %}
     </div>
+</div>
+</div>
 {% endblock %}
