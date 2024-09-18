@@ -1,0 +1,10 @@
+{% extends "papsas_app/layout.html" %}
+
+{% block body %}
+    <h1>Email Not Verified</h1>
+    <p>Your email address has not been verified. Please verify your email address to continue.</p>
+    <form action="{% url 'resend_verification_code' user_id %}" method="post">
+        {% csrf_token %}
+        <button type="submit" name="resend_code">Resend Verification Code</button>
+    </form>
+{% endblock %}

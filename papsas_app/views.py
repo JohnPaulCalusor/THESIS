@@ -73,7 +73,7 @@ def register(request):
                 send_mail(subject, message, 'your_email@example.com', [user.email])
 
                 # Set user as inactive until email is verified
-                user.is_active = False
+                user.is_active = True
                 user.save()
 
                 # Redirect to email verification page
@@ -93,7 +93,6 @@ def logout_view(request):
     return redirect('index')
 
 def login_view(request):
-    form = LoginForm()
     if request.user.is_authenticated:
         return redirect('index')
     
@@ -102,12 +101,16 @@ def login_view(request):
         password = request.POST['password']
         user = authenticate(request, username=username, password=password)
         if user is not None:
-            if user.email_verified:
+            if user.email_verified and user.is_active:
                 login(request, user)
                 return HttpResponseRedirect(reverse("index"))
+            elif not user.email_verified:
+                return redirect('email_not_verified', user_id=user.id)
             else:
+                form = LoginForm(request.POST)
                 return render(request, 'papsas_app/login.html', {
-                    'message' : 'Please verify your email address before logging in.'
+                    'message' : 'Your account is not active.',
+                    'form' : form
                 })
         else:
             form = LoginForm(request.POST)
@@ -116,6 +119,7 @@ def login_view(request):
                 'form' : form
                 })
     else:
+        form = LoginForm()
         return render(request, 'papsas_app/login.html', {
             'form' : form
         })
@@ -140,6 +144,25 @@ def verify_email(request, user_id):
     else:
         return render(request, 'papsas_app/verify_email.html', {'user_id': user_id})
     
+def email_not_verified(request, user_id):
+    user = User.objects.get(id=user_id)
+    return render(request, 'papsas_app/email_not_verified.html', {
+        'user_id': user_id
+    })
+    
+def resend_verification_code(request, user_id):
+    if request.method == 'POST':
+        user = User.objects.get(id=user_id)
+        verification_code = random.randint(100000, 999999)
+        user.verification_code = verification_code
+        user.save()
+        subject = 'Verify your email address'
+        message = f'Dear {user.first_name},\n\nYour verification code is: {verification_code}\n\nPlease enter this code to verify your email address.\n\nBest regards,\nPhilippine Association of Practioners of Student Affairs and Services'
+        send_mail(subject, message, 'your_email@example.com', [user.email])
+        return redirect('verify_email', user_id=user.id)
+    return redirect('login')
+
+
 def election(request):
     
     electionList = Election.objects.all()

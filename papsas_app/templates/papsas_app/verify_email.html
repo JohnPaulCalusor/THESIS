@@ -1,9 +1,11 @@
 <form method="post">
     {% csrf_token %}
     <input type="hidden" name="user_id" value="{{ user.id }}">
+    <label for="code">Enter verification code:</label>
     <input type="text" name="code" placeholder="Enter verification code">
     <button type="submit">Verify Email</button>
+    {% if message %}
+        <p>{{ message }}</p>
+    {% endif %}
+    <p>Please enter the verification code sent to your email address.</p>
 </form>
-{% if message %}
-<p> {{ message }} </p>
-{% endif %}

@@ -1,0 +1,10 @@
+{% extends "papsas_app/layout.html" %}
+
+{% block body %}
+    <h1>Resend Verification Code</h1>
+    <p>We've sent a new verification code to {{ email }}.</p>
+    <form action="{% url 'resend_verification_code' email %}" method="post">
+        {% csrf_token %}
+        <button type="submit" name="resend_code">Resend Verification Code</button>
+    </form>
+{% endblock %}
