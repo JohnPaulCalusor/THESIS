@@ -1,0 +1,33 @@
+{% extends 'papsas_app/layout.html' %}
+
+{% block body %}
+<div>
+    <h1>Event</h1>
+    {% for event in events %}
+    <p>
+        <a href="{% url 'attendance_view' event.id %}"> {{ event.eventName }} </a>
+    </p>
+    {% endfor %}
+</div>
+
+<div id="attendance_record">
+    {% if attendees %}
+    <a href="{% url 'attendance_list' %}">Close</a>
+    <h2>Attendance Record</h2>
+    <table>
+        <tr>
+            <th>Event Name</th>
+            <th>Attendee Name</th>
+            <th>Attendance Status</th>
+        </tr>
+        {% for attendee in attendees %}
+        <tr>
+            <td>{{ attendee.event}}</td>
+            <td>{{ attendee.user.first_name }}</td>
+            <td>{{ attendee.attended }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% endif %}
+</div>
+{% endblock %}

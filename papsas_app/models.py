@@ -64,6 +64,7 @@ class UserMembership(models.Model):
         return f'{self.membership}'
 
 class Election(models.Model):
+    title = models.CharField(max_length=128, null=True)    
     startDate = models.DateField(null=True)
     endDate = models.DateField(null=True)
     electionStatus = models.BooleanField()

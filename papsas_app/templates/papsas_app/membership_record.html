@@ -19,8 +19,8 @@
                 <td>{{ row.membership }}</td>
                 <td>{{ row.registrationDate }}</td>
                 <td>{{ row.expirationDate }}</td>
-                <td>{{ row.receipt }}</td>
-                <td>{{ row.verificationID }}</td>
+                <td> <a href="">View Receipt</a> </td>
+                <td><a href="">View ID</a></td>
                 <td>{{ row.membershipVerification }}</td>
                 <td>
                     <form action="{% url 'approve_membership' row.user.id %}" method="post">

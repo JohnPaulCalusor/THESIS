@@ -168,7 +168,8 @@ def election(request):
     electionList = Election.objects.all()
     ongoingElection = Election.objects.filter(electionStatus = True)
     if request.method == 'POST':
-        newElection = Election(electionStatus = True, startDate = date.today())
+        title = request.POST['title']
+        newElection = Election(electionStatus = True, startDate = date.today(), title = title)
         newElection.save()
 
     if is_officer(request):
@@ -417,7 +418,7 @@ def decline_membership(request, id):
         user_membership.delete()
         return redirect('membership_record')
 
-def get_user_info(request, id):
+def get_user_info(id):
     user = User.objects.get(id = id)
     user_data = {
         'username' : user.email,
@@ -430,7 +431,7 @@ def get_user_info(request, id):
         'birthdate' : user.birthdate,
     }
     return JsonResponse (user_data)
-
+    
 def event_calendar(request):
     events = Event.objects.all().order_by('startDate')
     data = []
@@ -490,7 +491,7 @@ def password_reset_confirm(request, user_id):
             return render(request, 'papsas_app/password_reset_confirm.html', {'message': 'Passwords do not match'})
     return render(request, 'papsas_app/password_reset_confirm.html', {'user_id': user_id})
 
-def count_vote(request, id):
+def count_vote(id):
     candidate = Candidacy.objects.get(id= id)  # replace with the actual candidate id
     num_votes = candidate.vote_set.count()
 
@@ -510,6 +511,25 @@ def compose_venue(request):
 
 def event_list(request):
     events = Event.objects.all()
+
     return render(request, 'papsas_app/event_list.html', {
         'events': events,
+    })
+
+def attendance_list(request):
+    events = Event.objects.all()
+    return render(request, 'papsas_app/attendance_record.html', {
+        'events': events,
+    })
+
+def attendance_view(request, id):
+    event = EventRegistration.objects.get( event = id)
+    try:
+        attendees = Attendance.objects.filter(event = event)
+    except:
+        attendees = None
+
+    return render(request, 'papsas_app/attendance_record.html', {
+        'event': event,
+        'attendees' : attendees
     })

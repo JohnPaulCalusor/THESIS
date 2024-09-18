@@ -18,7 +18,17 @@
         {% endif %}
 
         <h4>
-            {{ user.first_name }} {{user.last_name}}
+            {{ user.first_name }} {{user.last_name}} 
+            {% if user.email_verified %}
+            <!-- Show symbol check -->
+             <p>Check Verified</p> 
+            {% else %}
+            <!-- Show question mark symbol -->
+            <p>Question Mark Unverified</p>
+            {% endif %}
         </h4>
+        <p> {{ user.region }} </p>
+        <p>From<strong> {{ user.address }} </strong></p>
+
     </div>
 {% endblock %}
