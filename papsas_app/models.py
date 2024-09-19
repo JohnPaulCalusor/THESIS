@@ -34,6 +34,7 @@ class User(AbstractUser):
     age = models.IntegerField(null=True)
     birthdate = models.DateField(null=True)
     verification_code = models.IntegerField(null=True, blank=True)
+    verification_code_expiration = models.DateTimeField(null=True, blank=True)  # Add this line
     email_verified = models.BooleanField(default=False)
     profilePic = models.ImageField(null=True, blank=True, upload_to="papsas_app/profilePic", default="papsas_app/profilePic/default_dp.jpeg") 
     institution = models.CharField(max_length=128, null=True)
