@@ -62,7 +62,7 @@ class UserMembership(models.Model):
     membershipVerification = models.BooleanField(default=False)
 
     def __str__ (self):
-        return f'{self.membership}'
+        return f'{self.user.id} : {self.user.first_name} - {self.id} : {self.membership}'
 
 class Election(models.Model):
     title = models.CharField(max_length=128, null=True)    
@@ -136,13 +136,13 @@ class Achievement(models.Model):
 
 
 class EventRegistration(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="customer")
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
     receipt = models.ImageField(upload_to="papsas_app/reciept", null=True, blank=True) 
     registered_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.user.username} - {self.event.eventName} at {self.event.venue}"
+        return f"{self.user.id} : {self.user.username} - {self.event.eventName} at {self.event.venue}"
 
 class Attendance(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='audience')

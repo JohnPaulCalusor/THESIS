@@ -27,8 +27,9 @@ urlpatterns = [
     path('event/list', views.event_list, name='event_list'),
     # membership
     path('membership_registration/<int:mem_id>', views.membership_registration, name="membership_registration"),
-    path('membership_record/approve_membership/<int:id>', views.approve_membership, name="approve_membership"),
-    path('membership_record/decline_membership/<int:id>', views.decline_membership, name="decline_membership"),
+    path('membership_record/approve/<int:id>', views.approve_membership, name="approve_membership"),
+    path('membership_record/decline/<int:id>', views.decline_membership, name="decline_membership"),
+    path('membership-registration/delete/<int:id>', views.delete_membership, name="delete_membership"),
     # ganto nalang dapat url, - not _
     path('get-user-info/<int:id>/', views.get_user_info, name='get_user_info'),
     path('approve_membership/<int:id>', views.approve_membership, name="approve_membership"),
@@ -43,5 +44,8 @@ urlpatterns = [
     path('record/account', views.record, name="record"),
     path('record/attendance', views.attendance_list, name="attendance_list"),
     path('record/membership', views.membership_record, name="membership_record"),
-    path('record/attendance/<int:id>', views.attendance_view, name="attendance_view")
+    path('record/attendance/<int:id>', views.attendance_view, name="attendance_view"),
+    # get function
+    path('record/get-receipt/<int:user_id>/', views.get_receipt, name='get_receipt'),
+    path('record/get-id/<int:user_id>/', views.get_id, name='get_id'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

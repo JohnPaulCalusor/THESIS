@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_list_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, logout, authenticate
 from .models import User, Officer, Candidacy, Election, Event, Attendance, EventRegistration, MembershipTypes, UserMembership, Vote
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, HttpResponseNotFound
 from django.urls import reverse
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
@@ -14,6 +14,8 @@ from datetime import date
 from django.contrib.auth.forms import PasswordResetForm
 from django.contrib.auth.views import PasswordResetView
 from django.db.models import Count
+from django.core.exceptions import ObjectDoesNotExist
+
 # Create your views here.
 
 def index(request):
@@ -415,8 +417,22 @@ def decline_membership(request, id):
     userID = id
     if request.method == 'POST':
         user_membership = UserMembership.objects.get(user=userID)
-        user_membership.delete()
-        return redirect('membership_record')
+        if user_membership.membershipVerification == True:
+            user_membership.membershipVerification = False
+            user_membership.save()
+            return redirect('membership_record')
+        else:
+            return redirect('membership_record')
+    
+def delete_membership(request, id):
+    userID = id
+    if request.method == 'POST':
+        user_membership = UserMembership.objects.get(user=userID)
+        if user_membership.membershipVerification == False:
+            user_membership.delete()
+            return redirect('membership_record')
+        else:
+            return redirect('membership_record')
 
 def get_user_info(id):
     user = User.objects.get(id = id)
@@ -523,13 +539,45 @@ def attendance_list(request):
     })
 
 def attendance_view(request, id):
-    event = EventRegistration.objects.get( event = id)
     try:
+        event = EventRegistration.objects.get( event = id)
         attendees = Attendance.objects.filter(event = event)
     except:
         attendees = None
+        event = None
 
     return render(request, 'papsas_app/attendance_record.html', {
         'event': event,
         'attendees' : attendees
     })
+
+def get_receipt(request, user_id):
+    try:
+        user = User.objects.get(id=user_id)
+        user_registration = UserMembership.objects.get(user=user)
+        receipt = user_registration.receipt.url
+        receipt_data = {
+            'receipt': receipt
+        }
+        return JsonResponse(receipt_data)
+    
+    except ObjectDoesNotExist:
+        return JsonResponse({'error': 'User or UserMembership not found'}, status=404)
+    
+def get_id(request, user_id):
+    try:
+        user = User.objects.get(id=user_id)
+        user_registration = UserMembership.objects.get(user=user)
+        id = user_registration.verificationID.url
+        id_data = {
+            'id': id
+        }
+        return JsonResponse(id_data)
+    
+    except ObjectDoesNotExist:
+        return JsonResponse({'error': 'User or UserMembership not found'}, status=404)
+    
+
+
+
+
