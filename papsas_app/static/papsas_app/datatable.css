@@ -11,7 +11,9 @@ table {
 .data-table {
     
 }
-
+.no-existing{
+    text-align: center;
+}
 .data-table-container {
     max-width: 1600px;
     margin-left: auto; /* Center horizontally */
@@ -72,16 +74,26 @@ td a:hover {
 /* Button styles */
 
 .action-icon {
-    margin-right: 10px;
-    color: #ff0000;
-    text-decoration: none;
-    font-size: 16px;
-}
-
-.action-icon:hover {
-    color: #000000;
+    background-color: transparent; /* Remove background */
+    border: none; /* Remove border */
+    cursor: pointer; /* Change cursor to pointer for better UX */
+    color: red; /* Keep the icon color */
+    font-size: 16px; /* Adjust icon size */
+    padding: 5px; /* Optional: Adjust padding */
 }
 
 .action-icon i {
     margin-right: 5px;
+}
+
+/* Optional: Add hover effect */
+.action-icon:hover {
+    color: black; /* Change icon color on hover */
+}
+
+.action-icon i {
+    margin-right: 5px;
+}
+#receipt-container, #id-container {
+    display: none;
 }

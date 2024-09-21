@@ -4,12 +4,13 @@
     background-color: #ffffff;
     text-align: center; /* Center content within the resources section */
     padding: 10px;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
   }
   
   .membership_title {
     text-align: center;
     margin-bottom: 2rem;
+    margin-top: 5rem;
   
   }
   
@@ -83,6 +84,7 @@
     transition: .4s;
     display: inline-block;
     margin-bottom: 10px;
+    
   }
   .membership__button_1 a {
     color: #ffffff;
@@ -160,14 +162,14 @@
   .institutional {
     display: flex;
     align-items: center;
-    max-width: 1200px;
+    max-width: 1500px;
     width: 100%;
     padding: 20px;
     box-sizing: border-box;
   }
   .institutional-image {
     flex: 1;
-    max-width: 55%;
+    max-width: 50%;
     border-radius: 20px;
   }
   .institutional-text {
@@ -177,14 +179,14 @@
   }
   .institutional-text h2 {
     margin-top: 0;
-    font-size: 14px;
+    font-size: 20px;
     text-align: justify;
     color: #ff0000;
     margin-bottom: 10px;
     font-weight: 300;
   }
   .institutional-text p{
-    font-size: 14px;
+    font-size: 16px;
     text-align: justify;
     font-weight: 300;
   }

@@ -160,5 +160,19 @@
 
 <script src="static/papsas_app/js/scrollreveal.min.js"></script>
 <script src="static/papsas_app/js/main.js"></script>
+<script>
+    function toggleDescription(counter) {
+        const description = document.getElementById(`event-description-${counter}`);
+        const viewMoreBtn = document.querySelector(`#event-description-${counter} + .view-more-btn`);
+        
+        if (viewMoreBtn.innerText === "View More") {
+            description.classList.add('show-full');
+            viewMoreBtn.innerText = "View Less";
+        } else {
+            description.classList.remove('show-full');
+            viewMoreBtn.innerText = "View More";
+        }
+    }
+    </script>
 </body>
 </html>
