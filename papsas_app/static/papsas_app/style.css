@@ -4,17 +4,6 @@
     box-sizing: border-box;
     font-family: 'Poppins', sans-serif;
 }
-#voteContainer input[type=checkbox]{
-    display: none;
-}
-
-#voteContainer label>div {
-    border: black 1px solid;
-}
-
-#voteContainer input:checked ~ label>div{
-    border: solid 2px black;
-}
 
 #login{
   margin-top: 100px;
@@ -61,7 +50,6 @@
 
 
 body {
-  /* padding-top: 100px; */
   font-family: var(--body-font);
   font-size: var(--normal-font-size);
   font-weight: 500;

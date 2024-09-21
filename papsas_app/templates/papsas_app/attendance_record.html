@@ -10,7 +10,7 @@
     <h1>Event</h1>
     {% for event in events %}
     <p>
-        <a href="{% url 'attendance_view' event.id %}"> {{ event.eventName }} </a>
+        <a href="{% url 'attendance_view' event.id %}" class="event-links"> {{ event.eventName }} </a>
     </p>
     {% endfor %}
 </div>
@@ -40,4 +40,8 @@
     </table>
 </div>
 
+{% endblock %}
+
+{% block script %}
+<script src="{% static 'papsas_app/js/attendance_record.js' %}"></script>
 {% endblock %}
