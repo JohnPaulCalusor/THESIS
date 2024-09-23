@@ -538,19 +538,6 @@ def attendance_list(request):
         'events': events,
     })
 
-def attendance_view(request, id):
-    try:
-        event = EventRegistration.objects.get( event = id)
-        attendees = Attendance.objects.filter(event = event)
-    except:
-        attendees = None
-        event = None
-
-    return render(request, 'papsas_app/attendance_record.html', {
-        'event': event,
-        'attendees' : attendees
-    })
-
 def get_receipt(request, user_id):
     try:
         user = User.objects.get(id=user_id)
@@ -577,7 +564,24 @@ def get_id(request, user_id):
     except ObjectDoesNotExist:
         return JsonResponse({'error': 'User or UserMembership not found'}, status=404)
     
-
-
-
-
+def get_attendees(request, event_id):
+    try:
+        eventId = Event.objects.get(id=event_id)
+        attendances = Attendance.objects.filter(event__event_id= eventId)
+        attendees = []
+        for attendance in attendances:
+            attendees.append({
+                'username': attendance.user.username,
+                'first_name': attendance.user.first_name,
+                'last_name': attendance.user.last_name,
+                'status' : attendance.attended
+            })
+        return JsonResponse(
+            {'attendees': attendees},
+        )
+    except:
+        eventId = None
+        attendances = None 
+        attendees = []
+        return JsonResponse(attendees, safe=False)
+    

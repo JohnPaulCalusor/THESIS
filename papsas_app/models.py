@@ -133,16 +133,14 @@ class Achievement(models.Model):
     achievementDescription = models.TextField(max_length=9999, null=True)
     postStamp = models.DateTimeField(auto_now_add=True)
     
-
-
 class EventRegistration(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="customer")
-    event = models.ForeignKey(Event, on_delete=models.CASCADE)
+    event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name="activity")
     receipt = models.ImageField(upload_to="papsas_app/reciept", null=True, blank=True) 
     registered_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.user.id} : {self.user.username} - {self.event.eventName} at {self.event.venue}"
+        return f"{self.id} : {self.user.id} : {self.user.username} - {self.event.eventName} at {self.event.venue}"
 
 class Attendance(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='audience')
