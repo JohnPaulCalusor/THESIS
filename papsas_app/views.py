@@ -7,7 +7,11 @@ from django.urls import reverse
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
-import random
+import random, json
+from django.core.exceptions import ObjectDoesNotExist
+from django.contrib import messages
+from django.utils import timezone
+from django.core.exceptions import ValidationError
 # Imported Forms
 from .forms import AttendanceForm, EventRegistrationForm, EventForm, ProfileForm, RegistrationForm, LoginForm, MembershipRegistration, Attendance, VenueForm
 from datetime import date
@@ -62,17 +66,6 @@ def register(request):
                                             age = age,
                                             birthdate = birthDate)
                 user.save()
-                # Generate 6-digit verification code
-                verification_code = random.randint(100000, 999999)
-
-                # Save verification code to user's profile
-                user.verification_code = verification_code
-                user.save()
-
-            # Send verification email
-                subject = 'Verify your email address'
-                message = f'Dear {user.first_name},\n\nYour verification code is: {verification_code}\n\nPlease enter this code to verify your email address.\n\nBest regards,\nPhilippine Association of Practioners of Student Affairs and Services'
-                send_mail(subject, message, 'your_email@example.com', [user.email])
 
                 # Set user as inactive until email is verified
                 user.is_active = True
@@ -129,22 +122,45 @@ def login_view(request):
 def verify_email(request, user_id):
     user = User.objects.get(id=user_id)
     if request.method == 'POST':
-        code = request.POST['code']
-        if user.verification_code == int(code):
-            user.email_verified = True
-            user.is_active = True
+        if 'resend_code' in request.POST:
+            user.verification_code = random.randint(100000, 999999)
+            user.verification_code_expiration = timezone.now() + timezone.timedelta(minutes=2)
             user.save()
-            # return render(request, 'papsas_app/layout.html', {'message': 'Email successfully verified!'})
-            login(request, user)
-            return HttpResponseRedirect(reverse("index"))
-        else:
-            # if user input wrong verification code, just bring them back to the 'verify_email'
+            subject = 'Verify your email address'
+            message = f'Dear {user.first_name},\n\nYour verification code is: {user.verification_code}\n\nPlease enter this code to verify your email address.\n\nBest regards,\nPhilippine Association of Practioners of Student Affairs and Services'
+            send_mail(subject, message, 'your_email@example.com', [user.email])
             return render(request, 'papsas_app/verify_email.html', {
-                'message' : 'Invalid Verification Code'
+                'message' : 'New verification code sent to your email address.',
+                'user': user
+            })
+        else:
+            code = request.POST['code']
+            if user.verification_code_expiration is not None and timezone.now() > user.verification_code_expiration:
+                return render(request, 'papsas_app/verify_email.html', {
+                    'message' : 'Verification code has expired. Please request a new one.',
+                    'resend_code': True,
+                    'user': user
                 })
-            # return HttpResponse('Invalid verification code')
+            elif user.verification_code == int(code):
+                user.email_verified = True
+                user.is_active = True
+                user.save()
+                login(request, user)
+                return HttpResponseRedirect(reverse("index"))
+            else:
+                return render(request, 'papsas_app/verify_email.html', {
+                    'message' : 'Invalid Verification Code',
+                    'user': user
+                })
     else:
-        return render(request, 'papsas_app/verify_email.html', {'user_id': user_id})
+        if user.verification_code is None or user.verification_code_expiration is None or timezone.now() > user.verification_code_expiration:
+            user.verification_code = random.randint(100000, 999999)
+            user.verification_code_expiration = timezone.now() + timezone.timedelta(minutes=2)
+            user.save()
+            subject = 'Verify your email address'
+            message = f'Dear {user.first_name},\n\nYour verification code is: {user.verification_code}\n\nPlease enter this code to verify your email address.\n\nBest regards,\nPhilippine Association of Practioners of Student Affairs and Services'
+            send_mail(subject, message, 'your_email@example.com', [user.email])
+        return render(request, 'papsas_app/verify_email.html', {'user': user})
     
 def email_not_verified(request, user_id):
     user = User.objects.get(id=user_id)
@@ -157,6 +173,7 @@ def resend_verification_code(request, user_id):
         user = User.objects.get(id=user_id)
         verification_code = random.randint(100000, 999999)
         user.verification_code = verification_code
+        user.verification_code_generated_at = timezone.now()
         user.save()
         subject = 'Verify your email address'
         message = f'Dear {user.first_name},\n\nYour verification code is: {verification_code}\n\nPlease enter this code to verify your email address.\n\nBest regards,\nPhilippine Association of Practioners of Student Affairs and Services'
@@ -459,11 +476,11 @@ def event_calendar(request):
         })
     return render(request, 'papsas_app/event_calendar.html', {'events': data})
 
+
 def password_reset_request(request):
     if request.method == 'POST':
-        form = PasswordResetForm(request.POST)
-        if form.is_valid():
-            email = form.cleaned_data['email']
+        email = request.POST.get('email')
+        try:
             user = User.objects.get(email=email)
             verification_code = random.randint(100000, 999999)
             user.verification_code = verification_code
@@ -472,11 +489,14 @@ def password_reset_request(request):
             message = f'Dear {user.first_name},\n\nYour verification code is: {verification_code}\n\nPlease enter this code to reset your password.\n\nBest regards,\nPhilippine Association of Practioners of Student Affairs and Services'
             send_mail(subject, message, 'your_email@example.com', [user.email])
             return redirect('password_reset_verify', user_id=user.id)
+        except ObjectDoesNotExist:
+            messages.error(request, 'User with this email does not exist.')
+            return redirect('password_reset')
     else:
         form = PasswordResetForm()
         form.fields['email'].widget.attrs['placeholder'] = 'Enter your email address'
         form.fields['email'].widget.attrs['class'] = 'password-reset'
-    return render(request, 'papsas_app/password_reset.html', {'form': form})
+        return render(request, 'papsas_app/password_reset.html', {'form': form})
 
 def password_reset_verify(request, user_id):
     user = User.objects.get(id=user_id)

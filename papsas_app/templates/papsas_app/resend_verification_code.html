@@ -2,9 +2,33 @@
 
 {% block body %}
     <h1>Resend Verification Code</h1>
-    <p>We've sent a new verification code to {{ email }}.</p>
-    <form action="{% url 'resend_verification_code' email %}" method="post">
+    <p>We've sent a new verification code to {{ email }}. This code will expire in 2 minutes.</p>
+    <p id="timer"></p>
+    <form action="{% url 'verify_code' email %}" method="post">
         {% csrf_token %}
-        <button type="submit" name="resend_code">Resend Verification Code</button>
+        <input type="hidden" id="verification_code" value="{{ verification_code }}">
+        <button type="submit" name="verify_code">Verify Code</button>
     </form>
+
+    <script>
+        let countdown = 120; // 2 minutes in seconds
+        let timerElement = document.getElementById('timer');
+        let verificationCodeElement = document.getElementById('verification_code');
+
+        function updateTimer() {
+            let minutes = Math.floor(countdown / 60);
+            let seconds = countdown % 60;
+            timerElement.textContent = `Code expires in ${minutes} minutes and ${seconds} seconds`;
+            countdown -= 1;
+            if (countdown <= 0) {
+                timerElement.textContent = 'Code has expired. Please request a new one.';
+                verificationCodeElement.disabled = true;
+                document.querySelector('button[name="verify_code"]').disabled = true;
+            } else {
+                setTimeout(updateTimer, 1000);
+            }
+        }
+
+        updateTimer();
+    </script>
 {% endblock %}

@@ -7,5 +7,32 @@
     {% if message %}
         <p>{{ message }}</p>
     {% endif %}
+    {% if resend_code %}
+        <button type="submit" name="resend_code">Resend Code</button>
+    {% endif %}
     <p>Please enter the verification code sent to your email address.</p>
+    <div id="timer"></div>
+
+    <script>
+        var expirationTime = {{ user.get_expiration_timestamp }};
+        var currentTime = Math.floor(Date.now() / 1000);
+        var timeLeft = expirationTime - currentTime;
+
+        var timer = document.getElementById("timer");
+
+        function updateTimer() {
+            timeLeft -= 1;
+            var minutes = Math.floor(timeLeft / 60);
+            var seconds = timeLeft % 60;
+            timer.innerHTML = "Verification code expires in " + minutes + " minutes and " + seconds + " seconds";
+
+            if (timeLeft <= 0) {
+                timer.innerHTML = "Verification code has expired";
+            } else {
+                setTimeout(updateTimer, 1000);
+            }
+        }
+
+        updateTimer();
+    </script>
 </form>

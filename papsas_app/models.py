@@ -3,6 +3,8 @@ from django.contrib import admin
 from django.contrib.auth.models import AbstractUser
 from django import forms
 from django.db.models import F
+from django.utils import timezone
+from datetime import timedelta
 # Create your models here.
 
 Regions = [
@@ -28,19 +30,30 @@ Regions = [
 
 class User(AbstractUser):
     mobileNum = models.CharField(max_length=11)
-    region = models.CharField(max_length=64, choices=Regions, default = 'Region',)
+    region = models.CharField(max_length=64, choices=Regions, default='Region',)
     address = models.CharField(max_length=32)
     occupation = models.CharField(max_length=16)
     age = models.IntegerField(null=True)
     birthdate = models.DateField(null=True)
     verification_code = models.IntegerField(null=True, blank=True)
-    verification_code_expiration = models.DateTimeField(null=True, blank=True)  # Add this line
+    verification_code_expiration = models.DateTimeField(null=True, blank=True)
     email_verified = models.BooleanField(default=False)
     profilePic = models.ImageField(null=True, blank=True, upload_to="papsas_app/profilePic", default="papsas_app/images/default_dp.jpeg") 
     institution = models.CharField(max_length=128, null=True)
 
+    def get_expiration_timestamp(self):
+        return int(self.verification_code_expiration.timestamp())
+
     def __str__(self):
         return f'{self.id} - {self.first_name}'
+
+    def save(self, *args, **kwargs):
+        if self.verification_code:
+            self.verification_code_expiration = timezone.now() + timezone.timedelta(minutes=2)
+        else:
+            self.verification_code = None
+            self.verification_code_expiration = None
+        super().save(*args, **kwargs)
 
 class MembershipTypes(models.Model):
     pubmat = models.ImageField(upload_to="papsas_app/pubmat/event", null=True)
