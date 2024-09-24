@@ -4,11 +4,9 @@
     <label for="code">Enter verification code:</label>
     <input type="text" name="code" placeholder="Enter verification code">
     <button type="submit">Verify Email</button>
+    <button type="submit" name="resend_code" style="display: none;">Resend Code</button> <!-- add this line -->
     {% if message %}
         <p>{{ message }}</p>
-    {% endif %}
-    {% if resend_code %}
-        <button type="submit" name="resend_code">Resend Code</button>
     {% endif %}
     <p>Please enter the verification code sent to your email address.</p>
     <div id="timer"></div>
@@ -19,6 +17,7 @@
         var timeLeft = expirationTime - currentTime;
 
         var timer = document.getElementById("timer");
+        var form = document.querySelector("form"); 
 
         function updateTimer() {
             timeLeft -= 1;
@@ -27,7 +26,12 @@
             timer.innerHTML = "Verification code expires in " + minutes + " minutes and " + seconds + " seconds";
 
             if (timeLeft <= 0) {
-                timer.innerHTML = "Verification code has expired";
+                // hide all form elements except the timer and resend button
+                form.querySelectorAll("input, button, label, p").forEach(function(element) {
+                    element.style.display = "none";
+                });
+                timer.innerHTML = "Verification code has expired. Click the button to resend code.";
+                form.querySelector("button[name='resend_code']").style.display = "block";
             } else {
                 setTimeout(updateTimer, 1000);
             }
