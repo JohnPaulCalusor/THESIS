@@ -82,6 +82,7 @@ class Election(models.Model):
     startDate = models.DateField(null=True)
     endDate = models.DateField(null=True)
     electionStatus = models.BooleanField()
+    numWinners = models.IntegerField(null=True)
 
     def __str__(self):
         return f'Election {self.id}'
