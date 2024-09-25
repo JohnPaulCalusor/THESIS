@@ -16,7 +16,7 @@
         <div class="election-list">
             {% for election in electionList %}
                 <div class="election-item">
-                    <p> {{ election }} - {{ election.title }} </p>
+                    <p><a href="">{{ election }} - {{ election.title }}</a></p>
                 </div>
             {% endfor %}
         </div>
@@ -29,11 +29,12 @@
             <form action="{% url 'election' %}" method="post" >
                 {% csrf_token %}
                 <input type="text" name="title" placeholder="Election Name" required>
+                <input type="number" name="num_candidates" required placeholder="Number of Candidates">
                 <button type="submit"class="submit-btn">Start Election</button>
             </form>
         {% else %}
             <h3>Ongoing Election</h3>
-            <div>
+            <div>   
                 {% for election in electionList %}
                     {% if election.electionStatus == True %}
                         <form action="{% url 'manage_election' election.id %}" method="post" >

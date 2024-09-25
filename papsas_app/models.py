@@ -137,7 +137,7 @@ class Event(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2, null=True)
     startTime = models.TimeField(null=True)
     endTime = models.TimeField(null=True)
-    postStamp = models.DateTimeField(auto_now_add=True, null=True)
+    postStamp = models.DateTimeField(auto_now_add=True, null=True) #date na pinost
 
     def __str__(self):
         return f'{self.id} - {self.eventName}'
@@ -146,6 +146,13 @@ class Achievement(models.Model):
     achievementName = models.CharField(max_length=32, null=True)
     achievementDescription = models.TextField(max_length=9999, null=True)
     postStamp = models.DateTimeField(auto_now_add=True)
+    pubmat = models.ImageField(upload_to="papsas_app/pubmat/achievement", null=True)
+
+class NewsandOffers(models.Model):
+    name = models.CharField(max_length=32, null=True)
+    description = models.TextField(max_length=9999, null=True)
+    postStamp = models.DateTimeField(auto_now_add=True)
+    pubmat = models.ImageField(upload_to="papsas_app/pubmat/newsandoffers", null=True)
     
 class EventRegistration(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="customer")

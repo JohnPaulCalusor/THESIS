@@ -14,7 +14,7 @@ from django.utils import timezone
 from django.core.exceptions import ValidationError
 # Imported Forms
 from .forms import AttendanceForm, EventRegistrationForm, EventForm, ProfileForm, RegistrationForm, LoginForm, MembershipRegistration, Attendance, VenueForm
-from datetime import date
+from datetime import date, timedelta
 from django.contrib.auth.forms import PasswordResetForm
 from django.contrib.auth.views import PasswordResetView
 from django.db.models import Count
@@ -124,8 +124,11 @@ def verify_email(request, user_id):
     if request.method == 'POST':
         if 'resend_code' in request.POST:
             user.verification_code = random.randint(100000, 999999)
+            # if timenow = user.verification_code_expiration
             user.verification_code_expiration = timezone.now() + timezone.timedelta(minutes=2)
             user.save()
+
+            
             subject = 'Verify your email address'
             message = f'Dear {user.first_name},\n\nYour verification code is: {user.verification_code}\n\nPlease enter this code to verify your email address.\n\nBest regards,\nPhilippine Association of Practioners of Student Affairs and Services'
             send_mail(subject, message, 'your_email@example.com', [user.email])
@@ -143,7 +146,7 @@ def verify_email(request, user_id):
                 })
             elif user.verification_code == int(code):
                 user.email_verified = True
-                user.is_active = True
+                user.is_active = True 
                 user.save()
                 login(request, user)
                 return HttpResponseRedirect(reverse("index"))
@@ -187,8 +190,9 @@ def election(request):
     electionList = Election.objects.all()
     ongoingElection = Election.objects.filter(electionStatus = True)
     if request.method == 'POST':
+        num_winners = request.POST['num_candidates']
         title = request.POST['title']
-        newElection = Election(electionStatus = True, startDate = date.today(), title = title)
+        newElection = Election(electionStatus = True, startDate = date.today(), title = title, numWinners = num_winners,)
         newElection.save()
 
     if is_officer(request):
@@ -198,6 +202,34 @@ def election(request):
         })
     else:
         return redirect('index')
+    
+def manage_election(request, id):
+    if request.method == 'POST':
+        election = Election.objects.get(id = id)
+        numWinners = election.numWinners
+        new_officer(numWinners)
+        if (election.electionStatus == True):
+            election.electionStatus = False
+            election.save()
+            return redirect('election')
+
+def new_officer(num_winners):
+    try:
+        ongoing_election = Election.objects.get(electionStatus=True)
+    except Election.DoesNotExist:
+        print("No ongoing election found")
+        return
+
+    top_candidates = Candidacy.objects.filter(election=ongoing_election).annotate(vote_count=Count('nominee')).order_by('-vote_count')[:num_winners]
+    
+    for candidate in top_candidates[:num_winners]:
+        officer = Officer(
+            candidateID=candidate,
+            position='Regular',
+            termStart=date.today(),
+            termEnd=date.today() + timedelta(days=365)
+        )
+        officer.save()
 
 
 def is_officer(request):
@@ -219,18 +251,6 @@ def is_officer(request):
     else:
         return False
 
-def manage_election(request, id):
-    if request.method == 'POST':
-        election = Election.objects.get(id = id)
-        if (election.electionStatus == True):
-            election.electionStatus = False
-            election.save()
-            return redirect('election')
-        
-def get_winner(num_winners):
-    ongoingElection = Election.objects.get(electionStatus=True)
-    candidates = Candidacy.objects.filter(election=ongoingElection).annotate(vote_count=Count('nominee')).order_by('-vote_count')[:num_winners]
-    return candidates
         
 def vote(request):
     user = request.user
@@ -583,6 +603,18 @@ def get_id(request, user_id):
     
     except ObjectDoesNotExist:
         return JsonResponse({'error': 'User or UserMembership not found'}, status=404)
+
+def get_officers(request, election_id):
+    try:
+        election = Election.objects.get( id = election_id)
+    except Election.DoesNotExist:
+        return HttpResponseNotFound("Election not found")
+
+    candidacies = election.elections.all()
+
+
+    elected_officers = []
+
     
 def get_attendees(request, event_id):
     try:
