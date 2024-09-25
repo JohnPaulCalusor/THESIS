@@ -8,8 +8,16 @@
 
 {% block body %}
 <div class="data-table-container">
-    <div class="data-table">
+    <!-- Header section with title and "Add User" button -->
+    <div class="table-header">
         <h1>Membership Record</h1>
+        <a href="#" class="btn-add-user">
+            <i class="fas fa-user-plus"></i> Add Member
+        </a>
+    </div>
+
+    <!-- Membership Table -->
+    <div class="data-table">
         <table>
             <tr>
                 <th>Member</th>
@@ -58,6 +66,7 @@
                 {% endif %}
             {% endfor %}
         </table>
+
         {% if not record %}
         <div class="no-existing">
             <p>No existing record.</p>
@@ -66,15 +75,25 @@
     </div>
 
     <div id="receipt-container" class="modal">
-        <h2> Receipt </h2>
-        <button class="close-modal"> Close </button>
-        <img id="receipt-img" src="" alt="">
+        <div class="modal-content">
+            <h2>Receipt 
+                <span class="close-modal">
+                    <i class="fas fa-times"></i>
+                </span>
+            </h2>
+            <img id="receipt-img" src="" alt="Receipt Image">
+        </div>
     </div>
-
+    
     <div id="id-container" class="modal">
-        <h2> Identification </h2>
-        <button class="close-modal"> Close </button>
-        <img id="id-img" src="" alt="">
+        <div class="modal-content">
+            <h2>Identification 
+                <span class="close-modal">
+                    <i class="fas fa-times"></i>
+                </span>
+            </h2>
+            <img id="id-img" src="" alt="ID Image">
+        </div>
     </div>
 </div>
 {% endblock %}

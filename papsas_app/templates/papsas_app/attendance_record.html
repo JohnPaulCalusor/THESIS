@@ -2,33 +2,79 @@
 
 {% load static %}
 {% block head %}
-<link rel="stylesheet" href="{% static 'papsas_app/record_attendance.css' %}">
+<link rel="stylesheet" href="{% static 'papsas_app/datatable.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 {% endblock %}
 
 {% block body %}
-<div>
-    <h1>Event</h1>
-    {% for event in events %}
-    <p>
-        <a href="" class="event-links" data-event="{{ event.id }}"> {{ event.eventName }} </a>
-    </p>
-    {% endfor %}
+<div class="data-table-container">
+    <!-- Event Table Section -->
+    <div class="table-header">
+        <h1>Event List</h1>
+    </div>
+    
+    <div class="data-table">
+        {% if events %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Event Name</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for event in events %}
+                    <tr>
+                        <td>
+                            {{ event.eventName }}
+                        </td>
+                        <td>
+                            <button class="action-icon" onclick="openAttendance('{{ event.id }}')">
+                                <i class="fas fa-eye"></i> View Attendance
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+        <div class="no-existing">
+            <p>No existing events.</p>
+        </div>
+        {% endif %}
+    </div>
 </div>
 
-<div id="attendance_record">
-    <button id="close-button"> Close </button>
-    <h2>Attendance Record</h2>
-    <div id="table-container">
-        <table>
-            <thead>
-                <tr>
-                    <th>Attendee Name</th>
-                    <th>Attendance Status</th>
-                </tr>
-            </thead>
-            <tbody id="attendees-body">
-            </tbody>
-        </table>
+<!-- Attendance Record Popup -->
+<div id="attendance_record" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Attendance Record 
+                <span id="close-button" class="close-modal">
+                <i class="fas fa-times"></i>
+            </span></h2>
+
+        </div>
+        <div class="filter-container">
+            <input type="text" id="attendanceFilter" placeholder="Filter attendees..." onkeyup="filterAttendance()" />
+            <div class="checkbox-filter">
+                <label><input type="checkbox" id="presentCheckbox" onclick="filterAttendance()" checked> Present</label>
+                <label><input type="checkbox" id="absentCheckbox" onclick="filterAttendance()" checked> Absent</label>
+            </div>
+        </div>
+        <div id="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Attendee Name</th>
+                        <th>Attendance Status</th>
+                        
+                    </tr>
+                </thead>
+                <tbody id="attendees-body">
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 
@@ -36,4 +82,36 @@
 
 {% block script %}
 <script src="{% static 'papsas_app/js/attendance_record.js' %}"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+    // Ensure the close button exists before attaching the listener
+    var closeButton = document.getElementById("close-button");
+    
+    if (closeButton) {
+        closeButton.addEventListener("click", function() {
+            document.getElementById("attendance_record").style.display = "none";
+        });
+    }
+});
+    // Function to open attendance modal
+    function openAttendance(eventId) {
+        // Logic to populate attendance record
+        document.getElementById("attendance_record").style.display = "block";
+    }
+
+    // Function to close the attendance modal
+    document.getElementById("close-button").addEventListener("click", function() {
+        document.getElementById("attendance_record").style.display = "none";
+        
+    });
+
+    // Optional: close modal when clicking outside of it
+    window.onclick = function(event) {
+        var modal = document.getElementById("attendance_record");
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+    
+</script>
 {% endblock %}

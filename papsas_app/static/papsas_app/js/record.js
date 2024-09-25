@@ -61,3 +61,53 @@ function show_id(userId){
             document.getElementById('receipt-container').style.display = 'none';
             });
         }
+        document.addEventListener("DOMContentLoaded", function() {
+            const receiptLinks = document.querySelectorAll('.receipt-link');
+            const idLinks = document.querySelectorAll('.id-link');
+            const receiptContainer = document.getElementById('receipt-container');
+            const idContainer = document.getElementById('id-container');
+            const closeButtons = document.querySelectorAll('.close-modal');
+            const receiptImg = document.getElementById('receipt-img');
+            const idImg = document.getElementById('id-img');
+        
+            // Show receipt pop-up
+            receiptLinks.forEach(link => {
+                link.addEventListener('click', function(event) {
+                    event.preventDefault();
+                    const userId = this.getAttribute('data-id');
+                    // Load the receipt image dynamically
+                    receiptImg.src = `/path-to-receipt-image/${userId}/`;
+                    receiptContainer.style.display = 'flex';
+                });
+            });
+        
+            // Show ID pop-up
+            idLinks.forEach(link => {
+                link.addEventListener('click', function(event) {
+                    event.preventDefault();
+                    const userId = this.getAttribute('data-id');
+                    // Load the ID image dynamically
+                    idImg.src = `/path-to-id-image/${userId}/`;
+                    idContainer.style.display = 'flex';
+                });
+            });
+        
+            // Close the modal pop-up
+            closeButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    document.getElementById('receipt-container').style.display = 'none';
+                    document.getElementById('id-container').style.display = 'none';
+                    document.body.classList.remove('modal-open');
+                });
+            });
+        
+            // Close modal when clicking outside the modal content
+            window.addEventListener('click', function(event) {
+                if (event.target === receiptContainer || event.target === idContainer) {
+                    receiptContainer.style.display = 'none';
+                    idContainer.style.display = 'none';
+                    document.body.classList.remove('modal-open');
+                }
+            });
+        });
+        

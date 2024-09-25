@@ -1,0 +1,144 @@
+/* Modal container */
+.profile-modal {
+    display: none; /* Hidden by default */
+    position: fixed; 
+    z-index: 1; 
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.5); /* Black background with opacity */
+}
+
+/* Modal content */
+.profile-modal-content {
+    background-color: #fefefe;
+    margin: 10% auto; 
+    padding: 20px;
+    border: 1px solid #888;
+    width: 50%;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Close button */
+.close-modal {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close-modal:hover, .close-modal:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* Trigger button for profile modal */
+.btn-open-profile {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.btn-open-profile:hover {
+    background-color: #45a049;
+}
+
+/* Profile settings styling */
+.profile-settings-container {
+    max-width: 800px;
+    margin: 0 auto;
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.profile-header h3 {
+    text-align: center;
+    color: #333;
+    font-size: 28px;
+}
+
+.profile-content {
+    display: flex;
+    gap: 30px;
+    justify-content: space-around;
+    align-items: flex-start;
+}
+
+.profile-pic-section {
+    text-align: center;
+    flex-basis: 30%;
+}
+
+#profile-pic {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #ccc;
+}
+
+.upload-section {
+    margin-top: 20px;
+}
+
+.upload-section label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.btn-submit {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.btn-submit:hover {
+    background-color: #45a049;
+}
+
+.profile-info-section {
+    flex-basis: 60%;
+}
+
+.profile-info-section h4 {
+    font-size: 24px;
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.verified-icon {
+    color: #4CAF50;
+    font-size: 20px;
+}
+
+.unverified-icon {
+    color: #f44336;
+    font-size: 20px;
+}
+
+.email, .location, .address {
+    font-size: 16px;
+    margin-top: 10px;
+    color: #555;
+}
+
+.address strong {
+    color: #333;
+}

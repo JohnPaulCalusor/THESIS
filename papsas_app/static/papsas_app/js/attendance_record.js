@@ -8,6 +8,8 @@ document.addEventListener('DOMContentLoaded', function(){
             show_attendance(id)
             });
     });
+    
+    
 })
 
 function show_attendance(eventId){
