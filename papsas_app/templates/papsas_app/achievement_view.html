@@ -1,0 +1,12 @@
+{% extends 'papsas_app/layout.html' %}
+
+{% block body %}
+    <h1>Achievements</h1>
+    {% for achievement in achievements %}
+    <div>
+        <img src="{{ achievement.pubmat.url }}" alt="{{ achievement.name }}">
+        <h3>{{ achievement.name }}</h3>
+        <p>{{ achievement.description }}</p>
+    </div>
+    {% endfor %}
+{% endblock %}

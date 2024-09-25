@@ -143,8 +143,8 @@ class Event(models.Model):
         return f'{self.id} - {self.eventName}'
     
 class Achievement(models.Model):
-    achievementName = models.CharField(max_length=32, null=True)
-    achievementDescription = models.TextField(max_length=9999, null=True)
+    name = models.CharField(max_length=32, null=True)
+    description = models.TextField(max_length=9999, null=True)
     postStamp = models.DateTimeField(auto_now_add=True)
     pubmat = models.ImageField(upload_to="papsas_app/pubmat/achievement", null=True)
 

@@ -1,0 +1,11 @@
+{% extends 'papsas_app/layout.html' %}
+
+{% block body %}
+<div>
+    <form action="{% url 'compose_achievement' %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form }}
+        <button type="submit">Submit</button>
+    </form>
+</div>
+{% endblock %}

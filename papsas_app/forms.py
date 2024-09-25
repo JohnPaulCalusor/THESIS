@@ -1,5 +1,5 @@
 from django import forms
-from .models import Attendance, EventRegistration, Event, User, UserMembership, MembershipTypes, Venue
+from .models import Attendance, EventRegistration, Event, User, UserMembership, MembershipTypes, Venue, Achievement, NewsandOffers
 from django.core.exceptions import ValidationError
 from django.forms import ModelForm, TextInput, EmailInput
 
@@ -140,5 +140,14 @@ class VenueForm(forms.ModelForm):
         model = Venue
         fields = ('name', 'address', 'capacity')
 
-# class AchievementForm(forms.ModelForm):
+class AchievementForm(forms.ModelForm):
+    class Meta:
+        model = Achievement
+        fields = ('name', 'description', 'pubmat')
+
+class NewsForm(forms.ModelForm):
+    class Meta:
+        model = NewsandOffers
+        fields = ('name', 'description', 'pubmat')
+        
 

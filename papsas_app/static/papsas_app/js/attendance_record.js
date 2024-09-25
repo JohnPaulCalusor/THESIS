@@ -1,29 +1,18 @@
-document.addEventListener('DOMContentLoaded', function(){
-    event_links = document.querySelectorAll('.event-links')
-
-    event_links.forEach(function(link){
-        link.addEventListener('click', function(event){
-            event.preventDefault();
-            id = link.getAttribute('data-event');
-            show_attendance(id)
-            });
-    });
+document.addEventListener("DOMContentLoaded", function() {
+    // Ensure the close button exists before attaching the listener
+    var closeButton = document.getElementById("close-button");
     
-    
-})
+    if (closeButton) {
+        closeButton.addEventListener("click", function() {
+            document.getElementById("attendance_record").style.display = "none";
+        });
+    }
+});
 
-function show_attendance(eventId){
-    const attendance_record = document.querySelector('#attendance_record')
-    const attendance_table = document.querySelector('#table-container')
-    attendance_record.style.display = 'block'
-    const tableBody = document.getElementById('attendees-body');
-
-    close_button = document.querySelector('#close-button')
-    close_button.addEventListener('click', function(){
-        attendance_record.style.display = 'none'
-    });
-
-    fetch(`get-attendance/${eventId}/`)
+    function openAttendance(eventId) {
+        document.getElementById("attendance_record").style.display = "block";
+        const tableBody = document.getElementById('attendees-body');
+        fetch(`get-attendance/${eventId}/`)
         .then(response => response.json())
         .then(data => {
             const attendees = data.attendees;
@@ -31,11 +20,25 @@ function show_attendance(eventId){
             attendees.forEach(attendee => {
                 const tableRow = document.createElement('tr');
                 tableRow.innerHTML = `
-                    <td>${attendee.first_name} ${attendee.last_name}</td>
-                    <td>${attendee.status}</td>
+                    <td>${attendee.first_name} ${attendee.last_name}</td>   
+                    <td>${attendee.status ? 'Present' : 'Absent'}</td>
 
                 `;
                 tableBody.appendChild(tableRow);
         });
     });
-}
+    }
+
+    // Function to close the attendance modal
+    document.getElementById("close-button").addEventListener("click", function() {
+        document.getElementById("attendance_record").style.display = "none";
+        
+    });
+
+    // Optional: close modal when clicking outside of it
+    window.onclick = function(event) {
+        var modal = document.getElementById("attendance_record");
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }

@@ -40,6 +40,7 @@ urlpatterns = [
     # compose
     path('compose/event', views.event, name="event"),
     path('compose/venue', views.compose_venue, name="compose_venue"),
+    path('compose/achievement', views.compose_achievement, name="compose_achievement"),
     # record
     path('record/account', views.record, name="record"),
     path('record/attendance', views.attendance_list, name="attendance_list"),
@@ -47,5 +48,7 @@ urlpatterns = [
     # get function
     path('record/get-receipt/<int:user_id>/', views.get_receipt, name='get_receipt'),
     path('record/get-id/<int:user_id>/', views.get_id, name='get_id'),
-    path('record/get-attendance/<int:event_id>/', views.get_attendees, name='get_attendance')
+    path('record/get-attendance/<int:event_id>/', views.get_attendees, name='get_attendance'),
+    #achievement
+    path('achievement/', views.achievement_view, name='achievement')
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_list_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, logout, authenticate
-from .models import User, Officer, Candidacy, Election, Event, Attendance, EventRegistration, MembershipTypes, UserMembership, Vote
+from .models import User, Officer, Candidacy, Election, Event, Attendance, EventRegistration, MembershipTypes, UserMembership, Vote, Achievement, NewsandOffers
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, HttpResponseNotFound
 from django.urls import reverse
 from django.core.mail import send_mail
@@ -13,7 +13,7 @@ from django.contrib import messages
 from django.utils import timezone
 from django.core.exceptions import ValidationError
 # Imported Forms
-from .forms import AttendanceForm, EventRegistrationForm, EventForm, ProfileForm, RegistrationForm, LoginForm, MembershipRegistration, Attendance, VenueForm
+from .forms import AttendanceForm, EventRegistrationForm, EventForm, ProfileForm, RegistrationForm, LoginForm, MembershipRegistration, Attendance, VenueForm, AchievementForm, NewsForm
 from datetime import date, timedelta
 from django.contrib.auth.forms import PasswordResetForm
 from django.contrib.auth.views import PasswordResetView
@@ -637,3 +637,29 @@ def get_attendees(request, event_id):
         attendees = []
         return JsonResponse(attendees, safe=False)
     
+def compose_achievement(request):
+    form = AchievementForm()
+
+    if request.method == 'POST':
+        form = AchievementForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('index')
+        else:
+            return render(request, 'papsas_app/compose_achievement.html', {
+                'form' : form,
+            })
+        
+    return render(request, 'papsas_app/compose_achievement.html', {
+        'form' : form
+    })
+
+def achievement_view(request):
+    achievements = Achievement.objects.all()
+
+    return render(request, 'papsas_app/achievement_view.html', {
+        'achievements' : achievements,
+    } )
+
+
+
