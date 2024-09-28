@@ -1,34 +1,66 @@
 {% extends 'papsas_app/layout.html' %}
-
+{% load static %}
+{% block head %}
+    <link rel="stylesheet" href="{% static 'papsas_app/profile.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"> 
+{% endblock %}
 {% block body %}
-    <div>
-        <h3>Profile</h3>
-        {% if viewUser.profilePic %}
-            <!-- show the profilepic -->
-             <img src="{{ viewUser.profilePic.url }}" alt="profilePic" id="profile">
+    <div class="profile-container">
+        <div class="profile-header">
+            <h3>Profile</h3>
+            {% if viewUser.profilePic %}
+                <!-- show the profile picture -->
+                <img src="{{ viewUser.profilePic.url }}" alt="Profile Picture" class="profile-pic" onclick="openModal()">
+            {% else %}
+                <!-- Show default profile pic -->
+                <img src="{% url 'profile' user.id  %}" alt="Default Profile Picture" class="profile-pic" onclick="openModal()">
+            {% endif %}
 
-        {% else %}
+            <!-- Upload Button for Profile Picture -->
             {% if user.id == viewUser.id %}
-                <form action="{% url 'profile' user.id  %}" method="post" enctype="multipart/form-data">
+                <form action="{% url 'profile' user.id %}" method="post" enctype="multipart/form-data">
                     {% csrf_token %}
-                    {{ form }}
-                    <button type="submit">Submit</button>
+                    <label for="upload-pic" class="upload-btn">Upload New Picture</label>
+                    <input type="file" name="profilePic" id="upload-pic" class="file-input" accept="image/*" onchange="this.form.submit()">
+                    <button type="submit" class="submit-btn" style="display: none;">Submit</button>
                 </form>
             {% endif %}
-        {% endif %}
-
-        <h4>
-            {{ user.first_name }} {{user.last_name}} 
+        </div>
+        <!-- User Details -->
+        <div class="profile-details">
+            <h4>{{ user.first_name }} {{ user.last_name }}</h4>
             {% if user.email_verified %}
-            <!-- Show symbol check -->
-             <p>Check Verified</p> 
+                <p class="verified">✔ Verified</p>
             {% else %}
-            <!-- Show question mark symbol -->
-            <p>Question Mark Unverified</p>
+                <p class="unverified">❓ Unverified</p>
             {% endif %}
-        </h4>
-        <p> {{ user.region }} </p>
-        <p>From<strong> {{ user.address }} </strong></p>
-
+            <p>{{ user.region }}</p>
+            <p>From <strong>{{ user.address }}</strong></p>
+        </div>
     </div>
+
+    <!-- Modal for Image Preview -->
+    <div id="imageModal" class="modal">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <img class="modal-content" id="modalImage">
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script>
+        // Function to open the modal and show the image
+        function openModal() {
+            var modal = document.getElementById("imageModal");
+            var modalImage = document.getElementById("modalImage");
+            var profilePic = document.querySelector(".profile-pic");
+            modal.style.display = "block";
+            modalImage.src = profilePic.src;
+        }
+
+        // Function to close the modal
+        function closeModal() {
+            var modal = document.getElementById("imageModal");
+            modal.style.display = "none";
+        }
+    </script>
 {% endblock %}
