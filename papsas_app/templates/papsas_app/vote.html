@@ -10,10 +10,10 @@
 <link rel="stylesheet" href="{% static 'papsas_app/vote.css' %}">
 {% endblock %}
 {% block body %}
-    {% for election in openElection %}
-        <h2> {{ election.electionDate.year }} Officer Election</h2>
-        <p> {{ election.electionDate}} </p>
-    {% endfor %}
+    {% if ongoingElection %}
+        <h2> {{ ongoingElection.startDate.year }} Officer Election</h2>
+        <p> {{ ongoingElection.startDate}} </p>
+    {% endif %}
 
     <div>
         <h2>
@@ -25,7 +25,9 @@
         <h4>
             Cast your Vote
         </h4>
-
+        {% if message %}
+        <p> {{ message }} </p>
+        {% endif %}
         <div>
             <!-- vote form -->
             <form action="{% url 'vote' %}" method="post" id="voteForm">
@@ -33,7 +35,7 @@
                 <div id="voteContainer">
                     {% for candidate in candidates %}
                     <div>
-                        <input id="candidate-{{ candidate.id }}" type="checkbox" name="candidate" class="hidden-checkbox" value="{{ candidate.id }}" />
+                        <input id="candidate-{{ candidate.id }}" type="checkbox" name="candidates" class="hidden-checkbox" value="{{ candidate.id }}" />
                         <label for="candidate-{{candidate.id}}" class="candidate-label"> 
                             <div class="candidateContainer">
                                 <img src="{{ candidate.candidate.profilePic.url }}" alt="" srcset="">
@@ -77,7 +79,22 @@
         {% endif %}
     </div>
 
-<!-- show the ongoing election -->
-<!-- create an interface that allows user to submit candidacy -->
-<!-- after approve or submitted, show all candidates in vote page with vote button that only allows user to vote atleast 5 -->
+    <input type="hidden" id="num-officers" value="{{ ongoingElection.numWinners }}">
+
+{% endblock %}
+{% block script %}
+<script>
+  const voteForm = document.getElementById('voteForm');
+  const maxChecked = 2;  // Modify based on how many votes are allowed
+
+  voteForm.addEventListener('change', function(e) {
+    const checkboxes = voteForm.querySelectorAll('input[type="checkbox"]');
+    const checkedCount = Array.from(checkboxes).filter(checkbox => checkbox.checked).length;
+
+    if (checkedCount > maxChecked) {
+      alert(`You can only select up to ${maxChecked} options.`);
+    }
+  });
+</script>
+</script>
 {% endblock %}

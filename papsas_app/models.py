@@ -99,7 +99,7 @@ class Vote(models.Model):
     candidateID = models.ManyToManyField(Candidacy, related_name="nominee")
     voterID = models.ForeignKey(User, on_delete=models.CASCADE, related_name="voter")
     voteDate = models.DateField(auto_now_add=True)
-    election = models.ForeignKey(Election, on_delete=models.CASCADE, null=True)
+    election = models.ForeignKey(Election, on_delete=models.CASCADE, null=True, related_name="poll")
 
     def __str__(self):
         return f'{self.candidateID.all()}'

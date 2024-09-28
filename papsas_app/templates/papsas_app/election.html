@@ -17,36 +17,36 @@
             <div class="election-list">
                 {% for election in electionList %}
                     <div class="election-item">
-                        <p><button class="action-icon" onclick="openForm('{{ election.number }}', '{{ election.name }}', '{{ election.totalVotes }}')">{{ election }} - {{ election.title }}</button></p>
+                        <p><button class="action-icon" onclick="openForm('{{ election.id }}')">{{ election }} - {{ election.title }}</button></p>
                     </div>
                 {% endfor %}
             </div>
         </div>
 
-        <div class="new-election">
-            {% if not ongoingElection %}
-                <h3>Start New Election</h3>
-                <form action="{% url 'election' %}" method="post">
-                    {% csrf_token %}
-                    <input type="text" name="title" placeholder="Election Name" required>
-                    <input type="number" name="num_candidates" required placeholder="Number of Candidates">
-                    <button type="submit" class="submit-btn">Start Election</button>
-                </form>
-            {% else %}
-                <h3>Ongoing Election</h3>
-                <div>
-                    {% for election in electionList %}
-                        {% if election.electionStatus == True %}
-                            <form action="{% url 'manage_election' election.id %}" method="post">
-                                {% csrf_token %}
-                                <button type="submit" class="submit-btn">Stop Election</button>
-                            </form>
-                        {% endif %}
-                    {% endfor %}
-                </div>
-            {% endif %}
+            <div class="new-election">
+                    {% if not ongoingElection %}
+                    <h3>Start New Election</h3>
+                    <form action="{% url 'election' %}" method="post">
+                        {% csrf_token %}
+                        <input type="text" name="title" placeholder="Election Name" required>
+                        <input type="number" name="num_candidates" required placeholder="Number of Candidates">
+                        <button type="submit" class="submit-btn">Start Election</button>
+                    </form>
+                {% else %}
+                    <h3>Ongoing Election</h3>
+                    <div>
+                        {% for election in electionList %}
+                            {% if election.electionStatus == True %}
+                                <form action="{% url 'manage_election' election.id %}" method="post">
+                                    {% csrf_token %}
+                                    <button type="submit" class="submit-btn">Stop Election</button>
+                                </form>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
         </div>
-    </div>
 </div>
 
 <!-- Popup for Election Details -->
@@ -60,28 +60,21 @@
             <input type="text" id="filter" placeholder="Filter elections...">
         </div>
 
+        <div id="data-container">
+        </div>
+
         <!-- Table for Display -->
         <table class="data-table">
             <thead>
                 <tr>
-                    <th>No.</th>
+                    <th>Rank</th>
                     <th>Name</th>
                     <th>Total Votes</th>
                 </tr>
             </thead>
             <tbody id="electionData">
                 <!-- Data will be populated dynamically -->
-                <tr>
-                    <td>1</td>
-                    <td>Kris Nathaniel Dimaapi</td>
-                    <td>100</td>
-                </tr>
-                <tr>
-                    <td>1</td>
-                    <td>Kris Nathaniel Dimaapi</td>
-                    <td>100</td>
-                </tr>
-                
+
                 <!-- Add more rows here -->
             </tbody>
         </table>
@@ -90,25 +83,7 @@
 
 
 {% endblock %}
+
 {% block script %}
-<script>
-    function openForm(name, position, totalVotes) {
-    document.getElementById('number').value = name;
-    document.getElementById('name').value = position;
-    document.getElementById('totalVotes').value = totalVotes;
-    document.getElementById('popup_container').classList.add('active');
-}
-
-function openForm() {
-    document.getElementById('popup_container').classList.add('active');
-    document.getElementById('overlay').style.display = 'block'; // Show the overlay
-}
-
-function closeForm() {
-    document.getElementById('popup_container').classList.remove('active');
-    document.getElementById('overlay').style.display = 'none'; // Hide the overlay
-}
-
-
-</script>
+<script src="{% static 'papsas_app/js/election.js' %}"></script>
 {% endblock %}

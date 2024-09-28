@@ -1,5 +1,4 @@
 document.addEventListener("DOMContentLoaded", function() {
-    // Ensure the close button exists before attaching the listener
     var closeButton = document.getElementById("close-button");
     
     if (closeButton) {
@@ -29,13 +28,11 @@ document.addEventListener("DOMContentLoaded", function() {
     });
     }
 
-    // Function to close the attendance modal
     document.getElementById("close-button").addEventListener("click", function() {
         document.getElementById("attendance_record").style.display = "none";
         
     });
 
-    // Optional: close modal when clicking outside of it
     window.onclick = function(event) {
         var modal = document.getElementById("attendance_record");
         if (event.target == modal) {

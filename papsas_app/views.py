@@ -261,7 +261,7 @@ def vote(request):
 
 
     if request.POST:
-        selected_candidates = request.POST.getlist('candidate')
+        selected_candidates = request.POST.getlist('candidates')
 
         if not selected_candidates:
             return HttpResponse("No candidate selected!" , status=400)
@@ -273,19 +273,26 @@ def vote(request):
             return HttpResponse("You have already voted!" , status=400)
 
         vote = Vote.objects.create(voterID=user, election = ongoingElection)
-    
-        for candidate_id in selected_candidates:
-            try:
-                candidate_obj = Candidacy.objects.get(id = candidate_id, election = ongoingElection)
-                vote.candidateID.add(candidate_obj)
-            except Candidacy.DoesNotExist:
-                # handle the case where the candidate does not exist
-                return HttpResponse("Invalid candidate!", status=400)
+        num_selected = len(selected_candidates)
+        req_selected = ongoingElection.numWinners
+        if num_selected <= req_selected:
+            for candidate_id in selected_candidates:
+                try:
+                    candidate_obj = Candidacy.objects.get(id = candidate_id, election = ongoingElection)
+                    vote.candidateID.add(candidate_obj)
+                except Candidacy.DoesNotExist:
+                    # handle the case where the candidate does not exist
+                    return HttpResponse("Invalid candidate!", status=400)
+        else:
+            return render(request, 'papsas_app/vote.html', {
+                'message' : 'You voted above the limit'
+            })
         return redirect('index')
     else:
         return render(request, 'papsas_app/vote.html', {
             'candidates' : candidates,
             'attended_event' : attended_event,
+            'ongoingElection' : ongoingElection,
             'votes' : Vote.objects.filter( voterID = user, election = ongoingElection),
 
         })
@@ -609,11 +616,20 @@ def get_officers(request, election_id):
         election = Election.objects.get( id = election_id)
     except Election.DoesNotExist:
         return HttpResponseNotFound("Election not found")
+    
+    candidates = Candidacy.objects.filter( election = election )
+    num_officers = election.numWinners
 
-    candidacies = election.elections.all()
+    data = []
+    for candidate in candidates:
+        total_votes = Vote.objects.filter(candidateID = candidate).count()
+        data.append({
+            'name': f'{candidate.candidate.first_name} {candidate.candidate.last_name}',
+            'total_votes' : total_votes,
+        })
 
 
-    elected_officers = []
+    return JsonResponse({'officers': data, 'num_elected' : num_officers})
 
     
 def get_attendees(request, event_id):
