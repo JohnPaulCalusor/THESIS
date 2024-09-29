@@ -28,11 +28,17 @@ Regions = [
     ('Bangsamoro Autonomous Region in Muslim Mindanao', 'BARMM')
 ]
 
+occupation = [
+    ('Occupation', 'Occupation'),
+    ('Student', 'Student'),
+    ('Practitioner', 'Practitioner'),
+]
+
 class User(AbstractUser):
     mobileNum = models.CharField(max_length=11)
     region = models.CharField(max_length=64, choices=Regions, default='Region',)
     address = models.CharField(max_length=32)
-    occupation = models.CharField(max_length=16)
+    occupation = models.CharField(max_length=16, choices=occupation, default='Occupation')
     age = models.IntegerField(null=True)
     birthdate = models.DateField(null=True)
     verification_code = models.IntegerField(null=True, blank=True)

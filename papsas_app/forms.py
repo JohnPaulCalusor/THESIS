@@ -37,10 +37,6 @@ class RegistrationForm(forms.ModelForm):
                 'placeholder' : 'Address',
                 'class': 'input-field'
             }),
-            'occupation' : forms.TextInput(attrs={
-                'placeholder' : 'Occupation',
-                'class': 'input-field'
-            }),
             'age' : forms.NumberInput(attrs={
                 'placeholder' : 'Age',
                 'class': 'input-field'
