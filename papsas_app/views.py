@@ -51,7 +51,12 @@ def register(request):
                 return render(request, 'papsas_app/register.html', {
                 'form': form,
                 'message' : 'Please input a region'
-            })          
+            })
+            elif occupation == 'Occupation' :
+                return render(request, 'papsas_app/register.html', {
+                'form': form,
+                'message' : 'Please input an occupation'
+            })               
             else:
 
                 user = User.objects.create_user(username = username,

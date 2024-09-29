@@ -134,6 +134,7 @@ class Venue(models.Model):
 
 class Event(models.Model):
     eventName = models.CharField(max_length=32, null=True)
+    participant = models.CharField(max_length=16, choices=occupation, null=True)
     startDate = models.DateField(null=True)
     endDate = models.DateField(null=True)
     venue = models.ForeignKey(Venue, on_delete=models.CASCADE, null=True)
