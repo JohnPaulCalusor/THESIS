@@ -121,49 +121,70 @@ def login_view(request):
 
 def verify_email(request, user_id):
     user = User.objects.get(id=user_id)
+    
     if request.method == 'POST':
         if 'resend_code' in request.POST:
+            # Only resend the code if explicitly requested
             user.verification_code = random.randint(100000, 999999)
-            # if timenow = user.verification_code_expiration
             user.verification_code_expiration = timezone.now() + timezone.timedelta(minutes=2)
             user.save()
 
-            
+            # Send email with the new verification code
             subject = 'Verify your email address'
-            message = f'Dear {user.first_name},\n\nYour verification code is: {user.verification_code}\n\nPlease enter this code to verify your email address.\n\nBest regards,\nPhilippine Association of Practioners of Student Affairs and Services'
+            message = f'Dear {user.first_name},\n\nYour new verification code is: {user.verification_code}\n\nPlease enter this code to verify your email address.\n\nBest regards,\nPhilippine Association of Practioners of Student Affairs and Services'
             send_mail(subject, message, 'your_email@example.com', [user.email])
+            
             return render(request, 'papsas_app/verify_email.html', {
-                'message' : 'New verification code sent to your email address.',
-                'user': user
+                'message': 'A new verification code has been sent to your email address.',
+                'user': user,
+                'expiration_timestamp': int(user.verification_code_expiration.timestamp())
             })
+
         else:
             code = request.POST['code']
-            if user.verification_code_expiration is not None and timezone.now() > user.verification_code_expiration:
+
+            if user.verification_code_expiration and timezone.now() > user.verification_code_expiration:
                 return render(request, 'papsas_app/verify_email.html', {
-                    'message' : 'Verification code has expired. Please request a new one.',
+                    'message': 'Verification code has expired. Please request a new one.',
                     'resend_code': True,
-                    'user': user
+                    'user': user,
+                    'expiration_timestamp': 0
                 })
+            
             elif user.verification_code == int(code):
                 user.email_verified = True
-                user.is_active = True 
+                user.is_active = True
                 user.save()
                 login(request, user)
                 return HttpResponseRedirect(reverse("index"))
+
             else:
                 return render(request, 'papsas_app/verify_email.html', {
-                    'message' : 'Invalid Verification Code',
-                    'user': user
+                    'message': 'Invalid Verification Code',
+                    'user': user,
+                    'expiration_timestamp': int(user.verification_code_expiration.timestamp())
                 })
+    
     else:
-        if user.verification_code is None or user.verification_code_expiration is None or timezone.now() > user.verification_code_expiration:
+        # Only generate a new code if it's missing or expired
+        if (user.verification_code is None or 
+            user.verification_code_expiration is None or 
+            timezone.now() > user.verification_code_expiration):
+            
             user.verification_code = random.randint(100000, 999999)
             user.verification_code_expiration = timezone.now() + timezone.timedelta(minutes=2)
             user.save()
+
+            # Send email with the new verification code
             subject = 'Verify your email address'
             message = f'Dear {user.first_name},\n\nYour verification code is: {user.verification_code}\n\nPlease enter this code to verify your email address.\n\nBest regards,\nPhilippine Association of Practioners of Student Affairs and Services'
             send_mail(subject, message, 'your_email@example.com', [user.email])
-        return render(request, 'papsas_app/verify_email.html', {'user': user})
+
+        # Pass the expiration timestamp to the template
+        return render(request, 'papsas_app/verify_email.html', {
+            'user': user,
+            'expiration_timestamp': int(user.verification_code_expiration.timestamp())
+        })
     
 def email_not_verified(request, user_id):
     user = User.objects.get(id=user_id)
