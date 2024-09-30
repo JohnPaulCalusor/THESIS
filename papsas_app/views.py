@@ -39,63 +39,73 @@ def index(request):
         'events' : upcoming_events,
     })
 
+from django.shortcuts import render, redirect
+from django.utils import timezone
+from datetime import date
+from django.db import IntegrityError
+from .forms import RegistrationForm
+from .models import User
+
 def register(request):
     form = RegistrationForm()
 
     if request.method == 'POST':
         form = RegistrationForm(request.POST)
         if form.is_valid():
-            username = form.cleaned_data['email']
-            password = form.cleaned_data['password']
-            fname = form.cleaned_data['first_name']
-            lname = form.cleaned_data['last_name']
-            mobileNum = form.cleaned_data['mobileNum']
-            region = form.cleaned_data['region']
-            address = form.cleaned_data['address']
-            occupation = form.cleaned_data['occupation']
-            age = form.cleaned_data['age']
-            birthDate = form.cleaned_data['birthdate']
+            try:
+                username = form.cleaned_data['email']
+                password = form.cleaned_data['password']
+                fname = form.cleaned_data['first_name']
+                lname = form.cleaned_data['last_name']
+                mobileNum = form.cleaned_data['mobileNum']
+                region = form.cleaned_data['region']
+                address = form.cleaned_data['address']
+                occupation = form.cleaned_data['occupation']
+                age = form.cleaned_data['age']
+                birthDate = form.cleaned_data['birthdate']
 
-            if region == 'Region':
-                return render(request, 'papsas_app/register.html', {
-                'form': form,
-                'message' : 'Please input a region'
-            })
-            elif occupation == 'Occupation' :
-                return render(request, 'papsas_app/register.html', {
-                'form': form,
-                'message' : 'Please input an occupation'
-            })               
-            else:
+                if region == 'Region':
+                    form.add_error('region', 'Please select a valid region.')
+                if occupation == 'Occupation':
+                    form.add_error('occupation', 'Please select a valid occupation.')
 
-                user = User.objects.create_user(username = username,
-                                            email= username, 
-                                            password=password, 
-                                            first_name=fname, 
-                                            last_name= lname,
-                                            mobileNum= mobileNum,
-                                            region = region,
-                                            address = address,
-                                            occupation = occupation,
-                                            age = age,
-                                            birthdate = birthDate)
-                user.save()
+                if birthDate:
+                    calculated_age = date.today().year - birthDate.year - ((date.today().month, date.today().day) < (birthDate.month, birthDate.day))
+                    if age != calculated_age:
+                        form.add_error('age', 'Birthdate and Age did not match. Please input the correct details')
 
-                # Set user as inactive until email is verified
-                user.is_active = True
-                user.save()
+                if not form.errors:
+                    user = User.objects.create_user(
+                        username=username,
+                        email=username,
+                        password=password,
+                        first_name=fname,
+                        last_name=lname,
+                        mobileNum=mobileNum,
+                        region=region,
+                        address=address,
+                        occupation=occupation,
+                        age=age,
+                        birthdate=birthDate
+                    )
 
-                # Redirect to email verification page
-                return redirect('verify_email', user_id=user.id)
-        else:
-            return render(request, 'papsas_app/register.html', {
-                'form': form,
-                'message' : 'Invalid form data'
-        })          
-    else:
+                    user.is_active = False
+                    user.save()
+
+                    return redirect('verify_email', user_id=user.id)
+
+            except IntegrityError:
+                form.add_error('email', 'A user with this email already exists.')
+
         return render(request, 'papsas_app/register.html', {
             'form': form,
+            'message': 'Please correct the highlighted errors below.'
         })
+
+    return render(request, 'papsas_app/register.html', {
+        'form': form,
+    })
+
 
 def logout_view(request):
     logout(request)
