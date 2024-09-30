@@ -117,7 +117,7 @@ class Candidacy(models.Model):
     election = models.ForeignKey(Election, on_delete=models.CASCADE, related_name="elections")
     
     def __str__(self):
-        return f"{self.id} - {self.candidate.first_name} : officer"
+        return f"{self.candidate.first_name} running for Election {self.election.title} {self.election.startDate.year}"
     
 class Vote(models.Model):
     candidateID = models.ManyToManyField(Candidacy, related_name="nominee")
@@ -139,7 +139,7 @@ class Officer(models.Model):
     termEnd = models.DateField(null=True)
     
     def __str__(self):
-        return f"{self.candidateID.candidate.first_name} - {self.candidateID.candidate.id} is appointed as {self.position}"
+        return f"{self.candidateID.candidate.first_name} was elected ({self.termStart} - {self.termEnd})"
 
 class Venue(models.Model):
     name = models.CharField(max_length=32, null=True)
@@ -195,5 +195,5 @@ class Attendance(models.Model):
     date_attended = models.DateField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.user.username} - {self.event.event}"
+        return f"{self.user.first_name} attended {self.event.event.eventName}"
     

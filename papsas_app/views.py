@@ -355,6 +355,9 @@ def vote(request):
         })
 
 def profile(request, id):
+    candidacies = Candidacy.objects.filter( candidate = id )
+    attended_event = Attendance.objects.filter( user = id )
+    elected_officer = Officer.objects.filter(candidateID__candidate= id)
     user = User.objects.get( id = id)
     form = ProfileForm()
 
@@ -368,7 +371,10 @@ def profile(request, id):
             return redirect('profile', id = id)
     return render(request, 'papsas_app/profile.html/', {
         'viewUser' : user,
-        'form' : form
+        'form' : form,
+        'candidacies' : candidacies,
+        'attended_events' : attended_event,
+        'elected_officers' : elected_officer
     })
 
 def event(request):

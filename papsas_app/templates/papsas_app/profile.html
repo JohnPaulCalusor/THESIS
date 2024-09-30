@@ -66,30 +66,30 @@
     <div class="title"><h1>Recent Activities</h1></div>
 
     <div class="recent-activities-container">
-        <div class="recent-container">
-            <p>Activity 1 description...</p>
-        </div>
-        <div class="recent-container">
-            <p>Activity 2 description...</p>
-        </div>
-        <div class="recent-container">
-            <p>Activity 3 description...</p>
-        </div>
-        <div class="recent-container">
-            <p>Activity 3 description...</p>
-        </div>
-        <div class="recent-container">
-            <p>Activity 3 description...</p>
-        </div>
-        <div class="recent-container">
-            <p>Activity 3 description...</p>
-        </div>
-        <div class="recent-container">
-            <p>Activity 3 description...</p>
-        </div>
-        <div class="recent-container">
-            <p>Activity 3 description...</p>
-        </div>
+        {% if candidacies %}
+        <h2> Candidacies </h2>
+            {% for candidacy in candidacies %}
+            <div class="recent-container">
+                <p>{{ candidacy }}</p>
+            </div>
+            {% endfor %}
+        {% endif %}
+        {% if elected_officers %}
+        <h2> Election </h2>
+            {% for officer in elected_officers %}
+            <div class="recent-container">
+                <p>{{ officer }}</p>
+            </div>
+            {% endfor %}
+        {% endif %}
+        {% if attended_events %}
+        <h2> Events </h2>
+            {% for event in attended_events %}
+            <div class="recent-container">
+                <p>{{ event }}</p>
+            </div>
+            {% endfor %}
+        {% endif %}
         <!-- Add more recent activity blocks as needed -->
     </div>
 </div>
