@@ -7,7 +7,7 @@ from django.urls import reverse
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
-import random, json
+import random, json, logging
 from django.contrib import messages
 from django.db import IntegrityError
 from django.utils import timezone
@@ -20,7 +20,7 @@ from django.contrib.auth.views import PasswordResetView
 from django.db.models import Count
 from django.core.exceptions import ObjectDoesNotExist
 from functools import wraps
-
+from django.conf import settings
 # Create your views here.
 
 def practitioner_required(view_func):
@@ -376,7 +376,7 @@ def profile(request, id):
         'attended_events' : attended_event,
         'elected_officers' : elected_officer
     })
-
+logger = logging.getLogger(__name__)
 def event(request):
     if request.method == 'POST':
         form = EventForm(request.POST, request.FILES)
@@ -390,24 +390,40 @@ def event(request):
             event.exclusive = exclusive
             event.save()
 
+            subject = f'Don’t Miss Out: Exciting New Event: {event.eventName}'
+            message_template = (
+                'Dear {name},\n\n'
+                'We hope this message finds you well! We are thrilled to announce an upcoming event hosted by the Philippine Association of Practitioners of Student Affairs and Services (PAPSAS) that promises to be both enriching and transformative.\n\n'
+                '📅 Event Details:\n'
+                f'- Event Name: {event.eventName}\n'
+                f'- Date: {event.startDate}\n'
+                f'- Time: {event.startTime}\n'
+                f'- Venue: {event.venue}\n\n'
+                'This is not just another event; it’s a chance to elevate your practice and make meaningful connections. Don’t wait too long! Spaces are limited, and we want to ensure that you are part of this unique experience.\n\n'
+                'Feel free to share this event with your colleagues—let’s grow together as a community!\n\n'
+                'Thank you for being an integral part of PAPSAS. We look forward to seeing you there!\n\n'
+                'Warm regards,\n'
+                '[Bien]\n'  # Replace with actual sender's name
+                '[Pogi sa Pinas]\n'
+                'Philippine Association of Practitioners of Student Affairs and Services\n'
+            )
+
             if event.exclusive:
                 users_to_email = User.objects.all()
-                subject = 'New Event: ' + event.eventName
-                message = 'Dear ' + request.user.first_name + ',\n\nA new event has been composed: ' + event.eventName + '.\n\nPlease check the event details.\n\nBest regards,\nPhilippine Association of Practioners of Student Affairs and Services'
-                for user in users_to_email:
-                    send_mail(subject, message, 'your_email@example.com', [user.email])
             else:
                 users_to_email = User.objects.filter(occupation='Practitioner')
-                subject = 'New Event for Practitioners: ' + event.eventName
-                message = 'Dear ' + request.user.first_name + ',\n\nA new event has been composed for practitioners: ' + event.eventName + '.\n\nPlease check the event details.\n\nBest regards,\nPhilippine Association of Practioners of Student Affairs and Services'
-                for user in users_to_email:
-                    send_mail(subject, message, 'your_email@example.com', [user.email])
+
+            for user in users_to_email:
+                message = message_template.format(name=user.first_name, event_name=event.eventName)
+                try:
+                    send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [user.email])
+                except Exception as e:
+                    logger.error("Error sending email: %s", e)
 
             return redirect('index')
     else:
         form = EventForm
     return render(request, 'papsas_app/event_management.html', {'form': form})
-
 
 def attendance_form(request):
     if request.method == 'POST':
