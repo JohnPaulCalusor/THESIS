@@ -5,45 +5,94 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"> 
 {% endblock %}
 {% block body %}
+<div class="container">
     <div class="profile-container">
-        <div class="profile-header">
-            <h3>Profile</h3>
+        <div class="profile-header"> 
             {% if viewUser.profilePic %}
-                <!-- show the profile picture -->
+                
                 <img src="{{ viewUser.profilePic.url }}" alt="Profile Picture" class="profile-pic" onclick="openModal()">
             {% else %}
-                <!-- Show default profile pic -->
+                
                 <img src="{% url 'profile' user.id  %}" alt="Default Profile Picture" class="profile-pic" onclick="openModal()">
             {% endif %}
 
-            <!-- Upload Button for Profile Picture -->
+            
             {% if user.id == viewUser.id %}
                 <form action="{% url 'profile' user.id %}" method="post" enctype="multipart/form-data">
                     {% csrf_token %}
                     <label for="upload-pic" class="upload-btn">Upload New Picture</label>
-                    <input type="file" name="profilePic" id="upload-pic" class="file-input" accept="image/*" onchange="this.form.submit()">
+                    <input type="file" name="profilePic" id="upload-pic" class="file-input" accept="image/*" onchange="this.form.submit()" style="display: none;">
                     <button type="submit" class="submit-btn" style="display: none;">Submit</button>
                 </form>
             {% endif %}
         </div>
-        <!-- User Details -->
+        
+       
+        
         <div class="profile-details">
-            <h4>{{ user.first_name }} {{ user.last_name }}</h4>
-            {% if user.email_verified %}
-                <p class="verified">✔ Verified</p>
-            {% else %}
-                <p class="unverified">❓ Unverified</p>
-            {% endif %}
-            <p>{{ user.region }}</p>
-            <p>From <strong>{{ user.address }}</strong></p>
+            <h4>
+                {{ user.first_name }} {{ user.last_name }}
+                {% if user.email_verified %}
+                    <span class="verified"><i class="fas fa-circle-check"></i></span>
+                {% else %}
+                    <span class="unverified"><i class="fas fa-circle-xmark"></i></span>
+                {% endif %}
+            </h4>
+            <p class="region">{{ user.region }}</p>
+            
+            <p>{{ user.address }}</p>
+            <p class="occupation">{{ user.occupation }}</p>
+
         </div>
-    </div>
+        </div>
+        <div class="other-details">
+            <h3>Mobile Number</h3>
+            <p>{{ user.mobileNum }}</p>
+            
+            <h3>Email</h3>
+            <p>{{ user.email}}</p>
+            
+            <h3>Birthdate</h3>
+            <p>{{ user.birthdate}}</p>
+        </div>
+        
 
     <!-- Modal for Image Preview -->
     <div id="imageModal" class="modal">
         <span class="close" onclick="closeModal()">&times;</span>
         <img class="modal-content" id="modalImage">
     </div>
+
+    <div class="title"><h1>Recent Activities</h1></div>
+
+    <div class="recent-activities-container">
+        <div class="recent-container">
+            <p>Activity 1 description...</p>
+        </div>
+        <div class="recent-container">
+            <p>Activity 2 description...</p>
+        </div>
+        <div class="recent-container">
+            <p>Activity 3 description...</p>
+        </div>
+        <div class="recent-container">
+            <p>Activity 3 description...</p>
+        </div>
+        <div class="recent-container">
+            <p>Activity 3 description...</p>
+        </div>
+        <div class="recent-container">
+            <p>Activity 3 description...</p>
+        </div>
+        <div class="recent-container">
+            <p>Activity 3 description...</p>
+        </div>
+        <div class="recent-container">
+            <p>Activity 3 description...</p>
+        </div>
+        <!-- Add more recent activity blocks as needed -->
+    </div>
+</div>
 {% endblock %}
 
 {% block script %}
