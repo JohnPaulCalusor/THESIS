@@ -8,8 +8,8 @@ from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 import random, json
-from django.core.exceptions import ObjectDoesNotExist
 from django.contrib import messages
+from django.db import IntegrityError
 from django.utils import timezone
 from django.core.exceptions import ValidationError
 # Imported Forms
@@ -39,12 +39,7 @@ def index(request):
         'events' : upcoming_events,
     })
 
-from django.shortcuts import render, redirect
-from django.utils import timezone
-from datetime import date
-from django.db import IntegrityError
-from .forms import RegistrationForm
-from .models import User
+
 
 def register(request):
     form = RegistrationForm()
@@ -379,22 +374,34 @@ def profile(request, id):
 def event(request):
     if request.method == 'POST':
         form = EventForm(request.POST, request.FILES)
-
         if form.is_valid():
-            form.save()
-            return redirect('index')
-        else:
-            message = form.errors
-            return render(request, 'papsas_app/event_management.html', {
-                'form' : form,
-                'message' : message
-            })
+            event = form.save(commit=False)
+            exclusive = request.POST.get('exclusive', False)
+            if exclusive == 'on':
+                exclusive = True
+            else:
+                exclusive = False
+            event.exclusive = exclusive
+            event.save()
 
-    else:     
+            if event.exclusive:
+                users_to_email = User.objects.all()
+                subject = 'New Event: ' + event.eventName
+                message = 'Dear ' + request.user.first_name + ',\n\nA new event has been composed: ' + event.eventName + '.\n\nPlease check the event details.\n\nBest regards,\nPhilippine Association of Practioners of Student Affairs and Services'
+                for user in users_to_email:
+                    send_mail(subject, message, 'your_email@example.com', [user.email])
+            else:
+                users_to_email = User.objects.filter(occupation='Practitioner')
+                subject = 'New Event for Practitioners: ' + event.eventName
+                message = 'Dear ' + request.user.first_name + ',\n\nA new event has been composed for practitioners: ' + event.eventName + '.\n\nPlease check the event details.\n\nBest regards,\nPhilippine Association of Practioners of Student Affairs and Services'
+                for user in users_to_email:
+                    send_mail(subject, message, 'your_email@example.com', [user.email])
+
+            return redirect('index')
+    else:
         form = EventForm
-        return render(request, 'papsas_app/event_management.html', {
-            'form' : form
-        })
+    return render(request, 'papsas_app/event_management.html', {'form': form})
+
 
 def attendance_form(request):
     if request.method == 'POST':
