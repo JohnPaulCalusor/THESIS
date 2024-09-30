@@ -95,6 +95,7 @@ td a:hover {
 }
 #receipt-container, #id-container {
     display: none;
+    overflow: hidden;
 }
 /* Modal Container */
 .modal {
@@ -120,15 +121,20 @@ td a:hover {
     width: 80%;
     max-width: 600px;
     text-align: center;
+    overflow-y: auto;
+    max-height: 80vh;
     margin-top: 150px;
 }
 
 
 .modal img {
     max-width: 100%;
-    border: 1px solid #ddd;
+    margin: 0 auto;
+    display: block;
     border-radius: 10px;
+    border: 1px solid #ddd;
 }
+
 
 .modal h2 {
     position: relative;
