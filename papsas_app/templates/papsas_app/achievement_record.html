@@ -1,0 +1,33 @@
+{% extends 'papsas_app/layout.html' %}
+{% load static %}
+{% block title %}
+Achievement Record
+{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{% static 'papsas_app/achievement_record.css' %}">
+{% endblock %}
+
+{% block body %}
+<div>
+    <h1> Achievement Record </h1>
+</div>
+<div>
+    <table>
+        <tr>
+            <td> Title </td>
+            <td> Description </td>
+            <td> Stamp </td>
+            <td> Publication Material </td>
+        </tr>
+        {% for achievement in achievements %}
+        <tr>
+            <td> {{ achievement.name }} </td>
+            <td> {{ achievement.description }} </td>
+            <td> {{ achievement.postStamp }} </td>
+            <td> <img src="{{ achievement.pubmat.url }}" alt="{{achievement.name}} image" class="ach_img"> </td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endblock %}
