@@ -35,6 +35,7 @@
         {% endif %}
 
         <script>
+            // Handle timer logic
             var expirationTime = {{ expiration_timestamp }};
             var currentTime = Math.floor(Date.now() / 1000);
             var timeLeft = expirationTime - currentTime;
@@ -69,6 +70,25 @@
                     }
                 });
             }
+
+            // Handle automatic input focusing between the boxes
+            const codeInputs = document.querySelectorAll(".code-box");
+
+            codeInputs.forEach((input, index) => {
+                input.addEventListener('input', (e) => {
+                    // Move to the next input field if a number is entered
+                    if (input.value.length === 1 && index < codeInputs.length - 1) {
+                        codeInputs[index + 1].focus();
+                    }
+                });
+
+                input.addEventListener('keydown', (e) => {
+                    // Move to the previous input field if the backspace is pressed and the input is empty
+                    if (e.key === "Backspace" && input.value.length === 0 && index > 0) {
+                        codeInputs[index - 1].focus();
+                    }
+                });
+            });
         </script>
     </form>
 </div>

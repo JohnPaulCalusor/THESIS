@@ -155,26 +155,43 @@ def verify_email(request, user_id):
             })
 
         else:
-            code = request.POST['code']
+            try:
+                # Combine the six individual code inputs into a single string
+                code = (
+                    request.POST['code-1'] +
+                    request.POST['code-2'] +
+                    request.POST['code-3'] +
+                    request.POST['code-4'] +
+                    request.POST['code-5'] +
+                    request.POST['code-6']
+                )
 
-            if user.verification_code_expiration and timezone.now() > user.verification_code_expiration:
-                return render(request, 'papsas_app/verify_email.html', {
-                    'message': 'Verification code has expired. Please request a new one.',
-                    'resend_code': True,
-                    'user': user,
-                    'expiration_timestamp': 0
-                })
-            
-            elif user.verification_code == int(code):
-                user.email_verified = True
-                user.is_active = True
-                user.save()
-                login(request, user)
-                return HttpResponseRedirect(reverse("index"))
+                if user.verification_code_expiration and timezone.now() > user.verification_code_expiration:
+                    return render(request, 'papsas_app/verify_email.html', {
+                        'message': 'Verification code has expired. Please request a new one.',
+                        'resend_code': True,
+                        'user': user,
+                        'expiration_timestamp': 0
+                    })
+                
+                elif user.verification_code == int(code):
+                    user.email_verified = True
+                    user.is_active = True
+                    user.save()
+                    login(request, user)
+                    return HttpResponseRedirect(reverse("index"))
 
-            else:
+                else:
+                    return render(request, 'papsas_app/verify_email.html', {
+                        'message': 'Invalid Verification Code',
+                        'user': user,
+                        'expiration_timestamp': int(user.verification_code_expiration.timestamp())
+                    })
+
+            except KeyError:
+                # Handle missing input fields
                 return render(request, 'papsas_app/verify_email.html', {
-                    'message': 'Invalid Verification Code',
+                    'message': 'Please fill in all digits of the verification code.',
                     'user': user,
                     'expiration_timestamp': int(user.verification_code_expiration.timestamp())
                 })
