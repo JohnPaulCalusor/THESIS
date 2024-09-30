@@ -3,7 +3,7 @@ from django.contrib.auth.admin import UserAdmin
 
 # Register your models here.
 
-from .models import User, MembershipTypes, Vote, Candidacy, Officer, Election, Event, EventRegistration, UserMembership, Venue, Attendance
+from .models import User, MembershipTypes, Vote, Candidacy, Officer, Election, Event, EventRegistration, UserMembership, Venue, Attendance, NewsandOffers, Achievement
 
 class UserAdmin(admin.ModelAdmin):
     list_display = ('id' ,'first_name', 'username','email_verified')
@@ -23,3 +23,5 @@ admin.site.register(Event)
 admin.site.register(EventRegistration)
 admin.site.register(Venue)
 admin.site.register(Attendance)
+admin.site.register(Achievement)
+admin.site.register(NewsandOffers)
