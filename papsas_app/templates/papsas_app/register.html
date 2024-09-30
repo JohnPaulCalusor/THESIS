@@ -18,7 +18,7 @@
         </div>
     {% endif %}
 
-    <form action="{% url 'register' %}" method="post" class="login-body">
+    <form action="{% url 'register' %}" method="post" class="login-body" onsubmit="disableSubmitButton(this)">
         {% csrf_token %}
         <div class="register-border">
             <div class="login_box">
@@ -70,11 +70,18 @@
                     {{ form.institution }}
                 </div>
                 <div class="input-submit">
-                    <button class="submit-btn">Register</button>
+                    <button type="submit" class="submit-btn">Register</button>
                 </div>
             </div>
         </div>
     </form>
-
-
+    
+    <script>
+        function disableSubmitButton(form) {
+            const button = form.querySelector('.submit-btn');
+            button.disabled = true;
+            button.innerHTML = 'Processing...'; // Optional: change the text while processing
+        }
+    </script>
+    
 {% endblock %}
