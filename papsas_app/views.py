@@ -741,3 +741,9 @@ def achievement_record(request):
         'achievements' : achievements,
     })
 
+def news_offers_record(request):
+    news_offers = NewsandOffers.objects.all()
+    return render(request, 'papsas_app/news_offers_record.html', {
+        'news_offers' : news_offers,
+        })
+

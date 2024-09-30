@@ -1,0 +1,34 @@
+{% extends 'papsas_app/layout.html' %}
+{% load static %}
+
+{% block title %}
+News and Offers Record
+{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{% static 'papsas_app/news_offers_record.css' %}">
+{% endblock %}
+
+{% block body %}
+<div>
+    <h1>News and Offers Record</h1>
+</div>
+<div>
+    <table>
+        <tr>
+            <td> Title</td>
+            <td> Description </td>
+            <td> Stamp </td>
+            <td> Publication Material </td>
+        </tr>
+        {% for news_offer in news_offers %}
+        <tr>
+            <td>{{ news_offer.name }}</td>
+            <td>{{ news_offer.description }}</td>
+            <td>{{ news_offer.postStamp }}</td>
+            <td> <img src="{{ news_offer.pubmat.url }}" alt="{{news_offer.name}} image" class="n-o_img"> </td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endblock %}
