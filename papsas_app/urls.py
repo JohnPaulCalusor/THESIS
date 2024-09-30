@@ -45,6 +45,8 @@ urlpatterns = [
     path('record/account', views.record, name="record"),
     path('record/attendance', views.attendance_list, name="attendance_list"),
     path('record/membership', views.membership_record, name="membership_record"),
+    path('record/venue', views.venue_record, name="venue_record"),
+    path('record/achievement', views.achievement_record, name="achievement_record"),
     # get function
     path('record/get-receipt/<int:user_id>/', views.get_receipt, name='get_receipt'),
     path('record/get-id/<int:user_id>/', views.get_id, name='get_id'),

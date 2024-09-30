@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect, get_list_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, logout, authenticate
-from .models import User, Officer, Candidacy, Election, Event, Attendance, EventRegistration, MembershipTypes, UserMembership, Vote, Achievement, NewsandOffers
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, HttpResponseNotFound
+from .models import User, Officer, Candidacy, Election, Event, Attendance, EventRegistration, MembershipTypes, UserMembership, Vote, Achievement, NewsandOffers, Venue
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, HttpResponseNotFound, HttpResponseForbidden
 from django.urls import reverse
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
@@ -19,8 +19,17 @@ from django.contrib.auth.forms import PasswordResetForm
 from django.contrib.auth.views import PasswordResetView
 from django.db.models import Count
 from django.core.exceptions import ObjectDoesNotExist
+from functools import wraps
 
 # Create your views here.
+
+def practitioner_required(view_func):
+    @wraps(view_func)
+    def decorated_view(request, *args, **kwargs):
+        if request.user.occupation != 'Practitioner':
+            return HttpResponseForbidden()
+        return view_func(request, *args, **kwargs)
+    return decorated_view
 
 def index(request):
     today = date.today()
@@ -277,7 +286,7 @@ def is_officer(request):
     else:
         return False
 
-        
+@practitioner_required
 def vote(request):
     user = request.user
     ongoingElection = Election.objects.get( electionStatus = True )
@@ -703,5 +712,15 @@ def achievement_view(request):
         'achievements' : achievements,
     } )
 
+def venue_record(request):
+    venues = Venue.objects.all()
+    return render(request, 'papsas_app/venue_record.html', {
+        'venues' : venues,
+    })
 
+def achievement_record(request):
+    achievements = Achievement.objects.all()
+    return render(request, 'papsas_app/achievement_record.html', {
+        'achievements' : achievements,
+    })
 

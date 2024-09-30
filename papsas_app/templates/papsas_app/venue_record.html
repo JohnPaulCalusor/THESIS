@@ -1,0 +1,27 @@
+{% extends 'papsas_app/layout.html' %}
+
+{% block title %} Venue Record {% endblock %}
+
+{% block body %}
+<div>
+    <h1>
+        Venue Record
+    </h1>
+</div>
+<div>
+    <table>
+        <tr>
+            <th> Venue Name </th>
+            <th> Venue Address </th>
+            <th> Capacity </th>
+        </tr>
+        {% for venue in venues %}
+        <tr>
+            <td>{{ venue.name }}</td>
+            <td> {{ venue.address }} </td>
+            <td> {{ venue.capacity }} </td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endblock %}
