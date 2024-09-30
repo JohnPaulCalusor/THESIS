@@ -85,10 +85,16 @@ class AttendanceForm(forms.ModelForm):
         model = Attendance
         fields = ('user', 'event', 'attended')
 
+occupation = [
+    ('Student', 'Student'),
+    ('Practitioner', 'Practitioner'),
+]
+
 class EventForm(forms.ModelForm):
+
     class Meta:
         model = Event
-        fields = ('eventName', 'startDate', 'endDate', 'venue', 'eventDescription', 'pubmat', 'price', 'startTime', 'endTime')
+        fields = ('eventName', 'startDate', 'endDate', 'venue', 'exclusive', 'eventDescription', 'pubmat', 'price', 'startTime', 'endTime')
         widgets = {
             'startDate': forms.DateInput(attrs={'type': 'date'}),
             'endDate': forms.DateInput(attrs={'type': 'date'}),

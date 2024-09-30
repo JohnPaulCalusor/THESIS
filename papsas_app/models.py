@@ -29,10 +29,10 @@ Regions = [
 ]
 
 occupation = [
-    ('Occupation', 'Occupation'),
     ('Student', 'Student'),
     ('Practitioner', 'Practitioner'),
 ]
+
 
 class User(AbstractUser):
     mobileNum = models.CharField(max_length=11)
@@ -134,7 +134,7 @@ class Venue(models.Model):
 
 class Event(models.Model):
     eventName = models.CharField(max_length=32, null=True)
-    participant = models.CharField(max_length=16, choices=occupation, null=True)
+    exclusive = models.BooleanField(default=True)
     startDate = models.DateField(null=True)
     endDate = models.DateField(null=True)
     venue = models.ForeignKey(Venue, on_delete=models.CASCADE, null=True)

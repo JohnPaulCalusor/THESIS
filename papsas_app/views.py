@@ -722,6 +722,23 @@ def compose_achievement(request):
         'form' : form
     })
 
+def compose_news_offer(request):
+    form = NewsForm()
+
+    if request.method == 'POST':
+        form = NewsForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('index')
+        else:
+            return render(request, 'papsas_app/compose_news_offers.html', {
+                'form' : form,
+            })
+
+    return render(request, 'papsas_app/compose_news_offers.html', {
+        'form' : form
+    })
+
 def achievement_view(request):
     achievements = Achievement.objects.all()
 

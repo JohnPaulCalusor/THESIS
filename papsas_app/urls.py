@@ -41,6 +41,7 @@ urlpatterns = [
     path('compose/event', views.event, name="event"),
     path('compose/venue', views.compose_venue, name="compose_venue"),
     path('compose/achievement', views.compose_achievement, name="compose_achievement"),
+    path('compose/news_offer', views.compose_news_offer, name="compose_news_offer"),
     # record
     path('record/account', views.record, name="record"),
     path('record/attendance', views.attendance_list, name="attendance_list"),
