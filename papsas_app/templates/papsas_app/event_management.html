@@ -1,30 +1,113 @@
 {% extends 'papsas_app/layout.html' %}
 
 {% block body %}
-    <h3>
-        Event Management
-    </h3>
-    <form action="{% url 'event' %}" method="post" id="eventForm" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form.eventName }}
-        {{ form.startDate }}
-        {{ form.endDate }}
-        {{ form.venue }}
-        {{ form.address }}
-        {{ form.eventDescription }}
-        {{ form.pubmat }}
-        {{ form.price }}
-        {{ form.startTime }}
-        {{ form.endTime }}
-        {{ form.exclusive }}
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
 
-        {% comment %} {% for field in form %}
-            {{ field.label}}
-            {{ field }}
-        {% endfor %} {% endcomment %}
-        <button type="submit">Submit</button>
-    </form>
-    {% if message %}
-    <p>{{ message }}</p>
-    {% endif %}
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin: auto;
+        }
+
+        h3 {
+            text-align: center;
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+        }
+
+        input[type="text"],
+        input[type="date"],
+        input[type="time"],
+        input[type="number"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .btn {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .btn:hover {
+            background-color: #218838;
+        }
+
+        .message {
+            color: red;
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+
+    <div class="container">
+        <h3>Event Management</h3>
+        <form action="{% url 'event' %}" method="post" id="eventForm" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-group">
+                {{ form.eventName.label }} {{ form.eventName }}
+            </div>
+            <div class="form-group">
+                {{ form.startDate.label }} {{ form.startDate }}
+            </div>
+            <div class="form-group">
+                {{ form.endDate.label }} {{ form.endDate }}
+            </div>
+            <div class="form-group">
+                {{ form.venue.label }} {{ form.venue }}
+            </div>
+            <div class="form-group">
+                {{ form.address.label }} {{ form.address }}
+            </div>
+            <div class="form-group">
+                {{ form.eventDescription.label }} {{ form.eventDescription }}
+            </div>
+            <div class="form-group">
+                {{ form.pubmat.label }} {{ form.pubmat }}
+            </div>
+            <div class="form-group">
+                {{ form.price.label }} {{ form.price }}
+            </div>
+            <div class="form-group">
+                {{ form.startTime.label }} {{ form.startTime }}
+            </div>
+            <div class="form-group">
+                {{ form.endTime.label }} {{ form.endTime }}
+            </div>
+            <div class="form-group">
+                {{ form.exclusive.label }} {{ form.exclusive }}
+            </div>
+
+            <button type="submit" class="btn">Submit</button>
+        </form>
+        {% if message %}
+            <p class="message">{{ message }}</p>
+        {% endif %}
+    </div>
 {% endblock %}
