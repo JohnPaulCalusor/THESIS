@@ -55,7 +55,7 @@ urlpatterns = [
     path('get-candidates/<int:election_id>/', views.get_officers, name="get_officers"),
     # get htmx
     path('record/get-attendance/<int:event_id>/', views.get_attendees, name='get_attendance'),
-    path('partial/event', views.get_event, name="get_event"),
+    path('partial/event/<str:view>', views.get_event, name="get_event"),
     path('partial/account', views.get_account, name="get_account"),
     path('partial/venue', views.get_venue, name="get_venue"),
     path('partial/achievement', views.get_achievement, name="get_achievement"),

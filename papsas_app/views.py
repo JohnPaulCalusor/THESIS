@@ -820,10 +820,11 @@ def get_attendees(request, event_id):
     except Event.DoesNotExist:
         return render(request, 'papsas_app/partial_list/attendance_list.html', {'attendees': []})
 
-def get_event(request):
+def get_event(request, view):
     events = Event.objects.all()
     return render(request, 'papsas_app/partial_list/event_list.html', {
         'events': events,
+        'view' : view,
         })
 
 def get_venue(request):

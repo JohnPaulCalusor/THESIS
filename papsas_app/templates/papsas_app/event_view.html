@@ -6,7 +6,11 @@
 {% endblock %}
 
 {% block body %}
-<div id="event_container">
+<div id="event_container"
+hx-get="{% url 'get_event' 'list' %}"
+hx-trigger="every 5s"
+hx-swap="innerHTML"
+>
     
     {% for event in events %}
     <div class="event-card">
