@@ -496,12 +496,6 @@ def record(request):
         'userRecord' : userRecord
     })
 
-def get_account(request):
-    userRecord = User.objects.all()
-    return render(request, 'papsas_app/partial_list/account_list.html', {
-        'userRecord' : userRecord
-    }) 
-
 def membership_registration(request, mem_id):
     form = MembershipRegistration(request.user, mem_id)
     membership = mem_id
@@ -682,12 +676,6 @@ def attendance_list(request):
         'events': events,
     })
 
-def get_event(request):
-    events = Event.objects.all()
-    return render(request, 'papsas_app/partial_list/event_list.html', {
-        'events': events,
-        })
-
 def get_receipt(request, user_id):
     try:
         user = User.objects.get(id=user_id)
@@ -734,26 +722,6 @@ def get_officers(request, election_id):
 
     return JsonResponse({'officers': data, 'num_elected' : num_officers})
 
-    
-def get_attendees(request, event_id):
-    try:
-        eventId = Event.objects.get(id=event_id)
-        attendances = Attendance.objects.filter(event__event_id=eventId)
-        attendees = []
-        for attendance in attendances:
-            attendees.append({
-                'username': attendance.user.username,
-                'first_name': attendance.user.first_name,
-                'last_name': attendance.user.last_name,
-                'status' : attendance.attended
-            })
-        return render(request, 'papsas_app/partial_list/attendance_list.html', {
-            'attendees': attendees,
-            'eventId' : eventId
-            })
-    except Event.DoesNotExist:
-        return render(request, 'papsas_app/partial_list/attendance_list.html', {'attendees': []})
-    
 def compose_achievement(request):
     form = AchievementForm()
 
@@ -826,4 +794,46 @@ def delete_account(request, id):
             'userRecord' : accounts
         })
 
+#htmx functions
+def get_account(request):
+    userRecord = User.objects.all()
+    return render(request, 'papsas_app/partial_list/account_list.html', {
+        'userRecord' : userRecord
+    }) 
 
+def get_attendees(request, event_id):
+    try:
+        eventId = Event.objects.get(id=event_id)
+        attendances = Attendance.objects.filter(event__event_id=eventId)
+        attendees = []
+        for attendance in attendances:
+            attendees.append({
+                'username': attendance.user.username,
+                'first_name': attendance.user.first_name,
+                'last_name': attendance.user.last_name,
+                'status' : attendance.attended
+            })
+        return render(request, 'papsas_app/partial_list/attendance_list.html', {
+            'attendees': attendees,
+            'eventId' : eventId
+            })
+    except Event.DoesNotExist:
+        return render(request, 'papsas_app/partial_list/attendance_list.html', {'attendees': []})
+
+def get_event(request):
+    events = Event.objects.all()
+    return render(request, 'papsas_app/partial_list/event_list.html', {
+        'events': events,
+        })
+
+def get_venue(request):
+    venues = Venue.objects.all()
+    return render(request, 'papsas_app/partial_list/venue_list.html', {
+        'venues': venues,
+        })
+
+def get_achievement(request):
+    achievements = Achievement.objects.all()
+    return render(request, 'papsas_app/partial_list/achievement_list.html', {
+        'achievements' : achievements,
+        })

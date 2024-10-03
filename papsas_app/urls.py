@@ -57,6 +57,7 @@ urlpatterns = [
     path('record/get-attendance/<int:event_id>/', views.get_attendees, name='get_attendance'),
     path('partial/event', views.get_event, name="get_event"),
     path('partial/account', views.get_account, name="get_account"),
+    path('partial/venue', views.get_venue, name="get_venue"),
     #achievement
     path('achievement/', views.achievement_view, name='achievement'),
     #user

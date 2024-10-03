@@ -19,18 +19,25 @@
     </div>
     <div class="data-table">
         <table>
-            <tr>
-                <th> Venue Name </th>
-                <th> Venue Address </th>
-                <th> Capacity </th>
-            </tr>
-            {% for venue in venues %}
-            <tr>
-                <td>{{ venue.name }}</td>
-                <td> {{ venue.address }} </td>
-                <td> {{ venue.capacity }} </td>
-            </tr>
-            {% endfor %}
+            <thead>
+                <tr>
+                    <th> Venue Name </th>
+                    <th> Venue Address </th>
+                    <th> Capacity </th>
+                </tr>
+            </thead>
+            <tbody 
+            hx-get="{% url 'get_venue' %}"
+            hx-trigger="every 5s"
+            >
+                {% for venue in venues %}
+                <tr>
+                    <td>{{ venue.name }}</td>
+                    <td> {{ venue.address }} </td>
+                    <td> {{ venue.capacity }} </td>
+                </tr>
+                {% endfor %}
+            </tbody>
         </table>
 </div>
 </div>
