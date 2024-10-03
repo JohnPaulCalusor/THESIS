@@ -837,3 +837,9 @@ def get_achievement(request):
     return render(request, 'papsas_app/partial_list/achievement_list.html', {
         'achievements' : achievements,
         })
+
+def get_news_offers(request):
+    news_offers = NewsandOffers.objects.all()
+    return render(request, 'papsas_app/partial_list/news_offers_list.html', {
+        'news_offers' : news_offers,
+        })
