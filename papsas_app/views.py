@@ -666,7 +666,7 @@ def compose_venue(request):
 def event_list(request):
     events = Event.objects.all()
 
-    return render(request, 'papsas_app/event_list.html', {
+    return render(request, 'papsas_app/event_record.html', {
         'events': events,
     })
 
@@ -735,12 +735,12 @@ def get_attendees(request, event_id):
                 'last_name': attendance.user.last_name,
                 'status' : attendance.attended
             })
-        return render(request, 'papsas_app/attendance_list.html', {
+        return render(request, 'papsas_app/partial_list/attendance_list.html', {
             'attendees': attendees,
             'eventId' : eventId
             })
     except Event.DoesNotExist:
-        return render(request, 'papsas_app/attendance_list.html', {'attendees': []})
+        return render(request, 'papsas_app/partial_list/attendance_list.html', {'attendees': []})
     
 def compose_achievement(request):
     form = AchievementForm()
