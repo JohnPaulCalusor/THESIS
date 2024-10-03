@@ -1,0 +1,8 @@
+{% for achievement in achievements %}
+<tr>
+    <td> {{ achievement.name }} </td>
+    <td> {{ achievement.description }} </td>
+    <td> {{ achievement.postStamp }} </td>
+    <td> <img src="{{ achievement.pubmat.url }}" alt="{{achievement.name}} image" class="ach_img"> </td>
+</tr>
+{% endfor %}
