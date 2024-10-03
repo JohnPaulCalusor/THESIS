@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_list_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, logout, authenticate
-from .models import User, Officer, Candidacy, Election, Event, Attendance, EventRegistration, MembershipTypes, UserMembership, Vote, Achievement, NewsandOffers, Venue
+from models import User, Officer, Candidacy, Election, Event, Attendance, EventRegistration, MembershipTypes, UserMembership, Vote, Achievement, NewsandOffers, Venue
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, HttpResponseNotFound, HttpResponseForbidden
 from django.urls import reverse
 from django.core.mail import send_mail
@@ -13,7 +13,7 @@ from django.db import IntegrityError
 from django.utils import timezone
 from django.core.exceptions import ValidationError
 # Imported Forms
-from .forms import AttendanceForm, EventRegistrationForm, EventForm, ProfileForm, RegistrationForm, LoginForm, MembershipRegistration, Attendance, VenueForm, AchievementForm, NewsForm
+from forms import AttendanceForm, EventRegistrationForm, EventForm, ProfileForm, RegistrationForm, LoginForm, MembershipRegistration, Attendance, VenueForm, AchievementForm, NewsForm
 from datetime import date, timedelta
 from django.contrib.auth.forms import PasswordResetForm
 from django.contrib.auth.views import PasswordResetView
@@ -253,7 +253,7 @@ def election(request):
         newElection.save()
 
     if is_officer(request):
-        return render(request, "papsas_app/election.html", {
+        return render(request, "papsas_app/record/election.html", {
             'electionList' : electionList,
             'ongoingElection' : ongoingElection,
         })
@@ -341,12 +341,12 @@ def vote(request):
                     # handle the case where the candidate does not exist
                     return HttpResponse("Invalid candidate!", status=400)
         else:
-            return render(request, 'papsas_app/vote.html', {
+            return render(request, 'papsas_app/form/vote.html', {
                 'message' : 'You voted above the limit'
             })
         return redirect('index')
     else:
-        return render(request, 'papsas_app/vote.html', {
+        return render(request, 'papsas_app/form/vote.html', {
             'candidates' : candidates,
             'attended_event' : attended_event,
             'ongoingElection' : ongoingElection,
@@ -449,7 +449,7 @@ def attendance_form(request):
                 return render(request, 'papsas_app/attendance_error.html', {'error': 'Invalid event ID'})
     else:
         form = AttendanceForm()
-    return render(request, 'papsas_app/attendance_form.html', {'form': form})
+    return render(request, 'papsas_app/form/attendance_form.html', {'form': form})
 
 def mark_attendance(request, event_id):
     event = Event.objects.get(id=event_id)
@@ -463,7 +463,7 @@ def mark_attendance(request, event_id):
             return render(request, 'papsas_app/attendance_success.html')
         except User.DoesNotExist:
             return render(request, 'papsas_app/attendance_error.html', {'error': 'Invalid user ID'})
-    return render(request, 'papsas_app/attendance_form.html', {'event': event})
+    return render(request, 'papsas_app/form/attendance_form.html', {'event': event})
 
 
 @login_required
@@ -476,7 +476,7 @@ def event_registration_view(request, event_id):
             return redirect('index')
     else:
         form = EventRegistrationForm(user=request.user, event=event)
-    return render(request, 'papsas_app/event_registration_form.html', {'form': form, 'event': event})
+    return render(request, 'papsas_app/form/event_registration_form.html', {'form': form, 'event': event})
 
 def about(request):
     return render(request, 'papsas_app/about_us.html')
@@ -516,13 +516,13 @@ def membership_registration(request, mem_id):
             user_membership.save()
             return redirect('index')
         else:
-            return render(request, 'papsas_app/membership_registration.html', {
+            return render(request, 'papsas_app/form/membership_registration.html', {
             'form' : form,
             'membership' : membership
         })
 
     else:
-        return render(request, 'papsas_app/membership_registration.html', {
+        return render(request, 'papsas_app/form/membership_registration.html', {
             'form' : form,
             'membership' : membership,
         })
@@ -533,7 +533,7 @@ def check_membership_validity(request):
 def membership_record(request):
     record = UserMembership.objects.all()
     if is_officer(request):
-        return render(request, 'papsas_app/membership_record.html', {
+        return render(request, 'papsas_app/record/membership_record.html', {
             'record' : record,
         })
     else:
@@ -659,7 +659,7 @@ def compose_venue(request):
         if form.is_valid():
             form.save()
             return redirect('compose_venue')
-    return render(request, 'papsas_app/compose_venue.html', {
+    return render(request, 'papsas_app/form/compose_venue.html', {
         'form': form,
     })
 
@@ -672,7 +672,7 @@ def event_list(request):
 
 def attendance_list(request):
     events = Event.objects.all()
-    return render(request, 'papsas_app/attendance_record.html', {
+    return render(request, 'papsas_app/record/attendance_record.html', {
         'events': events,
     })
 
@@ -731,11 +731,11 @@ def compose_achievement(request):
             form.save()
             return redirect('index')
         else:
-            return render(request, 'papsas_app/compose_achievement.html', {
+            return render(request, 'papsas_app/form/compose_achievement.html', {
                 'form' : form,
             })
         
-    return render(request, 'papsas_app/compose_achievement.html', {
+    return render(request, 'papsas_app/form/compose_achievement.html', {
         'form' : form
     })
 
@@ -748,11 +748,11 @@ def compose_news_offer(request):
             form.save()
             return redirect('index')
         else:
-            return render(request, 'papsas_app/compose_news_offers.html', {
+            return render(request, 'papsas_app/form/compose_news_offers.html', {
                 'form' : form,
             })
 
-    return render(request, 'papsas_app/compose_news_offers.html', {
+    return render(request, 'papsas_app/form/compose_news_offers.html', {
         'form' : form
     })
 
@@ -765,19 +765,19 @@ def achievement_view(request):
 
 def venue_record(request):
     venues = Venue.objects.all()
-    return render(request, 'papsas_app/venue_record.html', {
+    return render(request, 'papsas_app/record/venue_record.html', {
         'venues' : venues,
     })
 
 def achievement_record(request):
     achievements = Achievement.objects.all()
-    return render(request, 'papsas_app/achievement_record.html', {
+    return render(request, 'papsas_app/record/achievement_record.html', {
         'achievements' : achievements,
     })
 
 def news_offers_record(request):
     news_offers = NewsandOffers.objects.all()
-    return render(request, 'papsas_app/news_offers_record.html', {
+    return render(request, 'papsas_app/record/news_offers_record.html', {
         'news_offers' : news_offers,
         })
 
