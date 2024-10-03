@@ -65,7 +65,11 @@
 
     <div class="title"><h1>Recent Activities</h1></div>
 
-    <div class="recent-activities-container">
+    <div class="recent-activities-container"
+        hx-get="{% url 'get_profile' user.id %}"
+        hx-trigger="every 5s"
+        hx-swap="innerHTML"
+    >
         {% if candidacies %}
         <h2> Candidacies </h2>
             {% for candidacy in candidacies %}

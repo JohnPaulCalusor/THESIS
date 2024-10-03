@@ -369,6 +369,7 @@ def profile(request, id):
             user.profilePic = profilePic
             user.save()
             return redirect('profile', id = id)
+        
     return render(request, 'papsas_app/profile.html/', {
         'viewUser' : user,
         'form' : form,
@@ -824,7 +825,7 @@ def get_event(request, view):
     events = Event.objects.all()
     return render(request, 'papsas_app/partial_list/event_list.html', {
         'events': events,
-        'view' : view,
+        'view' :view
         })
 
 def get_venue(request):
@@ -844,3 +845,18 @@ def get_news_offers(request):
     return render(request, 'papsas_app/partial_list/news_offers_list.html', {
         'news_offers' : news_offers,
         })
+
+def get_profile(request, id):
+    candidacies = Candidacy.objects.filter( candidate = id )
+    attended_event = Attendance.objects.filter( user = id )
+    elected_officer = Officer.objects.filter(candidateID__candidate= id)
+    user = User.objects.get( id = id)
+    form = ProfileForm()
+        
+    return render(request, 'papsas_app/partial_list/profile_list.html/', {
+        'viewUser' : user,
+        'form' : form,
+        'candidacies' : candidacies,
+        'attended_events' : attended_event,
+        'elected_officers' : elected_officer
+    })

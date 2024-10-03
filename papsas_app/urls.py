@@ -60,6 +60,7 @@ urlpatterns = [
     path('partial/venue', views.get_venue, name="get_venue"),
     path('partial/achievement', views.get_achievement, name="get_achievement"),
     path('partial/news_offers', views.get_news_offers, name="get_news_offers"), 
+    path('partial/profile/<int:id>', views.get_profile, name="get_profile"), 
     #achievement
     path('achievement/', views.achievement_view, name='achievement'),
     #user
