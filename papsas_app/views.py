@@ -666,7 +666,7 @@ def compose_venue(request):
 def event_list(request):
     events = Event.objects.all()
 
-    return render(request, 'papsas_app/event_record.html', {
+    return render(request, 'papsas_app/event_view.html', {
         'events': events,
     })
 
@@ -675,6 +675,12 @@ def attendance_list(request):
     return render(request, 'papsas_app/attendance_record.html', {
         'events': events,
     })
+
+def get_event(request):
+    events = Event.objects.all()
+    return render(request, 'papsas_app/partial_list/event_list.html', {
+        'events': events,
+        })
 
 def get_receipt(request, user_id):
     try:

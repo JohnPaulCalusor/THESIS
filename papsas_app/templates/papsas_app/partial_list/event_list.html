@@ -1,0 +1,18 @@
+{% for event in events %}
+<tr>
+    <td>
+        {{ event.eventName }}
+    </td>
+    <td>
+        <button class="action-icon">
+            <i class="fas fa-eye"></i> View Registration
+        </button>
+        <button class="action-icon"
+                data-url="{% url 'get_attendance' event.id %}"
+                onclick="showAttendanceModal(this.getAttribute('data-url'))"
+                >
+            <i class="fas fa-eye"></i> View Attendance
+        </button>
+    </td>
+</tr>
+{% endfor %}

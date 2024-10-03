@@ -52,8 +52,10 @@ urlpatterns = [
     # get function
     path('record/get-receipt/<int:user_id>/', views.get_receipt, name='get_receipt'),
     path('record/get-id/<int:user_id>/', views.get_id, name='get_id'),
-    path('record/get-attendance/<int:event_id>/', views.get_attendees, name='get_attendance'),
     path('get-candidates/<int:election_id>/', views.get_officers, name="get_officers"),
+    # get htmx
+    path('record/get-attendance/<int:event_id>/', views.get_attendees, name='get_attendance'),
+    path('partial/event', views.get_event, name="get_event"),
     #achievement
     path('achievement/', views.achievement_view, name='achievement')
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -23,7 +23,11 @@
                         <th>Action</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody 
+                hx-get="{% url 'get_event' %}" 
+                hx-trigger="every 5s"
+                hx-swap="innerHTML"
+                >
                     {% for event in events %}
                     <tr>
                         <td>
