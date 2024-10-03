@@ -56,6 +56,10 @@ urlpatterns = [
     # get htmx
     path('record/get-attendance/<int:event_id>/', views.get_attendees, name='get_attendance'),
     path('partial/event', views.get_event, name="get_event"),
+    path('partial/account', views.get_account, name="get_account"),
     #achievement
-    path('achievement/', views.achievement_view, name='achievement')
+    path('achievement/', views.achievement_view, name='achievement'),
+    #user
+    path('user/delete/<int:id>', views.delete_account, name="delete_account"),
+
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

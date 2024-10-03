@@ -496,6 +496,12 @@ def record(request):
         'userRecord' : userRecord
     })
 
+def get_account(request):
+    userRecord = User.objects.all()
+    return render(request, 'papsas_app/partial_list/account_list.html', {
+        'userRecord' : userRecord
+    }) 
+
 def membership_registration(request, mem_id):
     form = MembershipRegistration(request.user, mem_id)
     membership = mem_id
@@ -806,4 +812,18 @@ def news_offers_record(request):
     return render(request, 'papsas_app/news_offers_record.html', {
         'news_offers' : news_offers,
         })
+
+def delete_account(request, id):
+    try:
+        accounts = User.objects.all()
+        user = User.objects.get( id = id)
+    except:
+        return HttpResponseNotFound('User not Found')
+    
+    if request.method == 'POST':
+        user.delete()
+        return render(request, 'papsas_app/record.html', {
+            'userRecord' : accounts
+        })
+
 

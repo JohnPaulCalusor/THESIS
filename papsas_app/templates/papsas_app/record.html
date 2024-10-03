@@ -9,45 +9,54 @@
     <div class="data-table-container">
         <div class="table-header">
             <h1>User Record</h1>
-            <a href="#" class="btn-add-user">
-                <i class="fas fa-user-plus"></i> Add User
-            </a>
         </div>
         <table>
-            <tr>
-                <th>First Name</th>
-                <th>Last Name</th>
-                <th>Email</th>
-                <th>Mobile Number</th>
-                <th>Region</th>
-                <th>Address</th>
-                <th>Occupation</th>
-                <th>Age</th>
-                <th>Birth Date</th>
-                <th>Email Verified</th>
-                <th>Profile Picture</th>
-                <th>Action</th>
-            </tr>
-            {% for user in   userRecord  %}
+            <thead>
                 <tr>
-                    <td>{{user.first_name}}</td>
-                    <td>{{user.last_name}}</td>
-                    <td>{{user.email}}</td>
-                    <td>{{user.mobileNum}}</td>
-                    <td>{{user.region}}</td>
-                    <td>{{user.address}}</td>
-                    <td>{{user.occupation}}</td>
-                    <td>{{user.age}}</td>
-                    <td>{{user.birthdate}}</td>
-                    <td>{{user.email_verified}}</td>
-                    <td><a href="{% url 'profile' user.id %}"><i class="fas fa-eye"></a></td>
-                    <td> 
-                        <a href="" class="action-icon" title="View"><i class="fas fa-eye"></i></a>
-                        <a href="" class="action-icon" title="Edit"><i class="fas fa-edit"></i></a>
-                        <a href="" class="action-icon" title="Delete"><i class="fas fa-trash-alt"></i></a>
-                    </td>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Email</th>
+                    <th>Mobile Number</th>
+                    <th>Region</th>
+                    <th>Address</th>
+                    <th>Occupation</th>
+                    <th>Age</th>
+                    <th>Birth Date</th>
+                    <th>Email Verified</th>
+                    <th>Profile Picture</th>
+                    <th>Action</th>
                 </tr>
-            {% endfor %}
+            </thead>
+            <tbody 
+            hx-get="{% url 'get_account' %}"
+            hx-trigger="every 5s"
+            hx-swap="innerHTML"
+            >
+                {% for user in   userRecord  %}
+                    <tr>
+                        <td>{{user.first_name}}</td>
+                        <td>{{user.last_name}}</td>
+                        <td>{{user.email}}</td>
+                        <td>{{user.mobileNum}}</td>
+                        <td>{{user.region}}</td>
+                        <td>{{user.address}}</td>
+                        <td>{{user.occupation}}</td>
+                        <td>{{user.age}}</td>
+                        <td>{{user.birthdate}}</td>
+                        <td>{{user.email_verified}}</td>
+                        <td><a href="{% url 'profile' user.id %}"><i class="fas fa-eye"></a></td>
+                        <td>   
+                            <a href="" class="action-icon" title="Edit"><i class="fas fa-edit"></i></a>
+                            <form action="{% url 'delete_account' user.id %}" method="post">
+                                {% csrf_token %}
+                                <button class="action-icon" title="Delete" type="submit">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
         </table>
     </div>
     </div>
