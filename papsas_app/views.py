@@ -726,7 +726,7 @@ def get_officers(request, election_id):
 def get_attendees(request, event_id):
     try:
         eventId = Event.objects.get(id=event_id)
-        attendances = Attendance.objects.filter(event__event_id= eventId)
+        attendances = Attendance.objects.filter(event__event_id=eventId)
         attendees = []
         for attendance in attendances:
             attendees.append({
@@ -735,14 +735,12 @@ def get_attendees(request, event_id):
                 'last_name': attendance.user.last_name,
                 'status' : attendance.attended
             })
-        return JsonResponse(
-            {'attendees': attendees},
-        )
-    except:
-        eventId = None
-        attendances = None 
-        attendees = []
-        return JsonResponse(attendees, safe=False)
+        return render(request, 'papsas_app/attendance_list.html', {
+            'attendees': attendees,
+            'eventId' : eventId
+            })
+    except Event.DoesNotExist:
+        return render(request, 'papsas_app/attendance_list.html', {'attendees': []})
     
 def compose_achievement(request):
     form = AchievementForm()

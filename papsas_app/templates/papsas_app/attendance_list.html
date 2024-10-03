@@ -1,0 +1,6 @@
+{% for attendee in attendees %}
+<tr>
+    <td>{{ attendee.first_name }} {{ attendee.last_name }}</td>   
+    <td>{{ attendee.status|yesno:"Present,Absent" }}</td>
+</tr>
+{% endfor %}

@@ -4,6 +4,7 @@
 {% block head %}
 <link rel="stylesheet" href="{% static 'papsas_app/datatable.css' %}">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<script src="{% static 'papsas_app/attendance_record.js' %}"></script>
 {% endblock %}
 
 {% block body %}
@@ -29,10 +30,13 @@
                             {{ event.eventName }}
                         </td>
                         <td>
-                            <button class="action-icon" onclick="openAttendance('{{ event.id }}')">
+                            <button class="action-icon">
                                 <i class="fas fa-eye"></i> View Registration
                             </button>
-                            <button class="action-icon" onclick="openAttendance('{{ event.id }}')">
+                            <button class="action-icon"
+                                    data-url="{% url 'get_attendance' event.id %}"
+                                    onclick="showAttendanceModal(this.getAttribute('data-url'))"
+                                    >
                                 <i class="fas fa-eye"></i> View Attendance
                             </button>
                         </td>
@@ -53,7 +57,9 @@
     <div class="modal-content">
         <div class="modal-header">
             <h2>Attendance Record 
-                <span id="close-button" class="close-modal">
+                <span id="close-button" class="close-modal"
+                onclick="hideAttendanceModal()"
+                >
                 <i class="fas fa-times"></i>
             </span></h2>
         </div>
@@ -70,7 +76,6 @@
                     <tr>
                         <th>Attendee Name</th>
                         <th>Attendance Status</th>
-                        
                     </tr>
                 </thead>
                 <tbody id="attendees-body">
@@ -79,9 +84,4 @@
         </div>
     </div>
 </div>
-
-{% endblock %}
-
-{% block script %}
-<script src="{% static 'papsas_app/js/attendance_record.js' %}"></script>
 {% endblock %}

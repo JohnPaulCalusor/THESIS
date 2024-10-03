@@ -1,41 +1,25 @@
-document.addEventListener("DOMContentLoaded", function() {
-    var closeButton = document.getElementById("close-button");
+let pollingInterval;
+
+function showAttendanceModal(url) {
+    document.getElementById('attendance_record').style.display = 'block';
     
-    if (closeButton) {
-        closeButton.addEventListener("click", function() {
-            document.getElementById("attendance_record").style.display = "none";
-        });
+    fetchAttendanceData(url);
+    
+    pollingInterval = setInterval(() => {
+        fetchAttendanceData(url);
+    }, 5000);
+}
+
+function hideAttendanceModal() {
+    document.getElementById('attendance_record').style.display = 'none';
+    
+    if (pollingInterval) {
+        clearInterval(pollingInterval);
     }
-});
+    
+    document.getElementById('attendees-body').innerHTML = '';
+}
 
-    function openAttendance(eventId) {
-        document.getElementById("attendance_record").style.display = "block";
-        const tableBody = document.getElementById('attendees-body');
-        fetch(`get-attendance/${eventId}/`)
-        .then(response => response.json())
-        .then(data => {
-            const attendees = data.attendees;
-            tableBody.innerHTML = '';
-            attendees.forEach(attendee => {
-                const tableRow = document.createElement('tr');
-                tableRow.innerHTML = `
-                    <td>${attendee.first_name} ${attendee.last_name}</td>   
-                    <td>${attendee.status ? 'Present' : 'Absent'}</td>
-
-                `;
-                tableBody.appendChild(tableRow);
-        });
-    });
-    }
-
-    document.getElementById("close-button").addEventListener("click", function() {
-        document.getElementById("attendance_record").style.display = "none";
-        
-    });
-
-    window.onclick = function(event) {
-        var modal = document.getElementById("attendance_record");
-        if (event.target == modal) {
-            modal.style.display = "none";
-        }
-    }
+function fetchAttendanceData(url) {
+    htmx.ajax('GET', url, {target: '#attendees-body'});
+}
