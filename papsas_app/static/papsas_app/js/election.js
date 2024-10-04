@@ -50,6 +50,8 @@ function closeForm() {
     if (pollingInterval) {
         clearInterval(pollingInterval);
     }
+
+    document.getElementById('dataContainer').innerHTML = '';
 }
 
 function fetchAttendanceData(url) {
