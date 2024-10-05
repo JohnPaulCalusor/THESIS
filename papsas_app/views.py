@@ -26,6 +26,7 @@ from django.db.models import Count, Avg
 from django.core.exceptions import ObjectDoesNotExist
 from functools import wraps
 from django.conf import settings
+from django.views.decorators.csrf import csrf_exempt
 # Create your views here.
 
 def practitioner_required(view_func):
@@ -873,6 +874,7 @@ def get_event_reg(request, id):
     eventReg_data = []
     for reg in eventReg:
         eventReg_data.append({
+            'id' : reg.id,
             'name' : f'{reg.user.first_name} {reg.user.last_name}',
             'receipt' : reg.receipt.url if reg.receipt else None,
             'status' : reg.status
@@ -1047,3 +1049,24 @@ def get_least_region_data(request):
     labels = [region['region'] for region in least_regions]
     values = [region['count'] for region in least_regions]
     return JsonResponse({'labels': labels, 'values': values})
+
+@csrf_exempt
+def decline_eventReg(request, id):
+    if request.method == "PUT":
+        data = json.loads(request.body)
+        if data.get("status") is not None:
+            eventReg = EventRegistration.objects.get( id = id)
+            eventReg.status = data["status"]
+            eventReg.save()
+            return JsonResponse({'message': 'Updated successfully!'}, status = 200)
+    return JsonResponse({'error': 'Only PUT method is allowed.'}, status=405)
+@csrf_exempt
+def approve_eventReg(request, id):
+    eventReg = EventRegistration.objects.get( id = id)
+    if request.method == "PUT":
+        data = json.loads(request.body)
+        if data.get("status") is not None:
+            eventReg.status = data["status"]
+            eventReg.save()
+            return JsonResponse({'message': 'Updated successfully!'}, status = 200)
+    return JsonResponse({'error': 'Only PUT method is allowed.'}, status=405)

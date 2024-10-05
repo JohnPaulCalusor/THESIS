@@ -53,7 +53,7 @@ function showRegistrationRecord(eventId) {
                     const row = document.createElement('tr');
                     row.innerHTML = `
                         <td>${reg.name}</td>
-                        <td><img src="${reg.receipt.url}" alt="Receipt"></td>
+                        <td><img src="${reg.receipt}" alt="Receipt"></td>
                         <td>${reg.status}</td>
                         <td>
                             ${reg.status === 'Approved' ? 
@@ -82,8 +82,19 @@ function showRegistrationRecord(eventId) {
         approveButtons.forEach(button => {
             button.addEventListener('click', function() {
                 const regId = this.getAttribute('data-reg-id');
-                // Add your approve action here
-                // After approval, refresh the data:
+                fetch(`/record/event-registration/approve/${regId}`, {
+                    method: 'PUT',
+                    body: JSON.stringify({status: 'Approved'})
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.message) {
+                        alert(data.message);
+                    } else if (data.error) {
+                        alert(data.error);
+                    }
+                    });
+
                 fetchEventReg(eventId);
             });
         });
@@ -91,8 +102,11 @@ function showRegistrationRecord(eventId) {
         declineButtons.forEach(button => {
             button.addEventListener('click', function() {
                 const regId = this.getAttribute('data-reg-id');
-                // Add your decline action here
-                // After declining, refresh the data:
+                fetch(`/record/event-registration/decline/${regId}`, {
+                    method: 'PUT',
+                    body: JSON.stringify({status: 'Declined'})
+                })
+
                 fetchEventReg(eventId);
             });
         });
