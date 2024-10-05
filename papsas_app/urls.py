@@ -3,10 +3,23 @@ from django.urls import path
 from . import views
 from django.conf import settings
 from django.conf.urls.static import static
+from .views import (
+    get_attendance_per_venue,
+    get_attendance_vs_capacity,
+    get_membership_distribution_data,
+    get_attendance_over_time_data,
+    get_total_members_count,
+    get_total_events_count,
+    get_total_revenue,
+    get_membership_growth,
+    get_avg_registration_vs_attendance,
+    get_top_region_data, 
+    get_least_region_data
+)
 
 urlpatterns = [
     path('', views.index, name="index"),
-    path('register/' , views.register, name="register"),
+    path('register/', views.register, name="register"),
     path('logout', views.logout_view, name="logout"),
     path('login', views.login_view, name="login"),
     path('verify_email/<int:user_id>/', views.verify_email, name='verify_email'),
@@ -59,11 +72,23 @@ urlpatterns = [
     path('partial/account', views.get_account, name="get_account"),
     path('partial/venue', views.get_venue, name="get_venue"),
     path('partial/achievement', views.get_achievement, name="get_achievement"),
-    path('partial/news_offers', views.get_news_offers, name="get_news_offers"), 
-    path('partial/profile/<int:id>', views.get_profile, name="get_profile"), 
-    #achievement
+    path('partial/news_offers', views.get_news_offers, name="get_news_offers"),
+    # achievement
     path('achievement/', views.achievement_view, name='achievement'),
-    #user
+    # user
     path('user/delete/<int:id>', views.delete_account, name="delete_account"),
 
+    # admin dashboard
+    path('admin_dashboard/', views.admin_dashboard, name='admin_dashboard'),
+    path('get_attendance_per_venue/', get_attendance_per_venue, name='get_attendance_per_venue'),
+    path('get_attendance_vs_capacity/', get_attendance_vs_capacity, name='get_attendance_vs_capacity'),
+    path('get_membership_data/', views.get_membership_distribution_data, name='get_membership_data'),
+    path('get_attendance_over_time_data/', views.get_attendance_over_time_data, name='get_attendance_over_time_data'),
+    path('get_total_members_count/', get_total_members_count, name='get_total_members_count'),
+    path('get_total_events_count/', get_total_events_count, name='get_total_events_count'),
+    path('get_total_revenue/', get_total_revenue, name='get_total_revenue'),
+    path('get_membership_growth/', get_membership_growth, name='get_membership_growth'),
+    path('get_avg_registration_vs_attendance/', get_avg_registration_vs_attendance, name='get_avg_registration_vs_attendance'),
+    path('top_region_data/', get_top_region_data, name='get_top_region_data'),
+    path('least_region_data/', get_least_region_data, name='get_least_region_data')
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

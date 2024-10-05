@@ -1,0 +1,531 @@
+{% extends 'papsas_app/layout.html' %}
+
+{% load static %}
+{% block head %}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.0"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .tiles-container {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+        }
+        .tile {
+            width: 180px;
+            height: 100px;
+            background-color: #dbc9c9;
+            border: 2px solid #ffffff;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            font-size: 18px;
+            text-align: center;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .tile-data {
+            font-size: 24px;
+            color: #333;
+        }
+        .chart-container {
+            width: 60%;
+            margin: 0 auto;
+            padding: 10px;
+            position: relative;
+        }
+        .region {
+            margin: 1rem;
+            padding: 2rem 2rem;
+            text-align: center;
+            display: flex; /* Add this line */
+            justify-content: center; /* Add this line */
+            align-items: center;
+            gap: 10px;
+        }
+
+        .child {
+            padding: 1rem 1rem;
+            margin: auto;
+            width: 45%;
+            height: 400px;
+        }
+        canvas {
+            max-height: 300px;
+            margin-left: 0;
+        }
+        h1 {
+            text-align: center;
+            padding-bottom: 10px;
+        }
+    </style>
+<body>
+    <h1>Dashboard</h1>
+
+    <!-- Tiles Container -->
+    <div class="tiles-container">
+        <div class="tile">
+            <div>Total Count of Members</div>
+            <div class="tile-data" id="membersCount">0</div>
+        </div>
+        <div class="tile">
+            <div>Number of Events</div>
+            <div class="tile-data" id="eventsCount">0</div>
+        </div>
+        <div class="tile">
+            <div>Total Revenue on Events</div>
+            <div class="tile-data" id="totalRevenue">0</div>
+        </div>
+        <div class="tile">
+            <div>Event Rating</div>
+            <div class="tile-data" id="eventRating">0</div>
+        </div>
+    </div>
+
+    <!-- Chart Containers -->
+    <div class="chart-container">
+        <h3>Membership Distribution</h3>
+        <canvas id="membershipChart"></canvas>
+    </div>
+
+    <div class="chart-container">
+        <h3>Attendance Over Time</h3>
+        <canvas id="attendanceOverTimeChart"></canvas>
+    </div>
+
+    <div class="region">
+        <div class="child">
+            <h3>User Distribution by Region (Top 5)</h3>
+            <canvas id="topRegionChart"></canvas>
+        </div>
+        <div class="child">
+            <h3>User Distribution by Region (Least 5)</h3>
+            <canvas id="leastRegionChart"></canvas>
+        </div>
+    </div>
+
+
+    <div class="chart-container">
+        <h3>Average Event Attendance per Venue</h3>
+        <canvas id="attendancePerVenueChart"></canvas>
+    </div>
+
+    <div class="chart-container">
+        <h3>Attendance vs Capacity</h3>
+        <canvas id="attendanceVsCapacityChart"></canvas>
+    </div>
+
+    <!-- New Chart for Membership Growth -->
+    <div class="chart-container">
+        <h3>Membership Growth Over Time</h3>
+        <canvas id="membershipGrowthChart"></canvas>
+    </div>
+
+    <div class="chart-container">
+        <h3>Average Event Registration vs Average Attendance</h3>
+        <canvas id="avgRegVsAttendanceChart"></canvas>
+    </div>
+
+    <script>
+        // Predefined reddish color palette
+        const colorPalette = [
+            '#FF4D4D', '#FF9999', '#CC0000', '#FF6666', '#FFB2B2', 
+            '#FF1A1A', '#FF7F7F', '#D50000', '#A30000', '#FFCCCC'
+        ];
+
+        // Declare chart instances globally
+        let membershipChart, attendancePerVenueChart, attendanceVsCapacityChart, attendanceOverTimeChart, membershipGrowthChart;
+
+        const fetchData = async (url, ctx, chartType, chartInstance) => {
+            try {
+                const response = await fetch(`${url}?_=${new Date().getTime()}`);
+                if (!response.ok) throw new Error('Network response was not ok');
+                const data = await response.json();
+
+                // Destroy the previous chart instance if it exists
+                if (chartInstance) {
+                    chartInstance.destroy();
+                }
+
+                const datasets = [{
+                    label: 'Dataset',
+                    data: data.values,
+                    backgroundColor: data.values.map((_, index) => colorPalette[index % colorPalette.length]),
+                    borderColor: data.values.map((_, index) => colorPalette[index % colorPalette.length]),
+                    borderWidth: 1,
+                }];
+
+                // Create a new chart instance
+                return new Chart(ctx, {
+                    type: chartType,
+                    data: {
+                        labels: data.labels,
+                        datasets: datasets
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                min: 0,
+                                ticks: {
+                                    callback: function(value) {
+                                        return Number.isInteger(value) ? value : '';
+                                    }
+                                }
+                            },
+                            x: {
+                                ticks: {
+                                    autoSkip: true,
+                                    maxTicksLimit: 20
+                                }
+                            }
+                        }
+                    }
+                });
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+
+        const fetchAttendanceVsCapacityData = async (url, ctx) => {
+            try {
+                const response = await fetch(`${url}?_=${new Date().getTime()}`);
+                if (!response.ok) throw new Error('Network response was not ok');
+                const data = await response.json();
+
+                if (attendanceVsCapacityChart) {
+                    attendanceVsCapacityChart.destroy();
+                }
+
+                return new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: data.labels,
+                        datasets: [
+                            {
+                                label: 'Average Attendance',
+                                data: data.average_attendance,
+                                backgroundColor: colorPalette[0],
+                                borderColor: colorPalette[0],
+                                borderWidth: 1,
+                            },
+                            {
+                                label: 'Capacity',
+                                data: data.capacities,
+                                backgroundColor: colorPalette[1],
+                                borderColor: colorPalette[1],
+                                borderWidth: 1,
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    callback: function(value) {
+                                        return Number.isInteger(value) ? value : ''; 
+                                    }
+                                }
+                            },
+                            x: {
+                                ticks: {
+                                    autoSkip: true,
+                                    maxTicksLimit: 20
+                                }
+                            }
+                        }
+                    }
+                });
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+
+        const fetchAttendanceOverTimeData = async (url, ctx) => {
+            try {
+                const response = await fetch(`${url}?_=${new Date().getTime()}`);
+                if (!response.ok) throw new Error('Network response was not ok');
+                const data = await response.json();
+
+                if (attendanceOverTimeChart) {
+                    attendanceOverTimeChart.destroy();
+                }
+
+                return new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: data.labels,
+                        datasets: [{
+                            label: 'Attendance Over Time',
+                            data: data.values,
+                            borderColor: colorPalette[0],
+                            fill: false,
+                            tension: 0.1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    callback: function(value) {
+                                        return Number.isInteger(value) ? value : ''; 
+                                    }
+                                }
+                            },
+                            x: {
+                                ticks: {
+                                    autoSkip: true,
+                                    maxTicksLimit: 10
+                                }
+                            }
+                        }
+                    }
+                });
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+
+        let topRegionChart = null;
+let leastRegionChart = null;
+
+const fetchTopRegionData = async (url, ctx) => {
+    try {
+        const response = await fetch(`${url}?_=${new Date().getTime()}`);
+        if (!response.ok) throw new Error('Network response was not ok');
+        const data = await response.json();
+
+        if (topRegionChart) {
+            topRegionChart.destroy();
+        }
+
+        topRegionChart = new Chart(ctx, {
+            type: 'bar', // You can change this to 'doughnut' if needed
+            data: {
+                labels: data.labels,
+                datasets: [{
+                    label: 'Top 5 Regions',
+                    data: data.values,
+                    backgroundColor: colorPalette.slice(0, 5), // Use the first 5 colors
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                    }
+                }
+            }
+        });
+    } catch (error) {
+        console.error('Error fetching top region data:', error);
+    }
+};
+
+const fetchLeastRegionData = async (url, ctx) => {
+    try {
+        const response = await fetch(`${url}?_=${new Date().getTime()}`);
+        if (!response.ok) throw new Error('Network response was not ok');
+        const data = await response.json();
+
+        if (leastRegionChart) {
+            leastRegionChart.destroy();
+        }
+
+        leastRegionChart = new Chart(ctx, {
+            type: 'bar', // You can change this to 'doughnut' if needed
+            data: {
+                labels: data.labels,
+                datasets: [{
+                    label: 'Least 5 Regions',
+                    data: data.values,
+                    backgroundColor: colorPalette.slice(0, 5).reverse(), // Use the first 5 colors in reverse order
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                    }
+                }
+            }
+        });
+    } catch (error) {
+        console.error('Error fetching least region data:', error);
+    }
+};
+
+
+        let avgRegVsAttendanceChart = null;
+
+const fetchAvgRegistrationVsAttendanceData = async (url, ctx) => {
+    try {
+        const response = await fetch(`${url}?_=${new Date().getTime()}`);
+        if (!response.ok) throw new Error('Network response was not ok');
+        const data = await response.json();
+
+        if (avgRegVsAttendanceChart) {
+            avgRegVsAttendanceChart.destroy();
+        }
+
+        avgRegVsAttendanceChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: data.labels,
+                datasets: [{
+                    label: 'Average',
+                    data: data.values,
+                    backgroundColor: [colorPalette[0], colorPalette[1]], // Use the color palette
+                    borderColor: [colorPalette[0], colorPalette[1]], // Use the color palette
+                    borderWidth: 1,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return Number.isInteger(value) ? value : '';
+                            }
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Metrics'
+                        },
+                        ticks: {
+                            autoSkip: true,
+                            maxTicksLimit: 20
+                        }
+                    }
+                }
+            }
+        });
+    } catch (error) {
+        console.error('Error fetching average registration vs attendance data:', error);
+    }
+};
+
+
+        const fetchMembershipGrowthData = async (url, ctx) => {
+    try {
+        const response = await fetch(`${url}?_=${new Date().getTime()}`);
+        if (!response.ok) throw new Error('Network response was not ok');
+        const data = await response.json();
+
+        if (membershipGrowthChart) {
+            membershipGrowthChart.destroy();
+        }
+
+        console.log('Membership growth data:', data);
+
+        return new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: data.labels,
+                datasets: [{
+                    label: 'Membership Growth',
+                    data: data.values,
+                    borderColor: colorPalette[0],
+                    fill: false,
+                    tension: 0.1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return Number.isInteger(value) ? value : '';
+                            }
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Year'
+                        },
+                        ticks: {
+                            autoSkip: true,
+                            maxTicksLimit: 10
+                        }
+                    }
+                }
+            }
+        });
+    } catch (error) {
+        console.error('Error fetching membership growth data:', error);
+    }
+};
+
+        const updateTiles = async () => {
+            try {
+                const membersResponse = await fetch('{% url "get_total_members_count" %}');
+                if (!membersResponse.ok) throw new Error('Network response was not ok');
+                const membersData = await membersResponse.json();
+                document.getElementById('membersCount').innerText = membersData.count;
+
+                const eventsResponse = await fetch('{% url "get_total_events_count" %}');
+                if (!eventsResponse.ok) throw new Error('Network response was not ok');
+                const eventsData = await eventsResponse.json();
+                document.getElementById('eventsCount').innerText = eventsData.count;
+
+                const revenueResponse = await fetch('{% url "get_total_revenue" %}');
+                const revenueData = await revenueResponse.json();
+                document.getElementById('totalRevenue').innerText = '₱ ' + revenueData.total_revenue;
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+
+        const initCharts = async () => {
+            const attendanceCtx = document.getElementById('attendancePerVenueChart').getContext('2d');
+            const attendanceVsCapacityCtx = document.getElementById('attendanceVsCapacityChart').getContext('2d');
+            const membershipCtx = document.getElementById('membershipChart').getContext('2d');
+            const attendanceOverTimeCtx = document.getElementById('attendanceOverTimeChart').getContext('2d');
+            const membershipGrowthCtx = document.getElementById('membershipGrowthChart').getContext('2d');
+            const avgRegVsAttendanceCtx = document.getElementById('avgRegVsAttendanceChart').getContext('2d');
+            const topRegionCtx = document.getElementById('topRegionChart').getContext('2d');
+            const leastRegionCtx = document.getElementById('leastRegionChart').getContext('2d');
+
+            attendancePerVenueChart = await fetchData('{% url "get_attendance_per_venue" %}', attendanceCtx, 'bar', attendancePerVenueChart);
+            attendanceVsCapacityChart = await fetchAttendanceVsCapacityData('{% url "get_attendance_vs_capacity" %}', attendanceVsCapacityCtx);
+            membershipChart = await fetchData('{% url "get_membership_data" %}', membershipCtx, 'bar', membershipChart);
+            attendanceOverTimeChart = await fetchAttendanceOverTimeData('{% url "get_attendance_over_time_data" %}', attendanceOverTimeCtx);
+            membershipGrowthChart = await fetchMembershipGrowthData('{% url "get_membership_growth" %}', membershipGrowthCtx);
+            avgRegVsAttendanceChart = await fetchAvgRegistrationVsAttendanceData('{% url "get_avg_registration_vs_attendance" %}', avgRegVsAttendanceCtx);
+            topRegionChart = await fetchTopRegionData('{% url "get_top_region_data" %}', topRegionCtx);
+            leastRegionChart = await fetchLeastRegionData('{% url "get_least_region_data" %}', leastRegionCtx);
+        };
+
+        // Call the functions on page load
+        window.onload = () => {
+            initCharts();
+            updateTiles();
+        };
+    </script>
+    {% endblock %}

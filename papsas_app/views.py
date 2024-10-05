@@ -11,13 +11,17 @@ import random, json, logging
 from django.contrib import messages
 from django.db import IntegrityError
 from django.utils import timezone
+from django.utils.dateformat import DateFormat
 from django.core.exceptions import ValidationError
+from django.http import JsonResponse
+from .models import User, MembershipTypes, Vote, Event, Officer
+from django.db import models
 # Imported Forms
 from .forms import AttendanceForm, EventRegistrationForm, EventForm, ProfileForm, RegistrationForm, LoginForm, MembershipRegistration, Attendance, VenueForm, AchievementForm, NewsForm
 from datetime import date, timedelta
 from django.contrib.auth.forms import PasswordResetForm
 from django.contrib.auth.views import PasswordResetView
-from django.db.models import Count
+from django.db.models import Count, Avg
 from django.core.exceptions import ObjectDoesNotExist
 from functools import wraps
 from django.conf import settings
@@ -860,3 +864,177 @@ def get_profile(request, id):
         'attended_events' : attended_event,
         'elected_officers' : elected_officer
     })
+#admin dashboard
+
+from django.shortcuts import render
+from django.http import JsonResponse
+from django.db import models
+from django.db.models import Count
+from django.db.models.functions import TruncDay
+import logging
+
+def admin_dashboard(request):
+    return render(request, 'papsas_app/admin_dashboard.html')
+
+def get_attendance_per_venue(request):
+    venue_attendance = {}
+    
+    for attendance in Attendance.objects.select_related('event'):
+        venue_name = attendance.event.event.venue.name
+        if venue_name not in venue_attendance:
+            venue_attendance[venue_name] = 0
+        venue_attendance[venue_name] += 1
+
+    data = {
+        'labels': list(venue_attendance.keys()),
+        'values': list(venue_attendance.values())
+    }
+    
+    return JsonResponse(data)
+
+def get_attendance_vs_capacity(request):
+    try:
+        attendance_data = (
+            Attendance.objects
+            .select_related('event')
+            .values('event__event__venue__id', 'event__event__venue__name')
+            .annotate(
+                attendance_count=models.Count('id'),
+                event_count=models.Count('event__event', distinct=True)
+            )
+        )
+
+        venue_names = []
+        average_attendance = []
+        capacities = []
+
+        for attendance in attendance_data:
+            venue_id = attendance['event__event__venue__id']
+            venue_name = attendance['event__event__venue__name']
+            total_attendance = attendance['attendance_count']
+            event_count = attendance['event_count']
+            venue_capacity = Venue.objects.get(id=venue_id).capacity
+            
+            avg_attendance = total_attendance / event_count if event_count > 0 else 0
+
+            venue_names.append(venue_name)
+            average_attendance.append(round(avg_attendance, 2))
+            capacities.append(venue_capacity)
+
+        return JsonResponse({
+            'labels': venue_names,
+            'average_attendance': average_attendance,
+            'capacities': capacities
+        })
+    except Exception as e:
+        logging.error("Error fetching attendance vs capacity data: %s", e)
+        return JsonResponse({'error': str(e)}, status=500)
+
+def get_membership_distribution_data(request):
+    membership_data = UserMembership.objects.values('membership__type').annotate(total=Count('membership')).order_by('-total')
+    
+    labels = [item['membership__type'] for item in membership_data]
+    values = [item['total'] for item in membership_data]
+    
+    return JsonResponse({
+        'labels': labels,
+        'values': values,
+    })
+
+def get_attendance_over_time_data(request):
+    data = {"labels": [], "values": []}
+    
+    attendances = Attendance.objects.filter(attended=True)
+    attendances_by_day = attendances.annotate(day=TruncDay('date_attended')).values('day').annotate(count=Count('id')).values_list('day', 'count')
+    
+    for day, count in attendances_by_day:
+        data["labels"].append(day.strftime("%Y-%m-%d"))
+        data["values"].append(count)
+    
+    return JsonResponse(data)
+
+def get_total_events_count(request):
+    total_events = Event.objects.count()
+    return JsonResponse({'total_events': total_events})
+
+def get_total_members_count(request):
+    total_members = UserMembership.objects.count()
+    return JsonResponse({'count': total_members})
+
+def get_total_events_count(request):
+    count = Event.objects.count() 
+    return JsonResponse({'count': count})
+
+def get_total_revenue(request):
+    total_revenue = 0
+    events = Event.objects.all()  # Get all events
+
+    for event in events:
+        registrations_count = event.activity.count()  # Count how many registrations for each event
+        if event.price:  # Ensure the price is not None
+            total_revenue += event.price * registrations_count  # Multiply price by number of registrations
+
+    return JsonResponse({'total_revenue': total_revenue})
+
+def get_membership_growth(request):
+    today = timezone.now()
+    start_year = today.year - 10  # Adjust to how many years you want to show
+
+    # Count new members by year
+    growth_data = (
+        User.objects.filter(date_joined__year__gte=start_year)
+        .extra(select={'year': 'date_joined::date'})
+        .values('year')
+        .annotate(count=Count('id'))
+        .order_by('year')
+    )
+
+    # Prepare the response data
+    labels = []
+    values = []
+    for data in growth_data:
+        labels.append(data['year'].strftime('%Y'))  # Format the year
+        values.append(data['count'])
+
+    # Ensure all years in range are included, with 0 if no members
+    for year in range(start_year, today.year + 1):
+        if year not in [int(label) for label in labels]:
+            labels.append(str(year))
+            values.append(0)
+
+    # Sort by year
+    sorted_data = sorted(zip(labels, values))
+    sorted_labels, sorted_values = zip(*sorted_data)
+
+    return JsonResponse({'labels': list(sorted_labels), 'values': list(sorted_values)})
+
+def get_avg_registration_vs_attendance(request):
+    avg_registrations = EventRegistration.objects.count()
+    avg_attendances = Attendance.objects.filter(attended=True).count()
+
+    total_events = Event.objects.count()
+    if total_events > 0:
+        overall_avg_registration = avg_registrations / total_events
+        overall_avg_attendance = avg_attendances / total_events
+    else:
+        overall_avg_registration = 0
+        overall_avg_attendance = 0
+
+    data = {
+        'labels': ['Average Registration', 'Average Attendance'],
+        'values': [overall_avg_registration, overall_avg_attendance]
+    }
+
+    return JsonResponse(data)
+
+def get_top_region_data(request):
+    top_regions = User.objects.values('region').annotate(count=models.Count('id')).order_by('-count')[:5]
+    labels = [region['region'] for region in top_regions]
+    values = [region['count'] for region in top_regions]
+    return JsonResponse({'labels': labels, 'values': values})
+
+def get_least_region_data(request):
+    least_regions = User.objects.values('region').annotate(count=models.Count('id')).order_by('count')[:5]
+    labels = [region['region'] for region in least_regions]
+    values = [region['count'] for region in least_regions]
+    return JsonResponse({'labels': labels, 'values': values})
