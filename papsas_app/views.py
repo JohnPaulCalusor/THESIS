@@ -11,6 +11,7 @@ import random, json, logging
 from django.contrib import messages
 from django.db import IntegrityError
 from django.utils import timezone
+from django.db.models.functions import TruncDay
 from django.utils.dateformat import DateFormat
 from django.core.exceptions import ValidationError
 from django.http import JsonResponse
@@ -866,12 +867,6 @@ def get_profile(request, id):
     })
 #admin dashboard
 
-from django.shortcuts import render
-from django.http import JsonResponse
-from django.db import models
-from django.db.models import Count
-from django.db.models.functions import TruncDay
-import logging
 
 def admin_dashboard(request):
     return render(request, 'papsas_app/admin_dashboard.html')
