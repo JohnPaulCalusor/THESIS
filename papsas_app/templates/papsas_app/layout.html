@@ -23,7 +23,7 @@
     <div class="hero">
         <nav>
             <header class="header">
-                <div class="nav container">
+                <div class="nav">
                     <a href="{% url 'index' %}"><img src="/media/papsas_app/images/papsas.png" class="logo" alt='papsas_logo'></a> 
                     {% if user.is_authenticated %}
                     <div class="nav__menu" id="nav-menu">
@@ -64,7 +64,7 @@
                             {% endif%}
                             {% if user.profilePic %}
                             <li class="nav__item"><a href="{% url 'profile' user.id %}">
-                                    <img src="{{ user.profilePic.url }}" alt="profilePic" id="navProfile">
+                                    <img src="{{ user.profilePic.url }}" alt="profilePic" id="navProfile" class="profile">
                                 </a>
                             </li>
                             {% else %}
@@ -112,7 +112,7 @@
                                     <li class="nav__item"><a href="{% url 'logout' %}" class="nav__link">Logout</a></li>
                                 {% if user.profilePic %}
                                 <li class="nav__item"><a href="{% url 'profile' user.id %}">
-                                        <img src="{{ user.profilePic.url }}" alt="profilePic" id="navProfile">
+                                        <img src="{{ user.profilePic.url }}" alt="profilePic" id="navProfile" class="profile">
                                     </a>
                                 </li>
                                 {% else %}
@@ -140,10 +140,10 @@
                                     <a href="{% url 'become_member' %}" class="nav__link">Become a Member</a>
                                 </li>
                                 <li class="nav__item">
-                                    <a href="{% url 'become_member' %}" class="nav__link">Achievements</a>
+                                    <a href="{% url 'event_list' %}" class="nav__link">Achievements</a>
                                 </li>
                                 <li class="nav__item">
-                                    <a href="{% url 'news_offers' %}" class="nav__link">News and Offers</a>
+                                    <a href="{% url 'event_list' %}" class="nav__link">News and Offers</a>
                                 </li>
                                 <div class="login-container">
                                     <a href="{% url 'login' %}">Login</a>
