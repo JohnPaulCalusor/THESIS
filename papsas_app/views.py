@@ -765,7 +765,6 @@ def compose_news_offer(request):
 
 def achievement_view(request):
     achievements = Achievement.objects.all()
-
     return render(request, 'papsas_app/achievement_view.html', {
         'achievements' : achievements,
     } )
@@ -778,9 +777,34 @@ def venue_record(request):
 
 def achievement_record(request):
     achievements = Achievement.objects.all()
+    form = AchievementForm()
     return render(request, 'papsas_app/record/achievement_record.html', {
         'achievements' : achievements,
+        'form' : form,
     })
+
+def get_achievement_data(request, achievement_id):
+    try:
+        achievement = Achievement.objects.get( id = achievement_id )
+        if request.method =="POST":
+            form = AchievementForm( request.POST, request.FILES, instance = achievement )
+            if form.is_valid():
+                form.save()
+                return redirect('achievement_record')
+            return JsonResponse({'error': 'Invalid request'}, status=400)   
+
+        data = {
+            'name' : achievement.name,
+            'description' : achievement.description,
+            'pubmat' : achievement.pubmat.url,
+        }
+        return JsonResponse(data)
+    
+    except Achievement.DoesNotExist:
+        return JsonResponse({'error' : 'Achievement not found'}, status = 404)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+    
 
 def news_offers_record(request):
     news_offers = NewsandOffers.objects.all()

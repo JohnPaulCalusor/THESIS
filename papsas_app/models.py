@@ -180,6 +180,9 @@ class Achievement(models.Model):
     postStamp = models.DateTimeField(auto_now_add=True)
     pubmat = models.ImageField(upload_to="papsas_app/pubmat/achievement", null=True)
 
+    def __str__(self):
+        return f'{self.id} - {self.name}'
+
 class NewsandOffers(models.Model):
     name = models.CharField(max_length=32, null=True)
     description = models.TextField(max_length=9999, null=True)

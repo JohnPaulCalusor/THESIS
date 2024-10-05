@@ -146,6 +146,9 @@ class AchievementForm(forms.ModelForm):
     class Meta:
         model = Achievement
         fields = ('name', 'description', 'pubmat')
+        widgets = {
+            'name': forms.TextInput(attrs={'id': 'name-id'}),
+        }
 
 class NewsForm(forms.ModelForm):
     class Meta:

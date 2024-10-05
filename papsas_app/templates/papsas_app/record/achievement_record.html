@@ -34,14 +34,29 @@
                     <td> {{ achievement.description }} </td>
                     <td> {{ achievement.postStamp }} </td>
                     <td> <img src="{{ achievement.pubmat.url }}" alt="{{achievement.name}} image" class="ach_img"> </td>
-                    <td> <button>Update</button> <button>Delete</button> </td>
+                    <td> <button onclick="showUpdate('{{ achievement.id }}')">Update</button> <button>Delete</button> </td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
 </div>
+
+<div id="update-container">
+    <button>close</button>
+    <h2>Update Achievement</h2>
+    <div>
+        <form enctype="multipart/form-data" method="post">
+            <img src="" alt="" id="img">
+            {% csrf_token %}
+            {{ form.name }}
+            {{ form.description }}
+            {{ form.pubmat }}
+            <button type="submit">Update</button>
+        </form>
+    </div>
+</div>
 {% endblock %}
 {% block script %}
-<script src="{% static 'papsas_app/js/record.js' %}"></script>
+<script src="{% static 'papsas_app/js/achievement_record.js' %}"></script>
 {% endblock %}
