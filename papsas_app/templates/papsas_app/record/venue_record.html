@@ -24,6 +24,7 @@
                     <th> Venue Name </th>
                     <th> Venue Address </th>
                     <th> Capacity </th>
+                    <th> Action </th>
                 </tr>
             </thead>
             <tbody 
@@ -35,6 +36,7 @@
                     <td>{{ venue.name }}</td>
                     <td> {{ venue.address }} </td>
                     <td> {{ venue.capacity }} </td>
+                    <td> <button>Update</button> <button>Delete</button> </td>
                 </tr>
                 {% endfor %}
             </tbody>

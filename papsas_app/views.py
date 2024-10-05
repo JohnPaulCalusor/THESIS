@@ -1060,6 +1060,7 @@ def decline_eventReg(request, id):
             eventReg.save()
             return JsonResponse({'message': 'Updated successfully!'}, status = 200)
     return JsonResponse({'error': 'Only PUT method is allowed.'}, status=405)
+    
 @csrf_exempt
 def approve_eventReg(request, id):
     eventReg = EventRegistration.objects.get( id = id)
