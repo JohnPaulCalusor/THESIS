@@ -34,6 +34,12 @@ occupation = [
     ('Practitioner', 'Practitioner'),
 ]
 
+status = [
+    ('Approved', 'Approved'),
+    ('Pending', 'Pending'),
+    ('Declined', 'Declined')
+]
+
 
 
 class User(AbstractUser):
@@ -184,6 +190,7 @@ class EventRegistration(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name="activity")
     receipt = models.ImageField(upload_to="papsas_app/reciept", null=True, blank=True) 
     registered_at = models.DateTimeField(auto_now_add=True)
+    status = models.CharField(max_length=10, choices=status, default='Pending')
 
     def __str__(self):
         return f"{self.id} : {self.user.id} : {self.user.username} - {self.event.eventName} at {self.event.venue}"

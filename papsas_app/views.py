@@ -865,6 +865,20 @@ def get_profile(request, id):
         'attended_events' : attended_event,
         'elected_officers' : elected_officer
     })
+
+def get_event_reg(request, id):
+    event = Event.objects.get(id = id)
+    eventReg = EventRegistration.objects.filter(event = event)
+
+    eventReg_data = []
+    for reg in eventReg:
+        eventReg_data.append({
+            'name' : f'{reg.user.first_name} {reg.user.last_name}',
+            'receipt' : reg.receipt.url if reg.receipt else None,
+            'status' : reg.status
+        })
+    return JsonResponse(eventReg_data, safe=False)
+
 #admin dashboard
 
 
