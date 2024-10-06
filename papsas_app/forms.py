@@ -154,5 +154,49 @@ class NewsForm(forms.ModelForm):
     class Meta:
         model = NewsandOffers
         fields = ('name', 'description', 'pubmat')
+
+class UserUpdateForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ('email', 'first_name', 'last_name', 'mobileNum', 'region', 'address', 'occupation', 'age', 'birthdate', 'institution')
+        widgets = {
+            'email': forms.EmailInput(attrs={
+                'placeholder': 'Email',
+                'class': 'input-field'
+            }),
+            'first_name': forms.TextInput(attrs={
+                'placeholder': 'First Name',
+                'class': 'input-field'
+            }),
+            'last_name': forms.TextInput(attrs={
+                'placeholder': 'Last Name',
+                'class': 'input-field'
+            }),
+            'mobileNum': forms.TextInput(attrs={
+                'placeholder': 'Mobile Number',
+                'class': 'input-field'
+            }),
+            'address': forms.TextInput(attrs={
+                'placeholder': 'Address',
+                'class': 'input-field'
+            }),
+            'age': forms.NumberInput(attrs={
+                'placeholder': 'Age',
+                'class': 'input-field'
+            }),
+            'birthdate': forms.DateInput(attrs={
+                'type': 'date',
+                'class': 'input-field'
+            }),
+            'institution': forms.TextInput(attrs={
+                'placeholder': 'Institution',
+                'class': 'input-field'
+            }),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(UserUpdateForm, self).__init__(*args, **kwargs)
+        self.fields['birthdate'].label = 'Date of Birth'
+        self.fields['region'].widget.attrs['class'] = 'input-field'    
         
 

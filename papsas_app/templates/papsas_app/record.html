@@ -66,13 +66,16 @@
     </div>
     </div>
     <div id='popup_container'>
-        {% for field in form %}
-            {% if field.name != 'password' %}
-            {{ field }}
-            {% endif %}
-        {%  endfor %}
+        <form method="post" >
+            {% csrf_token %}
+            {% for field in form %}
+                {% if field.name != 'password' %}
+                {{ field }}
+                {% endif %}
+            {%  endfor %}
+            <button type="submit">Update</button>
+        </form>
 
-        <button type="submit">Update</button>
         <!-- popup for update -->     
     </div>
 {% endblock %}

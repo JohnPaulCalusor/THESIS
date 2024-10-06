@@ -83,6 +83,7 @@ urlpatterns = [
     path('achievement/delete/<int:id>/', views.delete_achievement, name="delete_achievement"),
     # user
     path('user/delete/<int:id>', views.delete_account, name="delete_account"),
+    path('user/update/<int:id>', views.update_account, name="update_account"),
     # admin dashboard
     path('admin_dashboard/', views.admin_dashboard, name='admin_dashboard'),
     path('get_attendance_per_venue/', get_attendance_per_venue, name='get_attendance_per_venue'),

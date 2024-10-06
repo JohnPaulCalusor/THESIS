@@ -18,7 +18,7 @@ from django.http import JsonResponse
 from .models import User, MembershipTypes, Vote, Event, Officer
 from django.db import models
 # Imported Forms
-from .forms import AttendanceForm, EventRegistrationForm, EventForm, ProfileForm, RegistrationForm, LoginForm, MembershipRegistration, Attendance, VenueForm, AchievementForm, NewsForm
+from .forms import AttendanceForm, EventRegistrationForm, EventForm, ProfileForm, RegistrationForm, LoginForm, MembershipRegistration, Attendance, VenueForm, AchievementForm, NewsForm, UserUpdateForm
 from datetime import date, timedelta
 from django.contrib.auth.forms import PasswordResetForm
 from django.contrib.auth.views import PasswordResetView
@@ -505,12 +505,40 @@ def record(request):
     try:
         form = RegistrationForm()
         userRecord = User.objects.all()
+
+        if request.method == 'POST':
+            form = RegistrationForm(request.POST)
+            if form.is_valid():
+                form.save()
+                return redirect('index')
+            else:
+                return render(request, 'papsas_app/form/record_form.html', 
+                              {'form': form
+                })
         return render(request, 'papsas_app/record.html', {
             'form' : form,
             'userRecord' : userRecord
         })
     except:
         return HttpResponseNotFound('Page not Found!')
+    
+def update_account(request, id):
+    try:
+        user = User.objects.get(id=id)
+        form = UserUpdateForm(instance=user)
+        if request.method == 'POST':
+            form = UserUpdateForm(request.POST, instance = user )
+            if form.is_valid():
+                form.save()
+                return redirect('record')
+            else:
+                errors = form.errors.as_json()
+                return HttpResponse(errors, content_type='application/json')
+
+    except Exception as e:
+        return HttpResponseForbidden(f'Error: {e}')
+
+    
 def membership_registration(request, mem_id):
     form = MembershipRegistration(request.user, mem_id)
     membership = mem_id
