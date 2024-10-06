@@ -414,11 +414,11 @@ def event(request):
                 '[Pogi sa Pinas]\n'
                 'Philippine Association of Practitioners of Student Affairs and Services\n'
             )
-
+            #dito ichcheck kung email_verified at kung practitioner or student
             if event.exclusive:
-                users_to_email = User.objects.all()
+                users_to_email = User.objects.filter(email_verified=True)
             else:
-                users_to_email = User.objects.filter(occupation='Practitioner')
+                users_to_email = User.objects.filter(occupation='Practitioner', email_verified=True)
 
             for user in users_to_email:
                 message = message_template.format(name=user.first_name, event_name=event.eventName)
@@ -426,6 +426,7 @@ def event(request):
                     send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [user.email])
                 except Exception as e:
                     logger.error("Error sending email: %s", e)
+
 
             return redirect('index')
     else:
@@ -601,42 +602,119 @@ def event_calendar(request):
         })
     return render(request, 'papsas_app/event_calendar.html', {'events': data})
 
+
+from django.utils import timezone
+from datetime import timedelta
+from django.shortcuts import render, redirect, get_object_or_404
+
+# Password Reset Request View (Sends Verification Code)
 def password_reset_request(request):
     if request.method == 'POST':
         email = request.POST.get('email')
         try:
             user = User.objects.get(email=email)
-            verification_code = random.randint(100000, 999999)
-            user.verification_code = verification_code
-            user.save()
-            subject = 'Password Reset Verification Code'
-            message = f'Dear {user.first_name},\n\nYour verification code is: {verification_code}\n\nPlease enter this code to reset your password.\n\nBest regards,\nPhilippine Association of Practioners of Student Affairs and Services'
-            send_mail(subject, message, 'your_email@example.com', [user.email])
+            
+            # Generate new verification code if it is missing or expired
+            if (user.verification_code is None or 
+                user.verification_code_expiration is None or 
+                timezone.now() > user.verification_code_expiration):
+                
+                user.verification_code = random.randint(100000, 999999)
+                user.verification_code_expiration = timezone.now() + timedelta(minutes=2)
+                user.save()
+
+                # Send email with the new verification code
+                subject = 'Password Reset Verification Code'
+                message = f'Dear {user.first_name},\n\nYour verification code is: {user.verification_code}\n\nPlease enter this code to reset your password.\n\nBest regards,\nPhilippine Association of Practioners of Student Affairs and Services'
+                send_mail(subject, message, 'your_email@example.com', [user.email])
+
             return redirect('password_reset_verify', user_id=user.id)
+
         except ObjectDoesNotExist:
             messages.error(request, 'User with this email does not exist.')
             return redirect('password_reset')
+
     else:
         form = PasswordResetForm()
         form.fields['email'].widget.attrs['placeholder'] = 'Enter your email address'
         form.fields['email'].widget.attrs['class'] = 'password-reset'
         return render(request, 'papsas_app/password_reset.html', {'form': form})
 
+
 def password_reset_verify(request, user_id):
     user = User.objects.get(id=user_id)
+
     if request.method == 'POST':
-        code_1 = request.POST.get('code-1')
-        code_2 = request.POST.get('code-2')
-        code_3 = request.POST.get('code-3')
-        code_4 = request.POST.get('code-4')
-        code_5 = request.POST.get('code-5')
-        code_6 = request.POST.get('code-6')
-        code = ''.join([code_1, code_2, code_3, code_4, code_5, code_6])
-        if user.verification_code == int(code):
-            return redirect('password_reset_confirm', user_id=user.id)
+        if 'resend_code' in request.POST:
+            # Resend the verification code
+            user.verification_code = random.randint(100000, 999999)
+            user.verification_code_expiration = timezone.now() + timezone.timedelta(minutes=2)
+            user.save()
+
+            # Send email with the new verification code
+            subject = 'Password Reset Verification Code'
+            message = f'Dear {user.first_name},\n\nYour new verification code is: {user.verification_code}\n\nPlease enter this code to reset your password.\n\nBest regards,\nPhilippine Association of Practitioners of Student Affairs and Services'
+            send_mail(subject, message, 'your_email@example.com', [user.email])
+
+            # Provide feedback message
+            return render(request, 'papsas_app/password_reset_verify.html', {
+                'message': 'A new verification code has been sent to your email address.',
+                'user': user,
+                'resend_code': False,  # Initially hide the resend button
+                'expiration_timestamp': int(user.verification_code_expiration.timestamp())
+            })
+
         else:
-            return render(request, 'papsas_app/password_reset_verify.html', {'message': 'Invalid Verification Code'})
-    return render(request, 'papsas_app/password_reset_verify.html', {'user_id': user_id})
+            # Combine the six individual code inputs into a single string
+            code = (
+                request.POST['code-1'] +
+                request.POST['code-2'] +
+                request.POST['code-3'] +
+                request.POST['code-4'] +
+                request.POST['code-5'] +
+                request.POST['code-6']
+            )
+
+            if user.verification_code_expiration and timezone.now() > user.verification_code_expiration:
+                return render(request, 'papsas_app/password_reset_verify.html', {
+                    'message': 'Verification code has expired. Please request a new one.',
+                    'resend_code': True,  # Show the resend button
+                    'user': user,
+                    'expiration_timestamp': 0
+                })
+
+            elif user.verification_code == int(code):
+                return redirect('password_reset_confirm', user_id=user.id)
+
+            else:
+                return render(request, 'papsas_app/password_reset_verify.html', {
+                    'message': 'Invalid Verification Code',
+                    'user': user,
+                    'resend_code': False,
+                    'expiration_timestamp': int(user.verification_code_expiration.timestamp())
+                })
+
+    # Handle GET request to display the form
+    if user.verification_code_expiration is None or timezone.now() > user.verification_code_expiration:
+        user.verification_code = random.randint(100000, 999999)
+        user.verification_code_expiration = timezone.now() + timezone.timedelta(minutes=2)
+        user.save()
+
+        # Only send the email when a new code is generated
+        subject = 'Password Reset Verification Code'
+        message = f'Dear {user.first_name},\n\nYour verification code is: {user.verification_code}\n\nPlease enter this code to reset your password.\n\nBest regards,\nPhilippine Association of Practitioners of Student Affairs and Services'
+        send_mail(subject, message, 'your_email@example.com', [user.email])
+
+        message_context = 'A new verification code has been sent to your email address.'
+    else:
+        message_context = 'You still have a valid verification code.'
+
+    return render(request, 'papsas_app/password_reset_verify.html', {
+        'user': user,
+        'resend_code': False,  # Initially hide the resend button
+        'expiration_timestamp': int(user.verification_code_expiration.timestamp()),
+        'message': message_context  # Pass the appropriate message based on code generation
+    })
 
 def password_reset_confirm(request, user_id):
     user = User.objects.get(id=user_id)
