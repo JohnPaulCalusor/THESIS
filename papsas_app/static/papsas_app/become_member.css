@@ -1,12 +1,20 @@
 .membership {
     padding: 2rem 1rem;
-    margin-top: 5rem;
+    margin-top: 200px;
+    background-color: #f3f1f1;
+    text-align: center; /* Center content within the resources section */
+    padding: 10px;
+    padding-bottom: 80px;
+  
+  }
+  .institutional-membership {
+    padding: 2rem 1rem;
+    margin-top: 1.5rem;
     background-color: #ffffff;
     text-align: center; /* Center content within the resources section */
     padding: 10px;
     margin-bottom: 10px;
   }
-  
   .membership_title {
     text-align: center;
     margin-bottom: 2rem;
@@ -25,7 +33,7 @@
     display: grid;
     grid-template-columns: repeat(4, 1fr); /* 4 equal columns */
     gap:10px;
-  
+    
     justify-items: center;
   }
   
@@ -39,6 +47,8 @@
     border: 1px solid #ddd;
     border-radius: 20px;
     box-sizing: border-box;
+    background-color: white;
+    padding-bottom: 30px;
   }
   
   .titleContainer {
@@ -84,6 +94,7 @@
     transition: .4s;
     display: inline-block;
     margin-bottom: 10px;
+    width: 250px;
     
   }
   .membership__button_1 a {

@@ -6,6 +6,7 @@
 {% endblock %}
 
 {% block body %}
+<h1 class="title-container">Event List</h1>
 <div id="event_container"
 hx-get="{% url 'get_event' 'list' %}"
 hx-trigger="every 5s"
@@ -29,4 +30,5 @@ hx-swap="innerHTML"
     <hr>
     {% endfor %}
 </div>
+
 {% endblock %}

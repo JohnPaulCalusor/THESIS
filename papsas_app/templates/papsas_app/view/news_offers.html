@@ -1,32 +1,54 @@
 {% extends 'papsas_app/layout.html' %}
-
+{% load static %}
+{% block head %}
+    <link rel="stylesheet" href="{% static 'papsas_app/news_and_offers.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"> 
+{% endblock %}
 
 {% block body %}
-<section class="offers">
-    <h1 class="offers__title">NEWS AND OFFERS</h1>
-    <div class="offers__container container">
-        <div class="offers__box">
-            <img src="media/papsas_app/images/affiliate.jpg" alt="Service 1" class="offers__img">
-            <h3 class="offer__title">RESEARCH</h3>
+    <section class="video-papsas">
+            <div class="video-feed-container">
+                <!-- First video post -->
+                <h1 class="video-title-container">News and Offers</h2>
+                <div class="video-post">
+                    <!-- Video section -->
+                    
+                    <div class="video-wrapper">
+                        <img src="media/papsas_app/images/member.jpg" alt="" class="event-image">
+                    </div>
+                    <!-- Title and caption section -->
+                    <div class="video-content">
+                        <h3 class="video-title">Title</h3>
+                        <p class="video-caption">Description</p>
+                    </div>
+                </div>
+            
+            </div>
         </div>
-        <div class="offers__box">
-            <img src="media/papsas_app/images/regular.jpg" alt="Service 2" class="offers__img">
-            <h3 class="offer__title">SEMINAR & WORKSHOP</h3>
+    </section>
+    
+    <footer class="footer">
+        <div class="footer__container container">
+            <div class="footer__content">
+                <h3 class="footer__title">Philippines Association of Practitioners of Student Affairs and Services, Inc.</h3>
+                <p class="footer__description">
+                    Dedicated to the pursuit of excellence in student affairs and services work.
+                </p>
+                <ul class="footer__links">
+                    <li><a href="#" class="footer__link">(043) 778 0656</a></li>
+                    <li><a href="#" class="footer__link">/papsasinc</a></li>
+                    <li><a href="#" class="footer__link">papsasinc.national@gmail.com</a></li>
+                    <li><a href="bit.ly/papsasinc" class="footer__link">bit.ly/papsasinc</a></li>
+                </ul>
+            </div>
+            <div class="footer__socials">
+                <a href="#" class="footer__social"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" class="footer__social"><i class="fab fa-twitter"></i></a>
+                <a href="#" class="footer__social"><i class="fab fa-instagram"></i></a>
+            </div>
         </div>
-        <div class="offers__box">
-            <img src="media/papsas_app/images/special.jpg" alt="Service 3" class="offers__img">
-            <h3 class="offer__title">NEWS AND UPDATES</h3>
-        </div>
+        <div class="footer__bottom">
+            <p>&copy; 2024 PAPSAS, Inc. All Rights Reserved.</p>
         </div>
 </section>
-
-<div>
-    {% for news_offer in news_offers %}
-    <div>
-        <img src="{{ news_offer.pubmat.url }}" alt="{{ news_offer.name }}">
-        <h3>{{ news_offer.name }}</h3>
-        <p>{{ news_offer.description }}</p>
-    </div>
-    {% endfor %}
-</div>
 {% endblock %}

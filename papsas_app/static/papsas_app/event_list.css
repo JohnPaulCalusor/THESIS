@@ -41,12 +41,19 @@
     color: #ff0000;
     margin-bottom: 10px;
 }
-
-.event-description {
+.event-content p {
     font-size: 1em;
     color: #555;
     margin-bottom: 15px;
     font-weight: 300;
+    text-align: justify;
+    line-height: 1.5em; /* Improves readability */
+    word-wrap: break-word; /* Prevents long words from overflowing */
+    white-space: normal; /* Allow text to wrap */
+    overflow: visible; /* No overflow restriction */
+    text-overflow: clip; /* No text truncation */
+    display: block; /* Ensure it shows full content */
+    max-height: none; /* No height restriction */
 }
 
 .event-date {
@@ -79,7 +86,17 @@
     transform: scale(1.05, 1);
 }
 
+.title-container{
+    font-size: 40px;
+    color: red;
+    margin-top: -50px;
+    text-transform: uppercase;
+    font-weight: 500;
+    text-align: center;
+    padding-top: 50px;
+    padding-bottom: 50px;
 
+  }
 /* Responsive design for mobile */
 @media (max-width: 768px) {
     .event-actions {

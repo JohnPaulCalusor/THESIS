@@ -52,6 +52,45 @@ td a {
 td a:hover {
     text-decoration: underline;
 }
+/* Ensuring the description column text wraps properly */
+td {
+    word-wrap: break-word;
+    max-width: 200px; /* Adjust the max-width as needed */
+}
+
+td:nth-child(2) { 
+    max-width: 300px; /* Adjust the width specifically for the Description column */
+    white-space: normal; /* Allow the text to wrap onto multiple lines */
+    overflow: hidden;
+    text-overflow: ellipsis; /* Adds "..." for long text */
+}
+.truncated {
+    display: inline; /* Display text in-line */
+    overflow: hidden; 
+    white-space: nowrap; 
+    text-overflow: ellipsis; /* Show ellipsis for long text */
+}
+
+.full-text {
+    display: none; /* Hide full text by default */
+}
+
+.show-more {
+    color: blue;
+    cursor: pointer;
+    margin-left: 5px;
+    font-size: 12px;
+    text-decoration: underline;
+}
+
+.show-more:hover {
+    color: darkblue;
+}
+
+.ach_img {
+    max-width: 100px;
+    height: auto;
+}
 
 /* Popup container style */
 #popup_container {
