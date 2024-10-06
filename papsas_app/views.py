@@ -602,11 +602,6 @@ def event_calendar(request):
         })
     return render(request, 'papsas_app/event_calendar.html', {'events': data})
 
-
-from django.utils import timezone
-from datetime import timedelta
-from django.shortcuts import render, redirect, get_object_or_404
-
 # Password Reset Request View (Sends Verification Code)
 def password_reset_request(request):
     if request.method == 'POST':
