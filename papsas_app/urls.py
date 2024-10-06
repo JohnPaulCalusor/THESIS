@@ -75,6 +75,7 @@ urlpatterns = [
     path('partial/event/<str:view>', views.get_event, name="get_event"),
     path('partial/account', views.get_account, name="get_account"),
     path('partial/venue', views.get_venue, name="get_venue"),
+    path('partial/profile/<int:id>', views.get_profile, name="get_profile"),
     path('partial/achievement', views.get_achievement, name="get_achievement"),
     path('partial/news_offers', views.get_news_offers, name="get_news_offers"),
     # achievement

@@ -108,7 +108,7 @@
                                         </ul>
                                     </li>
                                     <li class="nav__item"><a href="{% url 'achievement' %}" class="nav__link">Achievements</a></li>
-                                    <li class="nav__item"><a href="" class="nav__link">News and Offers</a></li>
+                                    <li class="nav__item"><a href="{% url 'news_offers' %}" class="nav__link">News and Offers</a></li>
                                     <li class="nav__item"><a href="{% url 'logout' %}" class="nav__link">Logout</a></li>
                                 {% if user.profilePic %}
                                 <li class="nav__item"><a href="{% url 'profile' user.id %}">
