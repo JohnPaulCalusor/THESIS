@@ -1218,3 +1218,14 @@ def approve_eventReg(request, id):
             return JsonResponse({'message': 'Updated successfully!'}, status = 200)
     return JsonResponse({'error': 'Only PUT method is allowed.'}, status=405)
 
+def delete_news_offer(request, id):
+    try:
+        news_offer = NewsandOffers.objects.get(id = id)
+        news_offer.delete()
+        messages.success(request, 'Deleted successfully!')
+        return redirect('news_offers_record')
+    except Exception as e:
+        return render(request, 'papsas_app/record/news_offers_record.html', {
+            'error': f'Error found: {e}',
+        })
+

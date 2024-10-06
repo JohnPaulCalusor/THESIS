@@ -84,6 +84,8 @@ urlpatterns = [
     # user
     path('user/delete/<int:id>', views.delete_account, name="delete_account"),
     path('user/update/<int:id>', views.update_account, name="update_account"),
+    #news and offers
+    path('news_offers/delete/<int:id>', views.delete_news_offer, name='delete_news_offer'),
     # admin dashboard
     path('admin_dashboard/', views.admin_dashboard, name='admin_dashboard'),
     path('get_attendance_per_venue/', get_attendance_per_venue, name='get_attendance_per_venue'),

@@ -17,6 +17,14 @@
         <input type="text" id="searchInput" placeholder="Search for news and offers..." />
     </div>
     <div class="data-table">
+        {% if error %}
+        <p>{{ error }}</p>
+        {% endif %}
+        {% if messages %}
+            {% for message in messages %}
+            <p>{{ message }}</p>
+            {% endfor %}
+        {%  endif %}
         <table>
             <thead>
                 <tr>
@@ -38,7 +46,11 @@
                     <td>{{ news_offer.postStamp }}</td>
                     <td> <img src="{{ news_offer.pubmat.url }}" alt="{{news_offer.name}} image" class="n-o_img"> </td>
                     <td> <button class="action-icon" title="Update" type="submit"><i class="fas fa-edit"></i></button> 
-                        <button class="action-icon" title="Delete" type="submit"><i class="fas fa-trash-alt"></i></button> </td>
+                        <form action="{% url 'delete_news_offer' news_offer.id %}" method="post">
+                            {% csrf_token %}
+                            <button class="action-icon" title="Delete" type="submit"><i class="fas fa-trash-alt"></i></button>
+                        </form>
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>
