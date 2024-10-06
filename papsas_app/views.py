@@ -502,11 +502,15 @@ def news_offers(request):
     })
 
 def record(request):
-    userRecord = User.objects.all()
-    return render(request, 'papsas_app/record.html', {
-        'userRecord' : userRecord
-    })
-
+    try:
+        form = RegistrationForm()
+        userRecord = User.objects.all()
+        return render(request, 'papsas_app/record.html', {
+            'form' : form,
+            'userRecord' : userRecord
+        })
+    except:
+        return HttpResponseNotFound('Page not Found!')
 def membership_registration(request, mem_id):
     form = MembershipRegistration(request.user, mem_id)
     membership = mem_id
@@ -580,17 +584,19 @@ def delete_membership(request, id):
         else:
             return redirect('membership_record')
 
-def get_user_info(id):
+def get_user_info(request, id):
     user = User.objects.get(id = id)
     user_data = {
         'username' : user.email,
-        'name' : f'{user.first_name} {user.last_name}',
+        'firstName' : user.first_name,
+        'lastName' : user.last_name,
         'mobileNum' : user.mobileNum,
         'region' : user.region,
         'address' : user.address,
         'occupation' : user.occupation,
         'age' : user.age,
         'birthdate' : user.birthdate,
+        'institution' : user.institution,
     }
     return JsonResponse (user_data)
     
@@ -892,7 +898,7 @@ def delete_achievement(request, id):
     except Exception as e:
         return HttpResponse(f'Error: {e}')
 
-def news_offers_record(request, view):
+def news_offers_record(request):
     news_offers = NewsandOffers.objects.all()
     return render(request, 'papsas_app/record/news_offers_record.html', {
         'news_offers' : news_offers,
@@ -903,14 +909,15 @@ def delete_account(request, id):
     try:
         accounts = User.objects.all()
         user = User.objects.get( id = id)
+        
+        if request.method == 'POST':
+            user.is_active = False
+            user.save()
+            return render(request, 'papsas_app/record.html', {
+                'userRecord' : accounts
+            })
     except:
         return HttpResponseNotFound('User not Found')
-    
-    if request.method == 'POST':
-        user.delete()
-        return render(request, 'papsas_app/record.html', {
-            'userRecord' : accounts
-        })
 
 #htmx functions
 def get_account(request):

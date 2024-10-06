@@ -1,29 +1,19 @@
-document.addEventListener('DOMContentLoaded', function(){
-    document.body.addEventListener('click', function(event) {
-        if (event.target && event.target.id === 'view_button') {
-            fetchUserInfo(event.target.dataset.id);
-        }
-    });
-});
-
 function fetchUserInfo(userId) {
-    fetch(`get-user-info/${userId}/`)
+    fetch(`/get-user-info/${userId}/`)
         .then(response => response.json())
         .then(data => {
-            const userInfo = `
-                <div>
-                    <h3>User Information</h3>
-                    <p><strong>Username:</strong> ${data.username}</p>
-                    <p><strong>Name:</strong> ${data.name}</p>
-                    <p><strong>Mobile Number:</strong> ${data.mobileNum}</p>
-                    <p><strong>Region:</strong> ${data.region}</p>
-                    <p><strong>Address:</strong> ${data.address}</p>
-                    <p><strong>Occupation:</strong> ${data.occupation}</p>
-                    <p><strong>Age:</strong> ${data.age}</p>
-                    <p><strong>Date of Birth:</strong> ${data.birthdate}</p>
-                </div>
-            `;
-            document.querySelector('#popup_container').innerHTML = userInfo;
-        })
+            document.getElementById('id_email').value = data.username;
+            document.getElementById('id_first_name').value = data.firstName
+            document.getElementById('id_last_name').value = data.lastName
+            document.getElementById('id_mobileNum').value = data.mobileNum
+            document.getElementById('id_region').value = data.region
+            document.getElementById('id_address').value = data.address
+            document.getElementById('id_occupation').value = data.occupation
+            document.getElementById('id_age').value = data.age
+            document.getElementById('id_birthdate').value = data.birthdate
+            document.getElementById('id_institution').value = data.institution
         .catch(error => console.error('Error fetching user info:', error));
+    
+    });
+    document.querySelector('#popup_container').style.display = 'block';
 }

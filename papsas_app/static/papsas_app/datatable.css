@@ -52,23 +52,6 @@ td a:hover {
 }
 
 /* Popup container style */
-#popup_container {
-    display: none;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 50%;
-    background-color: white;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    z-index: 1000;
-}
-
-#popup_container.active {
-    display: block;
-}
-
 /* Button styles */
 
 .action-icon {
@@ -229,24 +212,10 @@ td a:hover {
     background-color: rgba(0, 0, 0, 0.7); /* Dark background with opacity */
     z-index: 999; /* Positioned below the popup */
 }
+
 #popup_container {
     display: none;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 40%;
-    background-color: white;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    z-index: 1000;
-    border-radius: 10px;
 }
-
-#popup_container.active {
-    display: block;
-}
-
 /* Popup Content */
 .popup-content {
     padding: 20px;

@@ -23,6 +23,7 @@
                     <th>Age</th>
                     <th>Birth Date</th>
                     <th>Email Verified</th>
+                    <th> Active </th>
                     <th>Profile Picture</th>
                     <th>Action</th>
                 </tr>
@@ -44,9 +45,10 @@
                         <td>{{user.age}}</td>
                         <td>{{user.birthdate}}</td>
                         <td>{{user.email_verified}}</td>
+                        <td> {{ user.is_active }} </td>
                         <td><a href="{% url 'profile' user.id %}"><i class="fas fa-eye"></a></td>
                         <td>   
-                            <a href="" class="action-icon" title="Edit"><i class="fas fa-edit"></i></a>
+                            <a class="action-icon" title="Edit" onclick="fetchUserInfo( '{{ user.id }}' )"><i class="fas fa-edit"></i></a>
                             <form action="{% url 'delete_account' user.id %}" method="post">
                                 {% csrf_token %}
                                 <button class="action-icon" title="Delete" type="submit">
@@ -59,9 +61,16 @@
             </tbody>
         </table>
     </div>
-    </div>
+
     <div id='popup_container'>
-        <!-- popup -->     
+        {% for field in form %}
+            {% if field.name != 'password' %}
+            {{ field }}
+            {% endif %}
+        {%  endfor %}
+
+        <button type="submit">Update</button>
+        <!-- popup for update -->     
     </div>
 {% endblock %}
 
