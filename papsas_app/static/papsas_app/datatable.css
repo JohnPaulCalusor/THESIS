@@ -299,3 +299,44 @@ td a:hover {
 .data-table tbody tr:nth-child(even) {
     background-color: #f2f2f2;
 }
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    color: #000000;
+}
+
+input[type="text"],
+input[type="date"],
+input[type="time"],
+input[type="number"],
+textarea,
+select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.btn {
+    background-color: #ff0000;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+}
+
+.btn:hover {
+    background-color: #000000;
+}
+
+.message {
+    color: red;
+    text-align: center;
+    margin-top: 20px;
+}

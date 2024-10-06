@@ -10,9 +10,9 @@
 <div class="data-table-container">
     <div class="table-header">
         <h1> Achievement Record </h1>
-        <a href="#" class="btn-add-user">
-            <i class="fas fa-user-plus"></i> Add Achievement
-        </a>
+    </div>
+    <div class="filter-container">
+        <input type="text" id="searchInput" placeholder="Search for achievement..." />
     </div>
     <div class="data-table">
         {% if messages %}
@@ -25,11 +25,11 @@
         <table>
             <thead>
                 <tr>
-                    <td> Title </td>
-                    <td> Description </td>
-                    <td> Stamp </td>
-                    <td> Publication Material </td>
-                    <td> Action </td>
+                    <th> Title </th>
+                    <th> Description </th>
+                    <th> Stamp </th>
+                    <th> Publication Material </th>
+                    <th> Action </th>
                 </tr>
             </thead>
             <tbody 
@@ -51,8 +51,11 @@
             </tbody>
         </table>
     </div>
-</div>
 
+</div>
+<div class="pagination" id="pagination">
+    <!-- Pagination buttons will be dynamically generated -->
+</div>
 <div id="update-container">
     <button>close</button>
     <h2>Update Achievement</h2>
@@ -70,4 +73,5 @@
 {% endblock %}
 {% block script %}
 <script src="{% static 'papsas_app/js/achievement_record.js' %}"></script>
+<script src="{% static 'papsas_app/js/pagination.js' %}"></script>
 {% endblock %}

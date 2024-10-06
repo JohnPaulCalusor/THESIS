@@ -10,6 +10,9 @@
         <div class="table-header">
             <h1>User Record</h1>
         </div>
+        <div class="filter-container">
+            <input type="text" id="searchInput" placeholder="Search for members..." />
+        </div>
         <table>
             <thead>
                 <tr>
@@ -61,7 +64,7 @@
             </tbody>
         </table>
     </div>
-
+    </div>
     <div id='popup_container'>
         {% for field in form %}
             {% if field.name != 'password' %}
