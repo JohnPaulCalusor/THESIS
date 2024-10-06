@@ -487,16 +487,19 @@ def event_registration_view(request, event_id):
     return render(request, 'papsas_app/form/event_registration_form.html', {'form': form, 'event': event})
 
 def about(request):
-    return render(request, 'papsas_app/about_us.html')
+    return render(request, 'papsas_app/view/about_us.html')
 
 def become_member(request):
     memType = MembershipTypes.objects.all()
-    return render(request, 'papsas_app/become_member.html', {
+    return render(request, 'papsas_app/view/become_member.html', {
         'memType' : memType
     })
 
 def news_offers(request):
-    return render(request, 'papsas_app/news_offers.html')
+    news_offers = NewsandOffers.objects.all()
+    return render(request, 'papsas_app/view/news_offers.html', {
+        'news_offers' : news_offers
+    })
 
 def record(request):
     userRecord = User.objects.all()
@@ -745,7 +748,7 @@ def compose_venue(request):
 def event_list(request):
     events = Event.objects.all()
 
-    return render(request, 'papsas_app/event_view.html', {
+    return render(request, 'papsas_app/view/event_view.html', {
         'events': events,
     })
 
@@ -837,7 +840,7 @@ def compose_news_offer(request):
 
 def achievement_view(request):
     achievements = Achievement.objects.all()
-    return render(request, 'papsas_app/achievement_view.html', {
+    return render(request, 'papsas_app/view/achievement_view.html', {
         'achievements' : achievements,
     } )
 
@@ -889,11 +892,12 @@ def delete_achievement(request, id):
     except Exception as e:
         return HttpResponse(f'Error: {e}')
 
-def news_offers_record(request):
+def news_offers_record(request, view):
     news_offers = NewsandOffers.objects.all()
     return render(request, 'papsas_app/record/news_offers_record.html', {
         'news_offers' : news_offers,
         })
+
 
 def delete_account(request, id):
     try:
