@@ -41,10 +41,10 @@
                     <td> {{ achievement.description }} </td>
                     <td> {{ achievement.postStamp }} </td>
                     <td> <img src="{{ achievement.pubmat.url }}" alt="{{achievement.name}} image" class="ach_img"> </td>
-                    <td> <button onclick="showUpdate('{{ achievement.id }}')">Update</button> 
+                    <td> <button onclick="showUpdate('{{ achievement.id }}')" class="action-icon" title="Update"><i class="fas fa-edit"></i></button> 
                         <form action="{% url 'delete_achievement' achievement.id %}" method="post">
                             {% csrf_token %}
-                            <button>Delete</button>
+                            <button class="action-icon" title="Delete" type="submit"><i class="fas fa-trash-alt"></i></button>
                         </form></td>
                 </tr>
                 {% endfor %}
