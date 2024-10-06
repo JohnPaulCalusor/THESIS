@@ -165,7 +165,7 @@ class Event(models.Model):
     venue = models.ForeignKey(Venue, on_delete=models.CASCADE, null=True)
     eventDescription = models.TextField(max_length=9999, null=True)
     eventStatus = models.BooleanField(default=True)
-    pubmat = models.ImageField(upload_to="papsas_app/pubmat/event", null=True)
+    pubmat = models.ImageField(upload_to="papsas_app/pubmat/event", null=True, blank=True)
     price = models.DecimalField(max_digits=10, decimal_places=2, null=True)
     startTime = models.TimeField(null=True)
     endTime = models.TimeField(null=True)

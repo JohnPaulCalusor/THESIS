@@ -788,8 +788,10 @@ def event_list(request):
 
 def attendance_list(request):
     events = Event.objects.all()
+    form = EventForm()
     return render(request, 'papsas_app/record/attendance_record.html', {
         'events': events,
+        'form': form,
     })
 
 def get_receipt(request, user_id):
@@ -1297,4 +1299,47 @@ def update_venue(request, id):
             'error': f'Error found: {e}',
             })
 
+def delete_event (request, id):
+    try:
+        event = Event.objects.get(id = id)
+        if request.method == "POST":
+            event.delete()
+            messages.success(request, 'Deleted successfully!')
+            return redirect('attendance_list')
 
+    except Exception as e:
+        return render(request, 'papsas_app/record/attendance_record.html', {
+            'error': f'Error found: {e}',
+            })
+
+def update_event (request, id):
+    try:
+        event = Event.objects.get(id = id)
+        if request.method == "POST":
+            form = EventForm(request.POST, request.FILES, instance = event)
+            if form.is_valid:
+                form.save()
+                messages.success(request, 'Updated successfully!')
+                return redirect('attendance_list')
+            else:
+                return render(request, 'papsas_app/record/attendance_record.html', {
+                    'error': 'Invalid form data.',
+                    'form': form,
+                    })
+        data = {
+            'name' : event.eventName,
+            'startDate' : event.startDate,
+            'endDate' : event.endDate,
+            'venue' : event.venue.id,
+            'exclusive' : event.exclusive,
+            'description' : event.eventDescription,
+            'pubmat' : event.pubmat.url,
+            'price' : event.price,
+            'startTime' : event.startTime,
+            'endTime' : event.endTime,
+        }
+        return JsonResponse(data)
+    except Exception as e:
+        return render(request, 'papsas_app/record/attendance_record.html', {
+            'error': f'Error found: {e}',
+            })

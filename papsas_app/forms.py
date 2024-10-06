@@ -102,6 +102,15 @@ class EventForm(forms.ModelForm):
             'endTime': forms.DateInput(attrs={'type': 'time'}),
         }
         # required_fields = [list] to make the fields required
+
+    def clean_pubmat(self):
+        pubmat = self.cleaned_data.get('pubmat')
+        if self.instance and self.instance.pk is not None:  # If updating
+            # If no new image uploaded, we do not raise an error
+            return pubmat
+        if not pubmat:  # If no image uploaded during creation
+            raise forms.ValidationError("Image is required when creating a new achievement.")
+        return pubmat
 class EventRegistrationForm(forms.ModelForm):
     receipt_file = forms.FileField(required=True)
 

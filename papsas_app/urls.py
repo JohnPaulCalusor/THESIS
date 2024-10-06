@@ -90,6 +90,9 @@ urlpatterns = [
     #venue
     path('venue/delete/<int:id>', views.delete_venue, name='delete_venue'),
     path('venue/update/<int:id>/', views.update_venue, name='update_venue'),
+    #event
+    path('event/delete/<int:id>', views.delete_event, name='delete_event'),
+    path('event/update/<int:id>/', views.update_event, name='update_event'),
     # admin dashboard
     path('admin_dashboard/', views.admin_dashboard, name='admin_dashboard'),
     path('get_attendance_per_venue/', get_attendance_per_venue, name='get_attendance_per_venue'),
