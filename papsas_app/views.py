@@ -880,8 +880,10 @@ def achievement_view(request):
 
 def venue_record(request):
     venues = Venue.objects.all()
+    form = VenueForm()
     return render(request, 'papsas_app/record/venue_record.html', {
         'venues' : venues,
+        'form' : form,
     })
 
 def achievement_record(request):
@@ -1256,4 +1258,43 @@ def delete_news_offer(request, id):
         return render(request, 'papsas_app/record/news_offers_record.html', {
             'error': f'Error found: {e}',
         })
+    
+def delete_venue(request, id):
+    try:
+        venue = Venue.objects.get(id = id)
+        if request.method == "POST":
+            venue.delete()
+            messages.success(request, 'Deleted successfully!')
+            return redirect('venue_record')
+    except Exception as e:
+        return render(request, 'papsas_app/record/venue_record.html', {
+            'error': f'Error found: {e}',
+            })
+    
+def update_venue(request, id):
+    try:
+        venue = Venue.objects.get(id = id)
+        if request.method == "POST":
+            form = VenueForm(request.POST, instance = venue)
+            if form.is_valid():
+                form.save()
+                messages.success(request, 'Updated successfully!')
+                return redirect('venue_record')
+            else:
+                return render(request, 'papsas_app/record/venue_record.html', {
+                    'error': 'Invalid form data.',
+                    'form': form,
+                    })
+        data = {
+            'name' : venue.name,
+            'address' : venue.address,
+            'capacity' : venue.capacity,
+            }
+        return JsonResponse(data)
+        
+    except Exception as e:
+        return render(request, 'papsas_app/record/venue_record.html', {
+            'error': f'Error found: {e}',
+            })
+
 

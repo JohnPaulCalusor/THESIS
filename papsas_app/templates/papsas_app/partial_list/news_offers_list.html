@@ -4,7 +4,7 @@
     <td>{{ news_offer.description }}</td>
     <td>{{ news_offer.postStamp }}</td>
     <td> <img src="{{ news_offer.pubmat.url }}" alt="{{news_offer.name}} image" class="n-o_img"> </td>
-    <td> <button class="action-icon" title="Update" type="submit"><i class="fas fa-edit"></i></button> 
+    <td> <button class="action-icon" title="Update" onclick="showUpdate('{{ news_offer.id }}')"><i class="fas fa-edit"></i></button> 
         <form action="{% url 'delete_news_offer' news_offer.id %}" method="post">
             {% csrf_token %}
             <button class="action-icon" title="Delete" type="submit"><i class="fas fa-trash-alt"></i></button>

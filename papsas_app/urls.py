@@ -87,6 +87,9 @@ urlpatterns = [
     #news and offers
     path('news_offers/delete/<int:id>', views.delete_news_offer, name='delete_news_offer'),
     path('news_offers/update/<int:id>/', views.update_news_offer, name='update_news_offer'),
+    #venue
+    path('venue/delete/<int:id>', views.delete_venue, name='delete_venue'),
+    path('venue/update/<int:id>/', views.update_venue, name='update_venue'),
     # admin dashboard
     path('admin_dashboard/', views.admin_dashboard, name='admin_dashboard'),
     path('get_attendance_per_venue/', get_attendance_per_venue, name='get_attendance_per_venue'),
