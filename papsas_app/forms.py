@@ -149,11 +149,27 @@ class AchievementForm(forms.ModelForm):
         widgets = {
             'name': forms.TextInput(attrs={'id': 'name-id'}),
         }
+    def clean_pubmat(self):
+        pubmat = self.cleaned_data.get('pubmat')
+        if self.instance and self.instance.pk is not None:  # If updating
+            # If no new image uploaded, we do not raise an error
+            return pubmat
+        if not pubmat:  # If no image uploaded during creation
+            raise forms.ValidationError("Image is required when creating a new achievement.")
+        return pubmat
 
 class NewsForm(forms.ModelForm):
     class Meta:
         model = NewsandOffers
         fields = ('name', 'description', 'pubmat')
+    def clean_pubmat(self):
+        pubmat = self.cleaned_data.get('pubmat')
+        if self.instance and self.instance.pk is not None:  # If updating
+            # If no new image uploaded, we do not raise an error
+            return pubmat
+        if not pubmat:  # If no image uploaded during creation
+            raise forms.ValidationError("Image is required when creating a new achievement.")
+        return pubmat
 
 class UserUpdateForm(forms.ModelForm):
     class Meta:

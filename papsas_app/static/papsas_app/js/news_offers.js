@@ -1,23 +1,22 @@
-function showUpdate(achievementId) {
+function showUpdate(id) {
     const updateContainer = document.getElementById('update-container');
     updateContainer.style.display = 'block';
-    console.log(achievementId)
+    console.log(id)
 
-    fetch(`/get-achievement-data/${achievementId}/`)
+    fetch(`/news_offers/update/${id}/`)
         .then(response => response.json())
         .then(data => {
-            document.getElementById('name-id').value = data.name;
+            document.getElementById('id_name').value = data.name;
             document.getElementById('id_description').value = data.description;
             if (data.pubmat) {
                 document.getElementById('img').src = data.pubmat
             } else {
                 document.getElementById('img').src = ''
             }
-            document.getElementById('id_pubmat').src = data.pubmat;
             console.log(data)
             // Add the achievement ID to the form for submission
             const form = updateContainer.querySelector('form');
-            form.action = `/get-achievement-data/${achievementId}/`;
+            form.action = `/news_offers/update/${id}/`;
         })
         .catch(error => console.error('Error:', error));
 }
@@ -26,8 +25,3 @@ function showUpdate(achievementId) {
 function closeUpdateForm() {
     document.getElementById('update-container').style.display = 'none';
 }
-
-setTimeout(function(){
-    const element = document.getElementById('message-container');
-    element.remove();
-}, 5000);

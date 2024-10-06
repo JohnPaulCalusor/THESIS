@@ -900,7 +900,8 @@ def get_achievement_data(request, achievement_id):
             if form.is_valid():
                 form.save()
                 return redirect('achievement_record')
-            return JsonResponse({'error': 'Invalid request'}, status=400)   
+            else:
+                return JsonResponse({'error': 'Invalid request'}, status=400)   
 
         data = {
             'name' : achievement.name,
@@ -913,6 +914,31 @@ def get_achievement_data(request, achievement_id):
         return JsonResponse({'error' : 'Achievement not found'}, status = 404)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
+
+def update_news_offer(request, id):
+    try:
+        news_offer = NewsandOffers.objects.get( id = id)
+        if request.method == "POST":
+            form = NewsForm( request.POST, request.FILES, instance=news_offer)
+            if form.is_valid():
+                news_offer.name = request.POST.get('name')
+                news_offer.description = request.POST.get('description')
+                if request.FILES.get('pubmat') is not None:
+                    news_offer.pubmat = request.FILES.get('pubmat')
+                else:
+                    news_offer.pubmat = news_offer.pubmat
+                news_offer.save()
+                return redirect('news_offers_record')
+            else:
+                return JsonResponse({'error': 'Invalid request'}, status=400)
+        data = {
+            'name' : news_offer.name,
+            'description' : news_offer.description,
+            'pubmat' : news_offer.pubmat.url,
+            }
+        return JsonResponse(data)
+    except Exception as e:
+        return JsonResponse({'error' : e}, status = 404)
     
 def delete_achievement(request, id):
     try:
@@ -928,8 +954,10 @@ def delete_achievement(request, id):
 
 def news_offers_record(request):
     news_offers = NewsandOffers.objects.all()
+    form = NewsForm()
     return render(request, 'papsas_app/record/news_offers_record.html', {
         'news_offers' : news_offers,
+        'form' : form,
         })
 
 

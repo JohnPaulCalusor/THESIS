@@ -178,16 +178,17 @@ class Achievement(models.Model):
     name = models.CharField(max_length=32, null=True)
     description = models.TextField(max_length=9999, null=True)
     postStamp = models.DateTimeField(auto_now_add=True)
-    pubmat = models.ImageField(upload_to="papsas_app/pubmat/achievement", null=True)
+    pubmat = models.ImageField(upload_to="papsas_app/pubmat/achievement", null=True, blank=True)
 
     def __str__(self):
         return f'{self.id} - {self.name}'
+        
 
 class NewsandOffers(models.Model):
     name = models.CharField(max_length=32, null=True)
     description = models.TextField(max_length=9999, null=True)
     postStamp = models.DateTimeField(auto_now_add=True, null=True)
-    pubmat = models.ImageField(upload_to="papsas_app/pubmat/newsandoffers", null=True)
+    pubmat = models.ImageField(upload_to="papsas_app/pubmat/newsandoffers", null=True, blank=True)
     
 class EventRegistration(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="customer")

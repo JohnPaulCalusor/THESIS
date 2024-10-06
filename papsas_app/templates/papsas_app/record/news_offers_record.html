@@ -9,7 +9,8 @@
 
 {% block body %}
 <div class="container">
-<div class="data-table-container"></div>
+    <!-- ano to? -->
+<div class="data-table-container"></div> 
     <div class="table-header">
         <h1>News and Offers Record</h1>
     </div>
@@ -45,7 +46,7 @@
                     <td>{{ news_offer.description }}</td>
                     <td>{{ news_offer.postStamp }}</td>
                     <td> <img src="{{ news_offer.pubmat.url }}" alt="{{news_offer.name}} image" class="n-o_img"> </td>
-                    <td> <button class="action-icon" title="Update" type="submit"><i class="fas fa-edit"></i></button> 
+                    <td> <button class="action-icon" title="Update" onclick="showUpdate('{{ news_offer.id }}')"><i class="fas fa-edit"></i></button> 
                         <form action="{% url 'delete_news_offer' news_offer.id %}" method="post">
                             {% csrf_token %}
                             <button class="action-icon" title="Delete" type="submit"><i class="fas fa-trash-alt"></i></button>
@@ -55,6 +56,22 @@
                 {% endfor %}
             </tbody>
         </table>
+    </div>
+    <div id="update-container">
+        <h3>Update Record</h3>
+        <div>
+            <h4>Preview</h4>
+            <img id="img" alt="news and offers image">
+        </div>
+        <form method="post">
+            {% csrf_token %}
+            {{ form }}
+            <button type="submit">Update</button>
+        </form>
+    </div>
 </div>
-</div>
+{% endblock %}
+
+{% block script %}
+<script src="{% static 'papsas_app/js/news_offers.js' %}"></script>
 {% endblock %}
