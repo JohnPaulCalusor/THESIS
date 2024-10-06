@@ -79,6 +79,7 @@ urlpatterns = [
     path('partial/news_offers', views.get_news_offers, name="get_news_offers"),
     # achievement
     path('achievement/', views.achievement_view, name='achievement'),
+    path('achievement/delete/<int:id>/', views.delete_achievement, name="delete_achievement"),
     # user
     path('user/delete/<int:id>', views.delete_account, name="delete_account"),
 

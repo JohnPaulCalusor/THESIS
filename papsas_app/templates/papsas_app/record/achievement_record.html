@@ -15,6 +15,13 @@
         </a>
     </div>
     <div class="data-table">
+        {% if messages %}
+            {% for message in messages %}
+            <div id="message-container">
+                <p> {{ message }} </p>
+            </div>
+            {% endfor %}
+        {% endif %}
         <table>
             <thead>
                 <tr>
@@ -34,7 +41,11 @@
                     <td> {{ achievement.description }} </td>
                     <td> {{ achievement.postStamp }} </td>
                     <td> <img src="{{ achievement.pubmat.url }}" alt="{{achievement.name}} image" class="ach_img"> </td>
-                    <td> <button onclick="showUpdate('{{ achievement.id }}')">Update</button> <button>Delete</button> </td>
+                    <td> <button onclick="showUpdate('{{ achievement.id }}')">Update</button> 
+                        <form action="{% url 'delete_achievement' achievement.id %}" method="post">
+                            {% csrf_token %}
+                            <button>Delete</button>
+                        </form></td>
                 </tr>
                 {% endfor %}
             </tbody>

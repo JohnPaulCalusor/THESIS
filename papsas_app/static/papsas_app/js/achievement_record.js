@@ -25,3 +25,8 @@ function showUpdate(achievementId) {
 function closeUpdateForm() {
     document.getElementById('update-container').style.display = 'none';
 }
+
+setTimeout(function(){
+    const element = document.getElementById('message-container');
+    element.remove();
+}, 5000);

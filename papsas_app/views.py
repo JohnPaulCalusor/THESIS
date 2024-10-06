@@ -601,7 +601,6 @@ def event_calendar(request):
         })
     return render(request, 'papsas_app/event_calendar.html', {'events': data})
 
-
 def password_reset_request(request):
     if request.method == 'POST':
         email = request.POST.get('email')
@@ -805,6 +804,17 @@ def get_achievement_data(request, achievement_id):
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
     
+def delete_achievement(request, id):
+    try:
+        achievement = Achievement.objects.get( id = id )
+        achievement.delete()
+        messages.success(request, 'Achievement deleted successfully!')
+        return redirect('achievement_record')
+    except Achievement.DoesNotExist:
+        return HttpResponseNotFound('Achievement not found')
+
+    except Exception as e:
+        return HttpResponse(f'Error: {e}')
 
 def news_offers_record(request):
     news_offers = NewsandOffers.objects.all()
@@ -1095,3 +1105,4 @@ def approve_eventReg(request, id):
             eventReg.save()
             return JsonResponse({'message': 'Updated successfully!'}, status = 200)
     return JsonResponse({'error': 'Only PUT method is allowed.'}, status=405)
+
