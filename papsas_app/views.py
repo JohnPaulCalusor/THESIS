@@ -959,7 +959,7 @@ def achievement_view(request):
         'achievements' : achievements,
     } )
 
-@secretary_required
+@officer_required
 def venue_record(request):
     venues = Venue.objects.all()
     form = VenueForm()
@@ -968,7 +968,7 @@ def venue_record(request):
         'form' : form,
     })
 
-@secretary_required
+@officer_required
 def achievement_record(request):
     achievements = Achievement.objects.all()
     form = AchievementForm()
@@ -977,7 +977,7 @@ def achievement_record(request):
         'form' : form,
     })
 
-@secretary_required
+@officer_required
 def get_achievement_data(request, achievement_id):
     try:
         achievement = Achievement.objects.get( id = achievement_id )
@@ -1001,7 +1001,7 @@ def get_achievement_data(request, achievement_id):
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
 
-@secretary_required
+@officer_required
 def update_news_offer(request, id):
     try:
         news_offer = NewsandOffers.objects.get( id = id)
@@ -1027,7 +1027,7 @@ def update_news_offer(request, id):
     except Exception as e:
         return JsonResponse({'error' : e}, status = 404)
 
-@secretary_required
+@officer_required
 def delete_achievement(request, id):
     try:
         achievement = Achievement.objects.get( id = id )
@@ -1040,7 +1040,7 @@ def delete_achievement(request, id):
     except Exception as e:
         return HttpResponse(f'Error: {e}')
 
-@secretary_required
+@officer_required
 def news_offers_record(request):
     news_offers = NewsandOffers.objects.all()
     form = NewsForm()
@@ -1100,12 +1100,13 @@ def get_event(request, view):
         'view' :view
         })
 
-@secretary_required
+@officer_required
 def get_venue(request):
     venues = Venue.objects.all()
     return render(request, 'papsas_app/partial_list/venue_list.html', {
         'venues': venues,
         })
+
 
 def get_achievement(request):
     achievements = Achievement.objects.all()
