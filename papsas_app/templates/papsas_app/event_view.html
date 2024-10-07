@@ -14,7 +14,7 @@ hx-swap="innerHTML"
 >
     
     {% for event in events %}
-    <div class="event-card">
+    <div class="event-card" id="event-{{event.id}}">
         <div class="event-header">
             <img src="{{ event.pubmat.url }}" alt="" class="event-image">
         </div>

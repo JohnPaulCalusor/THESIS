@@ -1,6 +1,6 @@
 {% if view == "list" %}
     {% for event in events %}
-    <div class="event-card">
+    <div class="event-card" id="event-{{event.id}}">
         <div class="event-header">
             <img src="{{ event.pubmat.url }}" alt="" class="event-image">
         </div>
@@ -19,24 +19,32 @@
     {% for event in events %}
     <tr>
         <td>
+            {{ event.id }}
+        </td>
+        <td>
             {{ event.eventName }}
         </td>
         <td>
-            <button class="action-icon reg-button" data-event-id="{{ event.id }}"
-            onclick="showRegistrationRecord({{event.id}})">
+            <button class="action-icon reg-button" data-event-id="{{ event.id }}">
                 <i class="fas fa-eye"></i> View Registration
             </button>
-            
-            <button class="action-icon"
-                    data-url="{% url 'get_attendance' event.id %}"
-                    onclick="showAttendanceModal(this.getAttribute('data-url'))"
-                    >
+            <button class="action-icon attendance-button"
+                    data-url="{% url 'get_attendance' event.id %}">
                 <i class="fas fa-eye"></i> View Attendance
             </button>
-
-            <button class="action-icon" title="Update" type="submit"><i class="fas fa-edit"></i></button> 
-            <button class="action-icon" title="Delete" type="submit"><i class="fas fa-trash-alt"></i></button>
+            <button class="update-button"
+            data-event-id="{{event.id}}">Update</button> 
+            <form action="{% url 'delete_event' event.id %}" method="post">
+                {% csrf_token %}
+                <button>Delete</button>
+            </form>
+            <button class="view-button"
+            data-event-id="{{event.id}}">View</button>
         </td>
+    </tr>
+    {% empty %}
+    <tr>
+        <td colspan="3">No events found matching your search.</td>
     </tr>
     {% endfor %}
 {% endif %}

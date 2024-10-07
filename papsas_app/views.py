@@ -22,7 +22,7 @@ from .forms import AttendanceForm, EventRegistrationForm, EventForm, ProfileForm
 from datetime import date, timedelta
 from django.contrib.auth.forms import PasswordResetForm
 from django.contrib.auth.views import PasswordResetView
-from django.db.models import Count, Avg
+from django.db.models import Count, Avg, Q
 from django.core.exceptions import ObjectDoesNotExist
 from functools import wraps
 from django.conf import settings
@@ -866,6 +866,7 @@ def event_list(request):
         'events': events,
     })
 
+# view all event with its attendance and registration records
 @secretary_required
 def attendance_list(request):
     events = Event.objects.all()
@@ -1079,31 +1080,11 @@ def get_account(request):
     }) 
 
 @secretary_required
-def get_attendees(request, event_id):
-    try:
-        eventId = Event.objects.get(id=event_id)
-        attendances = Attendance.objects.filter(event__event_id=eventId)
-        attendees = []
-        for attendance in attendances:
-            attendees.append({
-                'username': attendance.user.username,
-                'first_name': attendance.user.first_name,
-                'last_name': attendance.user.last_name,
-                'status' : attendance.attended
-            })
-        return render(request, 'papsas_app/partial_list/attendance_list.html', {
-            'attendees': attendees,
-            'eventId' : eventId
-            })
-    except Event.DoesNotExist:
-        return render(request, 'papsas_app/partial_list/attendance_list.html', {'attendees': []})
-
-@member_required
-def get_event(request, view):
+def get_event(request):
     events = Event.objects.all()
     return render(request, 'papsas_app/partial_list/event_list.html', {
         'events': events,
-        'view' :view
+        'view' :'view'
         })
 
 @officer_required
@@ -1460,3 +1441,61 @@ def update_event (request, id):
         return render(request, 'papsas_app/record/attendance_record.html', {
             'error': f'Error found: {e}',
             })
+
+def search_events(request):
+    query = request.GET.get('q', '').strip()
+    
+    if query:
+        try:
+            id_query = int(query)
+            events = Event.objects.filter(
+                Q(id=id_query) |
+                Q(eventName__icontains=query)
+            ).order_by('-id')
+        except ValueError:
+            events = Event.objects.filter(
+                eventName__icontains=query
+            ).order_by('-id')
+    else:
+        events = Event.objects.all().order_by('-id')
+
+    return render(request, 'papsas_app/partial_list/event_list.html', {
+        'events': events
+    })
+
+#JS fetching
+@secretary_required
+def get_attendees(request, event_id):
+    try:
+        eventId = Event.objects.get(id=event_id)
+        attendances = Attendance.objects.filter(event__event_id=eventId)
+        attendees = []
+        for attendance in attendances:
+            attendees.append({
+                'username': attendance.user.username,
+                'first_name': attendance.user.first_name,
+                'last_name': attendance.user.last_name,
+                'status' : attendance.attended
+            })
+            return JsonResponse(attendees, safe=False)
+    except Event.DoesNotExist:
+        return HttpResponseNotFound()
+
+def get_event_details(request, id):
+    try:
+        event = Event.objects.get(id=id)
+        data = {
+            'name' : event.eventName,
+            'startDate' : event.startDate,
+            'endDate' : event.endDate,
+            'venue' : event.venue.id,
+            'exclusive' : event.exclusive,
+            'description' : event.eventDescription,
+            'pubmat' : event.pubmat.url,
+            'price' : event.price,
+            'startTime' : event.startTime,
+            'endTime' : event.endTime,
+            }
+        return JsonResponse(data)
+    except Event.DoesNotExist:
+        return HttpResponseNotFound()

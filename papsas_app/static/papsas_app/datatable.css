@@ -363,3 +363,8 @@ select {
     align-items: center;
 }
 
+/* used in attendance_record.html */
+#details-container{
+    display: none;
+}
+
