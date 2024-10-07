@@ -55,7 +55,7 @@ body {
   font-size: var(--normal-font-size);
   font-weight: 500;
   color: var(--text-color);
-  padding-top: 100px;
+  padding-top: 70px;
 }
 
 ul {
@@ -143,7 +143,7 @@ img {
     background-color: var(--first-color);
     left: 0;
     top: -100%;
-    width: 100px;
+    width: 100%;
     padding: 5rem 0 4rem;
     border-radius: 0 0 1.5rem 1.5rem;
     box-shadow: 0 2px 4px hsla(38, 4%, 15%, .15);
@@ -151,6 +151,10 @@ img {
   }
   .logo{
     margin-top: 5px;
+    margin-left: -10px;
+  }
+  .login-container{
+    width: 100%;
   }
 }
 
@@ -786,12 +790,15 @@ img {
     flex-direction: column; /* Stack videos in a column layout */
     padding: 0 10px;
     margin-top: 40rem;
-    margin-bottom: -20px;
+    margin-bottom: 20px;
   }
 
   .video-post {
     width: 100%; /* Full width for each video in column layout */
     margin-bottom: 20px; /* Space between video posts */
+  }
+  .video-title-container{
+    margin-top: 50px;
   }
 }
 

@@ -1,8 +1,9 @@
 
-  .login-header{
+  .login-header h1{
     text-align: center;
-    margin-top: -100px;
-    margin-bottom: -30px;
+    margin-bottom: 30px;
+    margin-top: -50px;
+    color: #ff0000;
   }
   .register-border{
     display: flex;
@@ -14,6 +15,7 @@
     border-radius: 20px;
     background-color: #ffffff;
     box-shadow: 0px 7px 12px 1px rgba(0,0,0, 0.05);
+    padding-top: 100px;
 
     
   }
@@ -48,7 +50,7 @@
     align-items: center;
     min-height: 110vh;
     background: #ffffff;
-    margin-top: -120px;
+    margin-top: -110px;
   }
   .input-submit{
     position: relative;
@@ -65,6 +67,7 @@
     font-weight: 300;
     font-size: 17px;
     margin-top: 20px;
+    margin-bottom: 20px;
   }
   .input-submit label{
     position: absolute;
@@ -108,10 +111,16 @@
   .login-header{
       text-align: center;
       margin-bottom: -30px;
+      margin-top: 20rem;
     }
     .register-border{
       box-shadow: none;
-      margin-top: 100px;
+    }
+    .login-header h1{
+      margin-bottom: 50px;
+      margin-top: 20rem;
+      text-align: left;
+      font-size: 35px;
     }
 }
 

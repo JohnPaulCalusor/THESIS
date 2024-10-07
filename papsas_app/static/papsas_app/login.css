@@ -123,6 +123,9 @@
       box-shadow: none;
       margin-top: 100px;
     }
+    .login-box{
+      box-shadow: none;
+    }
 }
 
 .forgot-password {

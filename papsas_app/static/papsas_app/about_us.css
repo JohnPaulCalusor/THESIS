@@ -99,7 +99,7 @@
     padding: 2rem 1rem;
     margin-top: 100px;
     background-color: #f3f1f1;
-    height: 38rem;
+    
     text-align: center; /* Center content within the resources section */
   
   }
@@ -191,6 +191,7 @@
         gap: 2rem;
         justify-content: center; /* Center the grid items */
     }
+    
   }
   
   /* Responsive layout for desktops and above */
@@ -220,6 +221,8 @@
         padding: 0.5rem 1rem;
         font-size: 0.875rem;
     }
+
+
   }
   
   
@@ -273,9 +276,7 @@
     .memo_grid {
       grid-template-columns: repeat(2, 1fr); /* 2 columns for medium screens */
     }
-    .memo {
-      margin-top: 28rem; /* Add 100px margin-top for mobile screens */
-    }
+
   }
   
   @media (max-width: 480px) {
@@ -349,7 +350,7 @@
     .partners__container {
         grid-template-columns: repeat(2, 1fr);
     }
-  
+
   
   }
   
@@ -381,7 +382,7 @@
       text-align: center;
     }
     .partners {
-      background-color: var(--first-color);
+      background-color: #f3f1f1;
       padding: 2rem 0;
       margin-top: 1rem;
     }
@@ -403,5 +404,6 @@
     .partner__button {
         padding: 0.4rem 1rem;
         font-size: 0.875rem; /* Adjust button size */
+        width: 80%;
     }
   }
