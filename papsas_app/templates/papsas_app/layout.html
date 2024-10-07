@@ -28,58 +28,83 @@
                     {% if user.is_authenticated %}
                     <div class="nav__menu" id="nav-menu">
                         <ul class="nav__list">
-                        {% if officer is not None %}
-                        <!-- if user is an officer -->
-                            {% if officer.termEnd > today %}
-                            <li class="nav__item"><a href="{% url 'admin_dashboard' %}"class="nav__link">Dashboard</a></li>
-                            <li class="nav__item dropdown">
-                                    <a href="{% url 'record' %}" class="nav__link">Records<i class='bx bx-chevron-down dropdown__icon'></i></a>
-                                    <ul class="dropdown-content">
-                                        <li><a href="{% url 'record' %}">Account</a></li>
-                                        <li><a href="{% url 'membership_record' %}">Members</a></li>
-                                        <li><a href="{% url 'attendance_list' %}">Event Attendance</a></li>
-                                        <li><a href="{% url 'venue_record' %}">Venue</a></li>
-                                        <li><a href="{% url 'achievement_record' %}">Achievement</a></li>
-                                        <li><a href="{% url 'news_offers_record' %}">News and Offers</a></li>
-                                    </ul>
-                            </li>
-                            </li>
-                              <li class="nav__item"> <a href="{% url 'election' %}"class="nav__link">Election</a></li>
-                            <li class="nav__item dropdown"><a href=""class="nav__link">Event<i class='bx bx-chevron-down dropdown__icon'></i></a>
-                                <ul class="dropdown-content"> 
-                                    <li><a href="{% url 'event_list' %}">Event List</a></li>
-                                    <li><a href="{% url 'event_calendar' %}">Calendar</a></li>
-                                </ul>
-                            </li>
 
-                            <li class="nav__item dropdown"><a href=""class="nav__link">Compose<i class='bx bx-chevron-down dropdown__icon'></i></a>
-                                <ul class="dropdown-content">
-                                    <li><a href="{% url 'event' %}">Event</a></li>
-                                    <li><a href="{% url 'compose_venue'%}">Venue</a></li>
-                                    <li><a href="{% url 'compose_achievement' %}">Achievement</a></li>
-                                    <li><a href="{% url 'compose_news_offer' %}">News and Offers</a></li>
-                                </ul>
-                            </li>
-                            <li class="nav__item"><a href="{% url 'logout' %}"class="nav__link">Logout</a></li>
-                            {% endif%}
-                            {% if user.profilePic %}
-                            <li class="nav__item"><a href="{% url 'profile' user.id %}">
-                                    <img src="{{ user.profilePic.url }}" alt="profilePic" id="navProfile" class="profile">
-                                </a>
-                            </li>
-                            {% else %}
-                            <div class="login-container"> <a href="{% url 'profile' user.id %}">Profile</a></div>
-                            {% endif %}
-                        </ul>
-                        <div class="nav__close" id="nav-close">
-                            <i class='bx bx-x'></i>
+                        <!-- check if user is an officer -->
+                        {% if officer is not None %}
+                            {% if officer.termEnd > today %}
+                                {% if officer.position == 'Secretary' %}
+                                <li class="nav__item"><a href="{% url 'admin_dashboard' %}"class="nav__link">Dashboard</a></li>
+                                <li class="nav__item dropdown">
+                                        <a href="{% url 'record' %}" class="nav__link">Records<i class='bx bx-chevron-down dropdown__icon'></i></a>
+                                        <ul class="dropdown-content">
+                                            <li><a href="{% url 'record' %}">Account</a></li>
+                                            <li><a href="{% url 'membership_record' %}">Members</a></li>
+                                            <li><a href="{% url 'attendance_list' %}">Event Attendance</a></li>
+                                            <li><a href="{% url 'venue_record' %}">Venue</a></li>
+                                            <li><a href="{% url 'achievement_record' %}">Achievement</a></li>
+                                            <li><a href="{% url 'news_offers_record' %}">News and Offers</a></li>
+                                        </ul>
+                                </li>
+                                <li class="nav__item"> <a href="{% url 'election' %}"class="nav__link">Election</a></li>
+                                <li class="nav__item dropdown"><a href=""class="nav__link">Event<i class='bx bx-chevron-down dropdown__icon'></i></a>
+                                    <ul class="dropdown-content"> 
+                                        <li><a href="{% url 'event_list' %}">Event List</a></li>
+                                        <li><a href="{% url 'event_calendar' %}">Calendar</a></li>
+                                    </ul>
+                                </li>
+                                <li class="nav__item dropdown"><a href=""class="nav__link">Compose<i class='bx bx-chevron-down dropdown__icon'></i></a>
+                                    <ul class="dropdown-content">
+                                        <li><a href="{% url 'event' %}">Event</a></li>
+                                        <li><a href="{% url 'compose_venue'%}">Venue</a></li>
+                                        <li><a href="{% url 'compose_achievement' %}">Achievement</a></li>
+                                        <li><a href="{% url 'compose_news_offer' %}">News and Offers</a></li>
+                                    </ul>
+                                </li>
+                                <li class="nav__item"><a href="{% url 'logout' %}"class="nav__link">Logout</a></li>
+                                <li class="nav__item"><a href="{% url 'profile' user.id %}">
+                                        <img src="{{ user.profilePic.url }}" alt="profilePic" id="navProfile" class="profile">
+                                    </a>
+                                </li>
+
+                                {% else %}
+                                <!-- If user is an officer but not secretary -->
+                                <li class="nav__item dropdown"><a href=""class="nav__link">Event<i class='bx bx-chevron-down dropdown__icon'></i></a>
+                                    <ul class="dropdown-content"> 
+                                        <li><a href="{% url 'event_list' %}">Event List</a></li>
+                                        <li><a href="{% url 'event_calendar' %}">Calendar</a></li>
+                                    </ul>
+                                </li>
+                                <li class="nav__item dropdown"><a href=""class="nav__link">Compose<i class='bx bx-chevron-down dropdown__icon'></i></a>
+                                    <ul class="dropdown-content">
+                                        <li><a href="{% url 'event' %}">Event</a></li>
+                                        <li><a href="{% url 'compose_venue'%}">Venue</a></li>
+                                        <li><a href="{% url 'compose_achievement' %}">Achievement</a></li>
+                                        <li><a href="{% url 'compose_news_offer' %}">News and Offers</a></li>
+                                    </ul>
+                                </li>
+                                <li class="nav__item"><a href="{% url 'logout' %}"class="nav__link">Logout</a></li>
+                                <li class="nav__item"><a href="{% url 'profile' user.id %}">
+                                        <img src="{{ user.profilePic.url }}" alt="profilePic" id="navProfile" class="profile">
+                                    </a>
+                                </li>
+                            <div class="nav__close" id="nav-close">
+                                <i class='bx bx-x'></i>
+                            </div>
                         </div>
-                        
-                    </div>
-                    <div class="nav__toggle" id="nav-toggle">
-                        <i class='bx bx-grid-alt'></i>
-                    </div>
+                        <div class="nav__toggle" id="nav-toggle">
+                            <i class='bx bx-grid-alt'></i>
+                        </div>
+                                <div class="nav__close" id="nav-close">
+                                    <i class='bx bx-x'></i>
+                                </div>
+                            </div>
+                            <div class="nav__toggle" id="nav-toggle">
+                                <i class='bx bx-grid-alt'></i>
+                            </div>
+                                {% endif %}
+                            {% endif %}
                         {% else %}
+                        </ul>
                         <!-- if user is not an officer -->
                         <div class="nav__menu" id="nav-menu">
                             <ul class="nav__list">

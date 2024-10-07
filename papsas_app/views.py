@@ -29,12 +29,89 @@ from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 # Create your views here.
 
+def is_member(request):
+    today = date.today()
+    user = request.user
+    if user.is_authenticated:
+        try:
+            membership = UserMembership.objects.filter(user=user).latest('id')
+            if membership.membershipVerification == 'True':
+                return True
+            else:
+                return False
+        except:
+            return False
+        
+def is_officer(request):
+    # check if user is officer
+    today = date.today()
+    user = request.user
+    if user.is_authenticated:
+        try:
+            candidacy = Candidacy.objects.filter( candidate = user).latest('id')
+            officer = Officer.objects.filter( candidateID = candidacy).latest('id')
+        except (Officer.DoesNotExist, Candidacy.DoesNotExist):
+            officer = None
+    else:
+        officer = None
+
+    if officer is not None and officer.termEnd > today:
+        return True
+
+    else:
+        return False
+
+def is_secretary(request):
+    today = date.today()
+    user = request.user
+    if user.is_authenticated:
+        try:
+            candidacy = Candidacy.objects.filter( candidate = user).latest('id')
+            officer = Officer.objects.filter( candidateID = candidacy, position = 'Secretary' ).latest('id')
+        except (Officer.DoesNotExist, Candidacy.DoesNotExist):
+            officer = None
+    else:
+        officer = None
+
+    if officer is not None and officer.termEnd > today:
+        return True
+
+    else:
+        return False
+    
+def member_required(view_func):
+    @wraps(view_func)
+    def decorated_view(request, *args, **kwargs):
+        if is_member(request):
+            return view_func(request, *args, **kwargs)
+        return HttpResponseForbidden()
+    return decorated_view
+
+
+
+
 def practitioner_required(view_func):
     @wraps(view_func)
     def decorated_view(request, *args, **kwargs):
         if request.user.occupation != 'Practitioner':
-            return HttpResponseForbidden()
-        return view_func(request, *args, **kwargs)
+            return view_func(request, *args, **kwargs)
+        return HttpResponseForbidden()
+    return decorated_view
+
+def officer_required(view_func):
+    @wraps(view_func)
+    def decorated_view(request, *args, **kwargs):
+        if is_officer(request):
+            return view_func(request, *args, **kwargs)
+        return HttpResponseForbidden()
+    return decorated_view
+
+def secretary_required(view_func):
+    @wraps(view_func)
+    def decorated_view(request, *args, **kwargs):
+        if is_secretary(request):
+            return view_func(request, *args, **kwargs)
+        return HttpResponseForbidden()
     return decorated_view
 
 def index(request):
@@ -247,7 +324,7 @@ def resend_verification_code(request, user_id):
         return redirect('verify_email', user_id=user.id)
     return redirect('login')
 
-
+@secretary_required
 def election(request):
     
     electionList = Election.objects.all()
@@ -265,7 +342,8 @@ def election(request):
         })
     else:
         return redirect('index')
-    
+
+@secretary_required
 def manage_election(request, id):
     if request.method == 'POST':
         election = Election.objects.get(id = id)
@@ -276,6 +354,7 @@ def manage_election(request, id):
             election.save()
             return redirect('election')
 
+@secretary_required
 def new_officer(num_winners):
     try:
         ongoing_election = Election.objects.get(electionStatus=True)
@@ -293,26 +372,6 @@ def new_officer(num_winners):
             termEnd=date.today() + timedelta(days=365)
         )
         officer.save()
-
-
-def is_officer(request):
-    # check if user is officer
-    today = date.today()
-    user = request.user
-    if user.is_authenticated:
-        try:
-            candidacy = Candidacy.objects.filter( candidate = user).latest('id')
-            officer = Officer.objects.filter( candidateID = candidacy ).latest('id')
-        except (Officer.DoesNotExist, Candidacy.DoesNotExist):
-            officer = None
-    else:
-        officer = None
-
-    if officer is not None and officer.termEnd > today:
-        return True
-
-    else:
-        return False
 
 @practitioner_required
 def vote(request):
@@ -360,6 +419,7 @@ def vote(request):
 
         })
 
+@login_required
 def profile(request, id):
     candidacies = Candidacy.objects.filter( candidate = id )
     attended_event = Attendance.objects.filter( user = id )
@@ -384,6 +444,8 @@ def profile(request, id):
         'elected_officers' : elected_officer
     })
 logger = logging.getLogger(__name__)
+
+@member_required
 def event(request):
     if request.method == 'POST':
         form = EventForm(request.POST, request.FILES)
@@ -433,6 +495,8 @@ def event(request):
         form = EventForm
     return render(request, 'papsas_app/event_management.html', {'form': form})
 
+# ano pinag iba nito
+@practitioner_required
 def attendance_form(request):
     if request.method == 'POST':
         form = AttendanceForm(request.POST)
@@ -459,6 +523,8 @@ def attendance_form(request):
         form = AttendanceForm()
     return render(request, 'papsas_app/form/attendance_form.html', {'form': form})
 
+# ano to (check)
+@practitioner_required
 def mark_attendance(request, event_id):
     event = Event.objects.get(id=event_id)
     if request.method == 'POST':
@@ -501,6 +567,7 @@ def news_offers(request):
         'news_offers' : news_offers
     })
 
+@secretary_required
 def record(request):
     try:
         form = RegistrationForm()
@@ -521,7 +588,8 @@ def record(request):
         })
     except:
         return HttpResponseNotFound('Page not Found!')
-    
+
+@secretary_required
 def update_account(request, id):
     try:
         user = User.objects.get(id=id)
@@ -538,7 +606,7 @@ def update_account(request, id):
     except Exception as e:
         return HttpResponseForbidden(f'Error: {e}')
 
-    
+@login_required
 def membership_registration(request, mem_id):
     form = MembershipRegistration(request.user, mem_id)
     membership = mem_id
@@ -569,10 +637,8 @@ def membership_registration(request, mem_id):
             'form' : form,
             'membership' : membership,
         })
-    
-def check_membership_validity(request):
-    pass
 
+@secretary_required
 def membership_record(request):
     record = UserMembership.objects.all()
     if is_officer(request):
@@ -581,6 +647,8 @@ def membership_record(request):
         })
     else:
         return redirect('index')
+    
+@secretary_required
 def approve_membership(request, id):
     userID = id
     if request.method == 'POST':
@@ -590,7 +658,8 @@ def approve_membership(request, id):
         return redirect('membership_record')
     else:
         return render(request, 'papsas_app/index.html')
-    
+
+@secretary_required
 def decline_membership(request, id):
     userID = id
     if request.method == 'POST':
@@ -601,7 +670,8 @@ def decline_membership(request, id):
             return redirect('membership_record')
         else:
             return redirect('membership_record')
-    
+
+@secretary_required
 def delete_membership(request, id):
     userID = id
     if request.method == 'POST':
@@ -612,6 +682,7 @@ def delete_membership(request, id):
         else:
             return redirect('membership_record')
 
+@secretary_required
 def get_user_info(request, id):
     user = User.objects.get(id = id)
     user_data = {
@@ -628,6 +699,7 @@ def get_user_info(request, id):
     }
     return JsonResponse (user_data)
     
+@member_required
 def event_calendar(request):
     events = Event.objects.all().order_by('startDate')
     data = []
@@ -767,6 +839,7 @@ def count_vote(id):
 
     return num_votes
 
+@officer_required
 def compose_venue(request):
     form = VenueForm()
 
@@ -779,6 +852,7 @@ def compose_venue(request):
         'form': form,
     })
 
+@member_required
 def event_list(request):
     events = Event.objects.all()
 
@@ -786,6 +860,7 @@ def event_list(request):
         'events': events,
     })
 
+@secretary_required
 def attendance_list(request):
     events = Event.objects.all()
     form = EventForm()
@@ -794,6 +869,7 @@ def attendance_list(request):
         'form': form,
     })
 
+@secretary_required
 def get_receipt(request, user_id):
     try:
         user = User.objects.get(id=user_id)
@@ -820,6 +896,7 @@ def get_id(request, user_id):
     except ObjectDoesNotExist:
         return JsonResponse({'error': 'User or UserMembership not found'}, status=404)
 
+@secretary_required
 def get_officers(request, election_id):
     try:
         election = Election.objects.get( id = election_id)
@@ -840,6 +917,7 @@ def get_officers(request, election_id):
 
     return JsonResponse({'officers': data, 'num_elected' : num_officers})
 
+@officer_required
 def compose_achievement(request):
     form = AchievementForm()
 
@@ -857,6 +935,7 @@ def compose_achievement(request):
         'form' : form
     })
 
+@officer_required
 def compose_news_offer(request):
     form = NewsForm()
 
@@ -880,6 +959,7 @@ def achievement_view(request):
         'achievements' : achievements,
     } )
 
+@secretary_required
 def venue_record(request):
     venues = Venue.objects.all()
     form = VenueForm()
@@ -888,6 +968,7 @@ def venue_record(request):
         'form' : form,
     })
 
+@secretary_required
 def achievement_record(request):
     achievements = Achievement.objects.all()
     form = AchievementForm()
@@ -896,6 +977,7 @@ def achievement_record(request):
         'form' : form,
     })
 
+@secretary_required
 def get_achievement_data(request, achievement_id):
     try:
         achievement = Achievement.objects.get( id = achievement_id )
@@ -919,6 +1001,7 @@ def get_achievement_data(request, achievement_id):
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
 
+@secretary_required
 def update_news_offer(request, id):
     try:
         news_offer = NewsandOffers.objects.get( id = id)
@@ -943,7 +1026,8 @@ def update_news_offer(request, id):
         return JsonResponse(data)
     except Exception as e:
         return JsonResponse({'error' : e}, status = 404)
-    
+
+@secretary_required
 def delete_achievement(request, id):
     try:
         achievement = Achievement.objects.get( id = id )
@@ -956,6 +1040,7 @@ def delete_achievement(request, id):
     except Exception as e:
         return HttpResponse(f'Error: {e}')
 
+@secretary_required
 def news_offers_record(request):
     news_offers = NewsandOffers.objects.all()
     form = NewsForm()
@@ -964,7 +1049,7 @@ def news_offers_record(request):
         'form' : form,
         })
 
-
+@secretary_required
 def delete_account(request, id):
     try:
         accounts = User.objects.all()
@@ -980,12 +1065,14 @@ def delete_account(request, id):
         return HttpResponseNotFound('User not Found')
 
 #htmx functions
+@secretary_required
 def get_account(request):
     userRecord = User.objects.all()
     return render(request, 'papsas_app/partial_list/account_list.html', {
         'userRecord' : userRecord
     }) 
 
+@secretary_required
 def get_attendees(request, event_id):
     try:
         eventId = Event.objects.get(id=event_id)
@@ -1005,6 +1092,7 @@ def get_attendees(request, event_id):
     except Event.DoesNotExist:
         return render(request, 'papsas_app/partial_list/attendance_list.html', {'attendees': []})
 
+@member_required
 def get_event(request, view):
     events = Event.objects.all()
     return render(request, 'papsas_app/partial_list/event_list.html', {
@@ -1012,6 +1100,7 @@ def get_event(request, view):
         'view' :view
         })
 
+@secretary_required
 def get_venue(request):
     venues = Venue.objects.all()
     return render(request, 'papsas_app/partial_list/venue_list.html', {
@@ -1024,12 +1113,14 @@ def get_achievement(request):
         'achievements' : achievements,
         })
 
+
 def get_news_offers(request):
     news_offers = NewsandOffers.objects.all()
     return render(request, 'papsas_app/partial_list/news_offers_list.html', {
         'news_offers' : news_offers,
         })
 
+@member_required
 def get_profile(request, id):
     candidacies = Candidacy.objects.filter( candidate = id )
     attended_event = Attendance.objects.filter( user = id )
@@ -1044,7 +1135,7 @@ def get_profile(request, id):
         'attended_events' : attended_event,
         'elected_officers' : elected_officer
     })
-
+@secretary_required
 def get_event_reg(request, id):
     event = Event.objects.get(id = id)
     eventReg = EventRegistration.objects.filter(event = event)
@@ -1061,10 +1152,11 @@ def get_event_reg(request, id):
 
 #admin dashboard
 
-
+@secretary_required
 def admin_dashboard(request):
     return render(request, 'papsas_app/admin_dashboard.html')
 
+@secretary_required
 def get_attendance_per_venue(request):
     venue_attendance = {}
     
@@ -1081,6 +1173,7 @@ def get_attendance_per_venue(request):
     
     return JsonResponse(data)
 
+@secretary_required
 def get_attendance_vs_capacity(request):
     try:
         attendance_data = (
@@ -1119,6 +1212,7 @@ def get_attendance_vs_capacity(request):
         logging.error("Error fetching attendance vs capacity data: %s", e)
         return JsonResponse({'error': str(e)}, status=500)
 
+@secretary_required
 def get_membership_distribution_data(request):
     membership_data = UserMembership.objects.values('membership__type').annotate(total=Count('membership')).order_by('-total')
     
@@ -1130,6 +1224,7 @@ def get_membership_distribution_data(request):
         'values': values,
     })
 
+@secretary_required
 def get_attendance_over_time_data(request):
     data = {"labels": [], "values": []}
     
@@ -1142,18 +1237,22 @@ def get_attendance_over_time_data(request):
     
     return JsonResponse(data)
 
+@secretary_required
 def get_total_events_count(request):
     total_events = Event.objects.count()
     return JsonResponse({'total_events': total_events})
 
+@secretary_required
 def get_total_members_count(request):
     total_members = UserMembership.objects.count()
     return JsonResponse({'count': total_members})
 
+@secretary_required
 def get_total_events_count(request):
     count = Event.objects.count() 
     return JsonResponse({'count': count})
 
+@secretary_required
 def get_total_revenue(request):
     total_revenue = 0
     events = Event.objects.all()  # Get all events
@@ -1165,6 +1264,7 @@ def get_total_revenue(request):
 
     return JsonResponse({'total_revenue': total_revenue})
 
+@secretary_required
 def get_membership_growth(request):
     today = timezone.now()
     start_year = today.year - 10  # Adjust to how many years you want to show
@@ -1197,6 +1297,7 @@ def get_membership_growth(request):
 
     return JsonResponse({'labels': list(sorted_labels), 'values': list(sorted_values)})
 
+@secretary_required
 def get_avg_registration_vs_attendance(request):
     avg_registrations = EventRegistration.objects.count()
     avg_attendances = Attendance.objects.filter(attended=True).count()
@@ -1216,18 +1317,21 @@ def get_avg_registration_vs_attendance(request):
 
     return JsonResponse(data)
 
+@secretary_required
 def get_top_region_data(request):
     top_regions = User.objects.values('region').annotate(count=models.Count('id')).order_by('-count')[:5]
     labels = [region['region'] for region in top_regions]
     values = [region['count'] for region in top_regions]
     return JsonResponse({'labels': labels, 'values': values})
 
+@secretary_required
 def get_least_region_data(request):
     least_regions = User.objects.values('region').annotate(count=models.Count('id')).order_by('count')[:5]
     labels = [region['region'] for region in least_regions]
     values = [region['count'] for region in least_regions]
     return JsonResponse({'labels': labels, 'values': values})
 
+@secretary_required
 @csrf_exempt
 def decline_eventReg(request, id):
     if request.method == "PUT":
@@ -1238,7 +1342,8 @@ def decline_eventReg(request, id):
             eventReg.save()
             return JsonResponse({'message': 'Updated successfully!'}, status = 200)
     return JsonResponse({'error': 'Only PUT method is allowed.'}, status=405)
-    
+
+@secretary_required
 @csrf_exempt
 def approve_eventReg(request, id):
     eventReg = EventRegistration.objects.get( id = id)
@@ -1250,6 +1355,7 @@ def approve_eventReg(request, id):
             return JsonResponse({'message': 'Updated successfully!'}, status = 200)
     return JsonResponse({'error': 'Only PUT method is allowed.'}, status=405)
 
+@secretary_required
 def delete_news_offer(request, id):
     try:
         news_offer = NewsandOffers.objects.get(id = id)
@@ -1260,7 +1366,8 @@ def delete_news_offer(request, id):
         return render(request, 'papsas_app/record/news_offers_record.html', {
             'error': f'Error found: {e}',
         })
-    
+
+@secretary_required
 def delete_venue(request, id):
     try:
         venue = Venue.objects.get(id = id)
@@ -1272,7 +1379,8 @@ def delete_venue(request, id):
         return render(request, 'papsas_app/record/venue_record.html', {
             'error': f'Error found: {e}',
             })
-    
+
+@secretary_required
 def update_venue(request, id):
     try:
         venue = Venue.objects.get(id = id)
@@ -1299,6 +1407,7 @@ def update_venue(request, id):
             'error': f'Error found: {e}',
             })
 
+@secretary_required
 def delete_event (request, id):
     try:
         event = Event.objects.get(id = id)
@@ -1312,6 +1421,7 @@ def delete_event (request, id):
             'error': f'Error found: {e}',
             })
 
+@secretary_required
 def update_event (request, id):
     try:
         event = Event.objects.get(id = id)
