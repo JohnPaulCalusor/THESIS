@@ -87,7 +87,13 @@ def member_required(view_func):
         return HttpResponseForbidden()
     return decorated_view
 
-
+def member_or_officer_required(view_func):
+    @wraps(view_func)
+    def decorated_view(request, *args, **kwargs):
+        if is_member(request) or is_officer(request):
+            return view_func(request, *args, **kwargs)
+        return HttpResponseForbidden()
+    return decorated_view
 
 
 def practitioner_required(view_func):
@@ -699,7 +705,7 @@ def get_user_info(request, id):
     }
     return JsonResponse (user_data)
     
-@member_required
+@member_or_officer_required
 def event_calendar(request):
     events = Event.objects.all().order_by('startDate')
     data = []
@@ -852,7 +858,7 @@ def compose_venue(request):
         'form': form,
     })
 
-@member_required
+@member_or_officer_required
 def event_list(request):
     events = Event.objects.all()
 
