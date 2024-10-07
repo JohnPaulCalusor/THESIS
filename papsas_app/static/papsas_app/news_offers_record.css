@@ -10,7 +10,11 @@ table {
     text-align: center;
     
 }
-
+td {
+    white-space: normal; /* Allow the text to wrap onto multiple lines */
+    overflow: hidden;
+    text-overflow: ellipsis; /* Adds "..." for long text */
+}
 
 .no-existing{
     text-align: center;
@@ -161,6 +165,7 @@ td a:hover {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 20px;
+    margin-top: 20px;
 }
 
 .table-header h1 {
@@ -332,4 +337,20 @@ td a:hover {
 
 #update-container {
     display: none;
+}
+.action-buttons {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Add spacing between the buttons */
+    margin-left: 108px;
+}
+
+.action-buttons form {
+    display: inline;
+}
+
+.action-buttons a, 
+.action-buttons button {
+    display: flex;
+    align-items: center;
 }

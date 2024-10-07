@@ -8,6 +8,7 @@ table {
     font-size: 14px;
     text-align: center;
     
+    
 }
 
 
@@ -54,38 +55,17 @@ td a:hover {
 }
 /* Ensuring the description column text wraps properly */
 td {
-    word-wrap: break-word;
-    max-width: 200px; /* Adjust the max-width as needed */
-}
-
-td:nth-child(2) { 
-    max-width: 300px; /* Adjust the width specifically for the Description column */
     white-space: normal; /* Allow the text to wrap onto multiple lines */
     overflow: hidden;
     text-overflow: ellipsis; /* Adds "..." for long text */
 }
-.truncated {
-    display: inline; /* Display text in-line */
-    overflow: hidden; 
-    white-space: nowrap; 
-    text-overflow: ellipsis; /* Show ellipsis for long text */
-}
+
+
 
 .full-text {
     display: none; /* Hide full text by default */
 }
 
-.show-more {
-    color: blue;
-    cursor: pointer;
-    margin-left: 5px;
-    font-size: 12px;
-    text-decoration: underline;
-}
-
-.show-more:hover {
-    color: darkblue;
-}
 
 .ach_img {
     max-width: 100px;
@@ -138,61 +118,7 @@ td:nth-child(2) {
     display: none;
 }
 /* Modal Container */
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 999; /* Bring it in front of other elements */
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.8); /* Darker background for contrast */
-    justify-content: center;
-    align-items: center;
-}
 
-
-/* Modal Content */
-.modal-content {
-    background-color: #fff;
-    margin: auto;
-    padding: 20px;
-    border-radius: 10px;
-    width: 80%;
-    max-width: 600px;
-    text-align: center;
-    margin-top: 150px;
-}
-
-
-.modal img {
-    max-width: 100%;
-    border: 1px solid #ddd;
-    border-radius: 10px;
-}
-
-.modal h2 {
-    position: relative;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 24px;
-    margin-bottom: 15px;
-}
-
-.close-modal {
-    cursor: pointer;
-    font-size: 24px;
-    color: #333;
-    margin-left: 10px;
-}
-
-.close-modal:hover {
-    color: #f44336; /* Red color on hover */
-}
-.modal-open {
-    pointer-events: none; /* Disable interaction on the rest of the page */
-}
 /* Table header styling */
 .table-header {
     display: flex;
@@ -204,6 +130,7 @@ td:nth-child(2) {
 .table-header h1 {
     font-size: 24px;
     margin: 0;
+    margin-top: 10px;
 }
 
 .btn-add-user {

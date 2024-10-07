@@ -50,6 +50,11 @@ td a {
 td a:hover {
     text-decoration: underline;
 }
+td {
+    white-space: normal; /* Allow the text to wrap onto multiple lines */
+    overflow: hidden;
+    text-overflow: ellipsis; /* Adds "..." for long text */
+}
 
 /* Popup container style */
 /* Button styles */
@@ -147,6 +152,7 @@ td a:hover {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 20px;
+    margin-top: 20px;
 }
 
 .table-header h1 {
@@ -340,3 +346,20 @@ select {
     text-align: center;
     margin-top: 20px;
 }
+.action-buttons {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Add spacing between the buttons */
+    margin-left: 10px;
+}
+
+.action-buttons form {
+    display: inline;
+}
+
+.action-buttons a, 
+.action-buttons button {
+    display: flex;
+    align-items: center;
+}
+

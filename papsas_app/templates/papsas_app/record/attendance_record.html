@@ -132,23 +132,40 @@
 </div>
 
 <div id="update-container">
-    <h3>
-        Update Event
-    </h3>
-    <div>
-        <h4>Preview Publication Material</h4>
-        <img id="img" alt="event-pubmat">
+    <div class="update-content">
+        <span onclick="hideUpdate()" class="close-modal">
+            <i class="fas fa-times"></i>
+        </span>
+        <h3>Update Event</h3>
+        <div>
+            <h4>Preview Publication Material</h4>
+            <img id="img" alt="event-pubmat">
+        </div>
+        <form method="post">
+            {% csrf_token %}
+            {{ form }}
+            <button type="submit" class="btn">Update</button>
+        </form>
     </div>
-    <form method="post">
-        {% csrf_token %}
-        {{ form }}
-        <button type="submit">Update</button>
-    </form>
 </div>
+
 {% endblock %}
 
 {% block script %}
 <script src="{% static 'papsas_app/js/event_record.js' %}"></script>
+<script>
+function showUpdate(eventId) {
+    // Fetch the event data using the eventId and populate the form
+    // For demonstration, let's assume you set the image source:
+    document.getElementById('img').src = `path/to/image/${eventId}`; // Set the correct image source
+    document.getElementById('update-container').style.display = 'block'; // Show the update container
+}
+
+function hideUpdate() {
+    document.getElementById('update-container').style.display = 'none'; // Hide the update container
+}
+
+</script>
 {% endblock %}
 
 

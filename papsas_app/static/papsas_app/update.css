@@ -1,3 +1,69 @@
+/* Modal Overlay */
 #update-container {
-    display: none;
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1000; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    background-color: rgba(0, 0, 0, 0.8); /* Black background with transparency */
+}
+#img {
+    width: 100%; /* Responsive width */
+    height: auto; /* Maintain aspect ratio */
+    border-radius: 8px; /* Rounded corners */
+    margin-top: 10px; /* Space above the image */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+    margin-bottom: 50px;
+}
+/* Center the container */
+.update-content {
+    position: absolute; /* Position relative to the overlay */
+    left: 50%; /* Center horizontally */
+    top: 50%; /* Center vertically */
+    transform: translate(-50%, -50%); /* Offset by half of its width and height */
+    background-color: #fff; /* White background for the modal */
+    border-radius: 8px; /* Rounded corners */
+    padding: 40px; /* Some padding */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Shadow for depth */
+    width: 50rem; /* Set a fixed width */
+    max-width: 90%; /* Responsive width */
+    max-height: 80%; /* Set maximum height */
+    overflow-y: auto; /* Enable vertical scrolling */
+}
+
+/* Close button style */
+.close-modal {
+    cursor: pointer; /* Show pointer on hover */
+    float: right; /* Align close icon to the right */
+    font-size: 1.5rem; /* Adjust size */
+}
+
+/* Optional: Style the update button */
+
+.btn {
+    background-color: #ff0000;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 20px;
+    
+}
+
+.btn:hover {
+    background-color: #000000;
+}
+h3{
+    color: red;
+    font-size: 30px;
+    margin-bottom: 20px;
+    font-weight: 400;
+}
+h4{
+    font-weight: 300;
+    text-align: center;
 }
