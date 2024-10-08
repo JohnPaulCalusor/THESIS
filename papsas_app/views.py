@@ -6,6 +6,7 @@ from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, HttpRe
 from django.urls import reverse
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
+from django.core.paginator import Paginator
 from django.utils.html import strip_tags
 import random, json, logging
 from django.contrib import messages
@@ -27,6 +28,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from functools import wraps
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
+from django.views import View
 # Create your views here.
 
 def is_member(request):
@@ -1084,7 +1086,7 @@ def get_event(request):
     events = Event.objects.all()
     return render(request, 'papsas_app/partial_list/event_list.html', {
         'events': events,
-        'view' :'view'
+        'view' : 'view'
         })
 
 @officer_required
@@ -1463,6 +1465,25 @@ def search_events(request):
         'events': events
     })
 
+def search_accounts(request):
+    search_query = request.GET.get('q', '')
+    
+    if search_query:
+        # Create a Q object for case-insensitive search across multiple fields
+        users = User.objects.filter(
+            first_name = search_query |
+            Q(first_name__icontains=search_query) |
+            Q(last_name__icontains=search_query) 
+        ).order_by('id')
+    else:
+        # If no search query, return all users
+        users = User.objects.all().order_by('id')
+    
+    # Render only the tbody content as this will be swapped by HTMX
+    return render(request, 'papsas_app/partial_list/account_list.html', {
+        'userRecord': users
+    })
+
 #JS fetching
 @secretary_required
 def get_attendees(request, event_id):
@@ -1499,3 +1520,41 @@ def get_event_details(request, id):
         return JsonResponse(data)
     except Event.DoesNotExist:
         return HttpResponseNotFound()
+
+# try pagination
+def user_record_view(request):
+    # Get filter parameters
+    search_query = request.GET.get('search', '')
+    sort_by = request.GET.get('sort', 'id')
+    sort_direction = request.GET.get('direction', 'asc')
+    page_number = request.GET.get('page', 1)
+    
+    # Base queryset
+    users = User.objects.all()
+    
+    # Apply search filter
+    if search_query:
+        users = users.filter(
+            Q(first_name__icontains=search_query) |
+            Q(last_name__icontains=search_query) |
+            Q(email__icontains=search_query)
+        )
+    
+    # Apply sorting
+    if sort_direction == 'desc':
+        sort_by = f'-{sort_by}'
+    users = users.order_by(sort_by)
+    
+    # Apply pagination
+    paginator = Paginator(users, 10)  # 10 items per page
+    page_obj = paginator.get_page(page_number)
+    
+    context = {
+        'userRecord': page_obj,
+        'current_sort': sort_by.replace('-', ''),
+        'current_direction': sort_direction,
+    }
+    
+    if request.htmx:
+        return render(request, 'papsas_app/partial_list/account_list.html', context)
+    return render(request, 'papsas_app/record/user_record.html', context)

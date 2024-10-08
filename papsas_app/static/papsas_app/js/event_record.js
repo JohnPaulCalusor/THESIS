@@ -6,6 +6,7 @@ function initializeEventList() {
     const searchInput = document.getElementById('searchInput');
     const eventListBody = document.getElementById('event-list-body');
     
+    bindButtons()
     // Setup search handler
     searchInput.addEventListener('input', function(e) {
         if (this.value.trim()) {
@@ -59,6 +60,13 @@ function bindButtons(){
         button.addEventListener('click', function () {
             const eventId = this.getAttribute('data-event-id');
             showRegistrationRecord(eventId);
+        });
+    });
+
+    document.querySelectorAll('.view-button').forEach(button => {
+        button.addEventListener('click', function () {
+            const eventId = this.getAttribute('data-event-id');
+            showEventDetails(eventId);
         });
     });
 
@@ -302,4 +310,24 @@ function showUpdate(id) {
             form.action = `/event/update/${id}/`;
         })
         .catch(error => console.error('Error:', error));
+}
+
+function showEventDetails(eventId) {
+    const body = document.getElementById('details-body')
+    document.querySelector('#details-container').style.display = 'block';
+
+    fetch(`/event/update/${eventId}/`)
+    .then(response => response.json())
+    .then(data => {
+        body.innerHTML = `
+        <img src="${data.pubmat}" alt="">
+        <h2>${data.name}</h2>
+        <p>Description : ${data.description}</p>
+        <p>Date: ${data.startDate} - ${data.endDate}</p>
+        <p>Time: ${data.startTime} - ${data.endTime}</p>
+        <p>Venue: ${data.venue}</p>
+        <p>Price: ${data.price}</p>
+        `
+    })
+
 }

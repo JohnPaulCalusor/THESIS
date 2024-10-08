@@ -107,5 +107,7 @@ urlpatterns = [
     path('top_region_data/', get_top_region_data, name='get_top_region_data'),
     path('least_region_data/', get_least_region_data, name='get_least_region_data'),
     # filter
-    path('search-events/', views.search_events, name='search_events')
+    path('search-events/', views.search_events, name='search_events'),
+    path('search-accounts/', views.search_accounts, name='search_accounts'),
+    path('user-record/', views.user_record_view, name='user_record'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
