@@ -1,25 +1,8 @@
-{% for user in   userRecord  %}
-<tr>
-    <td>{{user.first_name}}</td>
-    <td>{{user.last_name}}</td>
-    <td>{{user.email}}</td>
-    <td>{{user.mobileNum}}</td>
-    <td>{{user.region}}</td>
-    <td>{{user.address}}</td>
-    <td>{{user.occupation}}</td>
-    <td>{{user.age}}</td>
-    <td>{{user.birthdate}}</td>
-    <td>{{user.email_verified}}</td>
-    <td> {{ user.is_active }} </td>
-    <td><a href="{% url 'profile' user.id %}"><i class="fas fa-eye"></a></td>
-    <td>   
-        <a href="" class="action-icon" title="Edit" onclick="fetchUserInfo( {{ user.id }} )"><i class="fas fa-edit"></i></a>
-        <form action="{% url 'delete_account' user.id %}" method="post">
-            {% csrf_token %}
-            <button class="action-icon" title="Delete" type="submit">
-                <i class="fas fa-trash-alt"></i>
-            </button>
-        </form>
-    </td>
-</tr>
-{% endfor %}
+{% load render_table from django_tables2 %}
+
+<div id="table-container"
+    hx-get="{% url 'get_latest_users' %}"
+    hx-trigger="every 5s"
+    hx-swap="outerHTML">
+    {% render_table table %}
+</div>

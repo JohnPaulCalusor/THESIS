@@ -73,7 +73,7 @@ urlpatterns = [
     # get htmx
     path('record/get-attendance/<int:event_id>/', views.get_attendees, name='get_attendance'),
     path('partial/event/<str:view>', views.get_event, name="get_event"),
-    path('partial/account', views.get_account, name="get_account"),
+    path('partial/account', views.get_latest_users, name="get_latest_users"),
     path('partial/venue', views.get_venue, name="get_venue"),
     path('partial/profile/<int:id>', views.get_profile, name="get_profile"),
     path('partial/achievement', views.get_achievement, name="get_achievement"),
@@ -109,5 +109,6 @@ urlpatterns = [
     # filter
     path('search-events/', views.search_events, name='search_events'),
     path('search-accounts/', views.search_accounts, name='search_accounts'),
-    path('user-record/', views.user_record_view, name='user_record'),
+    # table
+    path('table/user/', views.UserListView.as_view(), name='user_table'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

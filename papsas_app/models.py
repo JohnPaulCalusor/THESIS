@@ -83,6 +83,9 @@ class User(AbstractUser):
             self.verification_code = None
             self.verification_code_expiration = None
         super().save(*args, **kwargs)
+    
+    class Meta:
+        ordering = ['id']
 
 
 class MembershipTypes(models.Model):

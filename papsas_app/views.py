@@ -7,6 +7,7 @@ from django.urls import reverse
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.core.paginator import Paginator
+from django_tables2.paginators import LazyPaginator
 from django.utils.html import strip_tags
 import random, json, logging
 from django.contrib import messages
@@ -28,7 +29,12 @@ from django.core.exceptions import ObjectDoesNotExist
 from functools import wraps
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
-from django.views import View
+from django.views.generic import ListView
+from django_tables2 import SingleTableView, RequestConfig
+from .tables import UserTable
+from .filters import UserFilter
+
+
 # Create your views here.
 
 def is_member(request):
@@ -1077,6 +1083,7 @@ def delete_account(request, id):
 
 #htmx functions
 @secretary_required
+# delete after django table
 def get_account(request):
     userRecord = User.objects.all()
     return render(request, 'papsas_app/partial_list/account_list.html', {
@@ -1523,40 +1530,33 @@ def get_event_details(request, id):
     except Event.DoesNotExist:
         return HttpResponseNotFound()
 
-# try pagination
-def user_record_view(request):
-    # Get filter parameters
-    search_query = request.GET.get('search', '')
-    sort_by = request.GET.get('sort', 'id')
-    sort_direction = request.GET.get('direction', 'asc')
-    page_number = request.GET.get('page', 1)
+class UserListView(SingleTableView):
+    model = User
+    table_class = UserTable
+    template_name = 'papsas_app/record/user_record.html'
+    filterset_class = UserFilter
+    paginator_class = LazyPaginator
+
+    def get_table(self):
+        table = super().get_table()
+        RequestConfig(
+            self.request, 
+            paginate={
+                "paginator_class": LazyPaginator,
+                "per_page": 10
+            }
+        ).configure(table)
+        return table
     
-    # Base queryset
-    users = User.objects.all()
+    def get_queryset(self):
+        queryset = User.objects.all()
+        self.filterset = self.filterset_class(self.request.GET, queryset=queryset)
+        return self.filterset.qs
     
-    # Apply search filter
-    if search_query:
-        users = users.filter(
-            Q(first_name__icontains=search_query) |
-            Q(last_name__icontains=search_query) |
-            Q(email__icontains=search_query)
-        )
-    
-    # Apply sorting
-    if sort_direction == 'desc':
-        sort_by = f'-{sort_by}'
-    users = users.order_by(sort_by)
-    
-    # Apply pagination
-    paginator = Paginator(users, 10)  # 10 items per page
-    page_obj = paginator.get_page(page_number)
-    
-    context = {
-        'userRecord': page_obj,
-        'current_sort': sort_by.replace('-', ''),
-        'current_direction': sort_direction,
-    }
-    
-    if request.htmx:
-        return render(request, 'papsas_app/partial_list/account_list.html', context)
-    return render(request, 'papsas_app/record/user_record.html', context)
+def get_latest_users(request):
+    table = UserTable(User.objects.all())
+    RequestConfig(request).configure(table)
+    if request.headers.get('HX-Request') == 'true':
+        return render(request, 'papsas_app/partial_list/account_list.html', {'table': table})
+    else:
+        return HttpResponse(status=400)
