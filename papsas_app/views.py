@@ -1082,11 +1082,11 @@ def get_account(request):
     }) 
 
 @secretary_required
-def get_event(request):
+def get_event(request, view):
     events = Event.objects.all()
     return render(request, 'papsas_app/partial_list/event_list.html', {
         'events': events,
-        'view' : 'view'
+        'view' : view
         })
 
 @officer_required

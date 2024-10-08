@@ -72,7 +72,7 @@ urlpatterns = [
     path('get-achievement-data/<int:achievement_id>/', views.get_achievement_data, name='get_achievement_data'),
     # get htmx
     path('record/get-attendance/<int:event_id>/', views.get_attendees, name='get_attendance'),
-    path('partial/event/', views.get_event, name="get_event"),
+    path('partial/event/<str:view>', views.get_event, name="get_event"),
     path('partial/account', views.get_account, name="get_account"),
     path('partial/venue', views.get_venue, name="get_venue"),
     path('partial/profile/<int:id>', views.get_profile, name="get_profile"),
