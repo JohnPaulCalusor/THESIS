@@ -10,11 +10,7 @@
 
 {% block body %}
 <div>
-    <form method="get" class="mb-4" id="filter-form" 
-        hx-get="{% url 'user_table' %}" 
-        hx-target="#table-container" 
-        hx-swap="outerHTML"
-        hx-trigger="change delay:500ms, keyup delay:500ms from:input">
+    <form method="get" class="mb-4" id="filter-form" >
         <div class="row">
             <div class="col-md-3 mb-3">
                 <label for="id_id">Id:</label>
