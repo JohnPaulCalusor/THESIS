@@ -21,3 +21,17 @@ function fetchUserInfo(userId) {
     
     document.querySelector('#popup_container').style.display = 'block';
 }
+function showPopup() {
+    document.querySelector('#popup_container').style.display = 'block';
+    document.body.insertAdjacentHTML('beforeend', '<div class="popup-overlay"></div>');
+}
+
+function closePopup() {
+    document.querySelector('#popup_container').style.display = 'none';
+    const overlay = document.querySelector('.popup-overlay');
+    if (overlay) {
+        overlay.remove();
+    }
+}
+
+document.querySelector('.popup-overlay')?.addEventListener('click', closePopup);

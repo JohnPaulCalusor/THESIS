@@ -23,11 +23,23 @@ function showUpdate(achievementId) {
 }
 
 // Optional: Close update form
-function closeUpdateForm() {
-    document.getElementById('update-container').style.display = 'none';
-}
+
 
 setTimeout(function(){
     const element = document.getElementById('message-container');
     element.remove();
 }, 5000);
+function showPopup() {
+    document.querySelector('#update-container').style.display = 'block';
+    document.body.insertAdjacentHTML('beforeend', '<div class="popup-overlay"></div>');
+}
+
+function closePopup() {
+    document.querySelector('#update-container').style.display = 'none';
+    const overlay = document.querySelector('.popup-overlay');
+    if (overlay) {
+        overlay.remove();
+    }
+}
+
+document.querySelector('.popup-overlay')?.addEventListener('click', closePopup);

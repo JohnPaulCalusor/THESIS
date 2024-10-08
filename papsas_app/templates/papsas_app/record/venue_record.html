@@ -57,14 +57,17 @@
 </div>
 
 <div id="update-container">
+    <div class="update-content">
+        <span class="upd-close-modal" onclick="closePopup()"><i class="fas fa-times"></i></span>
     <h3>
         Update Venue
     </h3>
     <form method="post">
         {% csrf_token %}
         {{ form }}
-        <button type="submit">Update</button>
+        <button type="submit" class="btn">Update</button>
     </form>
+</div>
 </div>
 {% endblock %}
 

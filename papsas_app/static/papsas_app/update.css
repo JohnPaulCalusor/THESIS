@@ -25,7 +25,7 @@
     transform: translate(-50%, -50%); /* Offset by half of its width and height */
     background-color: #fff; /* White background for the modal */
     border-radius: 8px; /* Rounded corners */
-    padding: 40px; /* Some padding */
+    padding: 20px; /* Some padding */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Shadow for depth */
     width: 50rem; /* Set a fixed width */
     max-width: 90%; /* Responsive width */
@@ -34,12 +34,14 @@
 }
 
 /* Close button style */
-.close-modal {
+.upd-close-modal {
     cursor: pointer; /* Show pointer on hover */
     float: right; /* Align close icon to the right */
-    font-size: 1.5rem; /* Adjust size */
+    font-size: 24px; /* Adjust size */
 }
-
+.upd-close-modal:hover{
+    color: red;
+}
 /* Optional: Style the update button */
 
 .btn {
@@ -52,6 +54,22 @@
     width: 100%;
     margin-top: 20px;
     
+}
+.form-group {
+    margin-bottom: 15px;
+    display: flex;
+    flex-direction: column; /* Align label and input vertically */
+}
+
+.form-group .label {
+    font-weight: bold; /* Make the label bold */
+}
+
+.form-control {
+    width: 100%; /* Full width for all inputs */
+    padding: 10px; /* Add some padding for better interaction */
+    border: 1px solid #ccc; /* Border for input fields */
+    border-radius: 4px; /* Slightly rounded corners */
 }
 
 .btn:hover {
@@ -67,3 +85,4 @@ h4{
     font-weight: 300;
     text-align: center;
 }
+
