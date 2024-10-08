@@ -32,7 +32,21 @@
     max-height: 80%; /* Set maximum height */
     overflow-y: auto; /* Enable vertical scrolling */
 }
-
+#details-container{
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1000; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    background-color: rgba(0, 0, 0, 0.8); 
+}
+#details-body{
+    margin-bottom: 15px;
+    display: flex;
+    flex-direction: column; /* Align label and input vertically */
+}
 /* Close button style */
 .upd-close-modal {
     cursor: pointer; /* Show pointer on hover */

@@ -311,3 +311,17 @@ function showUpdate(id) {
         })
         .catch(error => console.error('Error:', error));
 }
+function showPopup() {
+    document.querySelector('#details-container').style.display = 'block';
+    document.body.insertAdjacentHTML('beforeend', '<div class="popup-overlay"></div>');
+}
+
+function closePopup() {
+    document.querySelector('#details-container').style.display = 'none';
+    const overlay = document.querySelector('.popup-overlay');
+    if (overlay) {
+        overlay.remove();
+    }
+}
+
+document.querySelector('.popup-overlay')?.addEventListener('click', closePopup);

@@ -11,24 +11,25 @@
 {% endblock %}
 {% block body %}
     {% if ongoingElection %}
+    <div class="election-title">
         <h2> {{ ongoingElection.startDate.year }} Officer Election</h2>
         <p> {{ ongoingElection.startDate}} </p>
+    </div>
     {% endif %}
-
-    <div>
+    <div class="candidate-title">
         <h2>
             Candidates
         </h2>
     </div>
 
-    <div>
+    <div  class="cast-your-vote">
         <h4>
             Cast your Vote
         </h4>
         {% if message %}
         <p> {{ message }} </p>
         {% endif %}
-        <div>
+        <div class="container">
             <!-- vote form -->
             <form action="{% url 'vote' %}" method="post" id="voteForm">
                 {% csrf_token %}
@@ -43,7 +44,8 @@
                                     {{ candidate.candidate.first_name }} 
                                 </p>
                                 <p>Votes: {{ candidate.vote_count }}</p>
-                                <button>
+                                
+                                <button class="btn">
                                     <a href="{% url 'profile' candidate.candidate.id %}">View Profile</a>
                                 </button>
                             </div>
@@ -51,7 +53,7 @@
                     </div>
                     {% endfor %}
                 </div>
-                <button type="submit"> Cast Vote </button>
+                <button type="submit" class="cast-vote"> Cast Vote </button>
             </form>
 
         </div>
@@ -75,9 +77,12 @@
             <button type="submit">Submit Candidacy</button>
         </form>
         {% else %}
+        <div class="message">
         <p> You are not eligible to run candidacy. <a href="">Click here</a>  to view eligibility to run candidacy.</p>
+    </div>
         {% endif %}
     </div>
+
 
     <input type="hidden" id="num-officers" value="{{ ongoingElection.numWinners }}">
 
