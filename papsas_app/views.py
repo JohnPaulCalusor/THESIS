@@ -37,7 +37,7 @@ def is_member(request):
     if user.is_authenticated:
         try:
             membership = UserMembership.objects.filter(user=user).latest('id')
-            if membership.membershipVerification == 'True':
+            if membership.membershipVerification == True:
                 return True
             else:
                 return False
@@ -92,6 +92,8 @@ def member_required(view_func):
 def member_or_officer_required(view_func):
     @wraps(view_func)
     def decorated_view(request, *args, **kwargs):
+        print(f"is_member: {is_member(request)}")
+        print(f"is_officer: {is_officer(request)}")
         if is_member(request) or is_officer(request):
             return view_func(request, *args, **kwargs)
         return HttpResponseForbidden()
