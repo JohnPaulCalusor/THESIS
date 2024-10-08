@@ -111,6 +111,15 @@ class UserMembership(models.Model):
     def __str__ (self):
         return f'{self.user.id} : {self.user.first_name} - {self.id} : {self.membership}'
 
+    def save(self, *args, **kwargs):
+        if not self.expirationDate:
+            self.registrationDate = timezone.now()
+            if self.membership.duration:
+                self.expirationDate = self.registrationDate + self.membership.duration
+            else:
+                self.expirationDate = None  # or some other default value
+        super().save(*args, **kwargs)
+
 class Election(models.Model):
     title = models.CharField(max_length=128, null=True)    
     startDate = models.DateField(null=True)
