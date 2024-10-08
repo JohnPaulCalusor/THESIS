@@ -455,7 +455,7 @@ def profile(request, id):
     })
 logger = logging.getLogger(__name__)
 
-@member_required
+@secretary_required
 def event(request):
     if request.method == 'POST':
         form = EventForm(request.POST, request.FILES)
