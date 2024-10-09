@@ -9,41 +9,45 @@
 {% endblock %}
 
 {% block body %}
-<div>
-    <form method="get" class="mb-4" id="filter-form" >
+<div class="container">
+    <div class="title">
+        <h3>
+            User Records
+        </h3>
+        </div>
+<form method="get" class="mb-4" id="filter-form">
         <div class="row">
             <div class="col-md-3 mb-3">
-                <label for="id_id">Id:</label>
-                <input type="text" name="id" id="id_id" class="form-control" value="{{ filter.form.id.value|default:'' }}">
+                <label for="id_id" class="text-input">Id:</label>
+                <input type="text" name="id" id="id_id" class="form-control" placeholder="Search Id..."    value="{{ filter.form.id.value|default:'' }}">
             </div>
             <div class="col-md-3 mb-3">
-                <label for="id_email">Email:</label>
-                <input type="text" name="email" id="id_email" class="form-control" value="{{ filter.form.email.value|default:'' }}">
+                <label for="id_email" class="text-input">Email:</label>
+                <input type="text" name="email" id="id_email" class="form-control" placeholder="Search Email..."  value="{{ filter.form.email.value|default:'' }}">
             </div>
             <div class="col-md-3 mb-3">
-                <label for="id_first_name">First Name:</label>
-                <input type="text" name="first_name" id="id_first_name" class="form-control" value="{{ filter.form.first_name.value|default:'' }}">
+                <label for="id_first_name" class="text-input">First Name:</label>
+                <input type="text" name="first_name" id="id_first_name" class="form-control" placeholder="Search First Name..."  value="{{ filter.form.first_name.value|default:'' }}">
             </div>
             <div class="col-md-3 mb-3">
-                <label for="id_last_name">Last Name:</label>
-                <input type="text" name="last_name" id="id_last_name" class="form-control" value="{{ filter.form.last_name.value|default:'' }}">
+                <label for="id_last_name" class="text-input">Last Name:</label>
+                <input type="text" name="last_name" id="id_last_name" class="form-control" placeholder="Search Last Name..."  value="{{ filter.form.last_name.value|default:'' }}">
+            </div>
+            <div class="col-md-3 mb-3 d-flex align-items-end">
+                <button type="submit" class="search-submit">Search</button>
+                <button class="search-submit"><a href="{% url 'user_table' %}"></a>Reset</button>
             </div>
         </div>
-        <button type="submit" class="btn btn-primary">Search</button>
-        <a href="{% url 'user_table' %}" class="btn btn-secondary">Reset</a>
     </form>
 </div>
 <!-- Eto user table -->
 
-<div>
-    <h3>
-        User Records
-    </h3>
-
+<div class="container">
     <div id="table-container"
         hx-get="{% url 'get_latest_users' %}"
         hx-trigger="every 5s"
         hx-swap="outerHTML">
+        
         {% include 'papsas_app/partial_list/account_list.html' %}
     </div>
 </div>

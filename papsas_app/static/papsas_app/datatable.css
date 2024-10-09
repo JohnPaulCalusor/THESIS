@@ -7,8 +7,14 @@ table {
     text-align: center;
     
 }
-
-
+.text-input{
+    font-weight: 300;
+}
+.title h3{
+    font-size: 30px;
+    margin-top: 30px;
+    color: red;
+}
 .no-existing{
     text-align: center;
 }
@@ -368,3 +374,48 @@ select {
     display: none;
 }
 
+#filter-form .row {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 30px;
+}
+
+#filter-form .row .col-md-3 {
+    margin-right: 15px; /* Add space between inputs */
+    margin-bottom: 1rem; /* Add vertical space between rows if they wrap */
+    
+}
+
+#filter-form .row .col-md-3:last-child {
+    margin-right: 0; /* Remove margin on the last item in the row */
+}
+
+@media (max-width: 768px) {
+    #filter-form .row .col-md-3 {
+        flex: 1 1 50%;
+    }
+}
+
+@media (max-width: 576px) {
+    #filter-form .row .col-md-3 {
+        flex: 1 1 100%;
+    }
+}
+#filter-form .row .col-md-3.d-flex {
+    display: flex;
+    gap: 10px; /* Adds space between the buttons */
+    height: 38px;
+    margin-top: 25px;
+}
+.search-submit{
+    display: flex;
+    font-size: 16px;
+    padding: 5px;
+    width: 100px;
+    justify-content: center;
+
+}
+.pagination{
+    color: #ff0000;
+    justify-content: center;
+}
