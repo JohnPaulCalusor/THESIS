@@ -23,15 +23,15 @@
             </div>
             <div class="col-md-3 mb-3">
                 <label for="id_email" class="text-input">Email:</label>
-                <input type="text" name="email" id="id_email" class="form-control" placeholder="Search Email..."  value="{{ filter.form.email.value|default:'' }}">
+                <input type="text" name="email" id="q_email" class="form-control" placeholder="Search Email..."  value="{{ filter.form.email.value|default:'' }}">
             </div>
             <div class="col-md-3 mb-3">
                 <label for="id_first_name" class="text-input">First Name:</label>
-                <input type="text" name="first_name" id="id_first_name" class="form-control" placeholder="Search First Name..."  value="{{ filter.form.first_name.value|default:'' }}">
+                <input type="text" name="first_name" id="q_first_name" class="form-control" placeholder="Search First Name..."  value="{{ filter.form.first_name.value|default:'' }}">
             </div>
             <div class="col-md-3 mb-3">
                 <label for="id_last_name" class="text-input">Last Name:</label>
-                <input type="text" name="last_name" id="id_last_name" class="form-control" placeholder="Search Last Name..."  value="{{ filter.form.last_name.value|default:'' }}">
+                <input type="text" name="last_name" id="q_last_name" class="form-control" placeholder="Search Last Name..."  value="{{ filter.form.last_name.value|default:'' }}">
             </div>
             <div class="col-md-3 mb-3 d-flex align-items-end">
                 <button type="submit" class="search-submit">Search</button>
@@ -44,9 +44,23 @@
 
 <div class="container">
     <div id="table-container">
-        
         {% include 'papsas_app/partial_list/account_list.html' %}
     </div>
+</div>
+
+<div id="popup_container">
+    <div class="popup">
+    <span class="close-btn" onclick="closePopup()"><i class="fas fa-times"></i></span>
+    <h3>Update User Record</h3>
+    <form method="post" class="popup-form">
+        {% csrf_token %}
+        {% for field in form %}
+            {% if field.name != 'password' %}
+            {{ field }}
+            {% endif %}
+        {% endfor %}
+        <button type="submit" class="submit-btn">Update</button>
+    </form>
 </div>
 {% endblock %}
 

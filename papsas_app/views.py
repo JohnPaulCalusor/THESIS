@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect, get_list_or_404
+from django.shortcuts import render, redirect, get_list_or_404, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, logout, authenticate
 from .models import User, Officer, Candidacy, Election, Event, Attendance, EventRegistration, MembershipTypes, UserMembership, Vote, Achievement, NewsandOffers, Venue
@@ -614,7 +614,7 @@ def update_account(request, id):
             form = UserUpdateForm(request.POST, instance = user )
             if form.is_valid():
                 form.save()
-                return redirect('record')
+                return redirect('user_table')
             else:
                 errors = form.errors.as_json()
                 return HttpResponse(errors, content_type='application/json')
@@ -1066,6 +1066,7 @@ def news_offers_record(request):
         'form' : form,
         })
 
+@csrf_exempt
 @secretary_required
 def delete_account(request, id):
     try:
@@ -1075,9 +1076,7 @@ def delete_account(request, id):
         if request.method == 'POST':
             user.is_active = False
             user.save()
-            return render(request, 'papsas_app/record.html', {
-                'userRecord' : accounts
-            })
+            return redirect('user_table')
     except:
         return HttpResponseNotFound('User not Found')
 
@@ -1543,7 +1542,7 @@ class UserListView(SingleTableView):
             self.request, 
             paginate={
                 "paginator_class": LazyPaginator,
-                "per_page": 1
+                "per_page": 10
             }
         ).configure(table)
         return table
@@ -1557,6 +1556,8 @@ class UserListView(SingleTableView):
         context = super(UserListView, self).get_context_data(**kwargs)
         paginator = context['paginator']
         page_obj = context.get('page_obj')
+
+        context['form'] = UserUpdateForm()
 
         if page_obj is not None:
             page_number = page_obj.number
@@ -1574,6 +1575,18 @@ class UserListView(SingleTableView):
             context['page_number'] = None
 
         return context
+    
+    def post(self, request, *args, **kwargs):
+            user_id = request.POST.get('user_id')
+            user = get_object_or_404(User, id=user_id)
+            form = UserUpdateForm(request.POST, instance=user)
+            if form.is_valid():
+                form.save()
+                messages.success(request, 'User updated successfully.')
+                return redirect(reverse('user_list'))  # Adjust 'user_list' to your actual URL name
+            else:
+                messages.error(request, 'Error updating user. Please check the form.')
+                return self.get(request, *args, **kwargs)
     
 def get_latest_users(request):
     table = UserTable(User.objects.all())

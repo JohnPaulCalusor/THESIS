@@ -1,3 +1,14 @@
+document.addEventListener('DOMContentLoaded', function(){
+    const update_button = document.querySelectorAll('.update-button')
+
+    update_button.forEach(button => {
+        button.addEventListener('click', function(){
+            const userId = this.getAttribute('data-user-id')
+            fetchUserInfo(userId);
+        })
+    })
+})
+
 function fetchUserInfo(userId) {
     fetch(`/get-user-info/${userId}/`)
         .then(response => response.json())
@@ -33,5 +44,6 @@ function closePopup() {
         overlay.remove();
     }
 }
-
 document.querySelector('.popup-overlay')?.addEventListener('click', closePopup);
+
+
