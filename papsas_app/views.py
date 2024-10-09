@@ -31,8 +31,8 @@ from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import ListView
 from django_tables2 import SingleTableView, RequestConfig
-from .tables import UserTable
-from .filters import UserFilter
+from .tables import UserTable, MembershipTable
+from .filters import UserFilter, MembershipFilter
 
 
 # Create your views here.
@@ -671,7 +671,7 @@ def approve_membership(request, id):
         user_membership = UserMembership.objects.get(user=userID)
         user_membership.membershipVerification = True
         user_membership.save()
-        return redirect('membership_record')
+        return redirect('membership_table')
     else:
         return render(request, 'papsas_app/index.html')
 
@@ -683,9 +683,9 @@ def decline_membership(request, id):
         if user_membership.membershipVerification == True:
             user_membership.membershipVerification = False
             user_membership.save()
-            return redirect('membership_record')
+            return redirect('membership_table')
         else:
-            return redirect('membership_record')
+            return redirect('membership_table')
 
 @secretary_required
 def delete_membership(request, id):
@@ -694,9 +694,9 @@ def delete_membership(request, id):
         user_membership = UserMembership.objects.get(user=userID)
         if user_membership.membershipVerification == False:
             user_membership.delete()
-            return redirect('membership_record')
+            return redirect('membership_table')
         else:
-            return redirect('membership_record')
+            return redirect('membership_table')
 
 @secretary_required
 def get_user_info(request, id):
@@ -1081,13 +1081,6 @@ def delete_account(request, id):
         return HttpResponseNotFound('User not Found')
 
 #htmx functions
-@secretary_required
-# delete after django table
-def get_account(request):
-    userRecord = User.objects.all()
-    return render(request, 'papsas_app/partial_list/account_list.html', {
-        'userRecord' : userRecord
-    }) 
 
 @secretary_required
 def get_event(request, view):
@@ -1588,10 +1581,30 @@ class UserListView(SingleTableView):
                 messages.error(request, 'Error updating user. Please check the form.')
                 return self.get(request, *args, **kwargs)
     
-def get_latest_users(request):
-    table = UserTable(User.objects.all())
-    RequestConfig(request).configure(table)
-    if request.headers.get('HX-Request') == 'true':
-        return render(request, 'papsas_app/partial_list/account_list.html', {'table': table})
-    else:
-        return HttpResponse(status=400)
+class MembershipListView(SingleTableView):
+    model = UserMembership
+    table_class = MembershipTable
+    template_name = 'papsas_app/record/membership_table.html'
+    filterset_class = MembershipFilter
+    paginator_class = LazyPaginator
+
+    def get_table(self):
+        table = super().get_table()
+        RequestConfig(
+            self.request, 
+            paginate={
+                "paginator_class": LazyPaginator,
+                "per_page": 10
+            }
+        ).configure(table)
+        return table
+
+    def get_queryset(self):
+        queryset = UserMembership.objects.all()
+        self.filterset = self.filterset_class(self.request.GET, queryset=queryset)
+        return self.filterset.qs
+    
+    def get_context_data(self, **kwargs):
+        context = super(MembershipListView, self).get_context_data(**kwargs)
+        context['filter'] = self.filterset
+        return context

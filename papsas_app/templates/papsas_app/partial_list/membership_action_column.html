@@ -1,0 +1,27 @@
+{% load static %}
+{% block head %}
+<link rel="stylesheet" href="{% static 'papsas_app/datatable.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+{% endblock %}
+
+{% if not record.membershipVerification %}
+    <form action="{% url 'approve_membership' record.user.id %}" method="post" style="display:inline;">
+        {% csrf_token %}
+        <button type="submit" class="action-icon" title="Approve">
+            <i class="fas fa-check"></i>
+        </button>
+    </form>
+    <form action="{% url 'delete_membership' record.user.id %}" method="post" style="display:inline;">
+        {% csrf_token %}
+        <button type="submit" class="action-icon" title="Delete">
+            <i class="fas fa-trash-alt"></i>
+        </button>
+    </form>
+{% else %}
+    <form action="{% url 'decline_membership' record.user.id %}" method="post" style="display:inline;">
+        {% csrf_token %}
+        <button type="submit" class="action-icon" title="Decline">
+            <i class="fas fa-times"></i>
+        </button>
+    </form>
+{% endif %}

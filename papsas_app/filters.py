@@ -1,6 +1,7 @@
 import django_filters
-from .models import User
+from .models import User, UserMembership
 from django.db.models import Q
+from django import forms
 
 class UserFilter(django_filters.FilterSet):
     email = django_filters.CharFilter(lookup_expr='icontains')
@@ -11,3 +12,25 @@ class UserFilter(django_filters.FilterSet):
     class Meta:
         model = User
         fields = ['id', 'email', 'first_name', 'last_name']
+
+class MembershipFilter(django_filters.FilterSet):
+    id = django_filters.CharFilter(lookup_expr='icontains')
+    membership = django_filters.MultipleChoiceFilter(
+        choices = [
+            ('1', 'Regular'),
+            ('2', 'Special'),
+            ('3', 'Affiliate'),
+            ('4', 'Lifetime'),
+        ]
+    )
+    membershipVerification = django_filters.BooleanFilter(
+        widget=forms.Select(choices=[
+            ('', 'All'),
+            (True, 'Verified'),
+            (False, 'Not Verified')
+        ], attrs={'class': 'form-control'})
+    )
+
+    class Meta:
+        model = UserMembership
+        fields = ['id', 'membership', 'membershipVerification']
