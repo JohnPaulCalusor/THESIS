@@ -95,6 +95,7 @@
     display: inline-block;
     margin-bottom: 10px;
     width: 250px;
+    border: none;
     
   }
   .membership__button_1 a {
@@ -137,14 +138,16 @@
   @media (max-width: 768px) {
     .membership_title h1 {
       font-size: 1.5rem;
+      margin-top: -30px;
     }
     .membership_grid {
       grid-template-columns: repeat(1, 1fr); /* 2 columns for medium screens */
+      margin-bottom: 30px;
     }
     .membership {
-      margin-top: 33rem; /* Add 100px margin-top for mobile screens */
+      margin-top: 30rem; /* Add 100px margin-top for mobile screens */
       padding: 10px;
-      margin-bottom: -450px;
+      margin-bottom: -400px;
     }
   
     .membership__button{
@@ -152,6 +155,7 @@
     }
     .membership__button_3{
       margin-bottom: 10px;
+      
     }
     .institutional-membership{
       margin-top: 25rem;
