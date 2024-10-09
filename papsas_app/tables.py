@@ -9,7 +9,7 @@ class UserTable(tables.Table):
     profilePic = tables.Column(orderable=False, verbose_name="Profile Picture")
 
     def render_profilePic(self, record):
-            return format_html('<img src="{}" width="50" height="50">', record.profilePic.url)
+            return format_html('<img src="{}" width="40px" height="40px">', record.profilePic.url)
     
     class Meta:
         model = User

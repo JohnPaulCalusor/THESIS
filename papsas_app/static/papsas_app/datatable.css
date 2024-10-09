@@ -346,7 +346,11 @@ select {
 .btn:hover {
     background-color: #000000;
 }
-
+th.orderable a{
+    text-decoration: none;
+    color: #000;
+    font-weight: 300;
+}
 .message {
     color: red;
     text-align: center;
@@ -378,11 +382,13 @@ select {
     display: flex;
     flex-wrap: wrap;
     margin-top: 30px;
+    
 }
 
 #filter-form .row .col-md-3 {
     margin-right: 15px; /* Add space between inputs */
     margin-bottom: 1rem; /* Add vertical space between rows if they wrap */
+    width: 288px;
     
 }
 
@@ -415,7 +421,32 @@ select {
     justify-content: center;
 
 }
-.pagination{
+.pagination {
+    display: flex;
+    justify-content: right;
+    padding-left: 0;
+    list-style: none;
+    border-radius: 0.25rem;
+    gap: 10px;
     color: #ff0000;
-    justify-content: center;
+
+    
 }
+.pagination a{
+    position: relative;
+    display: block;
+    padding: 0.5rem 0.75rem;
+    margin-left: -1px;
+    line-height: 1.25;
+    color: #ff0000;
+    background-color: #fff;
+    border: 1px solid #dee2e6;
+    text-decoration: none;
+    border-radius: 0.25rem;
+    
+}
+
+
+
+
+
