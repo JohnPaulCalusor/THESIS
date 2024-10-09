@@ -1543,7 +1543,7 @@ class UserListView(SingleTableView):
             self.request, 
             paginate={
                 "paginator_class": LazyPaginator,
-                "per_page": 10
+                "per_page": 1
             }
         ).configure(table)
         return table
@@ -1552,6 +1552,28 @@ class UserListView(SingleTableView):
         queryset = User.objects.all()
         self.filterset = self.filterset_class(self.request.GET, queryset=queryset)
         return self.filterset.qs
+    
+    def get_context_data(self, **kwargs):
+        context = super(UserListView, self).get_context_data(**kwargs)
+        paginator = context['paginator']
+        page_obj = context.get('page_obj')
+
+        if page_obj is not None:
+            page_number = page_obj.number
+            page_range = paginator.page_range
+
+            start_index = page_number - 2 if page_number > 2 else 1
+            end_index = page_number + 2 if page_number < paginator.num_pages - 1 else paginator.num_pages
+
+            page_range = page_range[start_index:end_index]
+
+            context['page_range'] = page_range
+            context['page_number'] = page_number
+        else:
+            context['page_range'] = []
+            context['page_number'] = None
+
+        return context
     
 def get_latest_users(request):
     table = UserTable(User.objects.all())

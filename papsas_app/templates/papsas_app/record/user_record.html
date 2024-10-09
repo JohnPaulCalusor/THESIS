@@ -43,10 +43,7 @@
 <!-- Eto user table -->
 
 <div class="container">
-    <div id="table-container"
-        hx-get="{% url 'get_latest_users' %}"
-        hx-trigger="every 5s"
-        hx-swap="outerHTML">
+    <div id="table-container">
         
         {% include 'papsas_app/partial_list/account_list.html' %}
     </div>
