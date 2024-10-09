@@ -31,7 +31,7 @@ from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import ListView
 from django_tables2 import SingleTableView, RequestConfig
-from .tables import UserTable, MembershipTable
+from .tables import UserTable, MembershipTable, EventTable
 from .filters import UserFilter, MembershipFilter
 
 
@@ -1606,5 +1606,33 @@ class MembershipListView(SingleTableView):
     
     def get_context_data(self, **kwargs):
         context = super(MembershipListView, self).get_context_data(**kwargs)
+        context['filter'] = self.filterset
+        return context
+    
+class EventListView(SingleTableView):
+    model = Event
+    table_class = EventTable
+    template_name = 'papsas_app/record/event_table.html'
+    filterset_class = MembershipFilter
+    paginator_class = LazyPaginator
+
+    def get_table(self):
+        table = super().get_table()
+        RequestConfig(
+            self.request, 
+            paginate={
+                "paginator_class": LazyPaginator,
+                "per_page": 10
+            }
+        ).configure(table)
+        return table
+
+    def get_queryset(self):
+        queryset = Event.objects.all()
+        self.filterset = self.filterset_class(self.request.GET, queryset=queryset)
+        return self.filterset.qs
+    
+    def get_context_data(self, **kwargs):
+        context = super(EventListView, self).get_context_data(**kwargs)
         context['filter'] = self.filterset
         return context

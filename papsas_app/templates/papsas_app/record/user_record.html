@@ -54,11 +54,16 @@
     <h3>Update User Record</h3>
     <form method="post" class="popup-form">
         {% csrf_token %}
-        {% for field in form %}
-            {% if field.name != 'password' %}
-            {{ field }}
-            {% endif %}
-        {% endfor %}
+        {{ form.email }}
+        {{ form.first_name }}
+        {{ form.last_name }}
+        {{ form.mobileNum }}
+        {{ form.address }}
+        {{ form.region }}
+        {{ form.age }}
+        {{ form.birthdate }}
+        {{ form.occupation }}
+        {{ form.institution }}
         <button type="submit" class="submit-btn">Update</button>
     </form>
 </div>

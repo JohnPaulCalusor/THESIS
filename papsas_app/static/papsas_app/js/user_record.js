@@ -38,6 +38,16 @@ function showPopup() {
 }
 
 function closePopup() {
+    document.getElementById('id_email').value = "";
+    document.getElementById('id_first_name').value = "";
+    document.getElementById('id_last_name').value =  "";
+    document.getElementById('id_mobileNum').value =  "";
+    document.getElementById('id_region').value =  "";
+    document.getElementById('id_address').value =  "";
+    document.getElementById('id_occupation').value =  "";
+    document.getElementById('id_age').value =  "";
+    document.getElementById('id_birthdate').value =  "";
+    document.getElementById('id_institution').value =  "";
     document.querySelector('#popup_container').style.display = 'none';
     const overlay = document.querySelector('.popup-overlay');
     if (overlay) {

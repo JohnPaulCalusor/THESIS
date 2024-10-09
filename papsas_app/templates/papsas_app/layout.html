@@ -31,11 +31,11 @@
                                 {% if officer.position == 'Secretary' %}
                                 <li class="nav__item"><a href="{% url 'admin_dashboard' %}"class="nav__link">Dashboard</a></li>
                                 <li class="nav__item dropdown">
-                                        <a href="{% url 'record' %}" class="nav__link">Records<i class='bx bx-chevron-down dropdown__icon'></i></a>
+                                        <a href="{% url 'user_table' %}" class="nav__link">Records<i class='bx bx-chevron-down dropdown__icon'></i></a>
                                         <ul class="dropdown-content">
                                             <li><a href="{% url 'user_table' %}">Account</a></li>
                                             <li><a href="{% url 'membership_table' %}">Members</a></li>
-                                            <li><a href="{% url 'attendance_list' %}">Event Attendance</a></li>
+                                            <li><a href="{% url 'event_table' %}">Event Attendance</a></li>
                                             <li><a href="{% url 'venue_record' %}">Venue</a></li>
                                             <li><a href="{% url 'achievement_record' %}">Achievement</a></li>
                                             <li><a href="{% url 'news_offers_record' %}">News and Offers</a></li>

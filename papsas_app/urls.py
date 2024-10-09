@@ -110,5 +110,6 @@ urlpatterns = [
     path('search-accounts/', views.search_accounts, name='search_accounts'),
     # table
     path('table/user/', views.UserListView.as_view(), name='user_table'),
-    path('table/membership/', views.MembershipListView.as_view(), name="membership_table")
+    path('table/membership/', views.MembershipListView.as_view(), name="membership_table"),
+    path('table/event/', views.EventListView.as_view(), name="event_table"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

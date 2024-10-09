@@ -1,5 +1,5 @@
 <div class="action-buttons">
-    <a class="action-icon" title="Edit" onclick="fetchUserInfo('{{ user.id }}')">
+    <a class="action-icon" title="Edit" onclick="fetchUserInfo('{{ record.id }}')">
         <i class="fas fa-edit"></i>
     </a>
     <form action="{% url 'delete_account' user.id %}" method="post">
