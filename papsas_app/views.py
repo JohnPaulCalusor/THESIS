@@ -32,7 +32,8 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import ListView
 from django_tables2 import SingleTableView, RequestConfig
 from .tables import UserTable, MembershipTable, EventTable
-from .filters import UserFilter, MembershipFilter
+from .filters import UserFilter, MembershipFilter, EventFilter
+
 
 
 # Create your views here.
@@ -1421,16 +1422,16 @@ def update_event (request, id):
             if form.is_valid:
                 form.save()
                 messages.success(request, 'Updated successfully!')
-                return redirect('attendance_list')
+                return redirect('event_table')
             else:
-                return render(request, 'papsas_app/record/attendance_record.html', {
+                return render(request, 'papsas_app/record/event_table.html', {
                     'error': 'Invalid form data.',
                     'form': form,
                     })
         data = {
             'name' : event.eventName,
-            'startDate' : event.startDate,
-            'endDate' : event.endDate,
+            'startDate': event.startDate,
+            'endDate': event.endDate,
             'venue' : event.venue.id,
             'exclusive' : event.exclusive,
             'description' : event.eventDescription,
@@ -1441,49 +1442,9 @@ def update_event (request, id):
         }
         return JsonResponse(data)
     except Exception as e:
-        return render(request, 'papsas_app/record/attendance_record.html', {
+        return render(request, 'papsas_app/record/event_table.html', {
             'error': f'Error found: {e}',
             })
-
-def search_events(request):
-    query = request.GET.get('q', '').strip()
-    
-    if query:
-        try:
-            id_query = int(query)
-            events = Event.objects.filter(
-                Q(id=id_query) |
-                Q(eventName__icontains=query)
-            ).order_by('-id')
-        except ValueError:
-            events = Event.objects.filter(
-                eventName__icontains=query
-            ).order_by('-id')
-    else:
-        events = Event.objects.all().order_by('-id')
-
-    return render(request, 'papsas_app/partial_list/event_list.html', {
-        'events': events
-    })
-
-def search_accounts(request):
-    search_query = request.GET.get('q', '')
-    
-    if search_query:
-        # Create a Q object for case-insensitive search across multiple fields
-        users = User.objects.filter(
-            first_name = search_query |
-            Q(first_name__icontains=search_query) |
-            Q(last_name__icontains=search_query) 
-        ).order_by('id')
-    else:
-        # If no search query, return all users
-        users = User.objects.all().order_by('id')
-    
-    # Render only the tbody content as this will be swapped by HTMX
-    return render(request, 'papsas_app/partial_list/account_list.html', {
-        'userRecord': users
-    })
 
 #JS fetching
 @secretary_required
@@ -1576,7 +1537,7 @@ class UserListView(SingleTableView):
             if form.is_valid():
                 form.save()
                 messages.success(request, 'User updated successfully.')
-                return redirect(reverse('user_list'))  # Adjust 'user_list' to your actual URL name
+                return redirect(reverse('user_table'))
             else:
                 messages.error(request, 'Error updating user. Please check the form.')
                 return self.get(request, *args, **kwargs)
@@ -1613,7 +1574,7 @@ class EventListView(SingleTableView):
     model = Event
     table_class = EventTable
     template_name = 'papsas_app/record/event_table.html'
-    filterset_class = MembershipFilter
+    filterset_class = EventFilter
     paginator_class = LazyPaginator
 
     def get_table(self):
@@ -1634,5 +1595,18 @@ class EventListView(SingleTableView):
     
     def get_context_data(self, **kwargs):
         context = super(EventListView, self).get_context_data(**kwargs)
+        context['form'] = EventForm()
         context['filter'] = self.filterset
         return context
+    
+    def post(self, request, *args, **kwargs):
+            event_id = request.POST.get('event_id')
+            event = get_object_or_404(User, id=event_id)
+            form = EventForm(request.POST, request.FILES, instance=event)
+            if form.is_valid():
+                form.save()
+                messages.success(request, 'Event updated successfully.')
+                return redirect(reverse('event_table'))
+            else:
+                messages.error(request, 'Error updating user. Please check the form.')
+                return self.get(request, *args, **kwargs)

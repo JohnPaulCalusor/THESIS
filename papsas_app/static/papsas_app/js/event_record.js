@@ -1,117 +1,66 @@
-// Global variable to track search state
-let isSearchActive = false;
-let pollingInterval = null;
-
-function initializeEventList() {
-    const searchInput = document.getElementById('searchInput');
-    const eventListBody = document.getElementById('event-list-body');
+document.addEventListener('DOMContentLoaded', function(){
+    function bindButtons(){
+        document.querySelectorAll('.view-button').forEach(button => {
+            button.addEventListener('click', function () {
+                const eventId = this.getAttribute('data-event-id');
+                showEventDetails(eventId);
+            });
+        });
     
+        // View Registration - dynamically load registration record
+        document.querySelectorAll('.reg-button').forEach(button => {
+            button.addEventListener('click', function () {
+                const eventId = this.getAttribute('data-event-id');
+                showRegistrationRecord(eventId);
+            });
+        });
+    
+        document.querySelectorAll('.view-button').forEach(button => {
+            button.addEventListener('click', function () {
+                const eventId = this.getAttribute('data-event-id');
+                showEventDetails(eventId);
+            });
+        });
+    
+        // View Attendance - dynamically load attendance modal
+        document.querySelectorAll('.attendance-button').forEach(button => {
+            button.addEventListener('click', function () {
+                const url = this.getAttribute('data-url');
+                showAttendanceModal(url);
+            });
+        });
+    
+        // Update event - show update form dynamically
+        document.querySelectorAll('.update-button').forEach(button => {
+            button.addEventListener('click', function () {
+                const eventId = this.getAttribute('data-event-id');
+                showUpdate(eventId);
+            });
+        });
+    
+        document.querySelectorAll('.reg-close-modal').forEach(button => {
+            button.addEventListener('click', function () {
+                hideRegistrationModal()
+            });
+        });
+    
+        document.querySelectorAll('.att-close-modal').forEach(button => {
+            button.addEventListener('click', function () {
+                hideAttendanceModal()
+            });
+        });
+    
+        document.querySelectorAll('.upd-close-modal').forEach(button => {
+            button.addEventListener('click', function () {
+                hideUpdateModal()
+            });
+        });
+    }
+
     bindButtons()
-    // Setup search handler
-    searchInput.addEventListener('input', function(e) {
-        if (this.value.trim()) {
-            isSearchActive = true;
-            // Clear existing polling if it exists
-            if (pollingInterval) {
-                clearInterval(pollingInterval);
-                pollingInterval = null;
-            }
-        } else {
-            isSearchActive = false;
-            // Restart polling when search is cleared
-            startPolling();
-        }
-    });
+})
+    
 
-    function startPolling() {
-        if (!isSearchActive && !pollingInterval) {
-            pollingInterval = setInterval(() => {
-                if (!isSearchActive) {
-                    htmx.ajax('GET', '/partial/event/view', {target: '#event-list-body', swap: 'innerHTML'});
-                }
-            }, 5000);
-        }
-    }
-
-    // Initial polling start
-    startPolling();
-
-    // Handle cleanup when leaving the page
-    window.addEventListener('beforeunload', () => {
-        if (pollingInterval) {
-            clearInterval(pollingInterval);
-        }
-    });
-}
-
-// Initialize when the DOM is loaded
-document.addEventListener('DOMContentLoaded', initializeEventList);
-
-function bindButtons(){
-    document.querySelectorAll('.view-button').forEach(button => {
-        button.addEventListener('click', function () {
-            const eventId = this.getAttribute('data-event-id');
-            showEventDetails(eventId);
-        });
-    });
-
-    // View Registration - dynamically load registration record
-    document.querySelectorAll('.reg-button').forEach(button => {
-        button.addEventListener('click', function () {
-            const eventId = this.getAttribute('data-event-id');
-            showRegistrationRecord(eventId);
-        });
-    });
-
-    document.querySelectorAll('.view-button').forEach(button => {
-        button.addEventListener('click', function () {
-            const eventId = this.getAttribute('data-event-id');
-            showEventDetails(eventId);
-        });
-    });
-
-    // View Attendance - dynamically load attendance modal
-    document.querySelectorAll('.attendance-button').forEach(button => {
-        button.addEventListener('click', function () {
-            const url = this.getAttribute('data-url');
-            showAttendanceModal(url);
-        });
-    });
-
-    // Update event - show update form dynamically
-    document.querySelectorAll('.update-button').forEach(button => {
-        button.addEventListener('click', function () {
-            const eventId = this.getAttribute('data-event-id');
-            showUpdate(eventId);
-        });
-    });
-
-    document.querySelectorAll('.reg-close-modal').forEach(button => {
-        button.addEventListener('click', function () {
-            hideRegistrationModal()
-        });
-    });
-
-    document.querySelectorAll('.att-close-modal').forEach(button => {
-        button.addEventListener('click', function () {
-            hideAttendanceModal()
-        });
-    });
-
-    document.querySelectorAll('.upd-close-modal').forEach(button => {
-        button.addEventListener('click', function () {
-            hideUpdateModal()
-        });
-    });
-}
-
-document.addEventListener('htmx:afterSwap', function (event) {
-    // Check if the swap target is the event-list-body
-    if (event.detail.target.id === 'event-list-body') {
-        // Rebind your event listeners here
-        bindButtons();
-    }
-});
 
 
 function showEventDetails(eventId) {
@@ -304,7 +253,7 @@ function showUpdate(id) {
             document.getElementById('id_price').value = data.price;
             document.getElementById('id_startTime').value = data.startTime;
             document.getElementById('id_endTime').value = data.endTime;
-            console.log(data);
+            console.log(data.endDate);
             
             const form = updateContainer.querySelector('form');
             form.action = `/event/update/${id}/`;

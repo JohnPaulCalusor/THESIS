@@ -1,0 +1,8 @@
+<button class="update-button"
+data-event-id="{{record.id}}">Update</button> 
+<form action="{% url 'delete_event' record.id %}" method="post">
+    {% csrf_token %}
+    <button>Delete</button>
+</form>
+<button class="view-button"
+data-event-id="{{record.id}}">View</button>

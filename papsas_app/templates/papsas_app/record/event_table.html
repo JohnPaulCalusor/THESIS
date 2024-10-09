@@ -1,0 +1,141 @@
+{% extends 'papsas_app/layout.html' %}
+{% load render_table from django_tables2 %}
+{% load static %}
+{% load i18n %}
+
+{% block head %}
+<link rel="stylesheet" href="{% static 'papsas_app/datatable.css' %}">
+<link rel="stylesheet" href="{% static 'papsas_app/update.css' %}">
+{% endblock %}
+
+{% block body %}
+<div class="container"></div>
+    <div class="title">
+        <h3>
+            Event Records
+        </h3>
+    </div>
+    <form method="get" class="mb-4" id="filter-form">
+        <div class="row">
+            <div class="col-md-3 mb-3">
+                <label for="Id">Id:</label>
+                {{ filter.form.id }}
+            </div>
+            <div class="col-md-3 mb-3">
+                <label for="startDate">Start Date:</label>
+                {{ filter.form.startDate }}
+            </div>
+            <div class="col-md-3 mb-3">
+                <label for="endDate">End Date:</label>
+                {{ filter.form.endDate }}
+            </div>
+            <div class="col-md-3 mb-3 d-flex align-items-end">
+                <button type="submit" class="search-submit">Search</button>
+                <a href="{% url 'event_table' %}" class="search-submit">Reset</a>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div id="table-container">
+    {% render_table table %}
+    Total Records: {{ table.rows|length }}
+</div>
+
+<div id="attendance_record" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Attendance Record 
+                <span id="close-button" class="att-close-modal"
+                onclick="hideAttendanceModal()"
+                >
+                <i class="fas fa-times"></i>
+            </span></h2>
+        </div>
+        <div class="filter-container">
+            <input type="text" id="attendanceFilter" placeholder="Filter attendees..." onkeyup="filterAttendance()" />
+            <div class="checkbox-filter">
+                <label><input type="checkbox" id="presentCheckbox" onclick="filterAttendance()" checked> Present</label>
+                <label><input type="checkbox" id="absentCheckbox" onclick="filterAttendance()" checked> Absent</label>
+            </div>
+        </div>
+        <div id="table-container">
+            <table id="attendance_table">
+                <thead>
+                    <tr>
+                        <th>Attendee Name</th>
+                        <th>Attendance Status</th>
+                    </tr>
+                </thead>
+                <tbody id="attendees-body">
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div id="registration_record" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Registration Record 
+                <span id="close-button" class="reg-close-modal close-modal">
+                <i class="fas fa-times"></i>
+            </span></h2>
+        </div>
+        <div class="filter-container">
+            <input type="text" id="attendanceFilter" placeholder="Filter attendees..." onkeyup="filterAttendance()" />
+            <div class="checkbox-filter">
+                <label><input type="checkbox" id="presentCheckbox" onclick="filterAttendance()" checked> Present</label>
+                <label><input type="checkbox" id="absentCheckbox" onclick="filterAttendance()" checked> Absent</label>
+            </div>
+        </div>
+        <div id="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Receipt</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="event-reg-body">
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div id="update-container">
+    <div class="update-content">
+        <span class="upd-close-modal">
+            <i class="fas fa-times"></i>
+        </span>
+        <h3>Update Event</h3>
+        <div>
+            <h4>Preview Publication Material</h4>
+            <img id="img" alt="event-pubmat">
+        </div>
+        <div>
+            <form method="post">
+                {% csrf_token %}
+                {{ form }}
+                <button type="submit" class="btn">Update</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div id="details-container">
+    <div class="update-content">
+        <span class="upd-close-modal" onclick="closePopup()"><i class="fas fa-times"></i></span>
+        <h3>Event Details</h3>
+    <div id="details-body">
+        <!-- the contents are from event_record.js -->
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script src="{% static 'papsas_app/js/event_record.js' %}"></script>
+{% endblock %}

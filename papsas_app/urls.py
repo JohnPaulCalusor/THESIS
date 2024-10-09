@@ -105,9 +105,6 @@ urlpatterns = [
     path('get_avg_registration_vs_attendance/', get_avg_registration_vs_attendance, name='get_avg_registration_vs_attendance'),
     path('top_region_data/', get_top_region_data, name='get_top_region_data'),
     path('least_region_data/', get_least_region_data, name='get_least_region_data'),
-    # filter
-    path('search-events/', views.search_events, name='search_events'),
-    path('search-accounts/', views.search_accounts, name='search_accounts'),
     # table
     path('table/user/', views.UserListView.as_view(), name='user_table'),
     path('table/membership/', views.MembershipListView.as_view(), name="membership_table"),
