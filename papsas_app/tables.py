@@ -1,6 +1,6 @@
 import django_tables2 as tables
 from django.utils.html import format_html
-from .models import User, UserMembership, Event, EventRegistration
+from .models import User, UserMembership, Event, EventRegistration, Attendance, Achievement, NewsandOffers
 from django.urls import reverse
 from django.utils.safestring import mark_safe
 
@@ -62,3 +62,17 @@ class EventRegistrationTable(tables.Table):
         model = EventRegistration
         fields = ('id', 'user', 'reference_number', 'registered_at', 'status', 'actions')
         template_name = "django_tables2/bootstrap4.html"
+
+class EventAttendanceTable(tables.Table):
+    event = tables.Column(accessor='event.event.eventName', verbose_name='Event Name')
+
+    def render_user(self, record):
+        return f'{record.user.first_name} {record.user.last_name}'
+
+    class Meta:
+        model = Attendance
+        fields = ('id', 'event', 'user', 'attended', 'date_attended')
+        template_name = "django_tables2/bootstrap4.html"
+    
+
+    

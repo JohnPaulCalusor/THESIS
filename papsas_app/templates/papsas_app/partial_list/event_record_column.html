@@ -3,6 +3,8 @@
         <i class="fas fa-eye"></i> View Registration
     </button>
 </a>
-<button class="action-icon attendance-button">
-    <i class="fas fa-eye"></i> View Attendance
-</button>
+<a href="{% url 'event_attendance_table' record.id %}">
+    <button class="action-icon attendance-button">
+        <i class="fas fa-eye"></i> View Attendance
+    </button>
+</a>

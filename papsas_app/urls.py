@@ -109,4 +109,6 @@ urlpatterns = [
     path('table/membership/', views.MembershipListView.as_view(), name="membership_table"),
     path('table/event/', views.EventListView.as_view(), name="event_table"),
     path('event-registration-table/<int:event_id>/', views.EventRegistrationListView.as_view(), name='event_registration_table'),
+    path('event-attendance-table/<int:event_id>/', views.EventAttendanceListView.as_view(), name='event_attendance_table'),
+
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -41,52 +41,6 @@
     Total Records: {{ table.rows|length }}
 </div>
 
-<div id="attendance_record" class="modal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h2>Attendance Record 
-                <span id="close-button" class="att-close-modal"
-                onclick="hideAttendanceModal()"
-                >
-                <i class="fas fa-times"></i>
-            </span></h2>
-        </div>
-        <div class="filter-container">
-            <input type="text" id="attendanceFilter" placeholder="Filter attendees..." onkeyup="filterAttendance()" />
-            <div class="checkbox-filter">
-                <label><input type="checkbox" id="presentCheckbox" onclick="filterAttendance()" checked> Present</label>
-                <label><input type="checkbox" id="absentCheckbox" onclick="filterAttendance()" checked> Absent</label>
-            </div>
-        </div>
-        <div id="table-container">
-            <table id="attendance_table">
-                <thead>
-                    <tr>
-                        <th>Attendee Name</th>
-                        <th>Attendance Status</th>
-                    </tr>
-                </thead>
-                <tbody id="attendees-body">
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-
-<div id="registration_record" class="modal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h2>Registration Record 
-                <span id="close-button" class="reg-close-modal close-modal">
-                <i class="fas fa-times"></i>
-            </span></h2>
-        </div>
-        <div id="reg-table-container">
-            <!-- reg table here! -->
-        </div>
-    </div>
-</div>
-
 <div id="update-container">
     <div class="update-content">
         <span class="upd-close-modal">

@@ -10,7 +10,7 @@
 <div class="container"></div>
     <div class="title">
         <h3>
-            Event Records
+            {{ name }} Attendance Records
         </h3>
     </div>
     {% if messages %}
@@ -25,16 +25,16 @@
                 {{ filter.form.id }}
             </div>
             <div class="col-md-3 mb-3">
-                <label for="startDate">Start Date:</label>
-                {{ filter.form.startDate }}
+                <label for="user">User:</label>
+                {{ filter.form.user }}
             </div>
             <div class="col-md-3 mb-3">
-                <label for="endDate">End Date:</label>
-                {{ filter.form.endDate }}
+                <label for="attended">Status:</label>
+                {{ filter.form.attended }}
             </div>
             <div class="col-md-3 mb-3 d-flex align-items-end">
                 <button type="submit" class="search-submit">Search</button>
-                <a href="{% url 'event_table' %}" class="search-submit">Reset</a>
+                <a href="{% url 'event_attendance_table' event_id %}" class="search-submit">Reset</a>
             </div>
         </div>
     </form>
