@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_list_or_404, get_object_or_40
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, logout, authenticate
 from .models import User, Officer, Candidacy, Election, Event, Attendance, EventRegistration, MembershipTypes, UserMembership, Vote, Achievement, NewsandOffers, Venue
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, HttpResponseNotFound, HttpResponseForbidden
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, HttpResponseNotFound, HttpResponseForbidden, HttpResponseNotAllowed
 from django.urls import reverse
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
@@ -1308,28 +1308,35 @@ def get_least_region_data(request):
     return JsonResponse({'labels': labels, 'values': values})
 
 @secretary_required
-@csrf_exempt
 def decline_eventReg(request, id):
-    if request.method == "PUT":
-        data = json.loads(request.body)
-        if data.get("status") is not None:
-            eventReg = EventRegistration.objects.get( id = id)
-            eventReg.status = data["status"]
-            eventReg.save()
-            return JsonResponse({'message': 'Updated successfully!'}, status = 200)
-    return JsonResponse({'error': 'Only PUT method is allowed.'}, status=405)
+    if request.method == "POST":
+        eventReg = EventRegistration.objects.get( id = id)
+        eventReg.status = 'Declined'
+        eventReg.save()
+        messages.success(request, 'Registration declined successfully!')
+        return redirect(request.META.get('HTTP_REFERER', '/')) 
+    return HttpResponseForbidden()
 
 @secretary_required
-@csrf_exempt
 def approve_eventReg(request, id):
     eventReg = EventRegistration.objects.get( id = id)
-    if request.method == "PUT":
-        data = json.loads(request.body)
-        if data.get("status") is not None:
-            eventReg.status = data["status"]
-            eventReg.save()
-            return JsonResponse({'message': 'Updated successfully!'}, status = 200)
-    return JsonResponse({'error': 'Only PUT method is allowed.'}, status=405)
+    if request.method == "POST":
+        eventReg = EventRegistration.objects.get( id = id)
+        eventReg.status = 'Approved'
+        eventReg.save()
+        messages.success(request, 'Registration approved successfully!')
+        return redirect(request.META.get('HTTP_REFERER', '/')) 
+    return HttpResponseForbidden()
+
+@secretary_required
+def delete_eventReg(request, id):
+    eventReg = EventRegistration.objects.get( id = id)
+    if request.method == "POST":
+        eventReg = EventRegistration.objects.get( id = id)
+        eventReg.delete()
+        messages.success(request, 'Registration deleted successfully!')
+        return redirect(request.META.get('HTTP_REFERER', '/')) 
+    return HttpResponseForbidden()
 
 @secretary_required
 def delete_news_offer(request, id):

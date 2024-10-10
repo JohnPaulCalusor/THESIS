@@ -63,6 +63,7 @@ urlpatterns = [
     path('record/news_offers', views.news_offers_record, name="news_offers_record"),
     path('record/event-registration/decline/<int:id>', views.decline_eventReg, name="decline_eventReg"),
     path('record/event-registration/approve/<int:id>', views.approve_eventReg, name="approve_eventReg"),
+    path('record/event-registration/delete/<int:id>', views.delete_eventReg, name="delete_eventReg"),
     # get function
     path('record/get-receipt/<int:user_id>/', views.get_receipt, name='get_receipt'),
     path('record/get-id/<int:user_id>/', views.get_id, name='get_id'),

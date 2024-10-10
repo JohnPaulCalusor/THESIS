@@ -52,13 +52,13 @@ class EventTable(tables.Table):
           fields = ("id", "eventName", "startDate", "endDate")
 
 class EventRegistrationTable(tables.Table):
-    #user = tables.Column(accessor='user.first_name' + 'user.last_name', verbose_name='User')
     user = tables.Column(orderable = True, verbose_name="User")
-    
+    actions = tables.TemplateColumn(template_name='papsas_app/partial_list/event_reg_action_column.html', orderable = False)
+
     def render_user(self, record):
          return f'{record.user.first_name} {record.user.last_name}'
     
     class Meta:
         model = EventRegistration
-        fields = ('id', 'user', 'reference_number', 'registered_at', 'status')
+        fields = ('id', 'user', 'reference_number', 'registered_at', 'status', 'actions')
         template_name = "django_tables2/bootstrap4.html"
