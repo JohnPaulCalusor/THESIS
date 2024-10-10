@@ -3,91 +3,62 @@
 {% load static %}
 {% block head %}
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="{% static 'papsas_app/js/main.js' %}"></script>
     <script src="https://unpkg.com/htmx.org@1.9.0"></script>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
-        .tiles-container {
-            display: flex;
-            justify-content: space-around;
-            margin-bottom: 20px;
-        }
-        .tile {
-            width: 180px;
-            height: 100px;
-            background-color: #dbc9c9;
-            border: 2px solid #ffffff;
-            border-radius: 10px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            font-weight: bold;
-            font-size: 18px;
-            text-align: center;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-        }
-        .tile-data {
-            font-size: 24px;
-            color: #333;
-        }
-        .chart-container {
-            width: 60%;
-            margin: 0 auto;
-            padding: 10px;
-            position: relative;
-        }
-        .region {
-            margin: 1rem;
-            padding: 2rem 2rem;
-            text-align: center;
-            display: flex; /* Add this line */
-            justify-content: center; /* Add this line */
-            align-items: center;
-            gap: 10px;
-        }
-
-        .child {
-            padding: 1rem 1rem;
-            margin: auto;
-            width: 45%;
-            height: 400px;
-        }
-        canvas {
-            max-height: 300px;
-            margin-left: 0;
-        }
-        h1 {
-            text-align: center;
-            padding-bottom: 10px;
-        }
-    </style>
+    <link rel="stylesheet" href="{% static 'papsas_app/dashboard.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 <body>
-    <h1>Dashboard</h1>
+    <div class="container">
+ <h1>Dashboard</h1>
 
-    <!-- Tiles Container -->
-    <div class="tiles-container">
-        <div class="tile">
-            <div>Total Count of Members</div>
+<!-- Tiles Container -->
+<div class="tiles-container">
+    <div class="tile">
+        <div class="icon">
+            <i class="fas fa-users"></i> <!-- Icon for Members -->
+        </div>
+        <div class="tile-content">
+            <div class="title-data">Total Count of Members</div>
             <div class="tile-data" id="membersCount">0</div>
-        </div>
-        <div class="tile">
-            <div>Number of Events</div>
-            <div class="tile-data" id="eventsCount">0</div>
-        </div>
-        <div class="tile">
-            <div>Total Revenue on Events</div>
-            <div class="tile-data" id="totalRevenue">0</div>
-        </div>
-        <div class="tile">
-            <div>Event Rating</div>
-            <div class="tile-data" id="eventRating">0</div>
+
         </div>
     </div>
+    <div class="tile">
+        <div class="icon">
+            <i class="fas fa-calendar-alt"></i> <!-- Icon for Events -->
+        </div>
+        <div class="tile-content">
+            <div class="title-data">Number of Events</div>
+            <div class="tile-data" id="eventsCount">0</div>
+
+        </div>
+    </div>
+    <div class="tile">
+        <div class="icon">
+            <i class="fas fa-dollar-sign"></i> <!-- Icon for Revenue -->
+        </div>
+        <div class="tile-content">
+            <div class="title-data">Total Revenue on Events</div>
+            <div class="tile-data" id="totalRevenue">0</div>
+
+        </div>
+    </div>
+    <div class="tile">
+        <div class="icon">
+            <i class="fas fa-star"></i> <!-- Icon for Rating -->
+        </div>
+        <div class="tile-content">
+            <div class="title-data">Event Rating</div>
+            <div class="tile-data" id="eventRating">0</div>
+
+        </div>
+    </div>
+</div>
+
+    
 
     <!-- Chart Containers -->
+    <div class="region">
     <div class="chart-container">
         <h3>Membership Distribution</h3>
         <canvas id="membershipChart"></canvas>
@@ -97,39 +68,41 @@
         <h3>Attendance Over Time</h3>
         <canvas id="attendanceOverTimeChart"></canvas>
     </div>
+    <div class="chart-container">
+        <h3>Average Event Attendance per Venue</h3>
+        <canvas id="attendancePerVenueChart"></canvas>
+    </div>
+    </div>
 
     <div class="region">
-        <div class="child">
+        <div class="chart-container">
             <h3>User Distribution by Region (Top 5)</h3>
             <canvas id="topRegionChart"></canvas>
         </div>
-        <div class="child">
+        <div class="chart-container">
             <h3>User Distribution by Region (Least 5)</h3>
             <canvas id="leastRegionChart"></canvas>
         </div>
     </div>
 
-
     <div class="chart-container">
-        <h3>Average Event Attendance per Venue</h3>
-        <canvas id="attendancePerVenueChart"></canvas>
+        <h3>Membership Growth Over Time</h3>
+        <canvas id="membershipGrowthChart"></canvas>
     </div>
 
+    <div class="region">
     <div class="chart-container">
         <h3>Attendance vs Capacity</h3>
         <canvas id="attendanceVsCapacityChart"></canvas>
     </div>
 
     <!-- New Chart for Membership Growth -->
-    <div class="chart-container">
-        <h3>Membership Growth Over Time</h3>
-        <canvas id="membershipGrowthChart"></canvas>
-    </div>
 
     <div class="chart-container">
         <h3>Average Event Registration vs Average Attendance</h3>
         <canvas id="avgRegVsAttendanceChart"></canvas>
     </div>
+</div>
 
     <script>
         // Predefined reddish color palette
