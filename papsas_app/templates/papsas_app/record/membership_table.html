@@ -8,7 +8,7 @@
 {% endblock %}
 
 {% block body %}
-<div class="container"></div>
+<div class="container">
     <div class="title">
         <h3>
             User Membership Records
@@ -17,27 +17,28 @@
     <form method="get" class="mb-4" id="filter-form">
         <div class="row">
             <div class="col-md-3 mb-3">
-                <label for="Id">Id:</label>
+                <label for="Id" class="text-input">Id:</label>
                 {{ filter.form.id }}
             </div>
             <div class="col-md-3 mb-3">
-                <label for="membership">Membership:</label>
+                <label for="membership" class="text-input">Membership:</label>
                 {{ filter.form.membership }}
             </div>
             <div class="col-md-3 mb-3">
-                <label for="membershipVerification">Membership Verification:</label>
+                <label for="membershipVerification" class="text-input">Membership Verification:</label>
                 {{ filter.form.membershipVerification }}
             </div>
             <div class="col-md-3 mb-3 d-flex align-items-end">
                 <button type="submit" class="search-submit">Search</button>
-                <a href="{% url 'membership_table' %}" class="search-submit">Reset</a>
+                <button class="search-submit"><a href="{% url 'membership_table' %}" ></a>Reset</button>
             </div>
         </div>
     </form>
 </div>
-
+<div class="container">
 <div id="table-container">
     {% render_table table %}
     Total Records: {{ table.rows|length }}
+</div>
 </div>
 {% endblock %}

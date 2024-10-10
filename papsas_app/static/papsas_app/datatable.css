@@ -332,7 +332,13 @@ select {
     border: 1px solid #ccc;
     border-radius: 4px;
 }
-
+#id_membership{
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    height: 38px;
+}
 .btn {
     background-color: #ff0000;
     color: white;
@@ -447,6 +453,58 @@ th.orderable a{
 }
 
 
+.form-group {
+    margin-bottom: 20px;
+}
 
+.form-group input, .form-group select {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
 
-
+.form-group input:focus, .form-group select:focus {
+    outline: none;
+    border-color: #f00;
+}
+.input-box p{
+    font-weight: 300;
+    padding: 5px;
+}
+.input-two p{
+    font-weight: 300;
+    padding: 5px;
+}
+.two-forms {
+    display: flex;
+    gap: 20px;
+    
+  }
+  .input-box .input-field{
+    width: 100%;
+    padding: 10px;
+    margin: 0;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    height: 45px;
+  }
+  .input-two{
+    width: 100%;
+    margin-top: 10px;
+    font-size: 16px;
+    border-radius: 4px;
+    box-sizing: border-box;
+  }
+  select#membership {
+    width: 100%;
+    padding: 8px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #fff;
+}
