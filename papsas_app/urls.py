@@ -4,7 +4,6 @@ from . import views
 from django.conf import settings
 from django.conf.urls.static import static
 from .views import (
-    get_attendance_per_venue,
     get_attendance_vs_capacity,
     get_membership_distribution_data,
     get_attendance_over_time_data,
@@ -94,7 +93,6 @@ urlpatterns = [
     path('event/update/<int:id>/', views.update_event, name='update_event'),
     # admin dashboard
     path('admin_dashboard/', views.admin_dashboard, name='admin_dashboard'),
-    path('get_attendance_per_venue/', get_attendance_per_venue, name='get_attendance_per_venue'),
     path('get_attendance_vs_capacity/', get_attendance_vs_capacity, name='get_attendance_vs_capacity'),
     path('get_membership_data/', views.get_membership_distribution_data, name='get_membership_data'),
     path('get_attendance_over_time_data/', views.get_attendance_over_time_data, name='get_attendance_over_time_data'),

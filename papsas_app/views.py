@@ -1149,23 +1149,6 @@ def admin_dashboard(request):
     return render(request, 'papsas_app/admin_dashboard.html')
 
 @secretary_required
-def get_attendance_per_venue(request):
-    venue_attendance = {}
-    
-    for attendance in Attendance.objects.select_related('event'):
-        venue_name = attendance.event.event.venue.name
-        if venue_name not in venue_attendance:
-            venue_attendance[venue_name] = 0
-        venue_attendance[venue_name] += 1
-
-    data = {
-        'labels': list(venue_attendance.keys()),
-        'values': list(venue_attendance.values())
-    }
-    
-    return JsonResponse(data)
-
-@secretary_required
 def get_attendance_vs_capacity(request):
     try:
         attendance_data = (

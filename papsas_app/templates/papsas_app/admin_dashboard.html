@@ -68,11 +68,6 @@
         <h3>Attendance Over Time</h3>
         <canvas id="attendanceOverTimeChart"></canvas>
     </div>
-    <div class="chart-container">
-        <h3>Average Event Attendance per Venue</h3>
-        <canvas id="attendancePerVenueChart"></canvas>
-    </div>
-    </div>
 
     <div class="region">
         <div class="chart-container">
@@ -112,7 +107,7 @@
         ];
 
         // Declare chart instances globally
-        let membershipChart, attendancePerVenueChart, attendanceVsCapacityChart, attendanceOverTimeChart, membershipGrowthChart;
+        let membershipChart, attendanceVsCapacityChart, attendanceOverTimeChart, membershipGrowthChart;
 
         const fetchData = async (url, ctx, chartType, chartInstance) => {
             try {
@@ -476,7 +471,6 @@ const fetchAvgRegistrationVsAttendanceData = async (url, ctx) => {
         };
 
         const initCharts = async () => {
-            const attendanceCtx = document.getElementById('attendancePerVenueChart').getContext('2d');
             const attendanceVsCapacityCtx = document.getElementById('attendanceVsCapacityChart').getContext('2d');
             const membershipCtx = document.getElementById('membershipChart').getContext('2d');
             const attendanceOverTimeCtx = document.getElementById('attendanceOverTimeChart').getContext('2d');
@@ -485,7 +479,6 @@ const fetchAvgRegistrationVsAttendanceData = async (url, ctx) => {
             const topRegionCtx = document.getElementById('topRegionChart').getContext('2d');
             const leastRegionCtx = document.getElementById('leastRegionChart').getContext('2d');
 
-            attendancePerVenueChart = await fetchData('{% url "get_attendance_per_venue" %}', attendanceCtx, 'bar', attendancePerVenueChart);
             attendanceVsCapacityChart = await fetchAttendanceVsCapacityData('{% url "get_attendance_vs_capacity" %}', attendanceVsCapacityCtx);
             membershipChart = await fetchData('{% url "get_membership_data" %}', membershipCtx, 'bar', membershipChart);
             attendanceOverTimeChart = await fetchAttendanceOverTimeData('{% url "get_attendance_over_time_data" %}', attendanceOverTimeCtx);
