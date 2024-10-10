@@ -1,5 +1,5 @@
 import django_filters
-from .models import User, UserMembership, Event
+from .models import User, UserMembership, Event, EventRegistration
 from django.db.models import Q
 from django import forms
 
@@ -64,3 +64,21 @@ class EventFilter(django_filters.FilterSet):
     class Meta:
         model = Event
         fields = ['id', 'eventName', 'startDate', 'endDate']
+
+class EventRegistrationFilter(django_filters.FilterSet):
+    id = django_filters.CharFilter(lookup_expr='icontains')
+    user = django_filters.CharFilter(method='user_filter')
+    status = django_filters.CharFilter(
+        widget=forms.Select(choices=[
+            ('', 'All'),
+            ('Approved', 'Approved'),
+            ('Pending', 'Pending'),
+            ('Declined', 'Declined')
+        ], attrs={'class': 'form-control'})        
+    )
+    class Meta:
+        model = EventRegistration
+        fields = ['id', 'user', 'status']
+        
+    def user_filter(self, queryset, name, value):
+        return queryset.filter(user__first_name__icontains=value) | queryset.filter(user__last_name__icontains=value)

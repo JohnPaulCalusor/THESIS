@@ -1,6 +1,6 @@
 import django_tables2 as tables
 from django.utils.html import format_html
-from .models import User, UserMembership, Event
+from .models import User, UserMembership, Event, EventRegistration
 from django.urls import reverse
 from django.utils.safestring import mark_safe
 
@@ -40,12 +40,25 @@ class MembershipTable(tables.Table):
         fields = ("id", "first_name", "last_name", "membership", "membershipVerification", "registrationDate", "expirationDate", "receipt", "reference_number", "verificationID")
 
 class EventTable(tables.Table):
-     record = tables.TemplateColumn(template_name='papsas_app/partial_list/event_record_column.html')
-     actions = tables.TemplateColumn(template_name='papsas_app/partial_list/event_action_column.html')
+     record = tables.TemplateColumn(template_name='papsas_app/partial_list/event_record_column.html', orderable = False)
+     actions = tables.TemplateColumn(template_name='papsas_app/partial_list/event_action_column.html', orderable = False)
      eventName = tables.Column(orderable=True, verbose_name="Name")
      startDate = tables.Column(orderable=True, verbose_name="Start Date")
      endDate = tables.Column(orderable=True, verbose_name="End Date")
+     
      class Meta:
           model = Event
           template_name = "django_tables2/bootstrap.html"
           fields = ("id", "eventName", "startDate", "endDate")
+
+class EventRegistrationTable(tables.Table):
+    #user = tables.Column(accessor='user.first_name' + 'user.last_name', verbose_name='User')
+    user = tables.Column(orderable = True, verbose_name="User")
+    
+    def render_user(self, record):
+         return f'{record.user.first_name} {record.user.last_name}'
+    
+    class Meta:
+        model = EventRegistration
+        fields = ('id', 'user', 'reference_number', 'registered_at', 'status')
+        template_name = "django_tables2/bootstrap4.html"

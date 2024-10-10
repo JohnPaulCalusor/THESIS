@@ -31,8 +31,8 @@ from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import ListView
 from django_tables2 import SingleTableView, RequestConfig
-from .tables import UserTable, MembershipTable, EventTable
-from .filters import UserFilter, MembershipFilter, EventFilter
+from .tables import UserTable, MembershipTable, EventTable, EventRegistrationTable
+from .filters import UserFilter, MembershipFilter, EventFilter, EventRegistrationFilter
 
 
 
@@ -1610,3 +1610,33 @@ class EventListView(SingleTableView):
             else:
                 messages.error(request, 'Error updating user. Please check the form.')
                 return self.get(request, *args, **kwargs)
+            
+class EventRegistrationListView(SingleTableView):
+    model = EventRegistration
+    table_class = EventRegistrationTable
+    template_name = 'papsas_app/record/event_registration_table.html'
+    filterset_class = EventRegistrationFilter
+    paginator_class = LazyPaginator
+
+    def get_table(self):
+        table = super().get_table()
+        RequestConfig(
+            self.request, 
+            paginate={
+                "paginator_class": LazyPaginator,
+                "per_page": 10
+            }
+        ).configure(table)
+        return table
+
+    def get_queryset(self):
+        event_id = self.kwargs.get('event_id')
+        queryset = EventRegistration.objects.filter(event_id=event_id)
+        self.filterset = self.filterset_class(self.request.GET, queryset=queryset)
+        return self.filterset.qs
+
+    def get_context_data(self, **kwargs):
+        context = super(EventRegistrationListView, self).get_context_data(**kwargs)
+        context['filter'] = self.filterset
+        context['event_id'] = self.kwargs.get('event_id')
+        return context
