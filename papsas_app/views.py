@@ -26,6 +26,7 @@ from django.contrib.auth.forms import PasswordResetForm
 from django.contrib.auth.views import PasswordResetView
 from django.db.models import Count, Avg, Q
 from django.core.exceptions import ObjectDoesNotExist
+from django.db.models.functions import TruncYear
 from functools import wraps
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
@@ -1242,12 +1243,12 @@ def get_total_revenue(request):
 @secretary_required
 def get_membership_growth(request):
     today = timezone.now()
-    start_year = today.year - 10  # Adjust to how many years you want to show
+    start_year = today.year - 10  # Adjust this to how many years you want to show
 
-    # Count new members by year
+    # Count new memberships by year
     growth_data = (
-        User.objects.filter(date_joined__year__gte=start_year)
-        .extra(select={'year': 'date_joined::date'})
+        UserMembership.objects.filter(registrationDate__year__gte=start_year)
+        .annotate(year=TruncYear('registrationDate'))
         .values('year')
         .annotate(count=Count('id'))
         .order_by('year')
@@ -1257,13 +1258,13 @@ def get_membership_growth(request):
     labels = []
     values = []
     for data in growth_data:
-        labels.append(data['year'].strftime('%Y'))  # Format the year
+        labels.append(data['year'].year)  # TruncYear provides a date-like object
         values.append(data['count'])
 
     # Ensure all years in range are included, with 0 if no members
     for year in range(start_year, today.year + 1):
-        if year not in [int(label) for label in labels]:
-            labels.append(str(year))
+        if year not in labels:
+            labels.append(year)
             values.append(0)
 
     # Sort by year
