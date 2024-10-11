@@ -1,5 +1,5 @@
 import django_filters
-from .models import User, UserMembership, Event, EventRegistration, Attendance
+from .models import User, UserMembership, Event, EventRegistration, Attendance, Venue, Achievement, NewsandOffers
 from django.db.models import Q
 from django import forms
 
@@ -99,3 +99,29 @@ class AttendanceFilter(django_filters.FilterSet):
 
     def user_filter(self, queryset, name, value):
         return queryset.filter(user__first_name__icontains=value) | queryset.filter(user__last_name__icontains=value)
+    
+class VenueFilter(django_filters.FilterSet):
+    id = django_filters.CharFilter(lookup_expr='icontains')
+    name = django_filters.CharFilter(lookup_expr='icontains')
+    address = django_filters.CharFilter(lookup_expr='icontains')
+
+    class Meta:
+        model = Venue
+        fields = ['id', 'name', 'address']
+
+class AchievementFilter(django_filters.FilterSet):
+    id = django_filters.CharFilter(lookup_expr='icontains')
+    name = django_filters.CharFilter(lookup_expr='icontains')
+
+    class Meta:
+        model = Achievement
+        fields = ['id', 'name']
+
+class NewsAndOfferFilter(django_filters.FilterSet):
+    id = django_filters.CharFilter(lookup_expr='icontains')
+    name = django_filters.CharFilter(lookup_expr='icontains')
+
+    class Meta:
+        model = NewsandOffers
+        fields = ['id', 'name']
+

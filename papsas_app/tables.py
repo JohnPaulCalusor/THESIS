@@ -1,6 +1,6 @@
 import django_tables2 as tables
 from django.utils.html import format_html
-from .models import User, UserMembership, Event, EventRegistration, Attendance, Achievement, NewsandOffers
+from .models import User, UserMembership, Event, EventRegistration, Attendance, Venue, Achievement, NewsandOffers
 from django.urls import reverse
 from django.utils.safestring import mark_safe
 
@@ -75,4 +75,34 @@ class EventAttendanceTable(tables.Table):
         template_name = "django_tables2/bootstrap4.html"
     
 
+class VenueTable(tables.Table):
+    class Meta:
+        model = Venue
+        fiels = ('id' , 'name', 'address', 'capacity')
+        template_name = "django_tables2/bootstrap.html"
+
+class AchievementTable(tables.Table):
+    def render_pubmat(self, record):
+        return format_html('<img src="{}" width="50" height="50">', record.pubmat.url)
     
+    def render_description(self, value):
+        if len(value) > 100:
+            return f'{value[:100]}...'
+        return value
+    
+    class Meta:
+        model = Achievement
+        fields = ('id', 'name', 'description', 'postStamp', 'pubmat')
+
+class NewsAndOfferTable(tables.Table):
+    def render_pubmat(self, record):
+        return format_html('<img src="{}" width="50" height="50">', record.pubmat.url)
+    
+    def render_description(self, value):
+        if len(value) > 100:
+            return f'{value[:100]}...'
+        return value
+    
+    class Meta:
+        model = NewsandOffers
+        fields = ('id', 'name', 'description', 'postStamp', 'pubmat')

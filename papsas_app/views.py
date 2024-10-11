@@ -32,8 +32,8 @@ from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import ListView
 from django_tables2 import SingleTableView, RequestConfig
-from .tables import UserTable, MembershipTable, EventTable, EventRegistrationTable, EventAttendanceTable
-from .filters import UserFilter, MembershipFilter, EventFilter, EventRegistrationFilter, AttendanceFilter
+from .tables import UserTable, MembershipTable, EventTable, EventRegistrationTable, EventAttendanceTable, VenueTable, AchievementTable, NewsAndOfferTable
+from .filters import UserFilter, MembershipFilter, EventFilter, EventRegistrationFilter, AttendanceFilter, VenueFilter, AchievementFilter, NewsAndOfferFilter
 
 
 
@@ -1667,3 +1667,86 @@ class EventAttendanceListView(SingleTableView):
         context['event_id'] = self.kwargs.get('event_id')
         return context
 
+class VenueListView(SingleTableView):
+    model = Venue
+    table_class = VenueTable
+    template_name = 'papsas_app/record/venue_table.html'
+    filterset_class = VenueFilter
+    paginator_class = LazyPaginator
+
+    def get_table(self):
+        table = super().get_table()
+        RequestConfig(
+            self.request, 
+            paginate={
+                "paginator_class": LazyPaginator,
+                "per_page": 10
+            }
+        ).configure(table)
+        return table
+
+    def get_queryset(self):
+        queryset = Venue.objects.all()
+        self.filterset = self.filterset_class(self.request.GET, queryset=queryset)
+        return self.filterset.qs
+    
+    def get_context_data(self, **kwargs):
+        context = super(VenueListView, self).get_context_data(**kwargs)
+        context['filter'] = self.filterset
+        return context
+    
+class AchievementListView(SingleTableView):
+    model = Achievement
+    table_class = AchievementTable
+    template_name = 'papsas_app/record/achievement_table.html'
+    filterset_class = AchievementFilter
+    paginator_class = LazyPaginator
+
+    def get_table(self):
+        table = super().get_table()
+        RequestConfig(
+            self.request, 
+            paginate={
+                "paginator_class": LazyPaginator,
+                "per_page": 10
+            }
+        ).configure(table)
+        return table
+
+    def get_queryset(self):
+        queryset = Achievement.objects.all()
+        self.filterset = self.filterset_class(self.request.GET, queryset=queryset)
+        return self.filterset.qs
+    
+    def get_context_data(self, **kwargs):
+        context = super(AchievementListView, self).get_context_data(**kwargs)
+        context['filter'] = self.filterset
+        return context
+    
+class NewsAndOffersListView(SingleTableView):
+    model = NewsandOffers
+    table_class = NewsAndOfferTable
+    template_name = 'papsas_app/record/news_offers_table.html'
+    filterset_class = NewsAndOfferFilter
+    paginator_class = LazyPaginator
+
+    def get_table(self):
+        table = super().get_table()
+        RequestConfig(
+            self.request, 
+            paginate={
+                "paginator_class": LazyPaginator,
+                "per_page": 10
+            }
+        ).configure(table)
+        return table
+
+    def get_queryset(self):
+        queryset = NewsandOffers.objects.all()
+        self.filterset = self.filterset_class(self.request.GET, queryset=queryset)
+        return self.filterset.qs
+    
+    def get_context_data(self, **kwargs):
+        context = super(NewsAndOffersListView, self).get_context_data(**kwargs)
+        context['filter'] = self.filterset
+        return context
