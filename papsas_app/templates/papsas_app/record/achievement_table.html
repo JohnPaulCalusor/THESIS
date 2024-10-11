@@ -5,6 +5,7 @@
 
 {% block head %}
 <link rel="stylesheet" href="{% static 'papsas_app/datatable.css' %}">
+<link rel="stylesheet" href="{% static 'papsas_app/update.css' %}">
 {% endblock %}
 
 {% block body %}
@@ -25,7 +26,7 @@
                 {{ filter.form.name }}
             </div>
             <div class="col-md-3 mb-3 d-flex align-items-end">
-                <a href="{% url 'venue_table' %}" class="search-submit">Reset</a>
+                <a href="{% url 'achievement_table' %}" class="search-submit">Reset</a>
                 <button type="submit" class="search-submit">Search</button>
             </div>
         </div>
@@ -37,4 +38,33 @@
         Total Records: {{ table.rows|length }}
     </div>
 </div>
+
+<div id="update-container">
+    <div class="update-content">
+        <span class="upd-close-modal" onclick="closePopup()"><i class="fas fa-times"></i></span>
+    <h3>Update Achievement</h3>
+    <div>
+        <form enctype="multipart/form-data" method="post">
+            <img src="" alt="" id="img">
+            {% csrf_token %}
+            <div class="form-group">
+            <div class="form-group label">
+                {{ form.name.label }} {{ form.name }}
+            </div>
+            <div class="form-group label">
+                {{ form.description.label }} {{ form.description }}
+            </div>
+        
+            <div class="form-group">
+            {{ form.pubmat }}
+        </div>
+        
+            <button type="submit" class="btn">Update</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script src="{% static 'papsas_app/js/achievement_record.js' %}"></script>
 {% endblock %}

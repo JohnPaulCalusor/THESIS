@@ -52,7 +52,7 @@
             <img id="img" alt="event-pubmat">
         </div>
         <div>
-            <form method="post">
+            <form method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 {{ form }}
                 <button type="submit" class="btn">Update</button>

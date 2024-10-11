@@ -1,0 +1,8 @@
+<button class="action-icon update-button" title="Update" data-venue-id="{{ record.id }}">
+    <i class="fas fa-edit"></i>
+</button>
+
+<form action="{% url 'delete_venue' record.id %}" method="post">
+    {% csrf_token %}
+    <button class="action-icon" title="Delete" type="submit"><i class="fas fa-trash-alt"></i></button></td>
+</form> 

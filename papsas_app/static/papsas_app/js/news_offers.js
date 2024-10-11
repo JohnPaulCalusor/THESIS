@@ -1,3 +1,13 @@
+document.addEventListener('DOMContentLoaded', function(){
+    document.querySelectorAll('.update-button').forEach(button =>{
+        button.addEventListener('click', function(){
+            const id = this.dataset.id;
+            console.log(id)
+            showUpdate(id)
+        })
+    })
+})
+
 function showUpdate(id) {
     const updateContainer = document.getElementById('update-container');
     updateContainer.style.display = 'block';

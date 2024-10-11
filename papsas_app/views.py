@@ -944,7 +944,7 @@ def compose_achievement(request):
         form = AchievementForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
-            return redirect('index')
+            return redirect('achievement_table')
         else:
             return render(request, 'papsas_app/form/compose_achievement.html', {
                 'form' : form,
@@ -962,7 +962,7 @@ def compose_news_offer(request):
         form = NewsForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
-            return redirect('index')
+            return redirect('news_offers_table')
         else:
             return render(request, 'papsas_app/form/compose_news_offers.html', {
                 'form' : form,
@@ -996,6 +996,7 @@ def achievement_record(request):
         'form' : form,
     })
 
+# update_achievement
 @officer_required
 def get_achievement_data(request, achievement_id):
     try:
@@ -1004,7 +1005,7 @@ def get_achievement_data(request, achievement_id):
             form = AchievementForm( request.POST, request.FILES, instance = achievement )
             if form.is_valid():
                 form.save()
-                return redirect('achievement_record')
+                return redirect('achievement_table')
             else:
                 return JsonResponse({'error': 'Invalid request'}, status=400)   
 
@@ -1034,7 +1035,7 @@ def update_news_offer(request, id):
                 else:
                     news_offer.pubmat = news_offer.pubmat
                 news_offer.save()
-                return redirect('news_offers_record')
+                return redirect('news_offers_table')
             else:
                 return JsonResponse({'error': 'Invalid request'}, status=400)
         data = {
@@ -1052,7 +1053,7 @@ def delete_achievement(request, id):
         achievement = Achievement.objects.get( id = id )
         achievement.delete()
         messages.success(request, 'Achievement deleted successfully!')
-        return redirect('achievement_record')
+        return redirect('achievement_table')
     except Achievement.DoesNotExist:
         return HttpResponseNotFound('Achievement not found')
 
@@ -1344,9 +1345,9 @@ def delete_news_offer(request, id):
         news_offer = NewsandOffers.objects.get(id = id)
         news_offer.delete()
         messages.success(request, 'Deleted successfully!')
-        return redirect('news_offers_record')
+        return redirect('news_offers_table')
     except Exception as e:
-        return render(request, 'papsas_app/record/news_offers_record.html', {
+        return render(request, 'papsas_app/record/news_offers_table.html', {
             'error': f'Error found: {e}',
         })
 
@@ -1357,9 +1358,9 @@ def delete_venue(request, id):
         if request.method == "POST":
             venue.delete()
             messages.success(request, 'Deleted successfully!')
-            return redirect('venue_record')
+            return redirect('venue_table')
     except Exception as e:
-        return render(request, 'papsas_app/record/venue_record.html', {
+        return render(request, 'papsas_app/record/venue_table.html', {
             'error': f'Error found: {e}',
             })
 
@@ -1372,7 +1373,7 @@ def update_venue(request, id):
             if form.is_valid():
                 form.save()
                 messages.success(request, 'Updated successfully!')
-                return redirect('venue_record')
+                return redirect('venue_table')
             else:
                 return render(request, 'papsas_app/record/venue_record.html', {
                     'error': 'Invalid form data.',
@@ -1693,6 +1694,7 @@ class VenueListView(SingleTableView):
     def get_context_data(self, **kwargs):
         context = super(VenueListView, self).get_context_data(**kwargs)
         context['filter'] = self.filterset
+        context['form'] = VenueForm
         return context
     
 class AchievementListView(SingleTableView):
@@ -1721,6 +1723,7 @@ class AchievementListView(SingleTableView):
     def get_context_data(self, **kwargs):
         context = super(AchievementListView, self).get_context_data(**kwargs)
         context['filter'] = self.filterset
+        context['form'] = AchievementForm
         return context
     
 class NewsAndOffersListView(SingleTableView):
@@ -1749,4 +1752,5 @@ class NewsAndOffersListView(SingleTableView):
     def get_context_data(self, **kwargs):
         context = super(NewsAndOffersListView, self).get_context_data(**kwargs)
         context['filter'] = self.filterset
+        context['form'] = NewsForm
         return context

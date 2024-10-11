@@ -102,8 +102,10 @@ class AttendanceFilter(django_filters.FilterSet):
     
 class VenueFilter(django_filters.FilterSet):
     id = django_filters.CharFilter(lookup_expr='icontains')
-    name = django_filters.CharFilter(lookup_expr='icontains')
-    address = django_filters.CharFilter(lookup_expr='icontains')
+    name = django_filters.CharFilter(lookup_expr='icontains',
+                                     widget=forms.TextInput(attrs={'id': 'name-id'}))
+    address = django_filters.CharFilter(lookup_expr='icontains',
+                                        widget=forms.TextInput(attrs={'id': 'address-id'}))
 
     class Meta:
         model = Venue
@@ -111,7 +113,8 @@ class VenueFilter(django_filters.FilterSet):
 
 class AchievementFilter(django_filters.FilterSet):
     id = django_filters.CharFilter(lookup_expr='icontains')
-    name = django_filters.CharFilter(lookup_expr='icontains')
+    name = django_filters.CharFilter(lookup_expr='icontains',
+                                     widget=forms.TextInput(attrs={'id': 'name-id'}))
 
     class Meta:
         model = Achievement
@@ -119,7 +122,8 @@ class AchievementFilter(django_filters.FilterSet):
 
 class NewsAndOfferFilter(django_filters.FilterSet):
     id = django_filters.CharFilter(lookup_expr='icontains')
-    name = django_filters.CharFilter(lookup_expr='icontains')
+    name = django_filters.CharFilter(lookup_expr='icontains',
+                                     widget=forms.TextInput(attrs={'id': 'name-id'}))
 
     class Meta:
         model = NewsandOffers

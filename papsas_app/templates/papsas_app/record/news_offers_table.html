@@ -5,13 +5,14 @@
 
 {% block head %}
 <link rel="stylesheet" href="{% static 'papsas_app/datatable.css' %}">
+<link rel="stylesheet" href="{% static 'papsas_app/update.css' %}">
 {% endblock %}
 
 {% block body %}
 <div class="container">
     <div class="title">
         <h3>
-            Achievement Records
+            News and Offers Records
         </h3>
     </div>
     <form method="get" class="mb-4" id="filter-form">
@@ -37,4 +38,32 @@
         Total Records: {{ table.rows|length }}
     </div>
 </div>
+
+<div id="update-container">
+    <div class="update-content">
+        <span class="upd-close-modal" onclick="closePopup()"><i class="fas fa-times"></i></span>
+    <h3>Update Record</h3>
+    <div>
+        <img id="img" alt="news and offers image">
+    </div>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="form-group">
+            <div class="form-group label">
+                {{ form.name.label }} {{ form.name }}
+            </div>
+            <div class="form-group label">
+                {{ form.description.label }} {{ form.description }}
+            </div>
+        
+            <div class="form-group">
+            {{ form.pubmat }}
+        </div>
+        <button type="submit" class="btn">Update</button>
+    </form>
+</div>
+{% endblock %}
+
+{% block script %}
+<script src="{% static 'papsas_app/js/news_offers.js' %}"></script>
 {% endblock %}

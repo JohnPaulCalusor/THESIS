@@ -1,3 +1,13 @@
+document.addEventListener('DOMContentLoaded', function(){
+    document.querySelectorAll('.update-button').forEach(button => {
+        button.addEventListener('click', function(){
+            var id = this.dataset.venueId;
+            console.log(id)
+            showUpdate(id)
+        })
+    })
+})
+
 function showUpdate(id) {
     const updateContainer = document.getElementById('update-container');
     updateContainer.style.display = 'block';

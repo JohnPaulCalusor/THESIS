@@ -11,79 +11,79 @@
 {% block body %}
 <div class="container">
     <!-- ano to? -->
-<div class="data-table-container"></div> 
-    <div class="table-header">
-        <h1>News and Offers Record</h1>
-    </div>
-    <div class="filter-container">
-        <input type="text" id="searchInput" placeholder="Search for news and offers..." />
-    </div>
-    <div class="data-table">
-        {% if error %}
-        <p>{{ error }}</p>
-        {% endif %}
-        {% if messages %}
-            {% for message in messages %}
-            <p>{{ message }}</p>
-            {% endfor %}
-        {%  endif %}
-        <table>
-            <thead>
-                <tr>
-                    <th> Title</th>
-                    <th> Description </th>
-                    <th> Stamp </th>
-                    <th> Publication Material </th>
-                    <th> Action </th>
-                </tr>
-            </thead>
-            <tbody
-            hx-get="{% url 'get_news_offers' %}"
-            hx-trigger="every 5s"
-            >
-                {% for news_offer in news_offers %}
-                <tr>
-                    <td>{{ news_offer.name }}</td>
-                    <td>{{ news_offer.description }}</td>
-                    <td>{{ news_offer.postStamp }}</td>
-                    <td> <img src="{{ news_offer.pubmat.url }}" alt="{{news_offer.name}} image" class="n-o_img"> </td>
-                    <td><div class="action-buttons">
-                        <button class="action-icon" title="Update" onclick="showUpdate('{{ news_offer.id }}')"><i class="fas fa-edit"></i></button> 
-                        <form action="{% url 'delete_news_offer' news_offer.id %}" method="post">
-                            {% csrf_token %}
-                            <button class="action-icon" title="Delete" type="submit"><i class="fas fa-trash-alt"></i></button>
-                        </form>
-                    </div>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-    <div id="update-container">
-        <div class="update-content">
-            <span class="upd-close-modal" onclick="closePopup()"><i class="fas fa-times"></i></span>
-        <h3>Update Record</h3>
-        <div>
-            <img id="img" alt="news and offers image">
+    <div class="data-table-container">
+        <div class="table-header">
+            <h1>News and Offers Record</h1>
         </div>
-        <form method="post">
-            {% csrf_token %}
-            <div class="form-group">
-                <div class="form-group label">
-                    {{ form.name.label }} {{ form.name }}
-                </div>
-                <div class="form-group label">
-                    {{ form.description.label }} {{ form.description }}
-                </div>
-            
-                <div class="form-group">
-                {{ form.pubmat }}
+        <div class="filter-container">
+            <input type="text" id="searchInput" placeholder="Search for news and offers..." />
+        </div>
+        <div class="data-table">
+            {% if error %}
+            <p>{{ error }}</p>
+            {% endif %}
+            {% if messages %}
+                {% for message in messages %}
+                <p>{{ message }}</p>
+                {% endfor %}
+            {%  endif %}
+            <table>
+                <thead>
+                    <tr>
+                        <th> Title</th>
+                        <th> Description </th>
+                        <th> Stamp </th>
+                        <th> Publication Material </th>
+                        <th> Action </th>
+                    </tr>
+                </thead>
+                <tbody
+                hx-get="{% url 'get_news_offers' %}"
+                hx-trigger="every 5s"
+                >
+                    {% for news_offer in news_offers %}
+                    <tr>
+                        <td>{{ news_offer.name }}</td>
+                        <td>{{ news_offer.description }}</td>
+                        <td>{{ news_offer.postStamp }}</td>
+                        <td> <img src="{{ news_offer.pubmat.url }}" alt="{{news_offer.name}} image" class="n-o_img"> </td>
+                        <td><div class="action-buttons">
+                            <button class="action-icon" title="Update" onclick="showUpdate('{{ news_offer.id }}')"><i class="fas fa-edit"></i></button> 
+                            <form action="{% url 'delete_news_offer' news_offer.id %}" method="post">
+                                {% csrf_token %}
+                                <button class="action-icon" title="Delete" type="submit"><i class="fas fa-trash-alt"></i></button>
+                            </form>
+                        </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div id="update-container">
+            <div class="update-content">
+                <span class="upd-close-modal" onclick="closePopup()"><i class="fas fa-times"></i></span>
+            <h3>Update Record</h3>
+            <div>
+                <img id="img" alt="news and offers image">
             </div>
-            <button type="submit" class="btn">Update</button>
-        </form>
+            <form method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    <div class="form-group label">
+                        {{ form.name.label }} {{ form.name }}
+                    </div>
+                    <div class="form-group label">
+                        {{ form.description.label }} {{ form.description }}
+                    </div>
+                
+                    <div class="form-group">
+                    {{ form.pubmat }}
+                </div>
+                <button type="submit" class="btn">Update</button>
+            </form>
+        </div>
     </div>
-</div>
 </div>
 {% endblock %}
 

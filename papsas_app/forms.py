@@ -155,9 +155,6 @@ class AchievementForm(forms.ModelForm):
     class Meta:
         model = Achievement
         fields = ('name', 'description', 'pubmat')
-        widgets = {
-            'name': forms.TextInput(attrs={'id': 'name-id'}),
-        }
     def clean_pubmat(self):
         pubmat = self.cleaned_data.get('pubmat')
         if self.instance and self.instance.pk is not None:  # If updating

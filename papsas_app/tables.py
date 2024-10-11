@@ -76,12 +76,15 @@ class EventAttendanceTable(tables.Table):
     
 
 class VenueTable(tables.Table):
+    actions = tables.TemplateColumn(template_name='papsas_app/partial_list/venue_action_column.html')
+    
     class Meta:
         model = Venue
         fiels = ('id' , 'name', 'address', 'capacity')
         template_name = "django_tables2/bootstrap.html"
 
 class AchievementTable(tables.Table):
+    actions = tables.TemplateColumn(template_name='papsas_app/partial_list/achievement_action_column.html')
     def render_pubmat(self, record):
         return format_html('<img src="{}" width="50" height="50">', record.pubmat.url)
     
@@ -95,6 +98,8 @@ class AchievementTable(tables.Table):
         fields = ('id', 'name', 'description', 'postStamp', 'pubmat')
 
 class NewsAndOfferTable(tables.Table):
+    actions = tables.TemplateColumn(template_name='papsas_app/partial_list/news_offers_action_column.html')
+
     def render_pubmat(self, record):
         return format_html('<img src="{}" width="50" height="50">', record.pubmat.url)
     

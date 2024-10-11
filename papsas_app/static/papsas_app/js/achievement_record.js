@@ -1,3 +1,13 @@
+document.addEventListener('DOMContentLoaded', function(){
+    document.querySelectorAll('.update-button').forEach(button =>{
+        button.addEventListener('click', function(){
+            const id = this.dataset.id;
+            console.log(id)
+            showUpdate(id)
+        })
+    })
+})
+
 function showUpdate(achievementId) {
     const updateContainer = document.getElementById('update-container');
     updateContainer.style.display = 'block';
@@ -6,7 +16,7 @@ function showUpdate(achievementId) {
     fetch(`/get-achievement-data/${achievementId}/`)
         .then(response => response.json())
         .then(data => {
-            document.getElementById('name-id').value = data.name;
+            document.getElementById('id_name').value = data.name;
             document.getElementById('id_description').value = data.description;
             if (data.pubmat) {
                 document.getElementById('img').src = data.pubmat
