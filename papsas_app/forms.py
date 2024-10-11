@@ -111,29 +111,36 @@ class EventForm(forms.ModelForm):
         if not pubmat:  # If no image uploaded during creation
             raise forms.ValidationError("Image is required when creating a new achievement.")
         return pubmat
-class EventRegistrationForm(forms.ModelForm):
-    receipt_file = forms.FileField(required=True)
 
+class EventRegistrationForm(forms.ModelForm):
     class Meta:
         model = EventRegistration
-        fields = ('event',)
+        fields = ['user', 'event', 'receipt', 'reference_number']
 
-    def __init__(self, user, event, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user', None)
+        event = kwargs.pop('event', None)
         super(EventRegistrationForm, self).__init__(*args, **kwargs)
-        self.fields['start_date_of_event'] = forms.DateField(initial=event.startDate, disabled=True)
+        self.fields['amount'] = forms.IntegerField(initial=event.price, disabled=True)
+        self.fields['receipt'].widget.attrs.update({'class': 'form-control-file'})
+        self.fields['reference_number'].widget.attrs.update({'class': 'form-control'})
 
-        # Add additional fields
-        self.fields['membership_id'] = forms.CharField(initial=user.id, disabled=True)
-        self.fields['name'] = forms.CharField(initial=event.eventName, disabled=True)
-        self.fields['amount'] = forms.DecimalField(initial=event.price, disabled=True)
-        self.fields['venue'] = forms.CharField(initial=event.venue, disabled=True)
-    def save(self, commit=True):
-        event_registration = super(EventRegistrationForm, self).save(commit=False)
-        event_registration.user = self.user
-        event_registration.receipt = self.cleaned_data['receipt_file'].read()
-        if commit:
-            event_registration.save()
-        return event_registration
+        self.fields['user'] = forms.ModelChoiceField(
+            queryset=User.objects.all(),
+            initial=user,
+            widget=forms.HiddenInput()
+        )
+        self.fields['event'] = forms.ModelChoiceField(
+            queryset=Event.objects.all(),
+            initial=event,
+            widget=forms.HiddenInput()
+        )
+
+    def clean_reference_number(self):
+        reference_number = self.cleaned_data.get('reference_number')
+        if reference_number is not None and reference_number <= 0:
+            raise forms.ValidationError("Reference number must be a positive integer.")
+        return reference_number
     
 class MembershipRegistration(forms.ModelForm):
     class Meta:

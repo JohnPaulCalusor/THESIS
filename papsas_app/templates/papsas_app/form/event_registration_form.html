@@ -1,10 +1,7 @@
 <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
-    <p>Membership ID: {{ form.membership_id }}</p>
-    <p>Name: {{ form.name }}</p>
     <p>Amount: {{ form.amount }}</p>
-    <p>Date of Event: {{ form.start_date_of_event }}</p>
-    <p>Venue: {{ form.venue }}</p>
-    <p>Upload Receipt: {{ form.receipt_file }}</p>
+    <p>Reference Number: {{ form.reference_number }}</p>
+    <p>Upload Receipt: {{ form.receipt }}</p>
     <button type="submit">Register</button>
 </form>

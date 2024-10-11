@@ -558,17 +558,50 @@ def mark_attendance(request, event_id):
     return render(request, 'papsas_app/form/attendance_form.html', {'event': event})
 
 
+# register event
 @login_required
 def event_registration_view(request, event_id):
-    event = Event.objects.get(id=event_id)
-    if request.method == 'POST':
-        form = EventRegistrationForm(request.user, event, data=request.POST, files=request.FILES)
-        if form.is_valid():
-            form.save()
-            return redirect('index')
-    else:
-        form = EventRegistrationForm(user=request.user, event=event)
-    return render(request, 'papsas_app/form/event_registration_form.html', {'form': form, 'event': event})
+    try:
+        event = get_object_or_404(Event, id=event_id)
+        
+        if request.method == 'POST':
+            # Include the user and event in the POST data
+            post_data = request.POST.copy()
+            post_data['user'] = request.user.id
+            post_data['event'] = event.id
+            
+            form = EventRegistrationForm(
+                user=request.user, 
+                event=event, 
+                data=post_data, 
+                files=request.FILES
+            )
+            if form.is_valid():
+                try:
+                    registration = form.save()  # No need for commit=False here
+                    messages.success(request, "You have successfully registered for the event.")
+                    return redirect('index')
+                except IntegrityError:
+                    messages.error(request, "You are already registered for this event.")
+                except ValidationError as e:
+                    messages.error(request, f"Registration failed: {e}")
+        else:
+            form = EventRegistrationForm(user=request.user, event=event)
+
+        context = {
+            'form': form,
+            'event': event
+        }
+        return render(request, 'papsas_app/form/event_registration_form.html', context)
+
+    except Event.DoesNotExist:
+        print('event does not exist')
+        messages.error(request, "The requested event does not exist.")
+        return redirect('index')
+    except Exception as e:
+        print(f'error: {e}')
+        messages.error(request, f"An unexpected error occurred: {str(e)}")
+        return redirect('index')
 
 def about(request):
     return render(request, 'papsas_app/view/about_us.html')
