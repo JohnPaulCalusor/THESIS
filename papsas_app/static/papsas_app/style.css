@@ -190,7 +190,7 @@ img {
   cursor: pointer;
 }
 .profile{
-  
+  height: 25px;
   margin-right: 100px;
 }
 /* Show menu */
@@ -293,6 +293,7 @@ img {
     flex-direction: row;
     column-gap: 3.5rem;
   }
+  
 
 }
 
@@ -306,6 +307,7 @@ img {
   }
   .home__data {
     text-align: initial;
+   
   }
 
   .home__img img {
@@ -798,7 +800,7 @@ img {
   .video-feed-container {
     flex-direction: column; /* Stack videos in a column layout */
     padding: 0 10px;
-    margin-top: 40rem;
+    margin-top: 50rem;
     margin-bottom: 20px;
   }
 
