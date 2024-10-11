@@ -6,64 +6,85 @@
 {% endblock %}
 {% block body %}
 <div class="container">
-    <div class="profile-container">
-        <div class="profile-header"> 
+    <div class="profile-card">
+        <div class="profile-header">
             {% if viewUser.profilePic %}
                 
-                <img src="{{ viewUser.profilePic.url }}" alt="Profile Picture" class="profile-pic" onclick="openModal()">
+                <img src="{{ viewUser.profilePic.url }}" alt="Profile Picture" class="profile-picture" onclick="openModal()">
             {% else %}
                 
-                <img src="{% url 'profile' user.id  %}" alt="Default Profile Picture" class="profile-pic" onclick="openModal()">
+                <img src="{% url 'profile' user.id  %}" alt="Default Profile Picture" class="profile-picture" onclick="openModal()">
             {% endif %}
 
             
             {% if user.id == viewUser.id %}
+            <div class="upload-btn-container">
                 <form action="{% url 'profile' user.id %}" method="post" enctype="multipart/form-data">
                     {% csrf_token %}
+                    <div class="verification">
+                        {% if user.email_verified %}
+                            <span class="verified"><i class="fas fa-circle-check"></i></span>
+                        {% else %}
+                            <span class="unverified"><i class="fas fa-circle-xmark"></i></span>
+                        {% endif %}
+                    </div>
                     <label for="upload-pic" class="upload-btn">Upload New Picture</label>
+                    
+                    <p class="upload-note">At least 800×800 px recommended.<br>JPG or PNG is allowed</p>
                     <input type="file" name="profilePic" id="upload-pic" class="file-input" accept="image/*" onchange="this.form.submit()" style="display: none;">
-                    <button type="submit" class="submit-btn" style="display: none;">Submit</button>
+                    <button type="submit" class="upload-btn" style="display: none;">Submit</button>
+                    
                 </form>
+            </div>
             {% endif %}
         </div>
         
        
         
-        <div class="profile-details">
-            <h4>
-                {{ user.first_name }} {{ user.last_name }}
-                {% if user.email_verified %}
-                    <span class="verified"><i class="fas fa-circle-check"></i></span>
-                {% else %}
-                    <span class="unverified"><i class="fas fa-circle-xmark"></i></span>
-                {% endif %}
-            </h4>
-            <p class="region">{{ user.region }}</p>
-            
-            <p>{{ user.address }}</p>
-            <p class="occupation">{{ user.occupation }}</p>
+        <div class="personal-info">
+            <div class="title-activities"> 
+                <h1>Personal Information</h1>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Full Name</div>
+                <div class="info-value">{{ user.first_name }} {{ user.last_name }}</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Region</div>
+                <div class="info-value">{{ user.region }}</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Address</div>
+                <div class="info-value">{{ user.address }}</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Occupation</div>
+                <div class="info-value">{{ user.occupation }}</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Mobile Number</div>
+                <div class="info-value">{{ user.mobileNum }}</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Email</div>
+                <div class="info-value">{{ user.email}}</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Birthdate</div>
+                <div class="info-value">{{ user.birthdate}}</div>
+            </div>
+        </div>
 
-        </div>
-        </div>
-        <div class="other-details">
-            <h3>Mobile Number</h3>
-            <p>{{ user.mobileNum }}</p>
-            
-            <h3>Email</h3>
-            <p>{{ user.email}}</p>
-            
-            <h3>Birthdate</h3>
-            <p>{{ user.birthdate}}</p>
-        </div>
-        
 
-    <!-- Modal for Image Preview -->
+    
     <div id="imageModal" class="modal">
         <span class="close" onclick="closeModal()">&times;</span>
         <img class="modal-content" id="modalImage">
     </div>
-
-    <div class="title"><h1>Recent Activities</h1></div>
+    <div class="personal-info">
+    <div class="title-activities"> 
+        <h1>Recent Activities</h1>
+    </div>
 
     <div class="recent-activities-container"
         hx-get="{% url 'get_profile' user.id %}"
@@ -71,31 +92,32 @@
         hx-swap="innerHTML"
     >
         {% if candidacies %}
-        <h2> Candidacies </h2>
+        <div class="info-row-activity">
+            <div class="info-label-activity">Candidacies: </div>
             {% for candidacy in candidacies %}
-            <div class="recent-container">
-                <p>{{ candidacy }}</p>
-            </div>
+                <div class="info-value-activity">{{ candidacy }}</div>
             {% endfor %}
         {% endif %}
+        </div>
         {% if elected_officers %}
-        <h2> Election </h2>
+        <div class="info-row-activity">
+            <div class="info-label-activity">Election: </div>
             {% for officer in elected_officers %}
-            <div class="recent-container">
-                <p>{{ officer }}</p>
-            </div>
+                <div class="info-value-activity">{{ officer }}</div>
             {% endfor %}
         {% endif %}
+        </div>
         {% if attended_events %}
-        <h2> Events </h2>
+        <div class="info-row-activity">
+            <div class="info-label-activity">Events: </div>
             {% for event in attended_events %}
-            <div class="recent-container">
-                <p>{{ event }}</p>
-            </div>
+            <div class="info-value-activity">{{ event }}</div>
             {% endfor %}
         {% endif %}
+        </div>
         <!-- Add more recent activity blocks as needed -->
     </div>
+</div>
 </div>
 {% endblock %}
 
