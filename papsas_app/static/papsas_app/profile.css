@@ -90,6 +90,7 @@ body {
 .info-value-activity{
     color: #000000;
     font-weight: 300;
+    
 }
 .title{
     font-weight: bold;
@@ -115,8 +116,8 @@ body {
     text-transform: uppercase;
 }
 .info-row-activity{
-    display: flex;
-    justify-content: space-between;
+    display: block;
+    text-align: left;
     padding: 5px 0;
 }
 .modal {
