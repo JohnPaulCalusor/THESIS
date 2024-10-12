@@ -1787,3 +1787,8 @@ class NewsAndOffersListView(SingleTableView):
         context['filter'] = self.filterset
         context['form'] = NewsForm
         return context
+
+def get_expiring_memberships():
+    three_days_from_now = timezone.now().date() + timedelta(days=3)
+    expiring_memberships = UserMembership.objects.filter(expirationDate=three_days_from_now)
+    return expiring_memberships 
