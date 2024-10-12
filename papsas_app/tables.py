@@ -53,7 +53,7 @@ class EventTable(tables.Table):
     class Meta:
         model = Event
         template_name = "django_tables2/bootstrap.html"
-        fields = ("id", "eventName", "startDate", "endDate", "record", "avg_rating")
+        fields = ("id", "eventName", "startDate", "endDate", "record", "exclusive", "avg_rating")
 
 class EventRegistrationTable(tables.Table):
     user = tables.Column(orderable = True, verbose_name="User")

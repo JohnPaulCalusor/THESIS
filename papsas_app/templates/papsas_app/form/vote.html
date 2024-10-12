@@ -45,9 +45,11 @@
                                 </p>
                                 <p>Votes: {{ candidate.vote_count }}</p>
                                 
-                                <button class="btn">
-                                    <a href="{% url 'profile' candidate.candidate.id %}">View Profile</a>
-                                </button>
+                                <a href="{% url 'profile' candidate.candidate.id %}" class="btn">
+                                    View Profile
+                                </a>
+                                <!-- <button class="btn">
+                                </button> -->
                             </div>
                         </label>
                     </div>

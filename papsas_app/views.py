@@ -456,7 +456,6 @@ def vote(request):
                     candidate_obj = Candidacy.objects.get(id = candidate_id, election = ongoingElection)
                     vote.candidateID.add(candidate_obj)
                 except Candidacy.DoesNotExist:
-                    # handle the case where the candidate does not exist
                     return HttpResponse("Invalid candidate!", status=400)
         else:
             return render(request, 'papsas_app/form/vote.html', {
@@ -469,7 +468,6 @@ def vote(request):
             'attended_event' : attended_event,
             'ongoingElection' : ongoingElection,
             'votes' : Vote.objects.filter( voterID = user, election = ongoingElection),
-
         })
 
 @login_required
