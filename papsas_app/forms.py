@@ -123,7 +123,7 @@ class EventForm(forms.ModelForm):
 class EventRegistrationForm(forms.ModelForm):
     class Meta:
         model = EventRegistration
-        fields = ['user', 'event', 'receipt', 'reference_number']
+        fields = ['user', 'event', 'receipt']
 
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user', None)
@@ -153,7 +153,7 @@ class EventRegistrationForm(forms.ModelForm):
 class MembershipRegistration(forms.ModelForm):
     class Meta:
         model = UserMembership
-        fields = ('membership', 'verificationID', 'receipt')
+        fields = ('membership', 'verificationID', 'receipt', 'reference_number')
     
     def __init__(self, user, membership, *args, **kwargs):
         super(MembershipRegistration, self).__init__(*args, **kwargs)
