@@ -120,6 +120,8 @@ body {
     text-align: left;
     padding: 5px 0;
 }
+
+
 .modal {
     display: none;
     position: fixed;
