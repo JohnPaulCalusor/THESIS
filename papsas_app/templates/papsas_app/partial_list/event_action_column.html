@@ -1,8 +1,7 @@
-<button class="update-button"
-data-event-id="{{record.id}}">Update</button> 
-<form action="{% url 'delete_event' record.id %}" method="post">
+<button class="update-button" data-event-id="{{record.id}}">Update</button> 
+<form action="{% url 'delete_event' record.id %}" method="post" style="display: inline;">
     {% csrf_token %}
     <button>Delete</button>
 </form>
-<button class="view-button"
-data-event-id="{{record.id}}">View</button>
+<button class="view-button" data-event-id="{{record.id}}">View</button>
+<a href="{% url 'generate_qr' record.id %}" class="btn btn-primary btn-sm">Generate QR</a>

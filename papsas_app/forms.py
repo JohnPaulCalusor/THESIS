@@ -1,5 +1,5 @@
 from django import forms
-from .models import Attendance, EventRegistration, Event, User, UserMembership, MembershipTypes, Venue, Achievement, NewsandOffers
+from .models import Attendance, EventRegistration, Event, User, UserMembership, MembershipTypes, Venue, Achievement, NewsandOffers, EventRating
 from django.core.exceptions import ValidationError
 from django.forms import ModelForm, TextInput, EmailInput
 
@@ -74,6 +74,14 @@ class LoginForm(forms.ModelForm):
         super(LoginForm, self).__init__(*args, **kwargs)
         self.fields['email'].label = 'Email'
     
+class EventRatingForm(forms.ModelForm):
+    class Meta:
+        model = EventRating
+        fields = ['rating', 'comment']
+        widgets = {
+            'rating': forms.RadioSelect(choices=[(i, i) for i in range(1, 6)]),
+            'comment': forms.Textarea(attrs={'rows': 4}),
+        }
 
 class ProfileForm(forms.ModelForm):
     class Meta:

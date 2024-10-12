@@ -4,6 +4,7 @@ from django.contrib.auth.models import AbstractUser
 from django import forms
 from django.db.models import F
 from django.utils import timezone
+from django.db.models import Avg
 from datetime import timedelta
 from django.core.validators import RegexValidator, MinValueValidator, MaxValueValidator
 # Create your models here.
@@ -191,6 +192,23 @@ class Event(models.Model):
             return f'{self.description[:100]}...'
         return self.description
     
+    def average_rating(self):
+        return self.ratings.aggregate(Avg('rating'))['rating__avg']
+    
+class EventRating(models.Model):
+    event = models.ForeignKey('Event', on_delete=models.CASCADE, related_name='ratings')
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    rating = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
+    comment = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('event', 'user')
+
+    def __str__(self):
+        return f"{self.user.username}'s rating for {self.event.eventName}"
+
 class Achievement(models.Model):
     name = models.CharField(max_length=32, null=True)
     description = models.TextField(max_length=9999, null=True)

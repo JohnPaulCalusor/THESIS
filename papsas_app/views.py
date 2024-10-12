@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_list_or_404, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, logout, authenticate
-from .models import User, Officer, Candidacy, Election, Event, Attendance, EventRegistration, MembershipTypes, UserMembership, Vote, Achievement, NewsandOffers, Venue
+from .models import User, Officer, Candidacy, Election, Event, Attendance, EventRegistration, MembershipTypes, UserMembership, Vote, Achievement, NewsandOffers, Venue, EventRating
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, HttpResponseNotFound, HttpResponseForbidden, HttpResponseNotAllowed
 from django.urls import reverse
 from django.core.mail import send_mail
@@ -9,7 +9,7 @@ from django.template.loader import render_to_string
 from django.core.paginator import Paginator
 from django_tables2.paginators import LazyPaginator
 from django.utils.html import strip_tags
-import random, json, logging
+import random, json, logging, qrcode
 from django.contrib import messages
 from django.db import IntegrityError
 from django.utils import timezone
@@ -20,9 +20,10 @@ from django.http import JsonResponse
 from .models import User, MembershipTypes, Vote, Event, Officer
 from django.db import models
 # Imported Forms
-from .forms import AttendanceForm, EventRegistrationForm, EventForm, ProfileForm, RegistrationForm, LoginForm, MembershipRegistration, Attendance, VenueForm, AchievementForm, NewsForm, UserUpdateForm
+from .forms import AttendanceForm, EventRegistrationForm, EventForm, ProfileForm, RegistrationForm, LoginForm, MembershipRegistration, Attendance, VenueForm, AchievementForm, NewsForm, UserUpdateForm, EventRatingForm
 from datetime import date, timedelta
 from django.contrib.auth.forms import PasswordResetForm
+from io import BytesIO
 from django.contrib.auth.views import PasswordResetView
 from django.db.models import Count, Avg, Q
 from django.core.exceptions import ObjectDoesNotExist
@@ -140,7 +141,63 @@ def index(request):
         'events' : upcoming_events,
     })
 
+class EventListView(SingleTableView):
+    model = Event
+    table_class = EventTable
+    template_name = 'papsas_app/event_list.html'
 
+def get_queryset(self):
+        return Event.objects.annotate(avg_rating=Avg('ratings__rating'))
+
+def generate_qr(request, event_id):
+    event = get_object_or_404(Event, id=event_id)
+    
+    rate_url = reverse('rate_event', args=[event.id])
+    full_url = f"http://{settings.SITE_DOMAIN}{rate_url}"
+
+    qr = qrcode.QRCode(version=1, box_size=10, border=5)
+    qr.add_data(full_url)
+    qr.make(fit=True)
+
+    img = qr.make_image(fill_color="black", back_color="white")
+
+    buffer = BytesIO()
+    img.save(buffer, format="PNG")
+
+    response = HttpResponse(buffer.getvalue(), content_type="image/png")
+    response['Content-Disposition'] = f'attachment; filename="event_{event.id}_qr.png"'
+
+    return response
+
+@login_required
+def rate_event(request, event_id):
+    event = get_object_or_404(Event, id=event_id)
+
+    existing_rating = EventRating.objects. \
+        filter(event=event, user=request.user).\
+        first()
+
+    if request.method == 'POST':
+        if existing_rating:
+            form = EventRatingForm(request.POST, instance=existing_rating)
+        else:
+            form = EventRatingForm(request.POST)
+
+        if form.is_valid():
+            rating = form.save(commit=False)
+            rating.event = event
+            rating.user = request.user
+            rating.updated_at = timezone.now()
+            rating.save()
+            messages.success(request, 'Rating submitted successfully!')
+            return redirect('index')
+    else:
+        if existing_rating:
+            form = EventRatingForm(instance=existing_rating)
+        else:
+            form = EventRatingForm()
+
+    return render(request, 'papsas_app/rate_event.html', {'form': form, 'event': event})
 
 def register(request):
     form = RegistrationForm()

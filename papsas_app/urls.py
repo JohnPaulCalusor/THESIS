@@ -113,5 +113,9 @@ urlpatterns = [
     path('table/achievement/', views.AchievementListView.as_view(), name="achievement_table"),
     path('event-registration-table/<int:event_id>/', views.EventRegistrationListView.as_view(), name='event_registration_table'),
     path('event-attendance-table/<int:event_id>/', views.EventAttendanceListView.as_view(), name='event_attendance_table'),
+    #generate qr/event rating
+    path('events/', views.EventListView.as_view(), name='event_list'),
+    path('event/<int:event_id>/generate-qr/', views.generate_qr, name='generate_qr'),
+    path('event/<int:event_id>/rate/', views.rate_event, name='rate_event'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

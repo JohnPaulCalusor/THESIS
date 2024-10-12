@@ -40,16 +40,19 @@ class MembershipTable(tables.Table):
         fields = ("id", "first_name", "last_name", "membership", "membershipVerification", "registrationDate", "expirationDate", "receipt", "reference_number", "verificationID")
 
 class EventTable(tables.Table):
-     record = tables.TemplateColumn(template_name='papsas_app/partial_list/event_record_column.html', orderable = False)
-     actions = tables.TemplateColumn(template_name='papsas_app/partial_list/event_action_column.html', orderable = False)
-     eventName = tables.Column(orderable=True, verbose_name="Name")
-     startDate = tables.Column(orderable=True, verbose_name="Start Date")
-     endDate = tables.Column(orderable=True, verbose_name="End Date")
-     
-     class Meta:
-          model = Event
-          template_name = "django_tables2/bootstrap.html"
-          fields = ("id", "eventName", "startDate", "endDate")
+    actions = tables.TemplateColumn(template_name='papsas_app/partial_list/event_action_column.html', orderable=False)
+    eventName = tables.Column(orderable=True, verbose_name="Name")
+    startDate = tables.Column(orderable=True, verbose_name="Start Date")
+    endDate = tables.Column(orderable=True, verbose_name="End Date")
+    avg_rating = tables.Column(verbose_name='Average Rating')
+
+    def render_rating(self, value):
+        return f"{value:.1f}" if value is not None else "N/A"
+
+    class Meta:
+        model = Event
+        template_name = "django_tables2/bootstrap.html"
+        fields = ("id", "eventName", "startDate", "endDate", "avg_rating")
 
 class EventRegistrationTable(tables.Table):
     user = tables.Column(orderable = True, verbose_name="User")
