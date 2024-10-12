@@ -9,7 +9,7 @@
 {% endblock %}
 
 {% block body %}
-<div class="container"></div>
+<div class="container">
     <div class="title">
         <h3>
             Event Records
@@ -31,14 +31,19 @@
             </div>
             <div class="col-md-3 mb-3 d-flex align-items-end">
                 <button type="submit" class="search-submit">Search</button>
-                <a href="{% url 'event_table' %}" class="search-submit">Reset</a>
+                <button type="submit" class="search-submit"><a href="{% url 'event_table' %}"></a>Reset</button>
             </div>
         </div>
     </form>
 </div>
+<div class="container">
 <div id="table-container">
+    <div class="col-md-3 mb-3"> 
+        Total Records: {{ table.rows|length }}
+    </div>
     {% render_table table %}
-    Total Records: {{ table.rows|length }}
+    
+</div>
 </div>
 
 <div id="update-container">
@@ -68,6 +73,7 @@
     <div id="details-body">
         <!-- the contents are from event_record.js -->
     </div>
+</div>
 </div>
 {% endblock %}
 

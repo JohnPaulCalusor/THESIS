@@ -30,16 +30,17 @@
                 {{ filter.form.address }}
             </div>
             <div class="col-md-3 mb-3 d-flex align-items-end">
-                <a href="{% url 'venue_table' %}" class="search-submit">Reset</a>
                 <button type="submit" class="search-submit">Search</button>
+                <button type="submit" class="search-submit"><a href="{% url 'venue_table' %}"></a>Reset</button>
             </div>
         </div>
     </form>
 </div>
 <div class="container">
     <div id="table-container">
+        <div class="col-md-3 mb-3 d-flex align-items-end">Total Records: {{ table.rows|length }}</div>
         {% render_table table %}
-        Total Records: {{ table.rows|length }}
+        
     </div>
 </div>
 

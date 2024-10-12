@@ -45,6 +45,9 @@
 <!-- Eto user table -->
 <div class="container">
     <div id="table-container">
+        <div class="col-md-3 mb-3"> 
+            Total Records: {{ table.rows|length }}
+        </div>
         {% include 'papsas_app/partial_list/account_list.html' %}
         
     </div>

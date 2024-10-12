@@ -28,6 +28,7 @@
                 <label for="membershipVerification" class="text-input">Membership Verification:</label>
                 {{ filter.form.membershipVerification }}
             </div>
+            
             <div class="col-md-3 mb-3 d-flex align-items-end">
                 <button type="submit" class="search-submit">Search</button>
                 <button class="search-submit"><a href="{% url 'membership_table' %}" ></a>Reset</button>
@@ -37,8 +38,11 @@
 </div>
 <div class="container">
     <div id="table-container">
+        <div class="col-md-3 mb-3"> 
+            Total Records: {{ table.rows|length }}
+        </div>
         {% render_table table %}
-        Total Records: {{ table.rows|length }}
+        
     </div>
 </div>
 {% endblock %}

@@ -13,6 +13,7 @@ table {
 .title h3{
     font-size: 30px;
     margin-top: 30px;
+    font-weight: 400;
     color: red;
 }
 .no-existing{

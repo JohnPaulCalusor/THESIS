@@ -1,9 +1,11 @@
 /* General container styling */
+body{
+    background-color: #f9f9f9;
+}
 #event_container {
     max-width: 800px;
     margin: 0 auto;
     padding: 20px;
-    
     font-family: 'Arial', sans-serif;
 }
 
