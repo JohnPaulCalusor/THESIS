@@ -1,6 +1,6 @@
 <button class="action-icon update-button" data-id="{{ record.id }}" title="Update" ><i class="fas fa-edit"></i></button> 
 
-<form action="{% url 'delete_achievement' record.id %}" method="post">
+<form action="{% url 'delete_achievement' record.id %}" method="post" style="display: inline;">
     {% csrf_token %}
     <button class="action-icon" title="Delete" type="submit"><i class="fas fa-trash-alt"></i></button>
 </form>

@@ -9,6 +9,8 @@
             color: red;
             font-size: 14px;
             margin-top: 10px;
+            margin-bottom: 10px;
+            font-weight: 300;
         }
     </style>
 {% endblock %}
@@ -25,7 +27,6 @@
                 <div class="login-header">
                     <h1>Sign Up</h1>
                 </div>
-
                 <div class="two-forms">
                     <div class="input-box">
                         {{ form.first_name }}
@@ -76,11 +77,6 @@
                 <div class="input-box">
                     {{ form.institution }}
                 </div>
-
-                <div class="input-submit">
-                    <button type="submit" class="submit-btn">Register</button>
-                </div>
-
                 <div class="error-message">
                     {% if message %}
                         <div>{{ message }}</div>
@@ -93,6 +89,10 @@
                         {% endfor %}
                     </ul>
                 </div>
+                <div class="input-submit">
+                    <button type="submit" class="submit-btn">Register</button>
+                </div>
+
             </div>
         </div>
     </form>

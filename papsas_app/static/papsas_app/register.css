@@ -10,14 +10,12 @@
     justify-content: center;
     flex-direction: column;
     width: 550px;
-    height: 750px;
+    height: 800px;
     padding: 30px;
     border-radius: 20px;
     background-color: #ffffff;
-    box-shadow: 0px 7px 12px 1px rgba(0,0,0, 0.05);
     padding-top: 100px;
 
-    
   }
   .birth_tag{
     font-weight: 300;
@@ -164,7 +162,9 @@ input::placeholder {
 input:focus {
   width: 100%; /* Prevent width change on focus */
 }
-
+.error-message{
+  font-weight: 300;
+}
 @media (max-width: 768px) {
   .two-forms {
     flex-direction: column;
