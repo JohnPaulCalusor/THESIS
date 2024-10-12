@@ -55,17 +55,24 @@ document.addEventListener('DOMContentLoaded', function(){
                 hideUpdateModal()
             });
         });
+
+        document.querySelectorAll('.det-close-modal').forEach(button => {
+            button.addEventListener('click', function () {
+                closePopup()
+            });
+        });
     }
 
     bindButtons()
 })
     
 
-
+function hideUpdateModal(){
+    document.getElementById('update-container').style.display = 'none';
+}
 
 function showEventDetails(eventId) {
     body = document.getElementById('details-body')
-    document.querySelector('#details-container').style.display = 'block';
 
     fetch(`/event/update/${eventId}/`)
     .then(response => response.json())
@@ -82,6 +89,7 @@ function showEventDetails(eventId) {
         <p>${data.price}</p>
         `
     })
+    document.querySelector('#details-container').style.display = 'block';
 
 }
 

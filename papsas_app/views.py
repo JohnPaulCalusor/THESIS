@@ -141,33 +141,11 @@ def index(request):
         'events' : upcoming_events,
     })
 
-class EventListView(SingleTableView):
-    model = Event
-    table_class = EventTable
-    template_name = 'papsas_app/event_list.html'
 
-def get_queryset(self):
-        return Event.objects.annotate(avg_rating=Avg('ratings__rating'))
+# def get_queryset(self):
+#         return Event.objects.annotate(avg_rating=Avg('ratings__rating'))
 
-def generate_qr(request, event_id):
-    event = get_object_or_404(Event, id=event_id)
-    
-    rate_url = reverse('rate_event', args=[event.id])
-    full_url = f"http://{settings.SITE_DOMAIN}{rate_url}"
 
-    qr = qrcode.QRCode(version=1, box_size=10, border=5)
-    qr.add_data(full_url)
-    qr.make(fit=True)
-
-    img = qr.make_image(fill_color="black", back_color="white")
-
-    buffer = BytesIO()
-    img.save(buffer, format="PNG")
-
-    response = HttpResponse(buffer.getvalue(), content_type="image/png")
-    response['Content-Disposition'] = f'attachment; filename="event_{event.id}_qr.png"'
-
-    return response
 
 @login_required
 def rate_event(request, event_id):
@@ -1849,3 +1827,23 @@ def get_expiring_memberships():
     three_days_from_now = timezone.now().date() + timedelta(days=3)
     expiring_memberships = UserMembership.objects.filter(expirationDate=three_days_from_now)
     return expiring_memberships 
+
+def generate_qr(request, event_id):
+    event = get_object_or_404(Event, id=event_id)
+    
+    rate_url = reverse('rate_event', args=[event.id])
+    full_url = f"http://{settings.SITE_DOMAIN}{rate_url}"
+
+    qr = qrcode.QRCode(version=1, box_size=10, border=5)
+    qr.add_data(full_url)
+    qr.make(fit=True)
+
+    img = qr.make_image(fill_color="black", back_color="white")
+
+    buffer = BytesIO()
+    img.save(buffer, format="PNG")
+
+    response = HttpResponse(buffer.getvalue(), content_type="image/png")
+    response['Content-Disposition'] = f'attachment; filename="event_{event.id}_qr.png"'
+
+    return response
