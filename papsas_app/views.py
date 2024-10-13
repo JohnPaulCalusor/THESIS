@@ -959,14 +959,6 @@ def event_list(request):
     })
 
 # view all event with its attendance and registration records
-@secretary_required
-def attendance_list(request):
-    events = Event.objects.all()
-    form = EventForm()
-    return render(request, 'papsas_app/record/attendance_record.html', {
-        'events': events,
-        'form': form,
-    })
 
 @secretary_required
 def get_receipt(request, user_id):
@@ -1171,27 +1163,6 @@ def get_event(request, view):
     return render(request, 'papsas_app/partial_list/event_list.html', {
         'events': events,
         'view' : view
-        })
-
-@officer_required
-def get_venue(request):
-    venues = Venue.objects.all()
-    return render(request, 'papsas_app/partial_list/venue_list.html', {
-        'venues': venues,
-        })
-
-
-def get_achievement(request):
-    achievements = Achievement.objects.all()
-    return render(request, 'papsas_app/partial_list/achievement_list.html', {
-        'achievements' : achievements,
-        })
-
-
-def get_news_offers(request):
-    news_offers = NewsandOffers.objects.all()
-    return render(request, 'papsas_app/partial_list/news_offers_list.html', {
-        'news_offers' : news_offers,
         })
 
 @member_required
