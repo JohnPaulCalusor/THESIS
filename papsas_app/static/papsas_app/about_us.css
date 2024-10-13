@@ -407,3 +407,28 @@
         width: 80%;
     }
   }
+  @media screen and (max-width: 828px) {
+    .partners__container {
+        grid-template-columns: repeat(1, 1fr); /* Single column */
+        gap: 1.5rem;
+    }
+
+    .partner__box {
+        height: 29rem; /* Adjust height for better fit */
+        width: 90%; /* Make the box width more flexible */
+        margin: 0 auto; /* Center the boxes */
+    }
+
+    .partner__img {
+        height: auto; /* Reduce image height */
+    }
+
+    .partner__title {
+        font-size: 1.5rem; /* Adjust font size */
+    }
+
+    .partner__button {
+        width: 60%; /* Button takes full width */
+        height: 45px; /* Adjust button height */
+    }
+}
