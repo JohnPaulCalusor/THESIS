@@ -499,7 +499,8 @@ def profile(request, id):
     })
 logger = logging.getLogger(__name__)
 
-@secretary_required
+# compose_event
+@officer_required
 def event(request):
     if request.method == 'POST':
         form = EventForm(request.POST, request.FILES)
@@ -944,7 +945,7 @@ def compose_venue(request):
         form = VenueForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('compose_venue')
+            return redirect('venue_table')
     return render(request, 'papsas_app/form/compose_venue.html', {
         'form': form,
     })
