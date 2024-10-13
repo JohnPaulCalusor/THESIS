@@ -45,15 +45,15 @@ class EventTable(tables.Table):
     eventName = tables.Column(orderable=True, verbose_name="Name")
     startDate = tables.Column(orderable=True, verbose_name="Start Date")
     endDate = tables.Column(orderable=True, verbose_name="End Date")
-    avg_rating = tables.Column(verbose_name='Average Rating')
+    average_rating = tables.Column(orderable=True, verbose_name="Average Rating")
 
-    def render_rating(self, value):
-        return f"{value:.1f}" if value is not None else "N/A"
-
+    def render_average_rating(self, record):
+        return record.average_rating()
+    
     class Meta:
         model = Event
         template_name = "django_tables2/bootstrap.html"
-        fields = ("id", "eventName", "startDate", "endDate", "record", "exclusive", "avg_rating")
+        fields = ("id", "eventName", "startDate", "endDate", "record", "exclusive", "average_rating", "actions")
 
 class EventRegistrationTable(tables.Table):
     user = tables.Column(orderable = True, verbose_name="User")
