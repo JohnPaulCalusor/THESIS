@@ -446,7 +446,8 @@ def vote(request):
             user_voted = None
         if user_voted:
             return render(request, 'papsas_app/form/vote.html', {
-                'message' : 'You already voted for this election!'
+                'message' : 'You already voted for this election!',
+                'attended_event' : attended_event,
             })
 
         vote = Vote.objects.create(voterID=user, election = ongoingElection)
