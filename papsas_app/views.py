@@ -445,7 +445,9 @@ def vote(request):
         except Vote.DoesNotExist:
             user_voted = None
         if user_voted:
-            return HttpResponse("You have already voted!" , status=400)
+            return render(request, 'papsas_app/form/vote.html', {
+                'message' : 'You already voted for this election!'
+            })
 
         vote = Vote.objects.create(voterID=user, election = ongoingElection)
         num_selected = len(selected_candidates)
@@ -1823,8 +1825,8 @@ class NewsAndOffersListView(SingleTableView):
 
 def get_expiring_memberships():
     three_days_from_now = timezone.now().date() + timedelta(days=3)
-    expiring_memberships = UserMembership.objects.filter(expirationDate=three_days_from_now)
-    return expiring_memberships 
+    expiring_memberships = UserMembership.objects.filter(expirationDate__lte=three_days_from_now)
+    return expiring_memberships
 
 def generate_qr(request, event_id):
     event = get_object_or_404(Event, id=event_id)
