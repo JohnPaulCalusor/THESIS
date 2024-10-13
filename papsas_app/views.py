@@ -1477,10 +1477,10 @@ def delete_event (request, id):
         if request.method == "POST":
             event.delete()
             messages.success(request, 'Deleted successfully!')
-            return redirect('attendance_list')
+            return redirect('event_table')
 
     except Exception as e:
-        return render(request, 'papsas_app/record/attendance_record.html', {
+        return render(request, 'papsas_app/record/event_table.html', {
             'error': f'Error found: {e}',
             })
 
