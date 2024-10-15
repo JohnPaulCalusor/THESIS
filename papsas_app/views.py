@@ -550,17 +550,14 @@ def event(request):
         form = EventForm
     return render(request, 'papsas_app/event_management.html', {'form': form})
 
-# ano pinag iba nito
-@practitioner_required
-def attendance_form(request):
+def attendance_form(request, event_id):
     if request.method == 'POST':
         form = AttendanceForm(request.POST)
         if form.is_valid():
             user_id = form.cleaned_data['user_id']
-            event_id = form.cleaned_data['event_id']
+            event = Event.objects.get(id=event_id)
             try:
                 user = User.objects.get(id=user_id)
-                event = Event.objects.get(id=event_id)
                 # Check if the user is registered for the current event
                 event_registration = EventRegistration.objects.filter(user=user, event=event)
                 if event_registration.exists():
@@ -569,14 +566,15 @@ def attendance_form(request):
                     attendance.save()
                     return redirect('index')
                 else:
-                    return render(request, 'papsas_app/attendance_error.html', {'error': 'You are not registered for this event'})
+                    error_message = 'You are not registered for this event.'
             except User.DoesNotExist:
-                return render(request, 'papsas_app/attendance_error.html', {'error': 'Invalid user ID'})
+                error_message = 'Invalid user ID'
             except Event.DoesNotExist:
-                return render(request, 'papsas_app/attendance_error.html', {'error': 'Invalid event ID'})
+                error_message = 'Invalid event ID'
+            return render(request, 'papsas_app/form/attendance_form.html', {'form': form, 'event_id': event_id, 'error_message': error_message})
     else:
         form = AttendanceForm()
-    return render(request, 'papsas_app/form/attendance_form.html', {'form': form})
+    return render(request, 'papsas_app/form/attendance_form.html', {'form': form, 'event_id': event_id})
 
 # ano to (check)
 @practitioner_required
@@ -1820,8 +1818,8 @@ def get_expiring_memberships():
 def generate_qr(request, event_id):
     event = get_object_or_404(Event, id=event_id)
     
-    rate_url = reverse('rate_event', args=[event.id])
-    full_url = f"http://{settings.SITE_DOMAIN}{rate_url}"
+    attendance_url = reverse('attendance_form', args=[event.id])
+    full_url = f"http://{settings.SITE_DOMAIN}{attendance_url}"
 
     qr = qrcode.QRCode(version=1, box_size=10, border=5)
     qr.add_data(full_url)
