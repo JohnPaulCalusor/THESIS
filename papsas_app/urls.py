@@ -104,12 +104,15 @@ path('event/<int:event_id>/attendance_form/', views.attendance_form, name='atten
     # table
     path('table/user/', views.UserListView.as_view(), name='user_table'),
     path('table/membership/', views.MembershipListView.as_view(), name="membership_table"),
+    path('table/user/membership/', views.UserMembershipListView.as_view(), name="user_membership_table"),
     path('table/event/', views.EventListView.as_view(), name="event_table"),
     path('table/venue/', views.VenueListView.as_view(), name="venue_table"),
     path('table/news-offers/', views.NewsAndOffersListView.as_view(), name="news_offers_table"),
     path('table/achievement/', views.AchievementListView.as_view(), name="achievement_table"),
-    path('event-registration-table/<int:event_id>/', views.EventRegistrationListView.as_view(), name='event_registration_table'),
+    path('table/event-registration-table/<int:event_id>/', views.EventRegistrationListView.as_view(), name='event_registration_table'),
+    path('table/user/event-registration-table/', views.UserEventRegistrationListView.as_view(), name='user_event_registration_table'),
     path('event-attendance-table/<int:event_id>/', views.EventAttendanceListView.as_view(), name='event_attendance_table'),
+    path('table/user/event-attendance-table/', views.UserEventAttendanceListView.as_view(), name='user_event_attendance_table'),
     #generate qr/event rating
     path('event/<int:event_id>/generate-qr/', views.generate_qr, name='generate_qr'),
     path('event/<int:event_id>/rate/', views.rate_event, name='rate_event'),

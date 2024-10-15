@@ -33,7 +33,7 @@ from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import ListView
 from django_tables2 import SingleTableView, RequestConfig
-from .tables import UserTable, MembershipTable, EventTable, EventRegistrationTable, EventAttendanceTable, VenueTable, AchievementTable, NewsAndOfferTable
+from .tables import UserTable, MembershipTable, EventTable, EventRegistrationTable, EventAttendanceTable, VenueTable, AchievementTable, NewsAndOfferTable, UserMembershipTable, UserEventRegistrationTable, UserEventAttendanceTable
 from .filters import UserFilter, MembershipFilter, EventFilter, EventRegistrationFilter, AttendanceFilter, VenueFilter, AchievementFilter, NewsAndOfferFilter
 
 
@@ -1617,6 +1617,23 @@ class MembershipListView(SingleTableView):
         context['filter'] = self.filterset
         return context
     
+class UserMembershipListView(SingleTableView):
+    model = UserMembership
+    table_class = UserMembershipTable
+    template_name = 'papsas_app/record/single_membership_table.html'
+    filterset_class = MembershipFilter
+    paginator_class = LazyPaginator
+
+    def get_queryset(self):
+        queryset = UserMembership.objects.filter(user=self.request.user)
+        self.filterset = self.filterset_class(self.request.GET, queryset=queryset)
+        return self.filterset.qs
+
+    def get_context_data(self, **kwargs):
+        context = super(UserMembershipListView, self).get_context_data(**kwargs)
+        context['filter'] = self.filterset
+        return context
+    
 class EventListView(SingleTableView):
     model = Event
     table_class = EventTable
@@ -1689,6 +1706,34 @@ class EventRegistrationListView(SingleTableView):
         context['filter'] = self.filterset
         context['event_id'] = self.kwargs.get('event_id')
         return context
+
+class UserEventRegistrationListView(SingleTableView):
+    model = EventRegistration
+    table_class = UserEventRegistrationTable
+    template_name = 'papsas_app/record/user_event_registration_table.html'
+    filterset_class = EventRegistrationFilter
+    paginator_class = LazyPaginator
+
+    def get_table(self):
+        table = super().get_table()
+        RequestConfig(
+            self.request, 
+            paginate={
+                "paginator_class": LazyPaginator,
+                "per_page": 10
+            }
+        ).configure(table)
+        return table
+
+    def get_queryset(self):
+        queryset = EventRegistration.objects.filter( user = self.request.user )
+        self.filterset = self.filterset_class(self.request.GET, queryset=queryset)
+        return self.filterset.qs
+
+    def get_context_data(self, **kwargs):
+        context = super(UserEventRegistrationListView, self).get_context_data(**kwargs)
+        context['filter'] = self.filterset
+        return context
     
 class EventAttendanceListView(SingleTableView):
     model = Attendance
@@ -1721,6 +1766,34 @@ class EventAttendanceListView(SingleTableView):
         context['name'] = event.eventName
         context['filter'] = self.filterset
         context['event_id'] = self.kwargs.get('event_id')
+        return context
+    
+class UserEventAttendanceListView(SingleTableView):
+    model = Attendance
+    table_class = UserEventAttendanceTable
+    template_name= 'papsas_app/record/user_event_attendance_table.html'
+    filterset_class = AttendanceFilter
+    paginator_class = LazyPaginator
+
+    def get_table(self):
+        table = super().get_table()
+        RequestConfig(
+            self.request, 
+            paginate={
+                "paginator_class": LazyPaginator,
+                "per_page": 10
+            }
+        ).configure(table)
+        return table
+
+    def get_queryset(self):
+        queryset = Attendance.objects.filter( user = self.request.user )
+        self.filterset = self.filterset_class(self.request.GET, queryset=queryset)
+        return self.filterset.qs
+
+    def get_context_data(self, **kwargs):
+        context = super(UserEventAttendanceListView, self).get_context_data(**kwargs)
+        context['filter'] = self.filterset
         return context
 
 class VenueListView(SingleTableView):
