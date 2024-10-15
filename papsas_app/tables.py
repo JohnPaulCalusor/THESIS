@@ -39,6 +39,10 @@ class MembershipTable(tables.Table):
         template_name = "django_tables2/bootstrap.html"
         fields = ("id", "first_name", "last_name", "membership", "membershipVerification", "registrationDate", "expirationDate", "receipt", "reference_number", "verificationID")
 
+class UserMembershipTable(MembershipTable):
+    class Meta(MembershipTable.Meta):
+        exclude = ("actions", "first_name" ,"last_name")
+
 class EventTable(tables.Table):
     record = tables.TemplateColumn(template_name='papsas_app/partial_list/event_record_column.html', orderable=False)
     actions = tables.TemplateColumn(template_name='papsas_app/partial_list/event_action_column.html', orderable=False)
@@ -67,6 +71,10 @@ class EventRegistrationTable(tables.Table):
         fields = ('id', 'user', 'reference_number', 'registered_at', 'status', 'actions')
         template_name = "django_tables2/bootstrap4.html"
 
+class UserEventRegistrationTable(EventRegistrationTable):
+    class Meta(EventRegistrationTable.Meta):
+        exclude = ("actions", "user")
+
 class EventAttendanceTable(tables.Table):
     event = tables.Column(accessor='event.event.eventName', verbose_name='Event Name')
 
@@ -77,6 +85,10 @@ class EventAttendanceTable(tables.Table):
         model = Attendance
         fields = ('id', 'event', 'user', 'attended', 'date_attended')
         template_name = "django_tables2/bootstrap4.html"
+    
+class UserEventAttendanceTable(EventAttendanceTable):
+    class Meta(EventAttendanceTable.Meta):
+        exclude = ("actions", "user")
     
 
 class VenueTable(tables.Table):

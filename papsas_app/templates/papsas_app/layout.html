@@ -110,6 +110,15 @@
                                         <li><a href="{% url 'about' %}#section-3">Partners</a></li>
                                     </ul>
                                 </li>
+                                <li class="nav__item dropdown">
+                                    <a href="" class="nav__link">Records<i class='bx bx-chevron-down dropdown__icon'></i></a>
+                                    <ul class="dropdown-content">
+                                        <li><a href="{% url 'user_membership_table' %}">Membership</a></li>
+                                        <li><a href="{% url 'user_event_registration_table' %}">Event Registration</a></li>
+                                        <li><a href="{% url 'user_event_attendance_table' %}">Event Attendance</a></li>
+
+                                    </ul>
+                                </li>
                                 {% if is_member.membershipVerification == True %}
                                     {% for election in openElection %}
                                         {% if election is not None%}
