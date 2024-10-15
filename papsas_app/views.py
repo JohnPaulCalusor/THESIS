@@ -1286,9 +1286,10 @@ def get_total_revenue(request):
     events = Event.objects.all()  # Get all events
 
     for event in events:
-        registrations_count = event.activity.count()  # Count how many registrations for each event
+        approved_registrations = event.activity.filter(status='Approved')
+        registrations_count = approved_registrations.count()  # Count how many approved registrations for each event
         if event.price:  # Ensure the price is not None
-            total_revenue += event.price * registrations_count  # Multiply price by number of registrations
+            total_revenue += event.price * registrations_count  # Multiply price by number of approved registrations
 
     return JsonResponse({'total_revenue': total_revenue})
 
@@ -1344,6 +1345,11 @@ def get_avg_registration_vs_attendance(request):
     }
 
     return JsonResponse(data)
+
+@secretary_required
+def get_event_rating(request):
+    event_rating = EventRating.objects.aggregate(average_rating=Avg('rating'))
+    return JsonResponse(event_rating, safe=False)
 
 @secretary_required
 def get_top_region_data(request):

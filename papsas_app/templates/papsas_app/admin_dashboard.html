@@ -49,8 +49,7 @@
         </div>
         <div class="tile-content">
             <div class="title-data">Event Rating</div>
-            <div class="tile-data" id="eventRating">0</div>
-
+            <div class="tile-data" id="eventRating">{{ event_rating }}</div>
         </div>
     </div>
 </div>
@@ -451,26 +450,29 @@ const fetchAvgRegistrationVsAttendanceData = async (url, ctx) => {
     }
 };
 
-        const updateTiles = async () => {
-            try {
-                const membersResponse = await fetch('{% url "get_total_members_count" %}');
-                if (!membersResponse.ok) throw new Error('Network response was not ok');
-                const membersData = await membersResponse.json();
-                document.getElementById('membersCount').innerText = membersData.count;
+const updateTiles = async () => {
+    try {
+        const membersResponse = await fetch('{% url "get_total_members_count" %}');
+        if (!membersResponse.ok) throw new Error('Network response was not ok');
+        const membersData = await membersResponse.json();
+        document.getElementById('membersCount').innerText = membersData.count;
 
-                const eventsResponse = await fetch('{% url "get_total_events_count" %}');
-                if (!eventsResponse.ok) throw new Error('Network response was not ok');
-                const eventsData = await eventsResponse.json();
-                document.getElementById('eventsCount').innerText = eventsData.count;
+        const eventsResponse = await fetch('{% url "get_total_events_count" %}');
+        if (!eventsResponse.ok) throw new Error('Network response was not ok');
+        const eventsData = await eventsResponse.json();
+        document.getElementById('eventsCount').innerText = eventsData.count;
 
-                const revenueResponse = await fetch('{% url "get_total_revenue" %}');
-                const revenueData = await revenueResponse.json();
-                document.getElementById('totalRevenue').innerText = '₱ ' + revenueData.total_revenue;
-            } catch (error) {
-                console.error('Error fetching data:', error);
-            }
-        };
+        const revenueResponse = await fetch('{% url "get_total_revenue" %}');
+        const revenueData = await revenueResponse.json();
+        document.getElementById('totalRevenue').innerText = '₱ ' + revenueData.total_revenue;
 
+        const ratingResponse = await fetch('{% url "get_event_rating" %}');
+        const ratingData = await ratingResponse.json();
+        document.getElementById('eventRating').innerText = ratingData.average_rating ? ratingData.average_rating.toFixed(2) : 'No ratings yet';
+    } catch (error) {
+        console.error('Error fetching data:', error);
+    }
+};
         const initCharts = async () => {
             const attendanceVsCapacityCtx = document.getElementById('attendanceVsCapacityChart').getContext('2d');
             const membershipCtx = document.getElementById('membershipChart').getContext('2d');
