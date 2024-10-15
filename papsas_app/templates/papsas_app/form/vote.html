@@ -43,8 +43,6 @@
                                 <p>
                                     {{ candidate.candidate.first_name }} 
                                 </p>
-                                <p>Votes: {{ candidate.vote_count }}</p>
-                                
                                 <a href="{% url 'profile' candidate.candidate.id %}" class="btn">
                                     View Profile
                                 </a>
