@@ -1,8 +1,9 @@
 import django_tables2 as tables
 from django.utils.html import format_html
-from .models import User, UserMembership, Event, EventRegistration, Attendance, Venue, Achievement, NewsandOffers
+from .models import User, UserMembership, Event, EventRegistration, Attendance, Venue, Achievement, NewsandOffers, Election, Vote, Candidacy
 from django.urls import reverse
 from django.utils.safestring import mark_safe
+from django.db.models import Count
 
 class UserTable(tables.Table):
     actions = tables.TemplateColumn(template_name='papsas_app/partial_list/user_action_column.html', orderable=False, verbose_name='Actions')
@@ -127,3 +128,33 @@ class NewsAndOfferTable(tables.Table):
     class Meta:
         model = NewsandOffers
         fields = ('id', 'name', 'description', 'postStamp', 'pubmat')
+
+class ElectionTable(tables.Table):
+    startDate = tables.Column(orderable= True, verbose_name= "Opening Date")
+    endDate = tables.Column(orderable= True, verbose_name= "Closing Date")
+    numWinners = tables.Column(orderable= True, verbose_name="Officer Spot/s")
+    
+
+    def render_title(self, record):
+        url = reverse('election_table', args=[record.id])
+        return format_html('<a href="{}">{}<a>', url, record.title)
+
+    class Meta:
+        model = Election
+        fields = ('id', 'title', 'startDate', 'endDate', 'numWinners')
+
+class VoteTable(tables.Table):
+    candidate = tables.Column(accessor='candidate', verbose_name='Candidate')
+    election = tables.Column(accessor='election.title', verbose_name='Election')
+    vote_count = tables.Column(accessor='vote_count', verbose_name='Vote Count')
+
+    class Meta:
+        model = Candidacy
+        template_name = "django_tables2/bootstrap.html"
+        fields = ("id" ,"candidate", "election", "vote_count")
+
+    def render_candidate(self, value):
+        return f"{value.first_name} {value.last_name}"
+
+    def render_vote_count(self, value):
+        return value or 0

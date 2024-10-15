@@ -31,10 +31,10 @@ from django.db.models.functions import TruncYear
 from functools import wraps
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
-from django.views.generic import ListView
-from django_tables2 import SingleTableView, RequestConfig
-from .tables import UserTable, MembershipTable, EventTable, EventRegistrationTable, EventAttendanceTable, VenueTable, AchievementTable, NewsAndOfferTable, UserMembershipTable, UserEventRegistrationTable, UserEventAttendanceTable
-from .filters import UserFilter, MembershipFilter, EventFilter, EventRegistrationFilter, AttendanceFilter, VenueFilter, AchievementFilter, NewsAndOfferFilter
+from django.views.generic import ListView, View
+from django_tables2 import SingleTableView, RequestConfig, SingleTableMixin
+from .tables import UserTable, MembershipTable, EventTable, EventRegistrationTable, EventAttendanceTable, VenueTable, AchievementTable, NewsAndOfferTable, UserMembershipTable, UserEventRegistrationTable, UserEventAttendanceTable, ElectionTable, VoteTable
+from .filters import UserFilter, MembershipFilter, EventFilter, EventRegistrationFilter, AttendanceFilter, VenueFilter, AchievementFilter, NewsAndOfferFilter, CandidateFilter
 
 
 
@@ -379,36 +379,54 @@ def resend_verification_code(request, user_id):
 
 @secretary_required
 def election(request):
-    
     electionList = Election.objects.all()
-    ongoingElection = Election.objects.filter(electionStatus = True)
+    ongoingElection = Election.objects.filter(electionStatus=True)
+
+    table = ElectionTable(Election.objects.all())
+    RequestConfig(request, paginate={"per_page": 10}).configure(table)
+
     if request.method == 'POST':
         num_winners = request.POST['num_candidates']
         title = request.POST['title']
-        newElection = Election(electionStatus = True, startDate = date.today(), title = title, numWinners = num_winners,)
+        endDate = request.POST['endDate']
+        newElection = Election(electionStatus=True, startDate=date.today(), title=title, numWinners=num_winners, endDate=endDate)
         newElection.save()
 
-    if is_officer(request):
-        return render(request, "papsas_app/record/election.html", {
-            'electionList' : electionList,
-            'ongoingElection' : ongoingElection,
-        })
-    else:
-        return redirect('index')
+    return render(request, 'papsas_app/record/election.html', {
+        'electionList': electionList,
+        'ongoingElection': ongoingElection,
+        'table': table
+    })
+
+
+class ElectionTableMixin(SingleTableMixin, View):
+    model = Election
+    table_class = ElectionTable
+    template_name = 'papsas_app/record/election.html'
+
+    def get_table_data(self):
+        return Election.objects.all()
 
 @secretary_required
 def manage_election(request, id):
+    electionList = Election.objects.all()
+    ongoingElection = Election.objects.filter(electionStatus=True)
+
     if request.method == 'POST':
-        election = Election.objects.get(id = id)
-        numWinners = election.numWinners
-        new_officer(numWinners)
-        if (election.electionStatus == True):
-            election.electionStatus = False
-            election.save()
-            return redirect('election')
+        election = Election.objects.get(id=id)
+        election.electionStatus = False
+        election.save()
+        return redirect('election')
+    
+    table = ElectionTable(Election.objects.all())
+    return render(request, 'papsas_app/record/election.html', {
+        'electionList': electionList,
+        'ongoingElection': ongoingElection,
+        'table': table
+    })
 
 @secretary_required
-def new_officer(num_winners):
+def new_officer(request, num_winners):
     try:
         ongoing_election = Election.objects.get(electionStatus=True)
     except Election.DoesNotExist:
@@ -1907,3 +1925,38 @@ def generate_qr(request, event_id):
     response['Content-Disposition'] = f'attachment; filename="event_{event.id}_qr.png"'
 
     return response
+
+class ElectionListView(SingleTableView):
+    model = Candidacy
+    table_class = VoteTable
+    template_name = 'papsas_app/record/election_table.html'
+    filterset_class = CandidateFilter
+    paginator_class = LazyPaginator
+
+    def get_table(self):
+        table = super().get_table()
+        RequestConfig(
+            self.request,
+            paginate={
+                "paginator_class": LazyPaginator,
+                "per_page": 10,
+            }
+        ).configure(table)
+        return table
+
+    def get_queryset(self):
+        election_id = self.kwargs.get('election_id')
+        # Annotate vote counts for each candidacy
+        queryset = (
+            Candidacy.objects.filter(election=election_id)
+            .annotate(vote_count=Count('nominee'))
+            .select_related('candidate', 'election')
+        )
+        self.filterset = self.filterset_class(self.request.GET, queryset=queryset)
+        return self.filterset.qs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['filter'] = self.filterset
+        context['electionId'] = self.kwargs.get('election_id')
+        return context

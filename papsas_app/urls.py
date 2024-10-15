@@ -110,6 +110,7 @@ path('event/<int:event_id>/attendance_form/', views.attendance_form, name='atten
     path('table/news-offers/', views.NewsAndOffersListView.as_view(), name="news_offers_table"),
     path('table/achievement/', views.AchievementListView.as_view(), name="achievement_table"),
     path('table/event-registration-table/<int:event_id>/', views.EventRegistrationListView.as_view(), name='event_registration_table'),
+    path('table/election-table/<int:election_id>/', views.ElectionListView.as_view(), name='election_table'),
     path('table/user/event-registration-table/', views.UserEventRegistrationListView.as_view(), name='user_event_registration_table'),
     path('event-attendance-table/<int:event_id>/', views.EventAttendanceListView.as_view(), name='event_attendance_table'),
     path('table/user/event-attendance-table/', views.UserEventAttendanceListView.as_view(), name='user_event_attendance_table'),

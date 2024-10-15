@@ -1,5 +1,5 @@
 import django_filters
-from .models import User, UserMembership, Event, EventRegistration, Attendance, Venue, Achievement, NewsandOffers
+from .models import Candidacy, User, UserMembership, Event, EventRegistration, Attendance, Venue, Achievement, NewsandOffers, Candidacy
 from django.db.models import Q
 from django import forms
 
@@ -129,3 +129,14 @@ class NewsAndOfferFilter(django_filters.FilterSet):
         model = NewsandOffers
         fields = ['id', 'name']
 
+class CandidateFilter(django_filters.FilterSet):
+    name = django_filters.CharFilter(method='filter_name', label='Candidate')
+
+    class Meta:
+        model = Candidacy
+        fields = ['id']
+
+    def filter_name(self, queryset, name, value):
+        return queryset.filter(candidate__first_name__icontains=value) | queryset.filter(candidate__last_name__icontains=value)
+
+    

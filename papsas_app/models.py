@@ -130,6 +130,9 @@ class Election(models.Model):
 
     def __str__(self):
         return f'Election {self.id}'
+    
+    class Meta:
+        ordering = ['id']
 
 class Candidacy(models.Model):
     candidate = models.ForeignKey(User, on_delete=models.CASCADE, related_name="candidate")
@@ -139,6 +142,7 @@ class Candidacy(models.Model):
     def __str__(self):
         return f"{self.candidate.first_name} running for Election {self.election.title} {self.election.startDate.year}"
     
+    
 class Vote(models.Model):
     candidateID = models.ManyToManyField(Candidacy, related_name="nominee")
     voterID = models.ForeignKey(User, on_delete=models.CASCADE, related_name="voter")
@@ -147,6 +151,7 @@ class Vote(models.Model):
 
     def __str__(self):
         return f'{self.candidateID.all()}'
+
 
 class Officer(models.Model):
     candidateID = models.ForeignKey(Candidacy, on_delete=models.CASCADE, related_name="officers")
