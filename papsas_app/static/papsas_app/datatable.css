@@ -421,6 +421,7 @@ th.orderable a{
     margin-top: 25px;
 }
 .search-submit{
+    border: 1px solid black;
     display: flex;
     font-size: 16px;
     padding: 5px;
@@ -508,4 +509,8 @@ th.orderable a{
     border: 1px solid #ccc;
     border-radius: 4px;
     background-color: #fff;
+}
+
+ .reset {
+    border: 1px black solid;
 }
