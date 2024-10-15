@@ -6,7 +6,7 @@
 {% endblock %}
 
 {% block body %}
-    <button class="action-icon" data-event-id="{{record.id}}" title="Update">
+    <button class="action-icon update-button" data-event-id="{{record.id}}" title="Update">
         <i class="fas fa-edit"></i>
     </button> 
 
@@ -17,7 +17,7 @@
         </button>
     </form>
 
-    <button class="action-icon" data-event-id="{{record.id}}" title="View">
+    <button class="action-icon" data-event-id="{{record.id}}" title="View" class="view-button">
         <i class="fas fa-eye"></i>
     </button>
 
