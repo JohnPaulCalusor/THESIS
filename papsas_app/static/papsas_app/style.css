@@ -9,9 +9,8 @@
   margin-top: 100px;
 }
 #navProfile {
-    width: 35px;
     /* make the shape circle */
-    border-radius: 50%;
+    border-radius: 100%;
     display: flex;
 }
 
@@ -189,9 +188,13 @@ img {
   color: var(--text-color);
   cursor: pointer;
 }
+
 .profile{
-  height: 25px;
+  height: 40px;
+  width: 40px;
   margin-right: 100px;
+  object-fit: cover;
+  border-radius: 100%;
 }
 /* Show menu */
 .show-menu {
@@ -292,6 +295,8 @@ img {
   .nav__list {
     flex-direction: row;
     column-gap: 3.5rem;
+    display: flex;
+    align-items: center;
   }
   
 
