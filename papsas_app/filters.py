@@ -1,5 +1,5 @@
 import django_filters
-from .models import Candidacy, User, UserMembership, Event, EventRegistration, Attendance, Venue, Achievement, NewsandOffers, Candidacy
+from .models import Candidacy, User, UserMembership, Election, Event, EventRegistration, Attendance, Venue, Achievement, NewsandOffers, Candidacy
 from django.db.models import Q
 from django import forms
 
@@ -129,8 +129,38 @@ class NewsAndOfferFilter(django_filters.FilterSet):
         model = NewsandOffers
         fields = ['id', 'name']
 
+class ElectionFilter(django_filters.FilterSet):
+    title = django_filters.CharFilter(lookup_expr='icontains',
+                                     widget=forms.TextInput(attrs={'id': 'title-id'}))
+    startDate = django_filters.DateFilter(
+        field_name='startDate',
+        widget=forms.DateInput(
+            attrs={
+                'type': 'date',
+                'class': 'form-control',
+                'id' : 'filter-start'
+            }
+        ),
+        label='Start Date'
+    )
+    endDate = django_filters.DateFilter(
+        field_name='endDate',
+        widget=forms.DateInput(
+            attrs={
+                'type': 'date', 
+                'class': 'form-control',
+                'id' : 'filter-end'
+            }
+        ),
+        label='End Date'
+    )
+    class Meta:
+        model = Election
+        fields = ['id', 'title', 'startDate', 'endDate']
+
 class CandidateFilter(django_filters.FilterSet):
-    name = django_filters.CharFilter(method='filter_name', label='Candidate')
+    name = django_filters.CharFilter(lookup_expr='icontains',
+                                     widget=forms.TextInput(attrs={'id': 'name-id'}))
 
     class Meta:
         model = Candidacy

@@ -31,11 +31,10 @@ from django.db.models.functions import TruncYear
 from functools import wraps
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
-from django.views.generic import ListView, View
 from django_tables2 import SingleTableView, RequestConfig, SingleTableMixin
 from .tables import UserTable, MembershipTable, EventTable, EventRegistrationTable, EventAttendanceTable, VenueTable, AchievementTable, NewsAndOfferTable, UserMembershipTable, UserEventRegistrationTable, UserEventAttendanceTable, ElectionTable, VoteTable
-from .filters import UserFilter, MembershipFilter, EventFilter, EventRegistrationFilter, AttendanceFilter, VenueFilter, AchievementFilter, NewsAndOfferFilter, CandidateFilter
-
+from .filters import UserFilter, ElectionFilter, MembershipFilter, EventFilter, EventRegistrationFilter, AttendanceFilter, VenueFilter, AchievementFilter, NewsAndOfferFilter, CandidateFilter
+from django_filters.views import FilterView
 
 
 # Create your views here.
@@ -382,7 +381,9 @@ def election(request):
     electionList = Election.objects.all()
     ongoingElection = Election.objects.filter(electionStatus=True)
 
-    table = ElectionTable(Election.objects.all())
+    filter = ElectionFilter(request.GET, queryset=electionList)
+    table = ElectionTable(filter.qs)
+
     RequestConfig(request, paginate={"per_page": 10}).configure(table)
 
     if request.method == 'POST':
@@ -395,17 +396,9 @@ def election(request):
     return render(request, 'papsas_app/record/election.html', {
         'electionList': electionList,
         'ongoingElection': ongoingElection,
-        'table': table
+        'table': table,
+        'filter': filter
     })
-
-
-class ElectionTableMixin(SingleTableMixin, View):
-    model = Election
-    table_class = ElectionTable
-    template_name = 'papsas_app/record/election.html'
-
-    def get_table_data(self):
-        return Election.objects.all()
 
 @secretary_required
 def manage_election(request, id):

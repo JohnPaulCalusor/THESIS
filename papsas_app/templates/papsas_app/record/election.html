@@ -15,6 +15,31 @@
     <div class="election-dashboard">
         <div class="past-elections">
             <h3>Election List</h3>
+            <form method="get" class="mb-4" id="filter-form">
+                <div class="row">
+                    <div class="col-md-3 mb-3">
+                        <label for="Id" class="text-input">Id:</label>
+                        {{ filter.form.id }}
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label for="Id" class="text-input">Title:</label>
+                        {{ filter.form.title }}
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label for="Id" class="text-input">Opening Date:</label>
+                        {{ filter.form.startDate }}
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label for="Id" class="text-input">Closing Date:</label>
+                        {{ filter.form.endDate }}
+                    </div>
+                    
+                    <div class="col-md-3 mb-3 d-flex align-items-end">
+                        <button type="submit" class="search-submit">Search</button>
+                        <a href="{% url 'election' %}" class="search-submit">Reset</a>
+                    </div>
+                </div>
+            </form>
             <div class="election-list">
                 {% render_table table %}
             </div>
