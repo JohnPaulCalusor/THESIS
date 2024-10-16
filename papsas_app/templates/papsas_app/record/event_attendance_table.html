@@ -8,17 +8,23 @@
 {% endblock %}
 
 {% block body %}
-<div class="container"></div>
+<div class="container">
     <div class="title">
         <h3>
-            {{ name }} Attendance Records
+            {{ name }} Attendance Record
         </h3>
     </div>
+    <div class="back-button" onclick="window.history.back();">
+        <i class="fas fa-times"></i>
+    </div>
+    
+    <div class="container">
     {% if messages %}
         {% for message in messages %}
             {{ message }}
         {% endfor %}
     {% endif %}
+
     <form method="get" class="mb-4" id="filter-form">
         <div class="row">
             <div class="col-md-3 mb-3">

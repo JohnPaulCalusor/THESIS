@@ -40,7 +40,14 @@ th {
     cursor: pointer;
     padding: 10px;
 }
-
+.back-button:hover{
+    color: red;
+}
+.back-button{
+    text-align: right;
+    margin-top: -30px;
+    font-size: 20px;
+}
 tr:nth-child(even) {
     background-color: #f9f9f9;
 }
@@ -421,13 +428,19 @@ th.orderable a{
     margin-top: 25px;
 }
 .search-submit{
-    border: 1px solid black;
+    background-color: #000;
     display: flex;
     font-size: 16px;
     padding: 5px;
     width: 100px;
     justify-content: center;
+    color: #ffffff;
+    border: none;
 
+}
+.search-submit:hover{
+    color: rgb(255, 255, 255);
+    background-color: #ff0000;
 }
 .pagination {
     display: flex;

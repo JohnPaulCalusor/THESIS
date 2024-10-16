@@ -8,13 +8,17 @@
 {% endblock %}
 
 {% block body %}
-<div class="container"></div>
+<div class="container">
+    
     <div class="title">
-        <h3>
-            {{ name }} Registration Records 
+        
+        <h3>   
+            {{ name }} Registration Record
         </h3>
     </div>
-    <a href="{% url 'event_table' %}">Back</a>
+    <div class="back-button" onclick="window.history.back();">
+        <i class="fas fa-times"></i>
+    </div>
     {% if messages %}
     <div id="message-container">
         {% for message in messages %}
@@ -22,6 +26,7 @@
         {% endfor %}
     </div>
     {% endif %}
+    <div class="container">
     <form method="get" class="mb-4" id="filter-form">
         <div class="row">
             <div class="col-md-3 mb-3">
@@ -45,8 +50,9 @@
 </div>
 
 <div id="table-container">
-    {% render_table table %}
     Total Records: {{ table.rows|length }}
+    {% render_table table %}
+
 </div>
 
 {% endblock %}

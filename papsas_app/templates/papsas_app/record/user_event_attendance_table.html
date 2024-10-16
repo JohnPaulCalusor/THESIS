@@ -8,17 +8,19 @@
 {% endblock %}
 
 {% block body %}
-<div class="container"></div>
+<div class="container">
     <div class="title">
         <h3>
             Attendance Records
         </h3>
     </div>
+    <div class="container">
     {% if messages %}
         {% for message in messages %}
             {{ message }}
         {% endfor %}
     {% endif %}
+    
     <form method="get" class="mb-4" id="filter-form">
         <div class="row">
             <div class="col-md-3 mb-3">
@@ -37,9 +39,10 @@
     </form>
 </div>
 
+
 <div id="table-container">
-    {% render_table table %}
     Total Records: {{ table.rows|length }}
+    {% render_table table %}
 </div>
 
 {% endblock %}
