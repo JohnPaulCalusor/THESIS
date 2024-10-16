@@ -107,7 +107,7 @@ class UserMembership(models.Model):
     receipt = models.ImageField(upload_to="papsas_app/reciept", null=True, blank=True) 
     reference_number = models.IntegerField(null=True)
     verificationID = models.ImageField(upload_to="papsas_app/verificationID", null=True, blank=True) 
-    membershipVerification = models.BooleanField(default=False)
+    status = models.CharField(max_length=10, choices=status, default='Pending')
 
     def __str__ (self):
         return f'{self.user.id} : {self.user.first_name} - {self.id} : {self.membership}'
