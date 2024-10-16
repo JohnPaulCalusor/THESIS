@@ -136,6 +136,7 @@ class Election(models.Model):
 
 class Candidacy(models.Model):
     candidate = models.ForeignKey(User, on_delete=models.CASCADE, related_name="candidate")
+    tor = models.ImageField(upload_to="papsas_app/tor", null=True, blank=True) 
     candidacyStatus = models.BooleanField(null=True)
     election = models.ForeignKey(Election, on_delete=models.CASCADE, related_name="elections")
     
