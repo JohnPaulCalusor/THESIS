@@ -1206,45 +1206,6 @@ def admin_dashboard(request):
     return render(request, 'papsas_app/admin_dashboard.html')
 
 @secretary_required
-def get_attendance_vs_capacity(request):
-    try:
-        attendance_data = (
-            Attendance.objects
-            .select_related('event')
-            .values('event__event__venue__id', 'event__event__venue__name')
-            .annotate(
-                attendance_count=models.Count('id'),
-                event_count=models.Count('event__event', distinct=True)
-            )
-        )
-
-        venue_names = []
-        average_attendance = []
-        capacities = []
-
-        for attendance in attendance_data:
-            venue_id = attendance['event__event__venue__id']
-            venue_name = attendance['event__event__venue__name']
-            total_attendance = attendance['attendance_count']
-            event_count = attendance['event_count']
-            venue_capacity = Venue.objects.get(id=venue_id).capacity
-            
-            avg_attendance = total_attendance / event_count if event_count > 0 else 0
-
-            venue_names.append(venue_name)
-            average_attendance.append(round(avg_attendance, 2))
-            capacities.append(venue_capacity)
-
-        return JsonResponse({
-            'labels': venue_names,
-            'average_attendance': average_attendance,
-            'capacities': capacities
-        })
-    except Exception as e:
-        logging.error("Error fetching attendance vs capacity data: %s", e)
-        return JsonResponse({'error': str(e)}, status=500)
-
-@secretary_required
 def get_membership_distribution_data(request):
     membership_data = UserMembership.objects.values('membership__type').annotate(total=Count('membership')).order_by('-total')
     
@@ -1356,18 +1317,38 @@ def get_event_rating(request):
     return JsonResponse(event_rating, safe=False)
 
 @secretary_required
-def get_top_region_data(request):
-    top_regions = User.objects.values('region').annotate(count=models.Count('id')).order_by('-count')[:5]
-    labels = [region['region'] for region in top_regions]
-    values = [region['count'] for region in top_regions]
-    return JsonResponse({'labels': labels, 'values': values})
+def get_user_distribution_by_region(request):
+    filter_type = request.GET.get('filterType', 'all')
 
-@secretary_required
-def get_least_region_data(request):
-    least_regions = User.objects.values('region').annotate(count=models.Count('id')).order_by('count')[:5]
-    labels = [region['region'] for region in least_regions]
-    values = [region['count'] for region in least_regions]
-    return JsonResponse({'labels': labels, 'values': values})
+    users_by_region = User.objects.exclude(region__isnull=True).values('region').annotate(total=Count('id')).order_by('-total')
+
+    labels = [region['region'] for region in users_by_region] if users_by_region else []
+    values = [region['total'] for region in users_by_region] if users_by_region else []
+
+    top_5 = users_by_region[:5] if users_by_region else []
+    least_5 = users_by_region[::-1][:5] if users_by_region else []
+
+    if filter_type == 'top5':
+        response_data = {
+            'labels': [region['region'] for region in top_5],
+            'values': [region['total'] for region in top_5],
+        }
+    elif filter_type == 'least5':
+        response_data = {
+            'labels': [region['region'] for region in least_5],
+            'values': [region['total'] for region in least_5],
+        }
+    else:
+        response_data = {
+            'labels': labels,
+            'values': values,
+            'top_5_labels': [region['region'] for region in top_5],
+            'top_5_values': [region['total'] for region in top_5],
+            'least_5_labels': [region['region'] for region in least_5],
+            'least_5_values': [region['total'] for region in least_5],
+        }
+
+    return JsonResponse(response_data)
 
 @secretary_required
 def decline_eventReg(request, id):

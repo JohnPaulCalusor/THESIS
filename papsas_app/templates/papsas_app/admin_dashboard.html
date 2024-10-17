@@ -76,23 +76,20 @@
         <h3>Average Event Registration vs Average Attendance</h3>
         <canvas id="avgRegVsAttendanceChart"></canvas>
     </div>
-    <div class="chart-container">
-        <h3>Attendance vs Capacity</h3>
-        <canvas id="attendanceVsCapacityChart"></canvas>
-    </div>
 </div>
 
 
-    <div class="region">
-        <div class="chart-container">
-            <h3>Top 5 User Distribution by Region</h3>
-            <canvas id="topRegionChart"></canvas>
-        </div>
-        <div class="chart-container">
-            <h3>Least 5 User Distribution by Region </h3>
-            <canvas id="leastRegionChart"></canvas>
-        </div>
+<div class="region">
+    <div class="chart-container">
+        <h3>User Distribution by Region</h3>
+        <select id="filterDropdown" onchange="updateRegionChart()">
+            <option value="all" selected>All</option>
+            <option value="top">Top 5 Regions</option>
+            <option value="least">Least 5 Regions</option>
+        </select>
+        <canvas id="RegionChart"></canvas>
     </div>
+</div>
 
 
 
@@ -162,63 +159,6 @@
             }
         };
 
-        const fetchAttendanceVsCapacityData = async (url, ctx) => {
-            try {
-                const response = await fetch(`${url}?_=${new Date().getTime()}`);
-                if (!response.ok) throw new Error('Network response was not ok');
-                const data = await response.json();
-
-                if (attendanceVsCapacityChart) {
-                    attendanceVsCapacityChart.destroy();
-                }
-
-                return new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: data.labels,
-                        datasets: [
-                            {
-                                label: 'Average Attendance',
-                                data: data.average_attendance,
-                                backgroundColor: colorPalette[0],
-                                borderColor: colorPalette[0],
-                                borderWidth: 1,
-                            },
-                            {
-                                label: 'Capacity',
-                                data: data.capacities,
-                                backgroundColor: colorPalette[1],
-                                borderColor: colorPalette[1],
-                                borderWidth: 1,
-                            }
-                        ]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                ticks: {
-                                    callback: function(value) {
-                                        return Number.isInteger(value) ? value : ''; 
-                                    }
-                                }
-                            },
-                            x: {
-                                ticks: {
-                                    autoSkip: true,
-                                    maxTicksLimit: 20
-                                }
-                            }
-                        }
-                    }
-                });
-            } catch (error) {
-                console.error('Error fetching data:', error);
-            }
-        };
-
         const fetchAttendanceOverTimeData = async (url, ctx) => {
             try {
                 const response = await fetch(`${url}?_=${new Date().getTime()}`);
@@ -266,79 +206,6 @@
                 console.error('Error fetching data:', error);
             }
         };
-
-        let topRegionChart = null;
-let leastRegionChart = null;
-
-const fetchTopRegionData = async (url, ctx) => {
-    try {
-        const response = await fetch(`${url}?_=${new Date().getTime()}`);
-        if (!response.ok) throw new Error('Network response was not ok');
-        const data = await response.json();
-
-        if (topRegionChart) {
-            topRegionChart.destroy();
-        }
-
-        topRegionChart = new Chart(ctx, {
-            type: 'bar', // You can change this to 'doughnut' if needed
-            data: {
-                labels: data.labels,
-                datasets: [{
-                    label: 'Top 5 Regions',
-                    data: data.values,
-                    backgroundColor: colorPalette.slice(0, 5), // Use the first 5 colors
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                    }
-                }
-            }
-        });
-    } catch (error) {
-        console.error('Error fetching top region data:', error);
-    }
-};
-
-const fetchLeastRegionData = async (url, ctx) => {
-    try {
-        const response = await fetch(`${url}?_=${new Date().getTime()}`);
-        if (!response.ok) throw new Error('Network response was not ok');
-        const data = await response.json();
-
-        if (leastRegionChart) {
-            leastRegionChart.destroy();
-        }
-
-        leastRegionChart = new Chart(ctx, {
-            type: 'bar', // You can change this to 'doughnut' if needed
-            data: {
-                labels: data.labels,
-                datasets: [{
-                    label: 'Least 5 Regions',
-                    data: data.values,
-                    backgroundColor: colorPalette.slice(0, 5).reverse(), // Use the first 5 colors in reverse order
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                    }
-                }
-            }
-        });
-    } catch (error) {
-        console.error('Error fetching least region data:', error);
-    }
-};
 
 
         let avgRegVsAttendanceChart = null;
@@ -450,6 +317,53 @@ const fetchAvgRegistrationVsAttendanceData = async (url, ctx) => {
     }
 };
 
+let regionChart = null;
+
+const fetchUserDistributionByRegionData = async (url, ctx) => {
+    try {
+        const response = await fetch(`${url}?_=${new Date().getTime()}`);
+        if (!response.ok) throw new Error('Network response was not ok');
+        const data = await response.json();
+
+        if (regionChart) {
+            regionChart.destroy();
+        }
+
+        const datasets = [{
+            label: 'User  Distribution by Region',
+            data: data.values,
+            backgroundColor: data.values.map((_, index) => colorPalette[index % colorPalette.length]),
+            borderColor: data.values.map((_, index) => colorPalette[index % colorPalette.length]),
+            borderWidth: 1,
+        }];
+
+        regionChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: data.labels,
+                datasets: datasets
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                    },
+                },
+            }
+        });
+    } catch (error) {
+        console.error('Error fetching user distribution by region data:', error);
+    }
+};
+
+const updateRegionChart = async () => {
+        const filterValue = document.getElementById('filterDropdown').value;
+        const regionCtx = document.getElementById('RegionChart').getContext('2d');
+        regionChart = await fetchData(`{% url "get_user_distribution_by_region" %}?filter=${filterValue}`, regionCtx, 'bar', regionChart);
+    };
+
 const updateTiles = async () => {
     try {
         const membersResponse = await fetch('{% url "get_total_members_count" %}');
@@ -474,27 +388,24 @@ const updateTiles = async () => {
     }
 };
         const initCharts = async () => {
-            const attendanceVsCapacityCtx = document.getElementById('attendanceVsCapacityChart').getContext('2d');
             const membershipCtx = document.getElementById('membershipChart').getContext('2d');
             const attendanceOverTimeCtx = document.getElementById('attendanceOverTimeChart').getContext('2d');
             const membershipGrowthCtx = document.getElementById('membershipGrowthChart').getContext('2d');
             const avgRegVsAttendanceCtx = document.getElementById('avgRegVsAttendanceChart').getContext('2d');
-            const topRegionCtx = document.getElementById('topRegionChart').getContext('2d');
-            const leastRegionCtx = document.getElementById('leastRegionChart').getContext('2d');
+            const regionCtx = document.getElementById('RegionChart').getContext('2d');
 
-            attendanceVsCapacityChart = await fetchAttendanceVsCapacityData('{% url "get_attendance_vs_capacity" %}', attendanceVsCapacityCtx);
             membershipChart = await fetchData('{% url "get_membership_data" %}', membershipCtx, 'bar', membershipChart);
             attendanceOverTimeChart = await fetchAttendanceOverTimeData('{% url "get_attendance_over_time_data" %}', attendanceOverTimeCtx);
             membershipGrowthChart = await fetchMembershipGrowthData('{% url "get_membership_growth" %}', membershipGrowthCtx);
             avgRegVsAttendanceChart = await fetchAvgRegistrationVsAttendanceData('{% url "get_avg_registration_vs_attendance" %}', avgRegVsAttendanceCtx);
-            topRegionChart = await fetchTopRegionData('{% url "get_top_region_data" %}', topRegionCtx);
-            leastRegionChart = await fetchLeastRegionData('{% url "get_least_region_data" %}', leastRegionCtx);
+            regionChart = await fetchData('{% url "get_user_distribution_by_region" %}', regionCtx, 'bar', regionChart);
         };
 
         // Call the functions on page load
         window.onload = () => {
             initCharts();
             updateTiles();
+            updateRegionChart();
         };
     </script>
     {% endblock %}
