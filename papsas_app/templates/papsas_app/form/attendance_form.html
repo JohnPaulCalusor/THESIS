@@ -103,18 +103,16 @@
 </style>
 <div class="container">
   <div class="form-container">
-  <h3>Achievement</h3>
+  <h3>Attendance Form</h3>
       <form method="post">
         {% csrf_token %}
         <label for="id">Enter your ID:</label>
         <input type="text" id="id" name="id">
         <button type="submit" class="btn">Submit</button>
+        {% if error_message %}
+            <div class="message">{{ error_message }}</div>
+        {% endif %}
       </form>
-      {% if user_data %}
-        <h3>User Data:</h3>
-        <p>Name: {{ user_data.name }}</p>
-        <p>Picture: <img src="{{ user_data.picture }}" alt="User Picture"></p>
-      {% endif %}
     </div>
 </div>
 {% endblock %}

@@ -664,15 +664,11 @@ def event_registration_view(request, event_id):
             'event': event
         }
         return render(request, 'papsas_app/form/event_registration_form.html', context)
-
     except Event.DoesNotExist:
-        print('event does not exist')
-        messages.error(request, "The requested event does not exist.")
-        return redirect('index')
+        return HttpResponseNotFound()
     except Exception as e:
         print(f'error: {e}')
-        messages.error(request, f"An unexpected error occurred: {str(e)}")
-        return redirect('index')
+        return HttpResponseNotFound()
 
 def about(request):
     return render(request, 'papsas_app/view/about_us.html')
@@ -792,7 +788,11 @@ def decline_membership(request, id):
 
 @secretary_required
 def delete_membership(request, id):
-    userID = id
+    try:   
+        userID = get_object_or_404(User, user=id)
+    except:
+        return HttpResponseNotFound()
+    
     if request.method == 'POST':
         user_membership = UserMembership.objects.get(user=userID)
         user_membership.status = 'Declined'
@@ -801,7 +801,7 @@ def delete_membership(request, id):
 
 @secretary_required
 def get_user_info(request, id):
-    user = User.objects.get(id = id)
+    user = get_object_or_404(User, id = id)
     user_data = {
         'username' : user.email,
         'firstName' : user.first_name,
@@ -991,8 +991,8 @@ def event_list(request):
 
 @secretary_required
 def get_receipt(request, user_id):
+    user = get_object_or_404(User, id=user_id)
     try:
-        user = User.objects.get(id=user_id)
         user_registration = UserMembership.objects.get(user=user)
         receipt = user_registration.receipt.url
         receipt_data = {
@@ -1004,8 +1004,8 @@ def get_receipt(request, user_id):
         return JsonResponse({'error': 'User or UserMembership not found'}, status=404)
     
 def get_id(request, user_id):
+    user = User.objects.get(User, id=user_id)
     try:
-        user = User.objects.get(id=user_id)
         user_registration = UserMembership.objects.get(user=user)
         id = user_registration.verificationID.url
         id_data = {
@@ -1101,7 +1101,7 @@ def achievement_record(request):
 @officer_required
 def get_achievement_data(request, achievement_id):
     try:
-        achievement = Achievement.objects.get( id = achievement_id )
+        achievement = get_object_or_404( Achievement, id = achievement_id )
         if request.method =="POST":
             form = AchievementForm( request.POST, request.FILES, instance = achievement )
             if form.is_valid():
@@ -1124,8 +1124,8 @@ def get_achievement_data(request, achievement_id):
 
 @officer_required
 def update_news_offer(request, id):
+    news_offer = get_object_or_404(NewsandOffers, id = id)
     try:
-        news_offer = NewsandOffers.objects.get( id = id)
         if request.method == "POST":
             form = NewsForm( request.POST, request.FILES, instance=news_offer)
             if form.is_valid():
@@ -1398,7 +1398,7 @@ def approve_eventReg(request, id):
 
 @secretary_required
 def delete_eventReg(request, id):
-    eventReg = EventRegistration.objects.get( id = id)
+    eventReg = get_object_or_404( EventRegistration, id = id)
     if request.method == "POST":
         eventReg = EventRegistration.objects.get( id = id)
         eventReg.delete()
@@ -1408,8 +1408,8 @@ def delete_eventReg(request, id):
 
 @secretary_required
 def delete_news_offer(request, id):
+    news_offer = get_object_or_404(NewsandOffers, id = id)
     try:
-        news_offer = NewsandOffers.objects.get(id = id)
         news_offer.delete()
         messages.success(request, 'Deleted successfully!')
         return redirect('news_offers_table')
@@ -1421,7 +1421,7 @@ def delete_news_offer(request, id):
 @secretary_required
 def delete_venue(request, id):
     try:
-        venue = Venue.objects.get(id = id)
+        venue = get_object_or_404(Venue, id = id)
         if request.method == "POST":
             venue.delete()
             messages.success(request, 'Deleted successfully!')
@@ -1434,7 +1434,7 @@ def delete_venue(request, id):
 @secretary_required
 def update_venue(request, id):
     try:
-        venue = Venue.objects.get(id = id)
+        venue = get_object_or_404(Venue, id = id)
         if request.method == "POST":
             form = VenueForm(request.POST, instance = venue)
             if form.is_valid():
@@ -1475,7 +1475,7 @@ def delete_event (request, id):
 @secretary_required
 def update_event (request, id):
     try:
-        event = Event.objects.get(id = id)
+        event = get_object_or_404(Event, id = id)
         if request.method == "POST":
             form = EventForm(request.POST, request.FILES, instance = event)
             if form.is_valid:
@@ -1509,7 +1509,7 @@ def update_event (request, id):
 @secretary_required
 def get_attendees(request, event_id):
     try:
-        eventId = Event.objects.get(id=event_id)
+        eventId = get_object_or_404(Event, id=event_id)
         attendances = Attendance.objects.filter(event__event_id=eventId)
         attendees = []
         for attendance in attendances:
@@ -1525,7 +1525,7 @@ def get_attendees(request, event_id):
 
 def get_event_details(request, id):
     try:
-        event = Event.objects.get(id=id)
+        event = get_object_or_404(Event, id = id)
         data = {
             'name' : event.eventName,
             'startDate' : event.startDate,
