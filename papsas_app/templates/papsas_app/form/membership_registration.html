@@ -114,11 +114,24 @@
     <div class="form-container">
         <h3>Membership Form</h3>
     {% if is_member %}
-        {% if is_member.membershipVerification == False %}
+        {% if is_member.status == 'Pending' %}
             <h1> Your membership registration is on process.</h1>
             <p> Please wait for an email of the approval of your registration. Thank you!</p>
-        {% else %}
+        {% elif  is_member.status == 'Approved' %}
         <h1> You are already registered as {{ is_member.membership }} member.</h1>
+        <p> You can now access the member area.</p>
+        {% else %}
+        <h1> Your registration has been declined. </h1>
+        <p> Please contact us for more information. You may try to register again. </p>
+        <form action="{% url 'membership_registration' membership %}" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-group">
+                <div class="form-group label">
+                    {{form}}
+                </div>
+            </div>
+            <button type="submit" class="btn">Submit</button>
+        </form>
         {% endif %}
     {% else %}
         <form action="{% url 'membership_registration' membership %}" method="post" enctype="multipart/form-data">

@@ -750,7 +750,7 @@ def approve_membership(request, id):
     userID = id
     if request.method == 'POST':
         user_membership = UserMembership.objects.get(user=userID)
-        user_membership.membershipVerification = True
+        user_membership.status = 'Approved'
         user_membership.save()
         return redirect('membership_table')
     else:
@@ -761,23 +761,18 @@ def decline_membership(request, id):
     userID = id
     if request.method == 'POST':
         user_membership = UserMembership.objects.get(user=userID)
-        if user_membership.membershipVerification == True:
-            user_membership.membershipVerification = False
-            user_membership.save()
-            return redirect('membership_table')
-        else:
-            return redirect('membership_table')
+        user_membership.status = 'Declined'
+        user_membership.save()
+        return redirect('membership_table')
 
 @secretary_required
 def delete_membership(request, id):
     userID = id
     if request.method == 'POST':
         user_membership = UserMembership.objects.get(user=userID)
-        if user_membership.membershipVerification == False:
-            user_membership.delete()
-            return redirect('membership_table')
-        else:
-            return redirect('membership_table')
+        user_membership.status = 'Declined'
+        user_membership.save()
+        return redirect('membership_table')
 
 @secretary_required
 def get_user_info(request, id):
@@ -1895,8 +1890,12 @@ class NewsAndOffersListView(SingleTableView):
         return context
 
 def get_expiring_memberships():
+    today = timezone.now().date()
     three_days_from_now = timezone.now().date() + timedelta(days=3)
-    expiring_memberships = UserMembership.objects.filter(expirationDate__lte=three_days_from_now)
+    expiring_memberships = UserMembership.objects.filter(
+        expirationDate__gt = today,
+        expirationDate__lte = three_days_from_now
+        )
     return expiring_memberships
 
 def generate_qr(request, event_id):

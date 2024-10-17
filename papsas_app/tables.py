@@ -24,7 +24,6 @@ class MembershipTable(tables.Table):
     registrationDate = tables.Column(orderable=True, verbose_name="Registration Date")
     expirationDate = tables.Column(orderable=True, verbose_name="Expiration Date")
     verificationID = tables.Column(orderable=True, verbose_name="Verification Id")
-    membershipVerification = tables.Column(orderable=True, verbose_name="Status")
 
     def render_verificationID(self, value):
         if value:
@@ -38,7 +37,7 @@ class MembershipTable(tables.Table):
     class Meta:
         model = UserMembership
         template_name = "django_tables2/bootstrap.html"
-        fields = ("id", "first_name", "last_name", "membership", "membershipVerification", "registrationDate", "expirationDate", "receipt", "reference_number", "verificationID")
+        fields = ("id", "first_name", "last_name", "membership", "status", "registrationDate", "expirationDate", "receipt", "reference_number", "verificationID")
 
 class UserMembershipTable(MembershipTable):
     class Meta(MembershipTable.Meta):
