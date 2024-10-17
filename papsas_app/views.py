@@ -20,7 +20,7 @@ from django.http import JsonResponse
 from .models import User, MembershipTypes, Vote, Event, Officer
 from django.db import models
 # Imported Forms
-from .forms import AttendanceForm, EventRegistrationForm, EventForm, ProfileForm, RegistrationForm, LoginForm, MembershipRegistration, Attendance, VenueForm, AchievementForm, NewsForm, UserUpdateForm, EventRatingForm
+from .forms import AttendanceForm, EventRegistrationForm, EventForm, ProfileForm, RegistrationForm, LoginForm, MembershipRegistration, Attendance, VenueForm, AchievementForm, NewsForm, UserUpdateForm, EventRatingForm, TORForm
 from datetime import date, timedelta
 from django.contrib.auth.forms import PasswordResetForm
 from io import BytesIO
@@ -397,7 +397,7 @@ def election(request):
         'electionList': electionList,
         'ongoingElection': ongoingElection,
         'table': table,
-        'filter': filter
+        'filter': filter,
     })
 
 @secretary_required
@@ -441,10 +441,15 @@ def new_officer(request, num_winners):
 def vote(request):
     user = request.user
     ongoingElection = Election.objects.get( electionStatus = True )
-    attended_event = Attendance.objects.filter( user = user, attended = True )
+    attended_event = Attendance.objects.filter( user = user, attended = True ).count()
     # candidates = Candidacy.objects.filter( election = ongoingElection )
     candidates = Candidacy.objects.filter(election=ongoingElection).annotate(vote_count=Count('nominee'))
+    print(candidates)
 
+    try:
+        has_declared = Candidacy.objects.get( candidate = user , election = ongoingElection )
+    except:
+        has_declared = None
 
     if request.POST:
         selected_candidates = request.POST.getlist('candidates')
@@ -482,6 +487,8 @@ def vote(request):
             'attended_event' : attended_event,
             'ongoingElection' : ongoingElection,
             'votes' : Vote.objects.filter( voterID = user, election = ongoingElection),
+            'user' : request.user,
+            'has_declared' : has_declared
         })
 
 @login_required
@@ -1933,3 +1940,33 @@ class ElectionListView(SingleTableView):
         context['filter'] = self.filterset
         context['electionId'] = self.kwargs.get('election_id')
         return context
+
+def upload_tor(request, id):
+    user = request.user
+    if request.method =='POST':
+        # save the image as profilePic from 
+        form = TORForm(request.POST, request.FILES)
+        if form.is_valid():
+            tor = form.cleaned_data['tor']
+            user.tor = tor
+            user.save()
+            return redirect('profile', id = id)
+        
+def declare_candidacy(request, id):
+    user = request.user
+    election = Election.objects.get( id = id )
+    attended_event = Attendance.objects.filter( user = user, attended = True ).count()
+    if request.method == 'POST':
+        if attended_event >= 2 and user.tor:
+            # Create a new Candidacy record
+            candidacy = Candidacy(
+                candidate=user,
+                election=election
+            )
+            candidacy.save()
+            messages.success(request, 'Candidacy submitted successfully!')
+            return redirect('vote')
+        else:
+            messages.error(request, 'You must attend at least 2 events and have your TOR to declare your candidacy.')
+
+    

@@ -91,6 +91,11 @@ class ProfileForm(forms.ModelForm):
         model = User
         fields = ('profilePic',)
 
+class TORForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ('tor',)
+
 class AttendanceForm(forms.ModelForm):
     class Meta:
         model = Attendance

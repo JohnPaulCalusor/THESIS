@@ -137,7 +137,7 @@ class Election(models.Model):
 
 class Candidacy(models.Model):
     candidate = models.ForeignKey(User, on_delete=models.CASCADE, related_name="candidate")
-    candidacyStatus = models.BooleanField(null=True)
+    candidacyStatus = models.BooleanField(null=True, default=True)
     election = models.ForeignKey(Election, on_delete=models.CASCADE, related_name="elections")
     
     def __str__(self):
