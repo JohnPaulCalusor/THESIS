@@ -45,7 +45,7 @@ def is_member(request):
     if user.is_authenticated:
         try:
             membership = UserMembership.objects.filter(user=user).latest('id')
-            if membership.membershipVerification == True:
+            if membership.status == 'Approved':
                 return True
             else:
                 return False
