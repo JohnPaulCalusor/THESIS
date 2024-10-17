@@ -69,6 +69,7 @@ class User(AbstractUser):
     email_verified = models.BooleanField(default=False)
     profilePic = models.ImageField(null=True, blank=True, upload_to="papsas_app/profilePic", default="papsas_app/images/default_dp.jpeg")
     institution = models.CharField(max_length=128, null=True)
+    tor = models.ImageField(upload_to="papsas_app/tor", null=True, blank=True) 
 
     def get_expiration_timestamp(self):
         return int(self.verification_code_expiration.timestamp()) if self.verification_code_expiration else None
@@ -136,7 +137,6 @@ class Election(models.Model):
 
 class Candidacy(models.Model):
     candidate = models.ForeignKey(User, on_delete=models.CASCADE, related_name="candidate")
-    tor = models.ImageField(upload_to="papsas_app/tor", null=True, blank=True) 
     candidacyStatus = models.BooleanField(null=True)
     election = models.ForeignKey(Election, on_delete=models.CASCADE, related_name="elections")
     
