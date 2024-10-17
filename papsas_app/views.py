@@ -464,6 +464,7 @@ def vote(request):
             return render(request, 'papsas_app/form/vote.html', {
                 'message' : 'You already voted for this election!',
                 'attended_event' : attended_event,  
+                'has_declared' : has_declared
             })
 
         vote = Vote.objects.create(voterID=user, election = ongoingElection)
