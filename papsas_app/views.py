@@ -582,6 +582,11 @@ def event(request):
     return render(request, 'papsas_app/event_management.html', {'form': form})
 
 def attendance_form(request, event_id):
+    try:
+        event = Event.objects.get(id=event_id)
+    except Event.DoesNotExist:
+        return HttpResponseNotFound('Event not found')
+    
     if request.method == 'POST':
         form = AttendanceForm(request.POST)
         if form.is_valid():
