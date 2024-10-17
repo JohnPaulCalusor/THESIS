@@ -7,6 +7,10 @@ body {
     height: 100vh;
 }
 
+.tor{
+    justify-content: space-between;
+}
+
 .profile-card {
     background-color: white;
     border-radius: 10px;
