@@ -10,40 +10,49 @@ class RegistrationForm(forms.ModelForm):
         widgets = {
             'email' : forms.EmailInput(attrs={
                 'placeholder' : 'Email',
-                'class': 'input-field'
+                'class': 'input-field',
+                'required' : True
             }),
             'password' : forms.PasswordInput(render_value=True, attrs={
                 'placeholder' : 'Password',
-                'class': 'input-field'
+                'class': 'input-field',
+                'required' : True,
             }),
             'birthdate' : forms.DateInput(attrs={
                 'type': 'date',
                 'placeholder' : 'Date of Birth',
-                'class': 'input-field'
+                'class': 'input-field',
+                'required' : True
             }),
             'first_name' : forms.TextInput(attrs={
                 'placeholder' : 'First Name',
-                'class': 'input-field'
+                'class': 'input-field',
+                'required' : True
             }),
             'last_name' : forms.TextInput(attrs={
                 'placeholder' : 'Last Name',
-                'class': 'input-field'
+                'class': 'input-field',
+                'required' : True
             }),
             'mobileNum' : forms.TextInput(attrs={
                 'placeholder' : 'Mobile Number',
-                'class': 'input-field'
+                'class': 'input-field',
+                'required' : True
             }),
             'address' : forms.TextInput(attrs={
                 'placeholder' : 'Address',
-                'class': 'input-field'
+                'class': 'input-field',
+                'required' : True
             }),
             'age' : forms.NumberInput(attrs={
                 'placeholder' : 'Age',
-                'class': 'input-field'
+                'class': 'input-field',
+                'required' : True
             }),
             'institution' : forms.TextInput(attrs={
                 'placeholder' : 'Institution',
-                'class': 'input-field'
+                'class': 'input-field',
+                'required' : True
             }),
         }
     
@@ -51,6 +60,14 @@ class RegistrationForm(forms.ModelForm):
         super(RegistrationForm, self).__init__(*args, **kwargs)
         self.fields['birthdate'].label = 'Date of Birth'
         self.fields['region'].widget.attrs['class'] = 'input-field'
+
+    def clean_your_number(self):
+        data = self.cleaned_data['mobileNum']
+        try:
+            integer_value = int(data)
+        except ValueError:
+            raise forms.ValidationError("This field must be an integer.")
+        return integer_value
 
 # gawing basis
 class LoginForm(forms.ModelForm):

@@ -77,21 +77,22 @@
                 <div class="input-box">
                     {{ form.institution }}
                 </div>
-                <div class="error-message">
-                    {% if message %}
-                        <div>{{ message }}</div>
-                    {% endif %}
-                    <ul>
-                        {% for field in form %}
-                            {% if field.errors %}
-                                <li>{{ field.errors.as_text }}</li>
-                            {% endif %}
-                        {% endfor %}
-                    </ul>
-                </div>
+
                 <div class="input-submit">
                     <button type="submit" class="submit-btn">Register</button>
                 </div>
+                {% if form.errors %}
+                <div class="error-messages">
+                    {% for field in form %}
+                        {% for error in field.errors %}
+                            <p class="error">{{ field.label }}: {{ error }}</p>
+                        {% endfor %}
+                    {% endfor %}
+                    {% for error in form.non_field_errors %}
+                        <p class="error">{{ error }}</p>
+                    {% endfor %}
+                </div>
+                {% endif %}
 
             </div>
         </div>

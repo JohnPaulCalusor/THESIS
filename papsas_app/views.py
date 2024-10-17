@@ -35,6 +35,7 @@ from django_tables2 import SingleTableView, RequestConfig, SingleTableMixin
 from .tables import UserTable, MembershipTable, EventTable, EventRegistrationTable, EventAttendanceTable, VenueTable, AchievementTable, NewsAndOfferTable, UserMembershipTable, UserEventRegistrationTable, UserEventAttendanceTable, ElectionTable, VoteTable
 from .filters import UserFilter, ElectionFilter, MembershipFilter, EventFilter, EventRegistrationFilter, AttendanceFilter, VenueFilter, AchievementFilter, NewsAndOfferFilter, CandidateFilter
 from django_filters.views import FilterView
+from django.contrib.auth.password_validation import validate_password
 
 
 # Create your views here.
@@ -194,10 +195,15 @@ def register(request):
                 age = form.cleaned_data['age']
                 birthDate = form.cleaned_data['birthdate']
 
+                try:
+                    validate_password(password)
+                except Exception as e:
+                    form.add_error('password', e)
+
                 if region == 'Region':
-                    form.add_error('region', 'Please select a valid region.')
+                    form.add_error('region', 'Select a valid region.')
                 if occupation == 'Occupation':
-                    form.add_error('occupation', 'Please select a valid occupation.')
+                    form.add_error('occupation', 'Select a valid occupation.')
 
                 if birthDate:
                     calculated_age = date.today().year - birthDate.year - ((date.today().month, date.today().day) < (birthDate.month, birthDate.day))
@@ -223,13 +229,12 @@ def register(request):
                     user.save()
 
                     return redirect('verify_email', user_id=user.id)
-
             except IntegrityError:
                 form.add_error('email', 'A user with this email already exists.')
 
         return render(request, 'papsas_app/register.html', {
             'form': form,
-            'message': 'Please correct the highlighted errors below.'
+            'message': 'Enter valid input.'
         })
 
     return render(request, 'papsas_app/register.html', {
@@ -274,7 +279,10 @@ def login_view(request):
         })
 
 def verify_email(request, user_id):
-    user = User.objects.get(id=user_id)
+    try:  
+        user = User.objects.get(id=user_id)
+    except:
+        return HttpResponseNotFound()
     
     if request.method == 'POST':
         if 'resend_code' in request.POST:
@@ -494,10 +502,14 @@ def vote(request):
 
 @login_required
 def profile(request, id):
-    candidacies = Candidacy.objects.filter( candidate = id )
-    attended_event = Attendance.objects.filter( user = id )
-    elected_officer = Officer.objects.filter(candidateID__candidate= id)
-    user = User.objects.get( id = id)
+    try:
+        candidacies = Candidacy.objects.filter( candidate = id )
+        attended_event = Attendance.objects.filter( user = id )
+        elected_officer = Officer.objects.filter(candidateID__candidate= id)
+        user = User.objects.get( id = id)
+    except:
+        # subject to change
+        return HttpResponse("Invalid user!", status=400)
     form = ProfileForm()
 
     if request.method =='POST':
