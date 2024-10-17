@@ -2,7 +2,7 @@
     <a class="action-icon" title="Edit" onclick="fetchUserInfo('{{ record.id }}')">
         <i class="fas fa-edit"></i>
     </a>
-    <form action="{% url 'delete_account' user.id %}" method="post">
+    <form action="{% url 'delete_account' record.id %}" method="post">
         {% csrf_token %}
         <button class="action-icon" title="Delete" type="submit">
             <i class="fas fa-trash-alt"></i>
