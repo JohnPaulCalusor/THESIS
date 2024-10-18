@@ -834,7 +834,6 @@ def password_reset_request(request):
         email = request.POST.get('email')
         try:
             user = User.objects.get(email=email)
-            
             # Generate new verification code if it is missing or expired
             if (user.verification_code is None or 
                 user.verification_code_expiration is None or 
@@ -868,6 +867,7 @@ def password_reset_verify(request, user_id):
     if request.method == 'POST':
         # check if meron pa exising code, if wala, return as is
         if user.verification_code_expiration is None or timezone.now() > user.verification_code_expiration:
+            print('wala code')
             if 'resend_code' in request.POST:
                 # Resend the verification code
                 user.verification_code = random.randint(100000, 999999)
@@ -899,6 +899,7 @@ def password_reset_verify(request, user_id):
                 )
 
                 if user.verification_code_expiration and timezone.now() > user.verification_code_expiration:
+                    print('may code')
                     return render(request, 'papsas_app/password_reset_verify.html', {
                         'message': 'Verification code has expired. Please request a new one.',
                         'resend_code': True,  # Show the resend button
@@ -937,8 +938,6 @@ def password_reset_verify(request, user_id):
         send_mail(subject, message, 'your_email@example.com', [user.email])
 
         message_context = 'A new verification code has been sent to your email address.'
-    else:
-        message_context = 'You still have a valid verification code.'
 
     return render(request, 'papsas_app/password_reset_verify.html', {
         'user': user,
