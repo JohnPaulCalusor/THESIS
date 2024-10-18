@@ -84,6 +84,10 @@ class User(AbstractUser):
         else:
             self.verification_code = None
             self.verification_code_expiration = None
+        if self.pk is None:
+            self.set_password(self.password)
+        elif self._password is not None:
+            self.set_password(self._password)
         super().save(*args, **kwargs)
     
     class Meta:
@@ -99,6 +103,9 @@ class MembershipTypes(models.Model):
 
     def __str__(self):
         return f'{self.type}'
+    
+    class Meta:
+        ordering = ['id']
     
 class UserMembership(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='member')

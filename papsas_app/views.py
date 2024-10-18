@@ -696,17 +696,36 @@ def update_account(request, id):
     try:
         user = User.objects.get(id=id)
         form = UserUpdateForm(instance=user)
+
         if request.method == 'POST':
-            form = UserUpdateForm(request.POST, instance = user )
+            form = UserUpdateForm(request.POST, instance=user)
             if form.is_valid():
+                region = form.cleaned_data.get('region')
+                occupation = form.cleaned_data.get('occupation')
+                birthDate = form.cleaned_data.get('birthdate')
+                age = form.cleaned_data.get('age')
+
+                if region == 'Region':
+                    form.add_error('region', 'Select a valid region.')
+                if occupation == 'Occupation':
+                    form.add_error('occupation', 'Select a valid occupation.')
+
+                if birthDate:
+                    calculated_age = date.today().year - birthDate.year - ((date.today().month, date.today().day) < (birthDate.month, birthDate.day))
+                    if age != calculated_age:
+                        form.add_error('age', 'Birthdate and Age did not match. Please input the correct details')
+
+                if form.errors:
+                    return JsonResponse({'errors': form.errors}, status=400)  # Return errors if form is not valid
+
                 form.save()
-                return redirect('user_table')
+                return JsonResponse({'success': 'User  updated successfully'}, status=200)  # Return success response
+
             else:
-                errors = form.errors.as_json()
-                return HttpResponse(errors, content_type='application/json')
+                return JsonResponse({'errors': form.errors}, status=400)  # Return errors if form is not valid
 
     except Exception as e:
-        return HttpResponseForbidden(f'Error: {e}')
+        return JsonResponse({'error': str(e)}, status=500)  # Return error message
 
 @login_required
 def membership_registration(request, mem_id):
