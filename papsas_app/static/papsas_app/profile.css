@@ -5,6 +5,8 @@ body {
     justify-content: center;
     align-items: center;
     height: 100vh;
+    margin-top: 10rem;
+    margin-bottom: 10rem;
 }
 
 .tor{
@@ -126,7 +128,11 @@ body {
     padding: 5px 0;
 }
 
-
+.info-value img{
+    height: 40%;
+    width: 40%;
+    align-items: center;
+}
 .modal {
     display: none;
     position: fixed;

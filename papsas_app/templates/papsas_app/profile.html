@@ -73,23 +73,7 @@
                 <div class="info-label">Birthdate</div>
                 <div class="info-value">{{ user.birthdate}}</div>
             </div>
-            {% if user.tor %}
-                <div class="info-label">TOR</div>
-                <div class="info-value">
-                    <img src="{{ user.tor.url }}" alt="{{ user. }}" srcset="">
-                </div>
-            {% else %}
-            <div class="info-row">
-                <div class="info-label">TOR</div>
-                <div class="info-value">
-                    <form action="{% url 'upload_tor' user.id %}" id="tor-form" method="post" enctype="multipart/form-data">
-                        {% csrf_token %}
-                        <input type="file" name="tor" id="upload-pic" class="file-input" accept="image/*" onchange="this.form.submit()"">
-                        <button type="submit" class="upload-btn" style="display: none;">Submit</button>
-                    </form>
-                </div>
-            </div>
-            {% endif %}
+
         </div>
 
 
@@ -97,6 +81,27 @@
     <div id="imageModal" class="modal">
         <span class="close" onclick="closeModal()">&times;</span>
         <img class="modal-content" id="modalImage">
+    </div>
+    <div class="personal-info">
+        <div class="title-activities"> 
+            <h1>Transcript of Records</h1>
+        </div>
+        {% if user.tor %}
+        <div class="info-value">
+            <img src="{{ user.tor.url }}" alt="{{ user. }}" srcset="">
+        </div>
+    {% else %}
+    <div class="info-row">
+
+        <div class="info-value">
+            <form action="{% url 'upload_tor' user.id %}" id="tor-form" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input type="file" name="tor" id="upload-pic" class="file-input" accept="image/*" onchange="this.form.submit()"">
+                <button type="submit" class="upload-btn" style="display: none;">Submit</button>
+            </form>
+        </div>
+    </div>
+    {% endif %}
     </div>
     <div class="personal-info">
     <div class="title-activities"> 
