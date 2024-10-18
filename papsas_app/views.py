@@ -759,7 +759,7 @@ def approve_membership(request, id):
         user_membership.save()
 
         subject = 'Membership Approved'
-        message = f'Dear {user_membership.user.first_name},\n\nYour membership has been approved.\n\nBest regards,\nYour Organization'
+        message = f'Dear {user_membership.user.first_name},\n\nYour membership has been approved.\n\nBest regards,\nPASAS INC.'
         send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [user_membership.user.email])
 
         return redirect('membership_table') 
@@ -775,7 +775,7 @@ def decline_membership(request, id):
         user_membership.save()
 
         subject = 'Membership Declined'
-        message = f'Dear {user_membership.user.first_name},\n\nWe regret to inform you that your membership has been declined.\n\nBest regards,\nYour Organization'
+        message = f'Dear {user_membership.user.first_name},\n\nWe regret to inform you that your membership has been declined.\n\nBest regards,\nPAPSAS INC.'
         send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [user_membership.user.email])
 
         return redirect('membership_table') 
