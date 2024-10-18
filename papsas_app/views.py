@@ -725,7 +725,7 @@ def update_account(request, id):
                 return JsonResponse({'errors': form.errors}, status=400)  # Return errors if form is not valid
 
     except Exception as e:
-        return JsonResponse({'error': str(e)}, status=500)  # Return error message
+        return JsonResponse({'error': str(e)}, status=500) 
 
 @login_required
 def membership_registration(request, mem_id):
@@ -1193,16 +1193,18 @@ def news_offers_record(request):
 @csrf_exempt
 @secretary_required
 def delete_account(request, id):
+    user = get_object_or_404(User, id=id)
     try:
-        accounts = User.objects.all()
-        user = User.objects.get( id = id)
-        
         if request.method == 'POST':
+            print(2)
             user.is_active = False
             user.save()
-            return redirect('user_table')
-    except:
-        return HttpResponseNotFound('User not Found')
+            messages.success(request, 'Deactivated   user successfully.')  # Add a success message
+            return redirect('user_table')  # Redirect to the user table view or appropriate view
+    except Exception as e:
+        print(1)
+        messages.error(request, f'Error: {e}')  # Add an error message
+        return redirect('user_table') 
 
 #htmx functions
 

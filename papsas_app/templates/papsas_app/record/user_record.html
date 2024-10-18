@@ -49,8 +49,15 @@
             Total Records: {{ table.rows|length }}
         </div>
         {% include 'papsas_app/partial_list/account_list.html' %}
-        
+        {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
     </div>
+    
 </div>
 
 <div id="details-container">
