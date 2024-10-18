@@ -772,31 +772,37 @@ def membership_record(request):
 @secretary_required 
 def approve_membership(request, id): 
     userID = id 
-    if request.method == 'POST': 
-        user_membership = UserMembership.objects.get(user=userID) 
-        user_membership.status = 'Approved' 
-        user_membership.save()
+    try:
+        if request.method == 'POST': 
+            user_membership = UserMembership.objects.get(user=userID) 
+            user_membership.status = 'Approved' 
+            user_membership.save()
 
-        subject = 'Membership Approved'
-        message = f'Dear {user_membership.user.first_name},\n\nYour membership has been approved.\n\nBest regards,\nPASAS INC.'
-        send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [user_membership.user.email])
-
+            subject = 'Membership Approved'
+            message = f'Dear {user_membership.user.first_name},\n\nYour membership has been approved.\n\nBest regards,\nPASAS INC.'
+            send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [user_membership.user.email])
+            messages.success(request, 'Membership approval successful.')
+            return redirect('membership_table') 
+    except Exception as e: 
+        messages.error(request, f'Error: {e}')
         return redirect('membership_table') 
-    else: 
-        return render(request, 'papsas_app/index.html')
 
 @secretary_required 
 def decline_membership(request, id): 
-    userID = id 
-    if request.method == 'POST': 
-        user_membership = UserMembership.objects.get(user=userID) 
-        user_membership.status = 'Declined' 
-        user_membership.save()
+    userID = get_object_or_404( User, id = id )
+    try:
+        if request.method == 'POST': 
+            user_membership = UserMembership.objects.get(user=userID) 
+            user_membership.status = 'Declined' 
+            user_membership.save()
 
-        subject = 'Membership Declined'
-        message = f'Dear {user_membership.user.first_name},\n\nWe regret to inform you that your membership has been declined.\n\nBest regards,\nPAPSAS INC.'
-        send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [user_membership.user.email])
-
+            subject = 'Membership Declined'
+            message = f'Dear {user_membership.user.first_name},\n\nWe regret to inform you that your membership has been declined.\n\nBest regards,\nPAPSAS INC.'
+            send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [user_membership.user.email])
+            messages.success(request, 'Successfully declined membership.')
+            return redirect('membership_table') 
+    except Exception as e:
+        messages.error(request, f'Error: {e}')
         return redirect('membership_table') 
 
 @secretary_required
