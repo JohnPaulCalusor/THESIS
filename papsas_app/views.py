@@ -824,11 +824,23 @@ def event_calendar(request):
 
 # Password Reset Request View (Sends Verification Code)
 def password_reset_request(request):
+    form = PasswordResetForm()
     if request.method == 'POST':
-        email = request.POST.get('email')
-        try:
-            user = User.objects.get(email=email)
-            # Generate new verification code if it is missing or expired
+        # email = request.POST.get('email')
+        form = PasswordResetForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data['email']
+            try:
+                user = User.objects.get(email=email)    
+
+            except ObjectDoesNotExist:
+                form.add_error('email', 'Enter existing email.')
+                return redirect('password_reset')
+            except Exception as e:
+                print(e)    
+                form.add_error('email', e)
+                return redirect('password_reset')
+            
             if (user.verification_code is None or 
                 user.verification_code_expiration is None or 
                 timezone.now() > user.verification_code_expiration):
@@ -837,19 +849,15 @@ def password_reset_request(request):
                 user.verification_code_expiration = timezone.now() + timedelta(minutes=2)
                 user.save()
 
-                # Send email with the new verification code
                 subject = 'Password Reset Verification Code'
                 message = f'Dear {user.first_name},\n\nYour verification code is: {user.verification_code}\n\nPlease enter this code to reset your password.\n\nBest regards,\nPhilippine Association of Practioners of Student Affairs and Services'
                 send_mail(subject, message, 'your_email@example.com', [user.email])
 
             return redirect('password_reset_verify', user_id=user.id)
-
-        except ObjectDoesNotExist:
-            messages.error(request, 'User with this email does not exist.')
-            return redirect('password_reset')
-
+        else:
+            print(form.errors)
+            return render(request, 'papsas_app/password_reset.html', {'form': form})  
     else:
-        form = PasswordResetForm()
         form.fields['email'].widget.attrs['placeholder'] = 'Enter your email address'
         form.fields['email'].widget.attrs['class'] = 'password-reset'
         return render(request, 'papsas_app/password_reset.html', {'form': form})
