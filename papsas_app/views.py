@@ -937,7 +937,7 @@ def password_reset_verify(request, user_id):
         'user': user,
         'resend_code': False,  # Initially hide the resend button
         'expiration_timestamp': int(user.verification_code_expiration.timestamp()),
-        'message': message_context  # Pass the appropriate message based on code generation
+        'message': ''  # Pass the appropriate message based on code generation
     })
 
 def password_reset_confirm(request, user_id):
