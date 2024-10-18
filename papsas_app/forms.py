@@ -123,18 +123,23 @@ occupation = [
     ('Practitioner', 'Practitioner'),
 ]
 
-class EventForm(forms.ModelForm):
+from django import forms
+from .models import Event
+from django.utils import timezone
 
+class EventForm(forms.ModelForm):
     class Meta:
         model = Event
         fields = ('eventName', 'startDate', 'endDate', 'venue', 'exclusive', 'eventDescription', 'pubmat', 'price', 'startTime', 'endTime')
         widgets = {
-            'startDate': forms.DateInput(attrs={'type': 'date'}),
+            'startDate': forms.DateInput(attrs={
+                'type': 'date',
+                'min': timezone.now().date().isoformat()  # Set minimum date to today
+            }),
             'endDate': forms.DateInput(attrs={'type': 'date'}),
             'startTime': forms.DateInput(attrs={'type': 'time'}),
             'endTime': forms.DateInput(attrs={'type': 'time'}),
         }
-        # required_fields = [list] to make the fields required
 
     def clean_pubmat(self):
         pubmat = self.cleaned_data.get('pubmat')
@@ -144,7 +149,7 @@ class EventForm(forms.ModelForm):
         if not pubmat:  # If no image uploaded during creation
             raise forms.ValidationError("Image is required when creating a new achievement.")
         return pubmat
-
+    
 class EventRegistrationForm(forms.ModelForm):
     class Meta:
         model = EventRegistration
