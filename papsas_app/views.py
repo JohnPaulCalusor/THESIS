@@ -612,22 +612,6 @@ def attendance_form(request, event_id):
         form = AttendanceForm()
     return render(request, 'papsas_app/form/attendance_form.html', {'form': form, 'event_id': event_id})
 
-# ano to (check)
-@practitioner_required
-def mark_attendance(request, event_id):
-    event = Event.objects.get(id=event_id)
-    if request.method == 'POST':
-        user_id = request.POST['user_id']
-        try:
-            user = User.objects.get(id=user_id)
-            attendance, created = Attendance.objects.get_or_create(user=user, event=event)
-            attendance.attended = True
-            attendance.save()
-            return render(request, 'papsas_app/attendance_success.html')
-        except User.DoesNotExist:
-            return render(request, 'papsas_app/attendance_error.html', {'error': 'Invalid user ID'})
-    return render(request, 'papsas_app/form/attendance_form.html', {'event': event})
-
 
 # register event
 @login_required
@@ -766,25 +750,35 @@ def membership_record(request):
     else:
         return redirect('index')
     
-@secretary_required
-def approve_membership(request, id):
-    userID = id
-    if request.method == 'POST':
-        user_membership = UserMembership.objects.get(user=userID)
-        user_membership.status = 'Approved'
+@secretary_required 
+def approve_membership(request, id): 
+    userID = id 
+    if request.method == 'POST': 
+        user_membership = UserMembership.objects.get(user=userID) 
+        user_membership.status = 'Approved' 
         user_membership.save()
-        return redirect('membership_table')
-    else:
+
+        subject = 'Membership Approved'
+        message = f'Dear {user_membership.user.first_name},\n\nYour membership has been approved.\n\nBest regards,\nYour Organization'
+        send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [user_membership.user.email])
+
+        return redirect('membership_table') 
+    else: 
         return render(request, 'papsas_app/index.html')
 
-@secretary_required
-def decline_membership(request, id):
-    userID = id
-    if request.method == 'POST':
-        user_membership = UserMembership.objects.get(user=userID)
-        user_membership.status = 'Declined'
+@secretary_required 
+def decline_membership(request, id): 
+    userID = id 
+    if request.method == 'POST': 
+        user_membership = UserMembership.objects.get(user=userID) 
+        user_membership.status = 'Declined' 
         user_membership.save()
-        return redirect('membership_table')
+
+        subject = 'Membership Declined'
+        message = f'Dear {user_membership.user.first_name},\n\nWe regret to inform you that your membership has been declined.\n\nBest regards,\nYour Organization'
+        send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [user_membership.user.email])
+
+        return redirect('membership_table') 
 
 @secretary_required
 def delete_membership(request, id):
