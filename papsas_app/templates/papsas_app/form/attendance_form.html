@@ -104,7 +104,7 @@
 <div class="container">
   <div class="form-container">
   <h3>Attendance Form</h3>
-      <form method="post">
+      <form method="post" action="{% url 'attendance_form' event_id %}">
         {% csrf_token %}
         <label for="id">Enter your ID:</label>
         <input type="text" id="id" name="id">

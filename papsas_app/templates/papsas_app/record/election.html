@@ -65,7 +65,13 @@
                                     {% csrf_token %}
                                     <button type="submit" class="submit-btn">Stop Election</button>
                                 </form>
-                                <button class="submit-btn"> View Election Progress </button>
+                           
+                                <a href="{% url 'election_table' election.id %}" class="submit-btn">
+                                    <button class="submit-btn">
+                                        View Election Progress
+                                    </button>
+                                </a>
+                             
                             {% endif %}
                         {% endfor %}
                     </div>
