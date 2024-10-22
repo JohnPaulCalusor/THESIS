@@ -665,8 +665,13 @@ def become_member(request):
 
 def news_offers(request):
     news_offers = NewsandOffers.objects.all()
+
+    paginator = Paginator(news_offers, 10)
+    page_number = request.GET.get('page')
+    news_offers_page = paginator.get_page(page_number)
+    
     return render(request, 'papsas_app/view/news_offers.html', {
-        'news_offers' : news_offers
+        'news_offers' : news_offers_page
     })
 
 @secretary_required
@@ -1103,9 +1108,14 @@ def compose_news_offer(request):
 
 def achievement_view(request):
     achievements = Achievement.objects.all()
+    
+    paginator = Paginator(achievements, 5) 
+    page_number = request.GET.get('page')  
+    achievements_page = paginator.get_page(page_number) 
+
     return render(request, 'papsas_app/view/achievement_view.html', {
-        'achievements' : achievements,
-    } )
+        'achievements': achievements_page,
+    })
 
 @officer_required
 def venue_record(request):

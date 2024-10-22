@@ -22,6 +22,24 @@
     </div>
     {% endfor %}
 </div>
+
+<div class="pagination">
+    <span class="step-links">
+        {% if achievements.has_previous %}
+            <a href="?page=1">&laquo; first</a>
+            <a href="?page={{ achievements.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ achievements.number }} of {{ achievements.paginator.num_pages }}.
+        </span>
+
+        {% if achievements.has_next %}
+            <a href="?page={{ achievements.next_page_number }}">next</a>
+            <a href="?page={{ achievements.paginator.num_pages }}">last &raquo;</a>
+        {% endif %}
+    </span>
+</div>
 <footer class="footer">
     <div class="footer__container container">
         <div class="footer__content">
