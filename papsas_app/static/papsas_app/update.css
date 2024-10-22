@@ -48,12 +48,12 @@
     flex-direction: column; /* Align label and input vertically */
 }
 /* Close button style */
-.upd-close-modal {
+.upd-close-modal , .det-close-modal {
     cursor: pointer; /* Show pointer on hover */
     float: right; /* Align close icon to the right */
     font-size: 24px; /* Adjust size */
 }
-.upd-close-modal:hover{
+.upd-close-modal:hover , .det-close-modal:hover{
     color: red;
 }
 /* Optional: Style the update button */

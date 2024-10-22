@@ -18,6 +18,7 @@ class UserTable(tables.Table):
         fields = ("id", "first_name", "last_name", "email", "address", "region", "occupation", "age", "is_active" , "birthdate", "email_verified", "profilePic", "institution"    )
 
 class MembershipTable(tables.Table):
+    status = tables.Column(orderable=True, verbose_name="Status", attrs={"td": {"class": "status-column"}})
     actions = tables.TemplateColumn(template_name='papsas_app/partial_list/membership_action_column.html', orderable=False, verbose_name='Actions')
     first_name = tables.Column(accessor='user.first_name', verbose_name='First Name')
     last_name = tables.Column(accessor='user.last_name', verbose_name='Last Name')

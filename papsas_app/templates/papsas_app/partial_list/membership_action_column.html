@@ -20,13 +20,13 @@
 
 <form action="{% url 'approve_membership' record.user.id %}" method="post" style="display:inline;" onsubmit="return false;">
     {% csrf_token %}
-    <button type="button" class="action-icon" title="Approve" onclick="disableButton(this)">
+    <button type="button" class="action-icon" id="approve-button" title="Approve" onclick="disableButton(this)">
         <i class="fas fa-check"></i>
     </button>
 </form>
 <form action="{% url 'decline_membership' record.user.id %}" method="post" style="display:inline;" onsubmit="return false;">
     {% csrf_token %}
-    <button type="button" class="action-icon" title="Decline" onclick="disableButton(this)">
+    <button type="button" class="action-icon" id="decline-button" title="Decline" onclick="disableButton(this)">
         <i class="fas fa-times"></i>
     </button>
 </form>

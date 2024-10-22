@@ -805,6 +805,7 @@ def decline_membership(request, id):
         messages.error(request, f'Error: {e}')
         return redirect('membership_table') 
 
+# not used currently, but can be used in the future
 @secretary_required
 def delete_membership(request, id):
     try:   
