@@ -167,7 +167,7 @@ def rate_event(request, event_id):
             rating.user = request.user
             rating.updated_at = timezone.now()
             rating.save()
-            messages.success(request, 'Rating submitted successfully!')
+            messages.success(request, 'Rating submitted successfully.')
             return redirect('index')
     else:
         if existing_rating:
@@ -463,14 +463,14 @@ def vote(request):
         selected_candidates = request.POST.getlist('candidates')
 
         if not selected_candidates:
-            return HttpResponse("No candidate selected!" , status=400)
+            return HttpResponse("No candidate selected." , status=400)
         try:
             user_voted = Vote.objects.filter( voterID = user, election = ongoingElection)
         except Vote.DoesNotExist:
             user_voted = None
         if user_voted:
             return render(request, 'papsas_app/form/vote.html', {
-                'message' : 'You already voted for this election!',
+                'message' : 'You already voted for this election.',
                 'attended_event' : attended_event,  
                 'has_declared' : has_declared
             })
@@ -484,7 +484,7 @@ def vote(request):
                     candidate_obj = Candidacy.objects.get(id = candidate_id, election = ongoingElection)
                     vote.candidateID.add(candidate_obj)
                 except Candidacy.DoesNotExist:
-                    return HttpResponse("Invalid candidate!", status=400)
+                    return HttpResponse("Invalid candidate.", status=400)
         else:
             return render(request, 'papsas_app/form/vote.html', {
                 'message' : 'You voted above the limit'
@@ -509,7 +509,7 @@ def profile(request, id):
         user = User.objects.get( id = id)
     except:
         # subject to change
-        return HttpResponse("Invalid user!", status=400)
+        return HttpResponse("Invalid user.", status=400)
     form = ProfileForm()
 
     if request.method =='POST':
@@ -576,7 +576,7 @@ def event(request):
                     logger.error("Error sending email: %s", e)
 
 
-            return redirect('index')
+            return redirect('event_table')
     else:
         form = EventForm
     return render(request, 'papsas_app/event_management.html', {'form': form})
@@ -689,7 +689,7 @@ def record(request):
             'userRecord' : userRecord
         })
     except:
-        return HttpResponseNotFound('Page not Found!')
+        return HttpResponseNotFound('Page not Found.')
 
 @secretary_required
 def update_account(request, id):
@@ -719,7 +719,8 @@ def update_account(request, id):
                     return JsonResponse({'errors': form.errors}, status=400)  # Return errors if form is not valid
 
                 form.save()
-                return JsonResponse({'success': 'User  updated successfully'}, status=200)  # Return success response
+                messages.success(request, 'Updated successfully.')
+                return redirect('user_record')
 
             else:
                 return JsonResponse({'errors': form.errors}, status=400)  # Return errors if form is not valid
@@ -1133,6 +1134,7 @@ def get_achievement_data(request, achievement_id):
             form = AchievementForm( request.POST, request.FILES, instance = achievement )
             if form.is_valid():
                 form.save()
+                messages.success(request, 'Updated Successfully.')
                 return redirect('achievement_table')
             else:
                 return JsonResponse({'error': 'Invalid request'}, status=400)   
@@ -1163,6 +1165,7 @@ def update_news_offer(request, id):
                 else:
                     news_offer.pubmat = news_offer.pubmat
                 news_offer.save()
+                messages.success(request, 'Updated successfully.')
                 return redirect('news_offers_table')
             else:
                 return JsonResponse({'error': 'Invalid request'}, status=400)
@@ -1180,7 +1183,7 @@ def delete_achievement(request, id):
     try:
         achievement = Achievement.objects.get( id = id )
         achievement.delete()
-        messages.success(request, 'Achievement deleted successfully!')
+        messages.success(request, 'Deleted successfully.')
         return redirect('achievement_table')
     except Achievement.DoesNotExist:
         return HttpResponseNotFound('Achievement not found')
@@ -1410,7 +1413,7 @@ def decline_eventReg(request, id):
         eventReg = EventRegistration.objects.get( id = id)
         eventReg.status = 'Declined'
         eventReg.save()
-        messages.success(request, 'Registration declined successfully!')
+        messages.success(request, 'Registration declined successfully.')
         return redirect(request.META.get('HTTP_REFERER', '/')) 
     return HttpResponseForbidden()
 
@@ -1421,7 +1424,7 @@ def approve_eventReg(request, id):
         eventReg = EventRegistration.objects.get( id = id)
         eventReg.status = 'Approved'
         eventReg.save()
-        messages.success(request, 'Registration approved successfully!')
+        messages.success(request, 'Registration approved successfully.')
         return redirect(request.META.get('HTTP_REFERER', '/')) 
     return HttpResponseForbidden()
 
@@ -1431,7 +1434,7 @@ def delete_eventReg(request, id):
     if request.method == "POST":
         eventReg = EventRegistration.objects.get( id = id)
         eventReg.delete()
-        messages.success(request, 'Registration deleted successfully!')
+        messages.success(request, 'Registration deleted successfully.')
         return redirect(request.META.get('HTTP_REFERER', '/')) 
     return HttpResponseForbidden()
 
@@ -1440,7 +1443,7 @@ def delete_news_offer(request, id):
     news_offer = get_object_or_404(NewsandOffers, id = id)
     try:
         news_offer.delete()
-        messages.success(request, 'Deleted successfully!')
+        messages.success(request, 'Deleted successfully.')
         return redirect('news_offers_table')
     except Exception as e:
         return render(request, 'papsas_app/record/news_offers_table.html', {
@@ -1453,7 +1456,7 @@ def delete_venue(request, id):
         venue = get_object_or_404(Venue, id = id)
         if request.method == "POST":
             venue.delete()
-            messages.success(request, 'Deleted successfully!')
+            messages.success(request, 'Deleted successfully.')
             return redirect('venue_table')
     except Exception as e:
         return render(request, 'papsas_app/record/venue_table.html', {
@@ -1468,7 +1471,7 @@ def update_venue(request, id):
             form = VenueForm(request.POST, instance = venue)
             if form.is_valid():
                 form.save()
-                messages.success(request, 'Updated successfully!')
+                messages.success(request, 'Updated successfully.')
                 return redirect('venue_table')
             else:
                 return render(request, 'papsas_app/record/venue_record.html', {
@@ -1493,7 +1496,7 @@ def delete_event (request, id):
         event = Event.objects.get(id = id)
         if request.method == "POST":
             event.delete()
-            messages.success(request, 'Deleted successfully!')
+            messages.success(request, 'Deleted successfully.')
             return redirect('event_table')
 
     except Exception as e:
@@ -1509,7 +1512,8 @@ def update_event (request, id):
             form = EventForm(request.POST, request.FILES, instance = event)
             if form.is_valid:
                 form.save()
-                messages.success(request, 'Updated successfully!')
+                print('update event')
+                messages.success(request, 'Updated successfully.')
                 return redirect('event_table')
             else:
                 return render(request, 'papsas_app/record/event_table.html', {
@@ -2011,7 +2015,7 @@ def declare_candidacy(request, id):
                 election=election
             )
             candidacy.save()
-            messages.success(request, 'Candidacy submitted successfully!')
+            messages.success(request, 'Candidacy submitted successfully.')
             return redirect('vote')
         else:
             messages.error(request, 'You must attend at least 2 events and have your TOR to declare your candidacy.')

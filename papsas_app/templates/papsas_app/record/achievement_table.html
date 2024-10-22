@@ -36,7 +36,13 @@
     <div id="table-container">
         <div class="col-md-3 mb-3 d-flex align-items-end">Total Records: {{ table.rows|length }}</div>
         {% render_table table %}
-        
+        {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
     </div>
 </div>
 
