@@ -1,5 +1,5 @@
 body{
-    background-color: #f9f9f9;
+    background-color: #ffffff;
 }
 #voteContainer {
     display: grid;
@@ -62,6 +62,23 @@ body{
     
 }
 .election-title p{
+    font-size: 16px;
+    font-weight: 300;
+}
+.election-title-background{
+    text-align: center;
+    padding: 20px;
+    background-color: #f9f9f9;
+    margin-top: 50px;
+}
+.election-title-background h2{
+    font-size: 50px;
+    font-weight: 400;
+    text-transform:  uppercase;
+    color: red;
+    
+}
+.election-title-background p{
     font-size: 16px;
     font-weight: 300;
 }

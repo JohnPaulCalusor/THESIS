@@ -60,8 +60,9 @@
         </div>
     </div>
 
-    <div>
+
         <!-- candidacy form -->
+        <div class="election-title-background">
         <h2>
             Declaration of Candidacy
         </h2>
@@ -79,13 +80,13 @@
             {% if attended_event >= 2 and user.tor and has_declared is None %}
             <form action="{% url 'declare_candidacy' ongoingElection.id %}" method="post">
                 {% csrf_token %}
-                <button type="submit">Declare Candidacy</button>
+                <button type="submit" class="cast-vote">Declare Candidacy</button>
             </form>
         {% endif %}
     
     </div>
 
-
+</div>
     <!-- <input type="hidden" id="num-officers" value="{{ ongoingElection.numWinners }}"> -->
 
 {% endblock %}
