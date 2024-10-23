@@ -666,7 +666,7 @@ def become_member(request):
 def news_offers(request):
     news_offers = NewsandOffers.objects.all()
 
-    paginator = Paginator(news_offers, 10)
+    paginator = Paginator(news_offers, 5)
     page_number = request.GET.get('page')
     news_offers_page = paginator.get_page(page_number)
     
@@ -1016,8 +1016,12 @@ def compose_venue(request):
 def event_list(request):
     events = Event.objects.all()
 
+    paginator = Paginator(events, 5) 
+    page_number = request.GET.get('page')
+    events_page = paginator.get_page(page_number)
+
     return render(request, 'papsas_app/view/event_view.html', {
-        'events': events,
+        'events': events_page,
     })
 
 # view all event with its attendance and registration records

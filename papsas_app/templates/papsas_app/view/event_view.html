@@ -6,12 +6,7 @@
 {% endblock %}
 
 {% block body %}
-<div id="event_container"
-hx-get="{% url 'get_event' 'list'%}"
-hx-trigger="every 5s"
-hx-swap="innerHTML"
->
-    
+<div id="event_container">
     {% for event in events %}
     <div class="event-card">
         <div class="event-header">
@@ -24,10 +19,30 @@ hx-swap="innerHTML"
         </div>
         <div class="input-submit"> 
             <a href="{% url 'event_registration_view' event.id %}"><button class="submit-btn">Apply Now!</button></a>
-           
+        
         </div>
     </div>
     <hr>
     {% endfor %}
+    <div class="pagination">
+        <span class="step-links">
+            {% if events.has_previous %}
+                <a href="?page=1">&laquo; first</a>
+                <a href="?page={{ events.previous_page_number }}">previous</a>
+            {% endif %}
+    
+            <span class="current">
+                Page {{ events.number }} of {{ events.paginator.num_pages }}.
+            </span>
+    
+            {% if achievements.has_next %}
+                <a href="?page={{ events.next_page_number }}">next</a>
+                <a href="?page={{ events.paginator.num_pages }}">last &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
+    <!-- hx-get="{% url 'get_event' 'list'%}"
+    hx-trigger="every 5s"
+    hx-swap="innerHTML" -->
 </div>
 {% endblock %}
