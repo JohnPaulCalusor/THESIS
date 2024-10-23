@@ -5,7 +5,7 @@ body {
     justify-content: center;
     align-items: center;
     height: 100vh;
-    margin-top: 10rem;
+    margin-top: 5rem;
     margin-bottom: 10rem;
 }
 
@@ -166,8 +166,6 @@ body {
         padding: 50px;
         margin-top: 30px;
     }
-
-
     .verification{
         margin-left: 15rem;
     }
@@ -178,5 +176,48 @@ body {
         display: flex;
         text-align: right;
         margin-top: 2px;
+    }
+}
+@media (max-width: 768px) {
+    body {
+        margin-top: 1rem;
+        margin-bottom: 2rem;
+        height: auto;
+        
+    }
+
+    .profile-card {
+        width: 25rem;
+        padding: 15px; /* Reduce padding */
+        box-shadow: none;
+        border-radius: none;
+        background-color: #f9f9f9;
+    }
+
+    .profile-picture {
+        width: 80px;
+        height: 80px;
+        margin-left: 0; /* Center the profile picture */
+    }
+
+    .verification {
+        margin-left: 0;
+        text-align: right; /* Align verification text or elements */
+    }
+
+    .info-row {
+        flex-direction: column; /* Stack items vertically */
+        align-items: flex-start;
+    }
+
+    .info-label, .info-value {
+        font-size: 14px; /* Adjust text size for better readability */
+    }
+
+    .title, .title-activities {
+        font-size: 16px;
+    }
+    .info-value-activity{
+        text-align: left;
     }
 }

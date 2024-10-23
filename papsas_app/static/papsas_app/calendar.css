@@ -31,3 +31,10 @@ body{
         font-size: 0.8rem; /* Smaller font for mobile screens */
     }
 }
+@media only screen and (max-width: 828px) {
+    #calendar {
+        width: 95vw; /* Full width, with a small margin */
+        height: 60vh; /* Adjust height to fit the screen */
+        font-size: 0.85rem; /* Adjust font size for better readability */
+    }
+}
