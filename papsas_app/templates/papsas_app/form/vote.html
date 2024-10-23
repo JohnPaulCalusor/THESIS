@@ -77,7 +77,7 @@
                 Masteral Degree {% if user.tor %}<i class="fas fa-circle-check"></i>{% else %}<i class="fas fa-circle-xmark"></i>{% endif %}
             </li>
         </ul>
-            {% if attended_event >= 2 and user.tor and has_declared is None %}
+        {% if attended_event >= 2 and user.tor and has_declared is None %}
             <form action="{% url 'declare_candidacy' ongoingElection.id %}" method="post">
                 {% csrf_token %}
                 <button type="submit" class="cast-vote">Declare Candidacy</button>

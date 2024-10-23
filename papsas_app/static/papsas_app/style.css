@@ -8,8 +8,8 @@
 #login{
   margin-top: 100px;
 }
+
 #navProfile {
-    /* make the shape circle */
     border-radius: 100%;
     display: flex;
 }
@@ -65,10 +65,12 @@ a {
   text-decoration: none;
 }
 
+
 img {
   max-width: 100%;
   height: auto;
 }
+
 .member-img{
   border-radius: 20px;
   min-height: 90%;
@@ -215,7 +217,7 @@ img {
   display: grid;
   align-content: center;
   row-gap: 5rem;
-  
+  padding-inline: 15px;
   
 }
 .home__description{
@@ -432,6 +434,11 @@ img {
   .services__container {
       grid-template-columns: repeat(3, 1fr);
   }
+
+  .home__container img {
+    width: 45vw;
+    height: auto;
+  }
 }
 
 @media screen and (max-width: 767px) {
@@ -490,6 +497,7 @@ img {
     flex-direction: column;
     align-items: center;
     text-align: center;
+    padding-inline: 15px;
 }
 
 .footer__content {
