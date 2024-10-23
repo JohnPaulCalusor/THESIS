@@ -845,3 +845,8 @@ img {
 .video-papsas {
   margin-top: 100px;
 }
+@media only screen and (max-width: 828px) {
+  #navProfile{
+    margin-left: 11.5rem;
+  }
+}
