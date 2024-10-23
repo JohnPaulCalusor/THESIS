@@ -527,3 +527,7 @@ th.orderable a{
  .reset {
     border: 1px black solid;
 }
+
+.container {
+    padding-inline: 15px;
+}
