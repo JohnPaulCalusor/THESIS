@@ -445,7 +445,7 @@ def new_officer(request, num_winners):
         )
         officer.save()
 
-@practitioner_required
+# @practitioner_required
 def vote(request):
     user = request.user
     ongoingElection = Election.objects.get( electionStatus = True )
