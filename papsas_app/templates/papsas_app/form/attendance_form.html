@@ -103,16 +103,23 @@
 </style>
 <div class="container">
   <div class="form-container">
-  <h3>Attendance Form</h3>
-      <form method="post" action="{% url 'attendance_form' event_id %}">
-        {% csrf_token %}
-        <label for="id">Enter your ID:</label>
-        <input type="text" id="id" name="id">
-        <button type="submit" class="btn">Submit</button>
-        {% if error_message %}
-            <div class="message">{{ error_message }}</div>
-        {% endif %}
-      </form>
-    </div>
+    <h3>Attendance Form</h3>
+    
+    <p>Event: {{ event.eventName }}</p>
+    
+    <form method="post" action="{% url 'attendance_form' event_id %}">
+      {% csrf_token %}
+
+      <label for="user_id">Your ID: {{ request.user.id }}</label><br>
+
+      {{ form.as_p }}
+      
+      <button type="submit" class="btn">Submit</button>
+      
+      {% if error_message %}
+        <div class="message">{{ error_message }}</div>
+      {% endif %}
+    </form>
+  </div>
 </div>
 {% endblock %}

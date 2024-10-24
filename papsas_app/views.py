@@ -581,37 +581,38 @@ def event(request):
         form = EventForm
     return render(request, 'papsas_app/event_management.html', {'form': form})
 
+@login_required
 def attendance_form(request, event_id):
     try:
+        # Get the event from the event_id in the URL
         event = Event.objects.get(id=event_id)
     except Event.DoesNotExist:
         return HttpResponseNotFound('Event not found')
-    
+
     if request.method == 'POST':
         form = AttendanceForm(request.POST)
         if form.is_valid():
-            user_id = form.cleaned_data['user_id']
-            event = Event.objects.get(id=event_id)
-            try:
-                user = User.objects.get(id=user_id)
-                # Check if the user is registered for the current event
-                event_registration = EventRegistration.objects.filter(user=user, event=event)
-                if event_registration.exists():
-                    attendance, created = Attendance.objects.get_or_create(user=user, event=event)
-                    attendance.attended = True
-                    attendance.save()
-                    return redirect('index')
-                else:
-                    error_message = 'You are not registered for this event.'
-            except User.DoesNotExist:
-                error_message = 'Invalid user ID'
-            except Event.DoesNotExist:
-                error_message = 'Invalid event ID'
-            return render(request, 'papsas_app/form/attendance_form.html', {'form': form, 'event_id': event_id, 'error_message': error_message})
+            user = request.user
+
+            event_registration = EventRegistration.objects.filter(user=user, event=event)
+            if event_registration.exists():
+                attendance, created = Attendance.objects.get_or_create(user=user, event=event_registration.first())
+                attendance.attended = form.cleaned_data['attended']
+                attendance.save()
+                return redirect('index')
+            else:
+                error_message = 'You are not registered for this event.'
+        else:
+            error_message = 'Invalid form submission'
+
+        return render(request, 'papsas_app/form/attendance_form.html', {'form': form, 'event_id': event_id, 'error_message': error_message})
     else:
         form = AttendanceForm()
-    return render(request, 'papsas_app/form/attendance_form.html', {'form': form, 'event_id': event_id})
 
+    return render(request, 'papsas_app/form/attendance_form.html', {
+        'form': form, 
+        'event_id': event_id,
+        'event': event  })
 
 # register event
 @login_required

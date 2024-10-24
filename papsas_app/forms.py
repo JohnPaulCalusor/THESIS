@@ -116,7 +116,7 @@ class TORForm(forms.ModelForm):
 class AttendanceForm(forms.ModelForm):
     class Meta:
         model = Attendance
-        fields = ('user', 'event', 'attended')
+        fields = ('attended',)
 
 occupation = [
     ('Student', 'Student'),
