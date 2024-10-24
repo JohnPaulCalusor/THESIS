@@ -26,7 +26,6 @@
                     {% if user.is_authenticated %}
                     <div class="nav__menu" id="nav-menu">
                         <ul class="nav__list">
-
                         <!-- check if user is an officer -->
                         {% if officer is not None %}
                             {% if officer.termEnd > today %}
@@ -92,14 +91,11 @@
                                         <img src="{{ user.profilePic.url }}" alt="profilePic" id="navProfile" class="profile">
                                     </a>
                                 </li>
-
                                 {% endif %}
                             {% endif %}
-                            
-                        {% else %}
                         </ul>
+                        {% else %}
                         <!-- if user is not an officer -->
-                        <div class="nav__menu" id="nav-menu">
                             <ul class="nav__list">
                                 <li class="nav__item"><a href="{% url 'index' %}" class="nav__link">Home</a></li>
                                 <li class="nav__item dropdown">
@@ -117,7 +113,6 @@
                                             <li><a href="{% url 'user_membership_table' %}">Membership</a></li>
                                             <li><a href="{% url 'user_event_registration_table' %}">Event Registration</a></li>
                                             <li><a href="{% url 'user_event_attendance_table' %}">Event Attendance</a></li>
-
                                         </ul>
                                     </li>
                                     {% for election in openElection %}
@@ -138,12 +133,12 @@
                                     <li class="nav__item"><a href="{% url 'news_offers' %}" class="nav__link">News and Offers</a></li>
                                     <li class="nav__item"><a href="{% url 'logout' %}" class="nav__link">Logout</a></li>
                                 {% if user.profilePic %}
-                                <li class="nav__item"><a href="{% url 'profile' user.id %}">
-                                        <img src="{{ user.profilePic.url }}" alt="profilePic" id="navProfile" class="profile">
-                                    </a>
-                                </li>
+                                    <li class="nav__item"><a href="{% url 'profile' user.id %}">
+                                            <img src="{{ user.profilePic.url }}" alt="profilePic" id="navProfile" class="profile">
+                                        </a>
+                                    </li>
                                 {% else %}
-                                <div class="login-container"> <a href="{% url 'profile' user.id %}">Profile</a></div>
+                                    <div class="login-container"> <a href="{% url 'profile' user.id %}">Profile</a></div>
                                 {% endif %}
                             </ul>
 
@@ -152,12 +147,13 @@
                             <i class='bx bx-x'></i>
                         </div>
                     </div>
-                        <div class="nav__toggle" id="nav-toggle">
-                            <i class='bx bx-grid-alt'></i>
-                        </div>
+
+                    <div class="nav__toggle" id="nav-toggle">
+                        <i class='bx bx-grid-alt'></i>
+                    </div>
+
                     {% else %}
-                    
-                    <!-- if user is not logged in -->
+                        <!-- if user is not logged in -->
                         <div class="nav__menu" id="nav-menu">
                             <ul class="nav__list">
                                 <li class="nav__item">
