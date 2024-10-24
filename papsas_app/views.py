@@ -605,7 +605,11 @@ def attendance_form(request, event_id):
         else:
             error_message = 'Invalid form submission'
 
-        return render(request, 'papsas_app/form/attendance_form.html', {'form': form, 'event_id': event_id, 'error_message': error_message})
+        return render(request, 'papsas_app/form/attendance_form.html', {
+            'form': form, 
+            'event_id': event_id, 
+            'event': event,
+            'error_message': error_message})
     else:
         form = AttendanceForm()
 

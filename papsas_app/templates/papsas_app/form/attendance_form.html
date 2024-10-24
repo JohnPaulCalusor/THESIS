@@ -102,24 +102,24 @@
   }
 </style>
 <div class="container">
-  <div class="form-container">
-    <h3>Attendance Form</h3>
-    
-    <p>Event: {{ event.eventName }}</p>
-    
-    <form method="post" action="{% url 'attendance_form' event_id %}">
-      {% csrf_token %}
+    <div class="form-container">
+      <h3>Attendance Form</h3>
 
-      <label for="user_id">Your ID: {{ request.user.id }}</label><br>
+      <p>Event: {{ event.eventName }}</p>
 
-      {{ form.as_p }}
+      <label for="user_first_name">Your Name: {{ request.user.first_name }}</label><br>
       
-      <button type="submit" class="btn">Submit</button>
-      
-      {% if error_message %}
-        <div class="message">{{ error_message }}</div>
-      {% endif %}
-    </form>
+      <form method="post" action="{% url 'attendance_form' event_id %}">
+        {% csrf_token %}
+
+        {{ form.as_p }}
+
+        <button type="submit" class="btn">Submit</button>
+        
+        {% if error_message %}
+          <div class="message">{{ error_message }}</div>
+        {% endif %}
+      </form>
+    </div>
   </div>
-</div>
 {% endblock %}
