@@ -2039,4 +2039,27 @@ def declare_candidacy(request, id):
         else:
             messages.error(request, 'You must attend at least 2 events and have your TOR to declare your candidacy.')
 
-    
+def box_plot(request, event_id = None):
+    if event_id:
+        event = Event.objects.get(id=event_id)
+    else:
+        event = Event.objects.filter(date__lt=date.today()).latest('startDate')[:3]
+        print(event)
+    feedbacks = event.ratings.all()
+
+    ratings = [ feedback.rating for feedback in feedbacks ]
+
+    data = {
+        'event': {
+            'id': event.id,
+            'name': event.eventName,
+        },
+        'ratings': ratings
+    }
+
+    return JsonResponse (data)
+
+def box_event (request):
+    events = Event.objects.filter(startDate__lt=date.today()).order_by('startDate')
+    data = [{'id': event.id, 'name': event.eventName} for event in events]
+    return JsonResponse(data, safe=False)

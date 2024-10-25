@@ -5,6 +5,8 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="{% static 'papsas_app/js/main.js' %}"></script>
     <script src="https://unpkg.com/htmx.org@1.9.0"></script>
+    <script src="{% static 'papsas_app/js/box_chart.js' %}"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <link rel="stylesheet" href="{% static 'papsas_app/dashboard.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 <body>
@@ -60,6 +62,15 @@
         <h3>Membership Growth Over Time</h3>
         <canvas id="membershipGrowthChart"></canvas>
     </div>
+    <div id="boxplot-container" class="chart-container">
+        <div>
+            <label for="event-select">Select Event:</label>
+            
+            <select id="event-select" onchange="loadBoxPlot()">
+                <!-- Event options will be populated dynamically -->
+            </select>
+        </div>
+    </div>
     <div class="chart">
         <h3>Membership Distribution</h3>
         <canvas id="membershipChart"></canvas>
@@ -78,7 +89,6 @@
     </div>
 </div>
 
-
 <div class="region">
     <div class="chart-container">
         <h3>User Distribution by Region</h3>
@@ -90,7 +100,6 @@
         <canvas id="RegionChart"></canvas>
     </div>
 </div>
-
 
 
 
