@@ -98,6 +98,8 @@ urlpatterns = [
     path('get_user_distribution_by_region/', views.get_user_distribution_by_region, name='get_user_distribution_by_region'),
     path('get_event/<int:event_id>/rating/', views.box_plot, name='get_event_rating' ),
     path('events/boxplot/', views.box_event, name="box_event"),
+    path('get_event_price_vs_attendance_data/', views.get_event_price_vs_attendance_data, name='get_event_price_vs_attendance_data'),
+
     # table
     path('table/user/', views.UserListView.as_view(), name='user_table'),
     path('table/membership/', views.MembershipListView.as_view(), name="membership_table"),

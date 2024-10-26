@@ -2063,3 +2063,14 @@ def box_event (request):
     events = Event.objects.filter(startDate__lt=date.today()).order_by('startDate')
     data = [{'id': event.id, 'name': event.eventName} for event in events]
     return JsonResponse(data, safe=False)
+
+@secretary_required
+def get_event_price_vs_attendance_data(request):
+    events_data = (
+        EventRegistration.objects
+        .values('event__price')
+        .annotate(attendance_count=Count('attendance'))
+    )
+
+    data = list(events_data)
+    return JsonResponse({'values': data})
