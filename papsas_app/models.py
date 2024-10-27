@@ -4,6 +4,7 @@ from django.contrib.auth.models import AbstractUser
 from django import forms
 from django.db.models import F
 from django.utils import timezone
+from datetime import date
 from django.db.models import Avg
 from datetime import timedelta
 from django.core.validators import RegexValidator, MinValueValidator, MaxValueValidator
@@ -122,7 +123,7 @@ class UserMembership(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.expirationDate:
-            self.registrationDate = timezone.now()
+            self.registrationDate = date.today()
             if self.membership.duration:
                 self.expirationDate = self.registrationDate + self.membership.duration
             else:
