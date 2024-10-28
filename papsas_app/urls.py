@@ -105,6 +105,7 @@ urlpatterns = [
     path('table/membership/', views.MembershipListView.as_view(), name="membership_table"),
     path('table/user/membership/', views.UserMembershipListView.as_view(), name="user_membership_table"),
     path('table/event/', views.EventListView.as_view(), name="event_table"),
+    path('table/event/<int:event_id>/rating/', views.FeedbackListView.as_view(), name="feedback_table"),
     path('table/venue/', views.VenueListView.as_view(), name="venue_table"),
     path('table/news-offers/', views.NewsAndOffersListView.as_view(), name="news_offers_table"),
     path('table/achievement/', views.AchievementListView.as_view(), name="achievement_table"),

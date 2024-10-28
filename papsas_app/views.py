@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, get_list_or_404, get_object_or_404
 from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
 from django.contrib.auth import login, logout, authenticate
 from .models import User, Officer, Candidacy, Election, Event, Attendance, EventRegistration, MembershipTypes, UserMembership, Vote, Achievement, NewsandOffers, Venue, EventRating
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, HttpResponseNotFound, HttpResponseForbidden, HttpResponseNotAllowed
@@ -32,8 +33,8 @@ from functools import wraps
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 from django_tables2 import SingleTableView, RequestConfig, SingleTableMixin
-from .tables import UserTable, MembershipTable, EventTable, EventRegistrationTable, EventAttendanceTable, VenueTable, AchievementTable, NewsAndOfferTable, UserMembershipTable, UserEventRegistrationTable, UserEventAttendanceTable, ElectionTable, VoteTable
-from .filters import UserFilter, ElectionFilter, MembershipFilter, EventFilter, EventRegistrationFilter, AttendanceFilter, VenueFilter, AchievementFilter, NewsAndOfferFilter, CandidateFilter
+from .tables import UserTable, MembershipTable, EventTable, EventRegistrationTable, EventAttendanceTable, VenueTable, AchievementTable, NewsAndOfferTable, UserMembershipTable, UserEventRegistrationTable, UserEventAttendanceTable, ElectionTable, VoteTable, FeedbackTable
+from .filters import UserFilter, ElectionFilter, MembershipFilter, EventFilter, EventRegistrationFilter, AttendanceFilter, VenueFilter, AchievementFilter, NewsAndOfferFilter, CandidateFilter, FeedbackFilter
 from django_filters.views import FilterView
 from django.contrib.auth.password_validation import validate_password
 
@@ -2074,3 +2075,34 @@ def get_event_price_vs_attendance_data(request):
 
     data = list(events_data)
     return JsonResponse({'values': data})
+
+@method_decorator(secretary_required, name='dispatch')
+class FeedbackListView(SingleTableView):
+    model = EventRating
+    table_class = FeedbackTable
+    template_name = 'papsas_app/record/feedback_table.html'
+    filterset_class = FeedbackFilter
+    paginator_class = LazyPaginator
+
+    def get_table(self):
+        table = super().get_table()
+        RequestConfig(
+            self.request, 
+            paginate={
+                "paginator_class": LazyPaginator,
+                "per_page": 10
+            }
+        ).configure(table)
+        return table
+
+    def get_queryset(self):
+        event_id = self.kwargs.get('event_id')
+        queryset = EventRating.objects.filter( event = event_id )
+        self.filterset = self.filterset_class(self.request.GET, queryset=queryset)
+        return self.filterset.qs
+    
+    def get_context_data(self, **kwargs):
+        context = super(FeedbackListView, self).get_context_data(**kwargs)
+        context['filter'] = self.filterset
+        context['event'] = self.kwargs.get('event_id')
+        return context

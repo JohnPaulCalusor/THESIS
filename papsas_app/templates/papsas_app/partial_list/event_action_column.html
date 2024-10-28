@@ -24,4 +24,8 @@
     <a href="{% url 'generate_qr' record.id %}" title="Generate QR Code" class="action-icon">
         <i class="fas fa-qrcode"></i>
     </a>
+
+    <a href="{% url 'feedback_table' record.id %}" title="Feedback" class="action-icon">
+        <i class="fa-regular fa-comment"></i>
+    </a>
 {% endblock %}

@@ -1,6 +1,6 @@
 import django_tables2 as tables
 from django.utils.html import format_html
-from .models import User, UserMembership, Event, EventRegistration, Attendance, Venue, Achievement, NewsandOffers, Election, Vote, Candidacy
+from .models import User, UserMembership, Event, EventRegistration, Attendance, Venue, Achievement, NewsandOffers, Election, Vote, Candidacy, EventRating
 from django.urls import reverse
 from django.utils.safestring import mark_safe
 from django.db.models import Count
@@ -158,3 +158,9 @@ class VoteTable(tables.Table):
 
     def render_vote_count(self, value):
         return value or 0
+    
+class FeedbackTable(tables.Table):
+    
+    class Meta:
+        model = EventRating
+        fields = ('id', 'event', 'rating', 'comment')
