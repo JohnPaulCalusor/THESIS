@@ -21,7 +21,7 @@ def is_member(request):
     user = request.user
     today = date.today()
     try:
-        is_member = user.member.filter(status='Approved', expirationDate__gt=today).latest('id')
+        is_member = user.member.filter( expirationDate__gt=today).latest('id')
         if is_member:
             print(True)
     except:
