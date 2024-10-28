@@ -19,8 +19,9 @@ def is_officer(request):
 
 def is_member(request):
     user = request.user
+    today = date.today()
     try:
-        is_member = user.member.get()
+        is_member = user.member.filter( user.member.expirationDate > today ).latest('id')
     except:
         is_member = None
     
