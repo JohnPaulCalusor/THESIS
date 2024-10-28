@@ -72,25 +72,25 @@ function hideUpdateModal(){
 }
 
 function showEventDetails(eventId) {
-    body = document.getElementById('details-body')
+    const body = document.getElementById('details-body');
 
     fetch(`/event/update/${eventId}/`)
     .then(response => response.json())
     .then(data => {
         body.innerHTML = `
-        <img src="${data.pubmat}" alt="">
+        <img src="${data.pubmat}" alt="Event Image">
         <h2>${data.name}</h2>
-        <p>${data.description}</p>
-        <p>${data.startDate}</p>
-        <p>${data.endDate}</p>
-        <p>${data.startTime}</p>
-        <p>${data.endTime}</p>
-        <p>${data.venue}</p>
-        <p>${data.price}</p>
-        `
-    })
-    document.querySelector('#details-container').style.display = 'block';
+        <p><strong>Description:</strong> ${data.description}</p>
+        <p><strong>Start Date:</strong> ${data.startDate}</p>
+        <p><strong>End Date:</strong> ${data.endDate}</p>
+        <p><strong>Start Time:</strong> ${data.startTime}</p>
+        <p><strong>End Time:</strong> ${data.endTime}</p>
+        <p><strong>Venue:</strong> ${data.venue}</p>
+        <p><strong>Price:</strong> ${data.price}</p>
+        `;
+    });
 
+    document.querySelector('#details-container').style.display = 'block';
 }
 
 function showUpdate(id) {
