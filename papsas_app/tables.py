@@ -74,7 +74,7 @@ class EventRegistrationTable(tables.Table):
 
 class UserEventRegistrationTable(EventRegistrationTable):
     class Meta(EventRegistrationTable.Meta):
-        exclude = ("actions", "user")
+        exclude = ("user", )
 
 class EventAttendanceTable(tables.Table):
     event = tables.Column(accessor='event.event.eventName', verbose_name='Event Name')

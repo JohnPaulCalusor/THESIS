@@ -261,7 +261,7 @@ class EventRegistration(models.Model):
 
 class Attendance(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='audience')
-    event = models.ForeignKey(EventRegistration, on_delete=models.CASCADE)
+    event = models.ForeignKey(EventRegistration, on_delete=models.CASCADE, related_name='attendance')
     attended = models.BooleanField(default=False)
     date_attended = models.DateField(auto_now_add=True)
 

@@ -1,34 +1,50 @@
-{% if record.status == 'Pending' %}
-    <form action="{% url 'approve_eventReg' record.id %}" method="post" style="display:inline;">
-        {% csrf_token %}
-        <button type="submit" class="action-icon" title="Approve">
-            <i class="fas fa-check"></i>
-        </button>
-    </form>
-    <form action="{% url 'decline_eventReg' record.id %}" method="post" style="display:inline;">
-        {% csrf_token %}
-        <button type="submit" class="action-icon" title="Decline">
-            <i class="fas fa-trash-alt"></i>
-        </button>
-    </form>
-{% elif record.status == 'Approved' %}
-    <form action="{% url 'decline_eventReg' record.id %}" method="post" style="display:inline;">
-        {% csrf_token %}
-        <button type="submit" class="action-icon" title="Decline">
-            <i class="fas fa-times"></i>
-        </button>
-    </form>
+{% if is_officer %}
+    {% if record.status == 'Pending' %}
+        <form action="{% url 'approve_eventReg' record.id %}" method="post" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" class="action-icon" title="Approve">
+                <i class="fas fa-check"></i>
+            </button>
+        </form>
+        <form action="{% url 'decline_eventReg' record.id %}" method="post" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" class="action-icon" title="Decline">
+                <i class="fas fa-trash-alt"></i>
+            </button>
+        </form>
+    {% elif record.status == 'Approved' %}
+        <form action="{% url 'decline_eventReg' record.id %}" method="post" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" class="action-icon" title="Decline">
+                <i class="fas fa-times"></i>
+            </button>
+        </form>
+    {% else %}
+        <form action="{% url 'delete_eventReg' record.id %}" method="post" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" class="action-icon" title="Delete">
+                <i class="fas fa-trash-alt"></i>
+            </button>
+        </form>  
+        <form action="{% url 'approve_eventReg' record.id %}" method="post" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" class="action-icon" title="Approve">
+                <i class="fas fa-check"></i>
+            </button>
+        </form>
+    {% endif %}
 {% else %}
-    <form action="{% url 'delete_eventReg' record.id %}" method="post" style="display:inline;">
-        {% csrf_token %}
-        <button type="submit" class="action-icon" title="Delete">
-            <i class="fas fa-trash-alt"></i>
-        </button>
-    </form>  
-    <form action="{% url 'approve_eventReg' record.id %}" method="post" style="display:inline;">
-        {% csrf_token %}
-        <button type="submit" class="action-icon" title="Approve">
-            <i class="fas fa-check"></i>
-        </button>
-    </form>
+    {% if record.attendance.exists  %}
+        <a href="{% url 'rate_event' record.event.id %}">
+            <button type="submit" class="action-icon" title="Feedback">
+                <i class="fas fa-comment"></i>
+            </button>
+        </a>
+    {% else %}
+        <a href="{% url 'rate_event' record.event.id %}">
+            <button type="submit" class="action-icon" title="Feedback" disabled="True">
+                <i class="fas fa-comment"></i>
+            </button>
+        </a>
+    {% endif %}
 {% endif %}
