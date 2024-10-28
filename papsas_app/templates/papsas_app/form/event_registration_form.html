@@ -1,111 +1,12 @@
 {% extends 'papsas_app/layout.html' %}
 
-{% block body %}
+{% load static %}
+{% block head %}
+<link rel="stylesheet" href="{% static 'papsas_app/event_registration.css' %}">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-<style>
-    body {
-        font-family: Arial, sans-serif;
-        background-color: #f9f9f9;
-        margin: 0;
-        margin-top: 15rem;
-    }
+{% endblock %}
 
-    .form-container {
-        background: white;
-        padding: 20px;
-        border-radius: 5px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        max-width: 600px;
-        margin: auto;
-        margin-bottom: 50px;
-    }
-
-    h3 {
-        text-align: center;
-        color: #ff0000;
-        font-size: 24px;
-        margin-bottom: 15px;
-    }
-
-    .form-group {
-        margin-bottom: 15px;
-    }
-
-    .form-group label {
-        display: block;
-        margin-bottom: 5px;
-        color: #555;
-    }
-
-    input[type="text"],
-    input[type="date"],
-    input[type="time"],
-    input[type="number"],
-    textarea,
-    select {
-        width: 100%;
-        padding: 8px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-    }
-
-    .btn {
-        background-color: #ff0000;
-        color: white;
-        border: none;
-        padding: 10px 15px;
-        border-radius: 5px;
-        cursor: pointer;
-        width: 100%;
-        margin-top: 10px;
-    }
-
-    .btn:hover {
-        background-color: #000000;
-    }
-
-    .message {
-        color: red;
-        text-align: center;
-        margin-top: 20px;
-    }
-
-    /* Style for the custom file input button */
-    .file-input-container {
-        position: relative;
-        text-align: center;
-        border: 2px dashed #ccc;
-        padding: 20px;
-        cursor: pointer;
-        border-radius: 5px;
-        background-color: #f9f9f9;
-        max-width: 100%;
-    }
-
-    .file-input-container:hover {
-        background-color: #ebebeb;
-    }
-
-    .file-input-container input[type="file"] {
-        display: none;
-    }
-
-    .file-input-container label {
-        font-size: 16px;
-        color: #555;
-        cursor: pointer;
-        display: inline-block;
-    }
-
-    .file-input-container i {
-        font-size: 36px;
-        color: #888;
-    }
-    .back-button:hover{
-        color: #ff0000;
-    }
-</style>
-
+{% block body %}
 
 <div class="container">
     <div class="form-container">

@@ -144,20 +144,7 @@
 {% endblock %}
 
 {% block script %}
-    <script>
-        // Function to open the modal and show the image
-        function openModal() {
-            var modal = document.getElementById("imageModal");
-            var modalImage = document.getElementById("modalImage");
-            var profilePic = document.querySelector(".profile-pic");
-            modal.style.display = "block";
-            modalImage.src = profilePic.src;
-        }
 
-        // Function to close the modal
-        function closeModal() {
-            var modal = document.getElementById("imageModal");
-            modal.style.display = "none";
-        }
-    </script>
+<script src="{% static 'papsas_app/js/profile.js' %}"></script>
 {% endblock %}
+

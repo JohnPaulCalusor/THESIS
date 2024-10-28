@@ -807,6 +807,13 @@ img {
   text-align: justify;
   font-weight: 300;
 }
+.error-message {
+  color: red;
+  font-size: 14px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  font-weight: 300;
+}
 
 /* Responsive design */
 @media (max-width: 768px) {
