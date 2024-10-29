@@ -623,44 +623,47 @@ def attendance_form(request, event_id):
 @login_required
 def event_registration_view(request, event_id):
     user = request.user
+    event = get_object_or_404(Event, id=event_id)
+    form = EventRegistrationForm(user=request.user, event=event)
     try:
-        event = get_object_or_404(Event, id=event_id)
         has_registered = EventRegistration.objects.get( user= user, event = event)
         
-        if request.method == 'POST':
-            # Include the user and event in the POST data
-            post_data = request.POST.copy()
-            post_data['user'] = request.user.id
-            post_data['event'] = event.id
-            
-            form = EventRegistrationForm(
-                user=request.user, 
-                event=event, 
-                data=post_data, 
-                files=request.FILES
-            )
-            if form.is_valid():
-                try:
-                    registration = form.save()  # No need for commit=False here
-                    messages.success(request, "You have successfully registered for the event.")
-                    return redirect('index')
-                except IntegrityError:
-                    messages.error(request, "You are already registered for this event.")
-                except ValidationError as e:
-                    messages.error(request, f"Registration failed: {e}")
-        else:
-            form = EventRegistrationForm(user=request.user, event=event)
-
-            return render(request, 'papsas_app/form/event_registration_form.html', {
-                'form': form,
-                'event': event,
-                'has_registered' : has_registered
-            })
+    except EventRegistration.DoesNotExist:
+        has_registered = None
     except Event.DoesNotExist:
         return HttpResponseNotFound()
     except Exception as e:
         print(f'error: {e}')
         return HttpResponseNotFound()
+    
+    if request.method == 'POST':
+        # Include the user and event in the POST data
+        post_data = request.POST.copy()
+        post_data['user'] = request.user.id
+        post_data['event'] = event.id
+        
+        form = EventRegistrationForm(
+            user=request.user, 
+            event=event, 
+            data=post_data, 
+            files=request.FILES
+        )
+        if form.is_valid():
+            try:
+                form.save()  # No need for commit=False here
+                messages.success(request, "You have successfully registered for the event.")
+                return redirect('index')
+            except IntegrityError:
+                messages.error(request, "You are already registered for this event.")
+            except ValidationError as e:
+                messages.error(request, f"Registration failed: {e}")
+    else:
+
+        return render(request, 'papsas_app/form/event_registration_form.html', {
+            'form': form,
+            'event': event,
+            'has_registered' : has_registered
+        })
 
 def about(request):
     return render(request, 'papsas_app/view/about_us.html')
