@@ -37,13 +37,13 @@
     {% if record.attendance.exists  %}
         <a href="{% url 'rate_event' record.event.id %}">
             <button type="submit" class="action-icon" title="Feedback">
-                <i class="fas fa-comment"></i>
+                <i class="fa-regular fa-comment"></i>
             </button>
         </a>
     {% else %}
         <a href="{% url 'rate_event' record.event.id %}">
             <button type="submit" class="action-icon" title="Feedback" disabled="True">
-                <i class="fas fa-comment"></i>
+                <i class="fa-regular fa-comment"></i>
             </button>
         </a>
     {% endif %}

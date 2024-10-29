@@ -622,8 +622,10 @@ def attendance_form(request, event_id):
 # register event
 @login_required
 def event_registration_view(request, event_id):
+    user = request.user
     try:
         event = get_object_or_404(Event, id=event_id)
+        has_registered = EventRegistration.objects.get( user= user, event = event)
         
         if request.method == 'POST':
             # Include the user and event in the POST data
@@ -649,11 +651,11 @@ def event_registration_view(request, event_id):
         else:
             form = EventRegistrationForm(user=request.user, event=event)
 
-        context = {
-            'form': form,
-            'event': event
-        }
-        return render(request, 'papsas_app/form/event_registration_form.html', context)
+            return render(request, 'papsas_app/form/event_registration_form.html', {
+                'form': form,
+                'event': event,
+                'has_registered' : has_registered
+            })
     except Event.DoesNotExist:
         return HttpResponseNotFound()
     except Exception as e:

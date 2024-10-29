@@ -15,20 +15,49 @@
             <i class="fas fa-arrow-left"></i>
         </div>
         <h3>{{ event.eventName }}</h3>
-
-        <form method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-            <div class="form-group">
-                <div class="form-group label">Amount: {{ form.amount }}</div>
-            </div>
-            <div class="form-group">
-                <div class="form-group label">Upload Receipt: {{ form.receipt }}</div>
-            </div>
-            <div class="form-group">
-                <div class="form-group label">Reference Number: {{ form.reference_number }}</div>
-            </div>
-            <button type="submit" class="btn">Register</button>
-        </form>
+        {% if has_registered  %}
+            {% if has_registered.status == 'Pending' %}
+                <h1> Your event registration is on process.</h1>
+                <p> Please wait for an email of the approval of your registration. Thank you!</p>
+            {% elif  has_registered.status == 'Approved' %}
+            <h1> You are already registered in {{ has_registered.event.eventName }}.</h1>
+            <h4> Details </h4>
+            <p> Opening Date : {{ has_registered.event.startDate }} </p>
+            <p> Closing Date : {{ has_registered.event.endDate }} </p>
+            <p> Venue : {{ has_registered.event.venue }} </p>
+            <p> Address : {{ has_registered.event.venue.address }} </p>
+            {% else %}
+            <h1> Your registration has been declined. </h1>
+            <p> Please contact us for more information. You may try to register again. </p>
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="form-group">
+                    <div class="form-group label">Amount: {{ form.amount }}</div>
+                </div>
+                <div class="form-group">
+                    <div class="form-group label">Upload Receipt: {{ form.receipt }}</div>
+                </div>
+                <div class="form-group">
+                    <div class="form-group label">Reference Number: {{ form.reference_number }}</div>
+                </div>
+                <button type="submit" class="btn">Register</button>
+            </form>
+            {% endif %}
+        {% else %}
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="form-group">
+                    <div class="form-group label">Amount: {{ form.amount }}</div>
+                </div>
+                <div class="form-group">
+                    <div class="form-group label">Upload Receipt: {{ form.receipt }}</div>
+                </div>
+                <div class="form-group">
+                    <div class="form-group label">Reference Number: {{ form.reference_number }}</div>
+                </div>
+                <button type="submit" class="btn">Register</button>
+            </form>
+        {% endif %}
     </div>
 </div>
 {% endblock %}
