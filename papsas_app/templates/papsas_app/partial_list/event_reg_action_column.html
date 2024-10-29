@@ -1,4 +1,4 @@
-{% if is_officer %}
+{% if officer %}
     {% if record.status == 'Pending' %}
         <form action="{% url 'approve_eventReg' record.id %}" method="post" style="display:inline;">
             {% csrf_token %}
