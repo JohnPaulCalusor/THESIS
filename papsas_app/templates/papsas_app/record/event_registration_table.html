@@ -8,17 +8,21 @@
 {% endblock %}
 
 {% block body %}
+
 <div class="container">
     
     <div class="title">
         
-        <h3>   
+        <h3>       
+        <div class="back-button" onclick="window.history.back();">
+            <i class="fas fa-arrow-left"></i>
+        </div>
             {{ name }} Registration Record
+            
         </h3>
+        
     </div>
-    <div class="back-button" onclick="window.history.back();">
-        <i class="fas fa-times"></i>
-    </div>
+
     <div class="container">
     <form method="get" class="mb-4" id="filter-form">
         <div class="row">

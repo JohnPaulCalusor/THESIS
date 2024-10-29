@@ -14,7 +14,16 @@ body {
     margin: auto;
     margin-bottom: 50px;
 }
-
+h1{
+    text-align: center;
+    font-size: 25px;
+    margin-bottom: 10px;
+}
+p{
+    text-align: center;
+    font-weight: 300;
+    margin-bottom: 10px;
+}
 h3 {
     text-align: center;
     color: #ff0000;
