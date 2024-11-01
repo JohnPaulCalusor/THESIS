@@ -64,3 +64,28 @@ body {
     background: #000;
     transform: scale(1.05, 1);
 }
+/* iPhone 11 screen adjustments */
+@media (max-width: 768px) { /* iPhone 11 screen width */
+    .login-icon {
+        width: 200px; /* Smaller for smaller screen */
+    }
+
+    .register-border {
+        width: 90%; /* Use relative width for small screens */
+        height: auto; /* Allow content to adjust height */
+        padding: 20px;
+    }
+
+    .verification-label {
+        font-size: 24px; /* Slightly smaller for mobile */
+    }
+
+    .verification-des {
+        font-size: 14px;
+    }
+
+    .resend-btn {
+        height: 50px;
+        font-size: 15px;
+    }
+}
