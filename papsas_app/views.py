@@ -138,9 +138,14 @@ def index(request):
     today = date.today()
     events = Event.objects.all()
     upcoming_events = [event for event in events if event.startDate >= today]
-    return render(request, 'papsas_app/index.html', {
-        'events' : upcoming_events,
-    })
+    if is_secretary(request):
+        return render(request, 'papsas_app/admin_dashboard.html')
+    elif is_officer(request):
+        return render(request, 'papsas_app/record/venue_table.html')
+    else:
+        return render(request, 'papsas_app/index.html', {
+            'events' : upcoming_events,
+        })
 
 
 # def get_queryset(self):
