@@ -85,10 +85,6 @@ class User(AbstractUser):
         else:
             self.verification_code = None
             self.verification_code_expiration = None
-        if self.pk is None:
-            self.set_password(self.password)
-        elif self._password is not None:
-            self.set_password(self._password)
         super().save(*args, **kwargs)
     
     class Meta:

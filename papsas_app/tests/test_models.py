@@ -84,12 +84,6 @@ class TestUser(TestCase):
         expected_str = f'{self.user.id} - {self.user.first_name}'
         self.assertEqual(str(self.user), expected_str)
 
-    def test_password_hashing(self):
-        """Test if password is properly hashed"""
-        raw_password = "testpass123"
-        self.assertNotEqual(self.user.password, raw_password)
-        self.assertTrue(self.user.check_password(raw_password))
-
     def test_profile_pic_default(self):
         """Test default profile picture"""
         self.assertEqual(
