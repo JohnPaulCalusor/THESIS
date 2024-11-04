@@ -203,6 +203,23 @@
 <script src="static/papsas_app/js/scrollreveal.min.js"></script>
 <script src="static/papsas_app/js/main.js"></script>
 <script>
+    // Select all navigation links
+    const navLinks = document.querySelectorAll('.nav__link');
+
+    // Get the current path
+    const currentPath = window.location.pathname;
+
+    // Loop through each link and add 'active' class if href matches the current path
+    navLinks.forEach(link => {
+        // Extract the pathname from the link's href attribute
+        const linkPath = new URL(link.href).pathname;
+
+        if (linkPath === currentPath) {
+            link.classList.add('active');
+        }
+    });
+</script>
+<script>
     function toggleDescription(counter) {
         const description = document.getElementById(`event-description-${counter}`);
         const viewMoreBtn = document.querySelector(`#event-description-${counter} + .view-more-btn`);

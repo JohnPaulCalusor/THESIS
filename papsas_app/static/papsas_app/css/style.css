@@ -181,7 +181,6 @@ img {
   font-weight: 200;
   
 }
-
 .nav__close {
   position: absolute;
   top: 1rem;
@@ -190,7 +189,9 @@ img {
   color: var(--text-color);
   cursor: pointer;
 }
-
+.nav__link:hover, .nav__link.active{
+  color: #ff0000;
+}
 .profile{
   height: 40px;
   width: 40px;
