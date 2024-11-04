@@ -368,6 +368,9 @@ td {
     margin-bottom: 5px;
     color: #000000;
 }
+.form-group p {
+    margin-bottom: 10px;
+}
 
 input[type="text"],
 input[type="date"],
@@ -520,19 +523,23 @@ th.orderable a{
     border: 1px solid #ccc;
     border-radius: 4px;
     box-sizing: border-box;
+    font-weight: 300;
 }
 
 .form-group input:focus, .form-group select:focus {
     outline: none;
     border-color: #f00;
+    font-weight: 300;
 }
 .input-box p{
     font-weight: 300;
     padding: 5px;
+    font-weight: 500;
 }
 .input-two p{
     font-weight: 300;
     padding: 5px;
+    font-weight: 500;
 }
 .two-forms {
     display: flex;
@@ -543,18 +550,23 @@ th.orderable a{
     width: 100%;
     padding: 10px;
     margin: 0;
-    font-size: 16px;
+    font-size: 14px;
     border: 1px solid #ccc;
     border-radius: 4px;
     box-sizing: border-box;
-    height: 45px;
+    height: 42px;
+    font-weight: 300;
   }
-  .input-two{
-    width: 100%;
-    margin-top: 10px;
-    font-size: 16px;
+  .input-two .input-field{
+    width: 23.1rem;
+    padding: 10px;
+    margin: 0;
+    font-size: 14px;
+    border: 1px solid #ccc;
     border-radius: 4px;
     box-sizing: border-box;
+    height: 42px;
+    font-weight: 300;
   }
   select#membership {
     width: 100%;

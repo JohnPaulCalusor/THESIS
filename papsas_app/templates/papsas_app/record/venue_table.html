@@ -59,7 +59,20 @@
         </h3>
         <form method="post">
             {% csrf_token %}
-            {{ form }}
+            <div class="form-group">
+            <div class="form-group label">
+                <p>{{ form.name.label }}</p> 
+                {{ form.name }}
+            </div>
+            <div class="form-group label">
+                <p>{{ form.address.label }}</p> 
+                {{ form.address }}
+            </div>
+            <div class="form-group label">
+                <p>{{ form.capacity.label }}</p> 
+                {{ form.capacity }}
+            </div>
+        </div>
             <button type="submit" class="btn">Update</button>
         </form>
     </div>

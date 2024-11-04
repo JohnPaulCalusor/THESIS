@@ -60,13 +60,51 @@
         </span>
         <h3>Update Event</h3>
         <div>
-            <h4>Preview Publication Material</h4>
             <img id="img" alt="event-pubmat">
         </div>
         <div>
             <form method="post" enctype="multipart/form-data">
                 {% csrf_token %}
-                {{ form }}
+                    <div class="input-box">
+                        <p>Event Name</p>
+                        {{ form.eventName}}
+                    </div>
+                    <div class="input-box">
+                        <p>Start Date</p>
+                        {{ form.startDate}}
+                    </div>
+                    <div class="input-box">
+                        <p>End Date</p>
+                        {{ form.endDate}}
+                    </div>
+                    <div class="input-box">
+                        <p>Venue</p>
+                        {{ form.venue}}
+                    </div>
+                    <div class="input-box">
+                        <p>Exclusive</p>
+                        {{ form.exclusive}}
+                    </div>
+                    <div class="input-box">
+                        <p>Event Description</p>
+                        {{ form.eventDescription}}
+                    </div>
+                    <div class="input-box">
+                        <p>Public Material</p>
+                        {{ form.pubmat}}
+                    </div>
+                    <div class="input-box">
+                        <p>Price</p>
+                        {{ form.price}}
+                    </div>
+                    <div class="input-box">
+                        <p>Start Time</p>
+                        {{ form.startTime}}
+                    </div>
+                    <div class="input-box">
+                        <p>End Time</p>
+                        {{ form.endTime}}
+                    </div>
                 <button type="submit" class="btn">Update</button>
             </form>
         </div>
