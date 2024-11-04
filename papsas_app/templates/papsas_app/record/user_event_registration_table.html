@@ -14,15 +14,7 @@
             Event Registration Records 
         </h3>
     </div>
-    {% if messages %}
-
-    <div id="message-container">
-        {% for message in messages %}
-            {{ message }}
-        {% endfor %}
-    </div>
 </div>
-    {% endif %}
     <div>
     <form method="get" class="mb-4" id="filter-form">
         <div class="row">
@@ -45,7 +37,13 @@
 <div id="table-container">
     Total Records: {{ table.rows|length }}
     {% render_table table %}
-
 </div>
+{% if messages %}
+    <div id="message-container">
+        {% for message in messages %}
+            {{ message }}
+        {% endfor %}
+    </div>
+{% endif %}
 
 {% endblock %}
