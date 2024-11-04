@@ -80,8 +80,6 @@ class User(AbstractUser):
     institution = models.CharField(max_length=128, null=True)
     tor = models.ImageField(upload_to="papsas_app/tor", null=True, blank=True) 
 
-    USERNAME_FIELD = 'email'
-    EMAIL_FIELD = 'email'
 
     def get_expiration_timestamp(self):
         return int(self.verification_code_expiration.timestamp()) if self.verification_code_expiration else None
@@ -120,9 +118,9 @@ class UserMembership(models.Model):
     membership = models.ForeignKey(MembershipTypes, on_delete=models.CASCADE)
     registrationDate = models.DateField(auto_now_add=True)
     expirationDate = models.DateField(null=True, blank=True)
-    receipt = models.ImageField(upload_to="papsas_app/reciept", null=True, blank=True) 
-    reference_number = models.BigIntegerField(null=True)
-    verificationID = models.ImageField(upload_to="papsas_app/verificationID", null=True, blank=True) 
+    receipt = models.ImageField(upload_to="papsas_app/reciept", null=False, blank=False) 
+    reference_number = models.BigIntegerField(null=False)
+    verificationID = models.ImageField(upload_to="papsas_app/verificationID", null=False, blank=False) 
     status = models.CharField(max_length=10, choices=status, default='Pending')
 
     def __str__ (self):

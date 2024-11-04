@@ -1566,6 +1566,7 @@ def get_event_details(request, id):
     except Event.DoesNotExist:
         return HttpResponseNotFound()
 
+@method_decorator(secretary_required, name='dispatch')
 class UserListView(SingleTableView):
     model = User
     table_class = UserTable
@@ -1625,6 +1626,7 @@ class UserListView(SingleTableView):
                 messages.error(request, 'Error updating user. Please check the form.')
                 return self.get(request, *args, **kwargs)
     
+@method_decorator(secretary_required, name='dispatch')
 class MembershipListView(SingleTableView):
     model = UserMembership
     table_class = MembershipTable
@@ -1653,6 +1655,7 @@ class MembershipListView(SingleTableView):
         context['filter'] = self.filterset
         return context
     
+@method_decorator(member_required, name='dispatch')
 class UserMembershipListView(SingleTableView):
     model = UserMembership
     table_class = UserMembershipTable
@@ -1670,6 +1673,7 @@ class UserMembershipListView(SingleTableView):
         context['filter'] = self.filterset
         return context
     
+@method_decorator(secretary_required, name='dispatch')
 class EventListView(SingleTableView):
     model = Event
     table_class = EventTable
@@ -1711,6 +1715,7 @@ class EventListView(SingleTableView):
                 messages.error(request, 'Error updating user. Please check the form.')
                 return self.get(request, *args, **kwargs)
             
+@method_decorator(secretary_required, name='dispatch')
 class EventRegistrationListView(SingleTableView):
     model = EventRegistration
     table_class = EventRegistrationTable
@@ -1743,6 +1748,7 @@ class EventRegistrationListView(SingleTableView):
         context['event_id'] = self.kwargs.get('event_id')
         return context
 
+@method_decorator(member_required, name='dispatch')
 class UserEventRegistrationListView(SingleTableView):
     model = EventRegistration
     table_class = UserEventRegistrationTable
@@ -1771,6 +1777,7 @@ class UserEventRegistrationListView(SingleTableView):
         context['filter'] = self.filterset
         return context
     
+@method_decorator(secretary_required, name='dispatch')
 class EventAttendanceListView(SingleTableView):
     model = Attendance
     table_class = EventAttendanceTable
@@ -1804,6 +1811,7 @@ class EventAttendanceListView(SingleTableView):
         context['event_id'] = self.kwargs.get('event_id')
         return context
     
+@method_decorator(member_required, name='dispatch')
 class UserEventAttendanceListView(SingleTableView):
     model = Attendance
     table_class = UserEventAttendanceTable
@@ -1832,6 +1840,7 @@ class UserEventAttendanceListView(SingleTableView):
         context['filter'] = self.filterset
         return context
 
+@method_decorator(officer_required, name='dispatch')
 class VenueListView(SingleTableView):
     model = Venue
     table_class = VenueTable
@@ -1860,7 +1869,8 @@ class VenueListView(SingleTableView):
         context['filter'] = self.filterset
         context['form'] = VenueForm
         return context
-    
+
+@method_decorator(officer_required, name='dispatch')
 class AchievementListView(SingleTableView):
     model = Achievement
     table_class = AchievementTable
@@ -1890,6 +1900,7 @@ class AchievementListView(SingleTableView):
         context['form'] = AchievementForm
         return context
     
+@method_decorator(officer_required, name='dispatch')
 class NewsAndOffersListView(SingleTableView):
     model = NewsandOffers
     table_class = NewsAndOfferTable
@@ -1948,6 +1959,7 @@ def generate_qr(request, event_id):
 
     return response
 
+@method_decorator(secretary_required, name='dispatch')
 class ElectionListView(SingleTableView):
     model = Candidacy
     table_class = VoteTable
