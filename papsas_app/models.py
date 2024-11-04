@@ -101,7 +101,7 @@ class User(AbstractUser):
 
 
 class MembershipTypes(models.Model):
-    pubmat = models.ImageField(upload_to="papsas_app/pubmat/event", null=True)
+    pubmat = models.ImageField(upload_to="papsas_app/pubmat/event", null=False)
     type = models.CharField(max_length=16, null=True)
     description = models.CharField(max_length=512, null=True)
     duration = models.DurationField(null=True, blank=True)
@@ -197,7 +197,7 @@ class Event(models.Model):
     venue = models.ForeignKey(Venue, on_delete=models.CASCADE, null=True)
     eventDescription = models.TextField(max_length=9999, null=True)
     eventStatus = models.BooleanField(default=True)
-    pubmat = models.ImageField(upload_to="papsas_app/pubmat/event", null=True, blank=True)
+    pubmat = models.ImageField(upload_to="papsas_app/pubmat/event", null=False, blank=True)
     price = models.DecimalField(max_digits=10, decimal_places=2, null=True)
     startTime = models.TimeField(null=True)
     endTime = models.TimeField(null=True)
@@ -232,7 +232,7 @@ class Achievement(models.Model):
     name = models.CharField(max_length=32, null=True)
     description = models.TextField(max_length=9999, null=True)
     postStamp = models.DateTimeField(auto_now_add=True)
-    pubmat = models.ImageField(upload_to="papsas_app/pubmat/achievement", null=True, blank=True)
+    pubmat = models.ImageField(upload_to="papsas_app/pubmat/achievement", null=False, blank=True)
 
     def __str__(self):
         return f'{self.id} - {self.name}'
@@ -246,7 +246,7 @@ class NewsandOffers(models.Model):
     name = models.CharField(max_length=32, null=True)
     description = models.TextField(max_length=9999, null=True)
     postStamp = models.DateTimeField(auto_now_add=True, null=True)
-    pubmat = models.ImageField(upload_to="papsas_app/pubmat/newsandoffers", null=True, blank=True)
+    pubmat = models.ImageField(upload_to="papsas_app/pubmat/newsandoffers", null=False, blank=True)
 
     def short_description(self):
         if len(self.description) > 100:
@@ -256,8 +256,8 @@ class NewsandOffers(models.Model):
 class EventRegistration(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="customer")
     event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name="activity")
-    receipt = models.ImageField(upload_to="papsas_app/reciept", null=True, blank=True) 
-    reference_number = models.IntegerField(null = True)
+    receipt = models.ImageField(upload_to="papsas_app/reciept", null=False) 
+    reference_number = models.IntegerField(null = False)
     registered_at = models.DateTimeField(auto_now_add=True, null=True)
     status = models.CharField(max_length=10, choices=status, default='Pending')
 

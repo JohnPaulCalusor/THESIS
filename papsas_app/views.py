@@ -652,7 +652,7 @@ def event_registration_view(request, event_id):
             try:
                 form.save()  # No need for commit=False here
                 messages.success(request, "You have successfully registered for the event.")
-                return redirect('index')
+                return redirect( 'event_registration_table', event_id = event.id )
             except IntegrityError:
                 messages.error(request, "You are already registered for this event.")
             except ValidationError as e:
@@ -752,6 +752,7 @@ def membership_registration(request, mem_id):
     if request.method == 'POST':
         memType = MembershipTypes.objects.get( id = mem_id )
         form = MembershipRegistration(request.user, mem_id, data=request.POST, files = request.FILES)
+        infinite = timedelta(days=36500)
         if form.is_valid():
             user_membership = form.save(commit=False)
             user_membership.user = request.user
@@ -761,7 +762,7 @@ def membership_registration(request, mem_id):
             if memType.duration is not None:
                 user_membership.expirationDate = user_membership.registrationDate + memType.duration
             else:
-                user_membership.expirationDate = None
+                user_membership.expirationDate = user_membership.registrationDate + infinite
             user_membership.save()
             return redirect('index')
         else:
