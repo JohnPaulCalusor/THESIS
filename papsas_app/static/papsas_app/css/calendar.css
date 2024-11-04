@@ -1,0 +1,40 @@
+body{
+    background-color: #f9f9f9;
+}
+#calendar-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+}
+
+#calendar {
+    height: 75vh;
+    width: 75vw;
+    margin-top: 20px;
+    font-size: 1rem; /* Default font size for larger screens */
+}
+
+/* Responsive styles for mobile screens */
+@media only screen and (max-width: 768px) {
+    #calendar {
+        width: 90vw;
+        height: 60vh;
+        font-size: 0.9rem; /* Slightly smaller font for tablet screens */
+    }
+}
+
+@media only screen and (max-width: 480px) {
+    #calendar {
+        width: 100vw;
+        height: 50vh;
+        font-size: 0.8rem; /* Smaller font for mobile screens */
+    }
+}
+@media only screen and (max-width: 828px) {
+    #calendar {
+        width: 95vw; /* Full width, with a small margin */
+        height: 60vh; /* Adjust height to fit the screen */
+        font-size: 0.85rem; /* Adjust font size for better readability */
+    }
+}

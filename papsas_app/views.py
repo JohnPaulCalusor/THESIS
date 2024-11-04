@@ -20,6 +20,7 @@ from django.core.exceptions import ValidationError
 from django.http import JsonResponse
 from .models import User, MembershipTypes, Vote, Event, Officer
 from django.db import models
+from django.contrib.auth.hashers import make_password
 # Imported Forms
 from .forms import AttendanceForm, EventRegistrationForm, EventForm, ProfileForm, RegistrationForm, LoginForm, MembershipRegistration, Attendance, VenueForm, AchievementForm, NewsForm, UserUpdateForm, EventRatingForm, TORForm
 from datetime import date, timedelta
@@ -183,6 +184,7 @@ def rate_event(request, event_id):
 
     return render(request, 'papsas_app/rate_event.html', {'form': form, 'event': event})
 
+# kulang tor
 def register(request):
     form = RegistrationForm()
 
@@ -190,7 +192,7 @@ def register(request):
         form = RegistrationForm(request.POST)
         if form.is_valid():
             try:
-                username = form.cleaned_data['email']
+                email = form.cleaned_data['email']
                 password = form.cleaned_data['password']
                 fname = form.cleaned_data['first_name']
                 lname = form.cleaned_data['last_name']
@@ -200,11 +202,7 @@ def register(request):
                 occupation = form.cleaned_data['occupation']
                 age = form.cleaned_data['age']
                 birthDate = form.cleaned_data['birthdate']
-
-                try:
-                    validate_password(password)
-                except Exception as e:
-                    form.add_error('password', e)
+                institution = form.cleaned_data['institution']
 
                 if region == 'Region':
                     form.add_error('region', 'Select a valid region.')
@@ -217,10 +215,9 @@ def register(request):
                         form.add_error('age', 'Birthdate and Age did not match. Please input the correct details')
 
                 if not form.errors:
-                    user = User.objects.create_user(
-                        username=username,
-                        email=username,
-                        password=password,
+                    user = User(
+                        username=email,
+                        email=email,
                         first_name=fname,
                         last_name=lname,
                         mobileNum=mobileNum,
@@ -228,13 +225,15 @@ def register(request):
                         address=address,
                         occupation=occupation,
                         age=age,
-                        birthdate=birthDate
+                        birthdate=birthDate,
+                        is_active = True,
+                        institution = institution,
                     )
-
-                    user.is_active = False
+                    user.set_password(password)
                     user.save()
 
                     return redirect('verify_email', user_id=user.id)
+
             except IntegrityError:
                 form.add_error('email', 'A user with this email already exists.')
 
@@ -257,9 +256,9 @@ def login_view(request):
         return redirect('index')
     
     if request.method == 'POST':
-        username = request.POST['email']
+        email = request.POST['email']
         password = request.POST['password']
-        user = authenticate(request, username=username, password=password)
+        user = authenticate(request, username=email, password=password)
         if user is not None:
             if user.email_verified and user.is_active:
                 login(request, user)
@@ -275,7 +274,7 @@ def login_view(request):
         else:
             form = LoginForm(request.POST)
             return render(request, 'papsas_app/login.html', {
-                'message' : 'Invalid Credentials',
+                'message' : 'Invalid email and/or password',
                 'form' : form
                 })
     else:

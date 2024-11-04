@@ -8,6 +8,7 @@ from datetime import date
 from django.db.models import Avg
 from datetime import timedelta
 from django.core.validators import RegexValidator, MinValueValidator, MaxValueValidator
+from django.utils.translation import gettext_lazy as _
 # Create your models here.
 
 Regions = [
@@ -45,6 +46,13 @@ status = [
 
 
 class User(AbstractUser):
+    email = models.EmailField(
+        _('email address'),
+        unique=True,  # This is important
+        error_messages={
+            'unique': _("A user with that email already exists."),
+        },
+    )
     mobileNum = models.CharField(
         max_length=11,
         validators=[
@@ -72,11 +80,14 @@ class User(AbstractUser):
     institution = models.CharField(max_length=128, null=True)
     tor = models.ImageField(upload_to="papsas_app/tor", null=True, blank=True) 
 
+    USERNAME_FIELD = 'email'
+    EMAIL_FIELD = 'email'
+
     def get_expiration_timestamp(self):
         return int(self.verification_code_expiration.timestamp()) if self.verification_code_expiration else None
 
     def __str__(self):
-        return f'{self.id} - {self.first_name}'
+        return f'{self.id} - {self.first_name} - {self.email}'
 
     def save(self, *args, **kwargs):
         if self.verification_code:

@@ -1,0 +1,533 @@
+/* Datatable styling */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 14px;
+    text-align: center;
+    
+}
+.text-input{
+    font-weight: 300;
+}
+.title h3{
+    font-size: 30px;
+    margin-top: 30px;
+    font-weight: 400;
+    color: red;
+}
+.no-existing{
+    text-align: center;
+}
+.data-table-container {
+    max-width: 1600px;
+    margin-left: auto; /* Center horizontally */
+    margin-right: auto; /* Center horizontally */
+    padding-left: 1.5rem; /* Add some padding for spacing */
+    padding-right: 1.5rem; /* Add some padding for spacing */
+}
+
+th, td {
+    padding: 2px 5px;
+    border: 1px solid #ddd;
+    font-weight: 300;
+}
+
+th {
+    background-color: #f2f2f2;
+    color: #333;
+    font-weight: 400;
+    cursor: pointer;
+    padding: 10px;
+}
+.back-button:hover{
+    color: red;
+}
+.back-button{
+    text-align: left;
+    margin-top: 30px;
+    font-size: 20px;
+}
+tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+tr:hover {
+    background-color: #f1f1f1;
+}
+
+td a {
+    color: #ff0000;
+    text-decoration: none;
+}
+
+td a:hover {
+    text-decoration: underline;
+}
+td {
+    white-space: normal; /* Allow the text to wrap onto multiple lines */
+    overflow: hidden;
+    text-overflow: ellipsis; /* Adds "..." for long text */
+}
+
+/* Popup container style */
+/* Button styles */
+
+.action-icon {
+    background-color: transparent; /* Remove background */
+    border: none; /* Remove border */
+    cursor: pointer; /* Change cursor to pointer for better UX */
+    color: red; /* Keep the icon color */
+    font-size: 16px; /* Adjust icon size */
+    padding: 5px; /* Optional: Adjust padding */
+    font-weight: 300;
+}
+
+.action-icon i {
+    margin-right: 5px;
+}
+
+/* Optional: Add hover effect */
+.action-icon:hover {
+    color: black; /* Change icon color on hover */
+}
+
+.action-icon i {
+    margin-right: 5px;
+}
+#receipt-container, #id-container {
+    display: none;
+    overflow: hidden;
+}
+/* Modal Container */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 999; /* Bring it in front of other elements */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8); /* Darker background for contrast */
+    justify-content: center;
+    align-items: center;
+}
+
+
+/* Modal Content */
+.modal-content {
+    background-color: #fff;
+    margin: auto;
+    padding: 20px;
+    border-radius: 10px;
+    width: 80%;
+    max-width: 600px;
+    text-align: center;
+    overflow-y: auto;
+    max-height: 80vh;
+    margin-top: 150px;
+}
+
+
+.modal img {
+    max-width: 100%;
+    margin: 0 auto;
+    display: block;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+}
+
+
+.modal h2 {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 24px;
+    margin-bottom: 15px;
+}
+
+.close-modal {
+    cursor: pointer;
+    font-size: 24px;
+    color: #333;
+    margin-left: 10px;
+}
+
+.close-modal:hover {
+    color: #f44336; /* Red color on hover */
+}
+.modal-open {
+    pointer-events: none; /* Disable interaction on the rest of the page */
+}
+/* Table header styling */
+.table-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    margin-top: 20px;
+}
+
+.table-header h1 {
+    font-size: 24px;
+    margin: 0;
+}
+
+.btn-add-user {
+    background-color: #ff0000;
+    color: white;
+    padding: 10px 20px;
+    text-decoration: none;
+    font-size: 16px;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-add-user i {
+    font-size: 18px;
+}
+
+.btn-add-user:hover {
+    background-color: #000000;
+}
+.filter-container {
+    margin: 10px 0;
+}
+
+#attendanceFilter {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    box-sizing: border-box;
+    font-size: 16px;
+}
+
+.checkbox-filter {
+    display: flex;
+    justify-content: flex-start;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.checkbox-filter label {
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.checkbox-filter input {
+    margin-right: 5px;
+}
+/* Popup container style */
+
+.overlay {
+    display: none; /* Hidden by default */
+    position: fixed; 
+    top: 0; 
+    left: 0; 
+    width: 100%; 
+    height: 100%; 
+    background-color: rgba(0, 0, 0, 0.7); /* Dark background with opacity */
+    z-index: 999; /* Positioned below the popup */
+}
+
+#popup_container {
+    display: none;
+}
+/* Popup Content */
+.popup-content {
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+}
+
+.popup-content h2 {
+    display: flex;
+    justify-content: space-between;
+    font-size: 20px;
+    margin-bottom: 20px;
+}
+
+/* Close button */
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+/* Filter and Table styling */
+.filter-container {
+    margin-bottom: 20px;
+}
+
+.filter-container input {
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.checkbox-filter {
+    display: flex;
+    gap: 15px;
+    font-size: 14px;
+}
+
+.checkbox-filter input {
+    margin-right: 5px;
+}
+
+/* Table styling */
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    font-size: 14px;
+}
+
+.data-table th, .data-table td {
+    padding: 10px;
+    border: 1px solid #ddd;
+    text-align: center;
+}
+
+.data-table th {
+    background-color: #f9f9f9;
+    font-weight: bold;
+}
+
+/* Scrollable tbody */
+.data-table tbody {
+    display: block;
+    max-height: 300px; /* Adjust this height according to your design */
+    overflow-y: auto;
+    width: 100%;
+}
+
+/* Ensuring the table header and body cells align */
+.data-table thead, .data-table tbody tr {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+}
+
+.data-table tbody tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    color: #000000;
+}
+
+input[type="text"],
+input[type="date"],
+input[type="time"],
+input[type="number"],
+textarea,
+select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+#id_membership{
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    height: 38px;
+}
+.btn {
+    background-color: #ff0000;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+}
+
+.btn:hover {
+    background-color: #000000;
+}
+th.orderable a{
+    text-decoration: none;
+    color: #000;
+    font-weight: 300;
+}
+.message {
+    color: red;
+    text-align: center;
+    margin-top: 20px;
+}
+.action-buttons {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Add spacing between the buttons */
+    margin-left: 10px;
+}
+
+.action-buttons form {
+    display: inline;
+}
+
+.action-buttons a, 
+.action-buttons button {
+    display: flex;
+    align-items: center;
+}
+
+/* used in attendance_record.html */
+#details-container{
+    display: none;
+}
+
+#filter-form .row {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 30px;
+    
+}
+
+#filter-form .row .col-md-3 {
+    margin-right: 15px; /* Add space between inputs */
+    margin-bottom: 1rem; /* Add vertical space between rows if they wrap */
+    width: 288px;
+    
+}
+
+#filter-form .row .col-md-3:last-child {
+    margin-right: 0; /* Remove margin on the last item in the row */
+}
+
+@media (max-width: 768px) {
+    #filter-form .row .col-md-3 {
+        flex: 1 1 50%;
+    }
+}
+
+@media (max-width: 576px) {
+    #filter-form .row .col-md-3 {
+        flex: 1 1 100%;
+    }
+}
+#filter-form .row .col-md-3.d-flex {
+    display: flex;
+    gap: 10px; /* Adds space between the buttons */
+    height: 38px;
+    margin-top: 25px;
+}
+.search-submit{
+    background-color: #000;
+    display: flex;
+    font-size: 16px;
+    padding: 5px;
+    width: 100px;
+    justify-content: center;
+    color: #ffffff;
+    border: none;
+
+}
+.search-submit:hover{
+    color: rgb(255, 255, 255);
+    background-color: #ff0000;
+}
+.pagination {
+    display: flex;
+    justify-content: right;
+    padding-left: 0;
+    list-style: none;
+    border-radius: 0.25rem;
+    gap: 10px;
+    color: #ff0000;
+
+    
+}
+.pagination a{
+    position: relative;
+    display: block;
+    padding: 0.5rem 0.75rem;
+    margin-left: -1px;
+    line-height: 1.25;
+    color: #ff0000;
+    background-color: #fff;
+    border: 1px solid #dee2e6;
+    text-decoration: none;
+    border-radius: 0.25rem;
+    
+}
+
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group input, .form-group select {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.form-group input:focus, .form-group select:focus {
+    outline: none;
+    border-color: #f00;
+}
+.input-box p{
+    font-weight: 300;
+    padding: 5px;
+}
+.input-two p{
+    font-weight: 300;
+    padding: 5px;
+}
+.two-forms {
+    display: flex;
+    gap: 20px;
+    
+  }
+  .input-box .input-field{
+    width: 100%;
+    padding: 10px;
+    margin: 0;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    height: 45px;
+  }
+  .input-two{
+    width: 100%;
+    margin-top: 10px;
+    font-size: 16px;
+    border-radius: 4px;
+    box-sizing: border-box;
+  }
+  select#membership {
+    width: 100%;
+    padding: 8px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #fff;
+}
+
+ .reset {
+    border: 1px black solid;
+}
+
+.container {
+    padding-inline: 15px;
+}

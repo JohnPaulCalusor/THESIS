@@ -1,0 +1,168 @@
+/* General container styling */
+body{
+    background-color: #f9f9f9;
+}
+#event_container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: 'Arial', sans-serif;
+}
+
+/* Event card styling */
+.event-card {
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    margin-top: 20px;
+    overflow: hidden;
+}
+
+/* Event header image */
+.event-header {
+    width: 100%;
+    position: relative;
+}
+
+.event-image {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* Event content */
+.event-content {
+    padding: 15px;
+    text-align: left; /* Align the text to the left */
+}
+
+.event-content h3 {
+    font-size: 1.5em;
+    color: #ff0000;
+    margin-bottom: 10px;
+}
+.event-content p {
+    font-size: 1em;
+    color: #555;
+    margin-bottom: 15px;
+    font-weight: 300;
+    text-align: justify;
+    line-height: 1.5em; /* Improves readability */
+    word-wrap: break-word; /* Prevents long words from overflowing */
+    white-space: normal; /* Allow text to wrap */
+    overflow: visible; /* No overflow restriction */
+    text-overflow: clip; /* No text truncation */
+    display: block; /* Ensure it shows full content */
+    max-height: none; /* No height restriction */
+}
+
+.event-date {
+    color: #777;
+    font-size: 0.9em;
+}
+
+/* Action buttons styling */
+.input-submit {
+    text-align: center; /* Center-align the content */
+}
+
+.submit-btn {
+    width: 90%;
+    height: 60px;
+    background: #ff0000;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: .3s;
+    color: #fff;
+    font-weight: 300;
+    font-size: 17px;
+    margin: 20px auto 0 auto; /* Use margin auto to center the button */
+    display: block;
+}
+
+.submit-btn:hover {
+    background: #000;
+    transform: scale(1.05, 1);
+}
+
+.title-container{
+    font-size: 40px;
+    color: red;
+    margin-top: -50px;
+    text-transform: uppercase;
+    font-weight: 500;
+    text-align: center;
+    padding-top: 80px;
+
+
+  }
+/* Responsive design for mobile */
+@media (max-width: 768px) {
+    .event-actions {
+        flex-direction: column;
+    }
+
+    .event-actions button {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    .event-actions button:last-child {
+        margin-bottom: 0;
+    }
+}
+.event-description {
+    font-size: 1em;
+    color: #555;
+    margin-bottom: 15px;
+    font-weight: 300;
+    text-align: left; /* Align the description text */
+    max-width: 100%; /* Ensure it doesn’t overflow */
+    line-height: 1.5em; /* Improves readability */
+    word-wrap: break-word; /* Prevents long words from overflowing */
+    white-space: normal; /* Allow text to wrap and prevent overflow */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3; /* Limit to 3 lines */
+    -webkit-box-orient: vertical;
+    max-height: 80px; /* Adjust this height based on content */
+}
+
+/* When the description is expanded */
+.event-description.show-full {
+    max-height: none;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center; /* Center the pagination */
+    margin-top: 20px; /* Optional margin to add spacing */
+    margin-bottom: 30px;
+}
+
+.step-links {
+    display: inline-block;
+    padding: 10px;
+}
+
+.step-links a {
+    text-decoration: none;
+    color: #ff0000; /* Link color */
+    margin: 0 10px;
+    font-weight: bold;
+    text-transform: capitalize;
+}
+
+.step-links a:hover {
+    color: #ff0000; /* Darker shade on hover */
+}
+
+.step-links .current {
+    font-weight: bold;
+    color: #333; /* Current page color */
+    margin: 0 10px;
+}

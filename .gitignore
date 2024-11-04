@@ -11,3 +11,6 @@ media/papsas_app/pubmat/
 media/papsas_app/verificationID/
 papsas/papsas/settings.py
 papsas/settings.py
+myvenv
+media
+staticfiles

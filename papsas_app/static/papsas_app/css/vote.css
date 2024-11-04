@@ -1,0 +1,199 @@
+body {
+    background-color: #ffffff;
+}
+
+#voteContainer {
+    display: grid;
+    gap: 15px;
+    justify-content: center;
+    grid-template-columns: repeat(5, 1fr); /* 5 equal columns */
+}
+
+
+
+.candidateContainer {
+    width: 350px;  /* Set a fixed width */
+    height: 460px; /* Set a fixed height */
+    border-radius: 16px;
+    box-shadow: 0 2px 4px hsla(0, 0%, 0%, 0.15);
+    transition: .4s;
+    justify-content: space-between;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.candidateContainer img {
+    width: 400px;
+    border-radius: 14px;
+    height: 300px;
+}
+
+.hidden-checkbox {
+    display: none;
+}
+
+.hidden-checkbox:checked + .candidate-label .candidateContainer {
+    border: 3px solid rgb(255, 0, 0); /* Add an outline when selected */
+    border-radius: 10px;
+}
+
+.candidateContainer {
+    border: 1px solid #ccc;
+    padding: 10px;
+    transition: border 0.3s ease;
+    cursor: pointer;
+}
+
+.candidate-label:hover .candidateContainer {
+    border: 2px solid black;
+}
+
+.election-title {
+    text-align: center;
+    padding: 20px;
+}
+
+.election-title h2 {
+    font-size: 50px;
+    font-weight: 400;
+    text-transform: uppercase;
+    color: red;
+}
+
+.election-title p {
+    font-size: 16px;
+    font-weight: 300;
+}
+
+.election-title-background {
+    text-align: center;
+    padding: 20px;
+    background-color: #f9f9f9;
+    margin-top: 50px;
+}
+
+.election-title-background h2 {
+    font-size: 50px;
+    font-weight: 400;
+    text-transform: uppercase;
+    color: red;
+}
+
+.election-title-background p {
+    font-size: 16px;
+    font-weight: 300;
+}
+
+.candidate-title {
+    padding-top: 20px;
+    text-align: center;
+    text-transform: uppercase;
+    font-size: 25px;
+    font-weight: 300;
+}
+
+.candidate-title h2 {
+    font-weight: 400;
+    color: red;
+}
+
+.btn {
+    background-color: rgb(0, 0, 0);
+    color: #fff;
+    border: none;
+    padding: .80rem 1.5rem;
+    border-radius: 3rem;
+    display: inline-block;
+    margin-bottom: 10px;
+    width: 250px;
+    margin-top: 10px;
+    justify-content: center;
+}
+
+.btn:hover {
+    background-color: rgb(255, 0, 0);
+}
+
+.btn a {
+    color: #fff;
+    font-weight: 300;
+}
+
+.cast-vote {
+    background-color: red;
+    color: #fff;
+    padding: .80rem 1.5rem;
+    border-radius: 3rem;
+    margin-bottom: 10px;
+    width: 50rem;
+    margin-top: 50px;
+    border: none;
+    height: 70px;
+    font-weight: 300;
+    font-size: 16px;
+}
+
+.cast-vote:hover {
+    background-color: black;
+}
+
+.cast-your-vote {
+    text-align: center;
+}
+
+.cast-your-vote h4 {
+    text-align: center;
+    padding-bottom: 20px;
+    font-weight: 300;
+}
+
+.cast-your-vote p {
+    margin-top: 10px;
+    color: red;
+}
+
+.message {
+    text-align: center;
+    margin-bottom: 20px;
+}
+/* Responsive design for iPhone 11 */
+@media only screen and (max-width: 828px) {
+    #voteContainer {
+        grid-template-columns: repeat(1, 1fr); /* 2 columns for iPhone 11 */
+        gap: 10px; /* Reduce gap for smaller screen */
+    }
+    
+    .candidateContainer {
+        width: 100%; /* Use full width for each candidate box */
+        height: auto; /* Let height adjust based on content */
+    }
+
+    .candidateContainer img {
+        width: 100%; /* Adjust image size to container */
+        height: auto; /* Keep aspect ratio */
+    }
+
+    .cast-vote {
+        width: 90vw; /* Adjust vote button width for mobile */
+        font-size: 14px; /* Reduce font size for better fit */
+        height: 60px;
+    }
+    
+    .election-title h2 {
+        font-size: 35px; /* Adjust title size for smaller screens */
+    }
+    
+    .election-title p {
+        font-size: 14px; /* Adjust paragraph size */
+    }
+    
+    .btn {
+        width: 200px; /* Adjust button width for mobile */
+    }
+    
+    .cast-your-vote h4 {
+        font-size: 18px; /* Adjust font size for casting vote */
+    }
+}

@@ -4,6 +4,13 @@ from django.core.exceptions import ValidationError
 from django.forms import ModelForm, TextInput, EmailInput
 
 class RegistrationForm(forms.ModelForm):
+    password = forms.CharField(widget=forms.PasswordInput(attrs={
+        'placeholder': 'Password',
+        'class': 'input-field',
+        'required': True
+    }))
+    
+
     class Meta:
         model = User
         fields = ('email', 'password', 'first_name', 'last_name','mobileNum', 'region', 'address', 'occupation', 'age', 'birthdate', 'institution')
@@ -12,11 +19,6 @@ class RegistrationForm(forms.ModelForm):
                 'placeholder' : 'Email',
                 'class': 'input-field',
                 'required' : True
-            }),
-            'password' : forms.PasswordInput(render_value=True, attrs={
-                'placeholder' : 'Password',
-                'class': 'input-field',
-                'required' : True,
             }),
             'birthdate' : forms.DateInput(attrs={
                 'type': 'date',
@@ -60,6 +62,11 @@ class RegistrationForm(forms.ModelForm):
         super(RegistrationForm, self).__init__(*args, **kwargs)
         self.fields['birthdate'].label = 'Date of Birth'
         self.fields['region'].widget.attrs['class'] = 'input-field'
+
+    def clean_password(self):
+        password = self.cleaned_data.get('password')
+        # Optionally add password strength validation here
+        return password
 
     def clean_your_number(self):
         data = self.cleaned_data['mobileNum']
