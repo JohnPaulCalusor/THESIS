@@ -109,10 +109,10 @@
     </div>
 
     <div class="recent-activities-container"
-        hx-get="{% url 'get_profile' user.id %}"
-        hx-trigger="every 5s"
-        hx-swap="innerHTML"
     >
+    <!-- hx-get="{% url 'get_profile' user.id %}"
+    hx-trigger="every 5s"
+    hx-swap="innerHTML" -->
         {% if candidacies %}
         <div class="info-row-activity">
             <div class="info-label-activity">Candidacies: </div>

@@ -470,8 +470,8 @@ def vote(request):
         except Vote.DoesNotExist:
             user_voted = None
         if user_voted:
+            messages.error(request, 'You already voted for this election.')
             return render(request, 'papsas_app/form/vote.html', {
-                'message' : 'You already voted for this election.',
                 'attended_event' : attended_event,  
                 'has_declared' : has_declared
             })
@@ -484,13 +484,15 @@ def vote(request):
                 try:
                     candidate_obj = Candidacy.objects.get(id = candidate_id, election = ongoingElection)
                     vote.candidateID.add(candidate_obj)
+                    messages.success(request, 'You have voted successfully.')
                 except Candidacy.DoesNotExist:
                     return HttpResponse("Invalid candidate.", status=400)
         else:
             return render(request, 'papsas_app/form/vote.html', {
                 'message' : 'You voted above the limit'
             })
-        return redirect('index')
+        
+        return redirect('vote')
     else:
         return render(request, 'papsas_app/form/vote.html', {
             'candidates' : candidates,
