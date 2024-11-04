@@ -401,9 +401,10 @@ select {
     background-color: #000000;
 }
 th.orderable a{
+    margin-right: 5px;
     text-decoration: none;
     color: #000;
-    font-weight: 300;
+    font-weight: bold;
 }
 .message {
     color: red;
