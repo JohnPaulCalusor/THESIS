@@ -27,6 +27,46 @@ table {
     padding-right: 1.5rem; /* Add some padding for spacing */
 }
 
+.header-bold {
+    font-weight: bold;
+}
+
+th.orderable {
+    cursor: pointer;
+    position: relative;
+    padding-right: 15px; 
+}
+
+th.orderable::after {
+    content: "▲\A ▼"; 
+    white-space: pre; 
+    font-size: 0.7em;
+    position: absolute;
+    right: 5px;
+    top: 50%;
+    transform: translateY(-50%); 
+    color: gray; 
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Display an up arrow for ascending order */
+th.orderable.asc::after {
+    content: "▲"; /* Up arrow symbol */
+    font-size: 0.8em; /* Adjust size as needed */
+    margin-left: 5px;
+    color: green; /* Customize color */
+}
+
+/* Display a down arrow for descending order */
+th.orderable.desc::after {
+    content: "▼"; /* Down arrow symbol */
+    font-size: 0.8em; /* Adjust size as needed */
+    margin-left: 5px;
+    color: red; /* Customize color */
+}
+
 th, td {
     padding: 2px 5px;
     border: 1px solid #ddd;
