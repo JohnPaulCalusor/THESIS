@@ -28,6 +28,12 @@
     font-weight: 500;
   
   }
+  .institutional-name h1 {
+    font-size: 2rem;
+    color: #ff0000;
+    font-weight: 500;
+  
+  }
   
   .membership_grid {
     display: grid;
@@ -240,4 +246,3 @@
       height: 15rem;
     }
   }
-  
