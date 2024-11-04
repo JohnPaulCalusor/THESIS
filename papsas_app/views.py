@@ -149,10 +149,6 @@ def index(request):
         })
 
 
-# def get_queryset(self):
-#         return Event.objects.annotate(avg_rating=Avg('ratings__rating'))
-
-
 
 @login_required
 def rate_event(request, event_id):
@@ -962,12 +958,20 @@ def password_reset_confirm(request, user_id):
     if request.method == 'POST':
         password1 = request.POST['password1']
         password2 = request.POST['password2']
+        
         if password1 == password2:
-            user.set_password(password1)
-            user.save()
-            return redirect('login')
+            try:
+                # Validate the new password
+                validate_password(password1)
+                user.set_password(password1)
+                user.save()
+                return redirect('login')
+            except ValidationError as e:
+                # Handle validation errors
+                return render(request, 'papsas_app/password_reset_confirm.html', {'message': e.messages})
         else:
             return render(request, 'papsas_app/password_reset_confirm.html', {'message': 'Passwords do not match'})
+    
     return render(request, 'papsas_app/password_reset_confirm.html', {'user_id': user_id})
 
 def count_vote(id):

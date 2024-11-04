@@ -139,6 +139,14 @@
         </div>
         <!-- Add more recent activity blocks as needed -->
     </div>
+
+    <div class="personal-info">
+        <div class="title-activities"> 
+            <h1>Account Settings</h1>
+        </div>
+        <a href="{% url 'password_reset_confirm' viewUser.id %}" class="change-password-btn">Change Password</a>
+    </div>
+
 </div>
 </div>
 {% endblock %}
