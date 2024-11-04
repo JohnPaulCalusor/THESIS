@@ -433,38 +433,3 @@
         height: 45px; /* Adjust button height */
     }
 }
-@media screen and (max-width: 1366px) {
-  .partners__container {
-    grid-template-columns: repeat(3, 1fr); /* Single column */
-    gap: 1.5rem;
-    padding-left: 70px;
-    padding-right: 70px;
-}
-
-.partner__box {
-    height: 26rem; /* Adjust height for better fit */
-    width: 90%; /* Make the box width more flexible */
-    margin: 0 auto; /* Center the boxes */
-}
-
-.partner__img {
-    height: auto; /* Reduce image height */
-}
-
-.partner__title {
-    font-size: 1.2rem; /* Adjust font size */
-}
-
-.partner__button {
-    width: 60%; /* Button takes full width */
-    height: 45px; /* Adjust button height */
-}
-.officer__container{
-  padding-left: 70px;
-  padding-right: 70px;
-}
-.memo_grid{
-  padding-left: 70px;
-  padding-right: 70px;
-}
-}
