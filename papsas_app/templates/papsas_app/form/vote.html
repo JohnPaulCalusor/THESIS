@@ -29,36 +29,42 @@
         </h4>
         <div class="container">
             <!-- vote form -->
-            <form action="{% url 'vote' %}" method="post" id="voteForm">
+            <form method="post" id="voteForm"
+                hx-post="{% url 'vote' %}"
+                hx-confirm="Are you sure you want to submit your vote?"
+                hx-target="body"
+                hx-swap="outerHTML"
+            >
                 {% csrf_token %}
+                {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                        <div class="alert alert-warning alert-dismissible fade show custom-alert" role="alert">
+                            <strong>{{ message }}</strong>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">X</button>
+                        </div>
+                    {% endfor %}
+                </ul>
+                {% endif %}
                 <div id="voteContainer">
                     {% for candidate in candidates %}
                     <div>
                         <input id="candidate-{{ candidate.id }}" type="checkbox" name="candidates" class="hidden-checkbox" value="{{ candidate.id }}" />
                         <label for="candidate-{{candidate.id}}" class="candidate-label"> 
                             <div class="candidateContainer">
-                                <img src="{{ candidate.candidate.profilePic.url }}" alt="" srcset="">
+                                <img src="{{ candidate.candidate.profilePic.url }}" alt="{{ candidate.candidate.first_name }} picture">
                                 <p>
                                     {{ candidate.candidate.first_name }} 
                                 </p>
                                 <a href="{% url 'profile' candidate.candidate.id %}" class="btn">
                                     View Profile
                                 </a>
-                                <!-- <button class="btn">
-                                </button> -->
                             </div>
                         </label>
                     </div>
                     {% endfor %}
                 </div>
                 <button type="submit" class="cast-vote"> Cast Vote </button>
-                {% if messages %}
-                <ul class="messages">
-                    {% for message in messages %}
-                        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-                    {% endfor %}
-                </ul>
-                {% endif %}
             </form>
 
         </div>
@@ -82,7 +88,12 @@
             </li>
         </ul>
         {% if attended_event >= 2 and user.tor and has_declared is None %}
-            <form action="{% url 'declare_candidacy' ongoingElection.id %}" method="post">
+            <form method="post"
+            hx-post="{% url 'declare_candidacy' ongoingElection.id %}""
+            hx-confirm="Are you sure you want to submit your candidacy?"
+            hx-target="body"
+            hx-swap="outerHTML"
+            >
                 {% csrf_token %}
                 <button type="submit" class="cast-vote">Declare Candidacy</button>
             </form>

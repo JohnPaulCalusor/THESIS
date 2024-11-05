@@ -486,10 +486,12 @@ def vote(request):
                     messages.success(request, 'You have voted successfully.')
                 except Candidacy.DoesNotExist:
                     return HttpResponse("Invalid candidate.", status=400)
+        elif num_selected == 0:
+            messages.error(request, 'Please select a candidate.')
+            return redirect('vote')
         else:
-            return render(request, 'papsas_app/form/vote.html', {
-                'message' : 'You voted above the limit'
-            })
+            messages.error(request, 'You voted above the limit.')
+            return redirect('vote')
         
         return redirect('vote')
     else:
