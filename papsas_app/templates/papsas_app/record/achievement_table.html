@@ -33,16 +33,19 @@
     </form>
 </div>
 <div class="container">
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+            <div class="alert alert-warning alert-dismissible fade show custom-alert" role="alert">
+                <strong>{{ message }}</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">X</button>
+            </div>
+        {% endfor %}
+    </ul>
+    {% endif %}
     <div id="table-container">
-        <div class="col-md-3 mb-3 d-flex align-items-end">Total Records: {{ table.rows|length }}</div>
         {% render_table table %}
-        {% if messages %}
-        <ul class="messages">
-            {% for message in messages %}
-                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-            {% endfor %}
-        </ul>
-        {% endif %}
+        <div class="col-md-3 mb-3 d-flex align-items-end">Total Records: {{ table.rows|length }}</div>
     </div>
 </div>
 
@@ -51,7 +54,12 @@
         <span class="upd-close-modal" onclick="closePopup()"><i class="fas fa-times"></i></span>
     <h3>Update Achievement</h3>
     <div>
-        <form enctype="multipart/form-data" method="post">
+        <form enctype="multipart/form-data" method="post"
+            hx-post=""
+            hx-confirm="Are you sure you want to update this achievement?"
+            hx-swap="none"
+            id="update-form"
+        >
             <img src="" alt="" id="img">
             {% csrf_token %}
             <div class="form-group">
@@ -64,7 +72,7 @@
         
             <div class="form-group">
             {{ form.pubmat }}
-        </div>
+            </div>
         
             <button type="submit" class="btn">Update</button>
         </form>

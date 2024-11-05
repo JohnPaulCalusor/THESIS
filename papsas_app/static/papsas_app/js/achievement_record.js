@@ -25,9 +25,14 @@ function showUpdate(achievementId) {
             }
             document.getElementById('id_pubmat').src = data.pubmat;
             console.log(data)
-            // Add the achievement ID to the form for submission
+  
             const form = updateContainer.querySelector('form');
-            form.action = `/get-achievement-data/${achievementId}/`;
+            const updateUrl = `/get-achievement-data/${achievementId}/`;
+
+            form.setAttribute("hx-post", updateUrl);
+            form.setAttribute("hx-confirm", `Are you sure you want to update '${data.name}' `);
+            
+            htmx.process(form);
         })
         .catch(error => console.error('Error:', error));
 }
@@ -35,10 +40,11 @@ function showUpdate(achievementId) {
 // Optional: Close update form
 
 
-setTimeout(function(){
-    const element = document.getElementById('message-container');
-    element.remove();
-}, 5000);
+// setTimeout(function(){
+//     const element = document.getElementById('message-container');
+//     element.remove();
+// }, 5000);
+
 function showPopup() {
     document.querySelector('#update-container').style.display = 'block';
     document.body.insertAdjacentHTML('beforeend', '<div class="popup-overlay"></div>');

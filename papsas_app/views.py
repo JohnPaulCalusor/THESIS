@@ -681,7 +681,7 @@ def become_member(request):
     })
 
 def news_offers(request):
-    news_offers = NewsandOffers.objects.all()
+    news_offers = NewsandOffers.objects.all().order_by('-id')
 
     paginator = Paginator(news_offers, 5)
     page_number = request.GET.get('page')
@@ -1099,7 +1099,7 @@ def compose_news_offer(request):
     })
 
 def achievement_view(request):
-    achievements = Achievement.objects.all()
+    achievements = Achievement.objects.all().order_by('-id')
     
     paginator = Paginator(achievements, 5) 
     page_number = request.GET.get('page')  
@@ -1127,7 +1127,7 @@ def achievement_record(request):
         'form' : form,
     })
 
-# update_achievement
+# update achievement
 @officer_required
 def get_achievement_data(request, achievement_id):
     try:
@@ -1137,7 +1137,9 @@ def get_achievement_data(request, achievement_id):
             if form.is_valid():
                 form.save()
                 messages.success(request, 'Updated Successfully.')
-                return redirect('achievement_table')
+                response = HttpResponse()
+                response['HX-Refresh'] = 'true' 
+                return response
             else:
                 return JsonResponse({'error': 'Invalid request'}, status=400)   
 
@@ -1167,8 +1169,10 @@ def update_news_offer(request, id):
                 else:
                     news_offer.pubmat = news_offer.pubmat
                 news_offer.save()
-                messages.success(request, 'Updated successfully.')
-                return redirect('news_offers_table')
+                messages.success(request, 'Updated Successfully.')
+                response = HttpResponse()
+                response['HX-Refresh'] = 'true' 
+                return response
             else:
                 return JsonResponse({'error': 'Invalid request'}, status=400)
         data = {
@@ -1475,7 +1479,7 @@ def update_venue(request, id):
                 form.save()
                 messages.success(request, 'Updated successfully.')
                 response = HttpResponse()
-                response['HX-Refresh'] = 'true'  # This will trigger a full page refresh
+                response['HX-Refresh'] = 'true' 
                 return response
             else:
                 return render(request, 'papsas_app/record/venue_record.html', {

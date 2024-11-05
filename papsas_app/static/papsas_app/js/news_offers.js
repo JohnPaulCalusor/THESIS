@@ -26,7 +26,12 @@ function showUpdate(id) {
             console.log(data)
             // Add the achievement ID to the form for submission
             const form = updateContainer.querySelector('form');
-            form.action = `/news_offers/update/${id}/`;
+            const updateUrl = `/news_offers/update/${id}/`;
+
+            form.setAttribute("hx-post", updateUrl);
+            form.setAttribute("hx-confirm", `Are you sure you want to update '${data.name}' `);
+            
+            htmx.process(form);
         })
         .catch(error => console.error('Error:', error));
 }

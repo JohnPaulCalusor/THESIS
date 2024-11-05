@@ -241,6 +241,9 @@ class Achievement(models.Model):
         if len(self.description) > 100:
             return f'{self.description[:100]}...'
         return self.description
+
+    class Meta:
+        ordering = ['id']
         
 class NewsandOffers(models.Model):
     name = models.CharField(max_length=255, null=True)
@@ -252,6 +255,9 @@ class NewsandOffers(models.Model):
         if len(self.description) > 100:
             return f'{self.description[:100]}...'
         return self.description
+
+    class Meta:
+        ordering = ['id']
     
 class EventRegistration(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="customer")

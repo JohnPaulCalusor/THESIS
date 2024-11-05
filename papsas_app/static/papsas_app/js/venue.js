@@ -20,7 +20,6 @@ function showUpdate(id) {
             document.getElementById('id_address').value = data.address;
             document.getElementById('id_capacity').value = data.capacity;
 
-            // Get the form and set the attribute
             const form = updateContainer.querySelector('form');
             const updateUrl = `/venue/update/${id}/`;
             form.setAttribute("hx-post", updateUrl);
