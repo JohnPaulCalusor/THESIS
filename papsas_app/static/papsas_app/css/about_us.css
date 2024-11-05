@@ -345,7 +345,26 @@
   .partner__button:hover {
     background-color: #000000;
   }
-  
+  #scrollUpButton {
+    display: none;
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    z-index: 100;
+    border: none;
+    outline: none;
+    background-color: #ff0000;
+    color: white;
+    cursor: pointer;
+    padding: 10px 15px;
+    border-radius: 5px;
+    font-size: 18px;
+    transition: background-color 0.3s;
+}
+
+#scrollUpButton:hover {
+    background-color: #000000;
+}
   /* Responsive layout for larger screens */
   @media screen and (min-width: 768px) {
     .partners__container {

@@ -159,6 +159,9 @@ body {
     color: #fff;
     cursor: pointer;
 }
+.change-password-btn{
+    color: red;
+}
 /* Media Queries for Mobile */
 @media (max-width: 768px) {
     body {
