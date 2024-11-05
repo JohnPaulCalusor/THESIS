@@ -24,8 +24,10 @@
             </div>
             
             <div class="input-box password-container">
-                <i class="fa fa-eye" id="togglePassword" style="cursor: pointer; margin-left: 21rem; margin-bottom: -10px;"></i>
-                {{ form.password }}
+                <div class="password-wrapper">
+                    {{ form.password }}
+                    <i class="fa fa-eye" id="togglePassword"></i>
+                </div>
             </div>
             {% if resend_code %}
                 <button type="submit" name="resend_code">Resend Verification Code</button>
