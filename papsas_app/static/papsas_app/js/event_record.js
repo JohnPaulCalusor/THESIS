@@ -95,7 +95,6 @@ function showEventDetails(eventId) {
 
 function showUpdate(id) {
     const updateContainer = document.getElementById('update-container');
-    updateContainer.style.display = 'block';
     console.log(id);
 
     fetch(`/event/update/${id}/`)
@@ -119,10 +118,15 @@ function showUpdate(id) {
             console.log(data.endDate);
             
             const form = updateContainer.querySelector('form');
-            form.action = `/event/update/${id}/`;
+            const updateUrl = `/event/update/${id}/`;
+            form.setAttribute("hx-post", updateUrl);
+            form.setAttribute("hx-confirm", `Are you sure you want to update '${data.name}' `);
+            
+            htmx.process(form);
+            updateContainer.style.display = 'block';
         })
         .catch(error => console.error('Error:', error));
-}
+    }
 function showPopup() {
     document.querySelector('#details-container').style.display = 'block';
     document.body.insertAdjacentHTML('beforeend', '<div class="popup-overlay"></div>');

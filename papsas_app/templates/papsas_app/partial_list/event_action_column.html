@@ -10,7 +10,12 @@
         <i class="fas fa-edit"></i>
     </button> 
 
-    <form action="{% url 'delete_event' record.id %}" method="post" style="display: inline;">
+    <form method="post" style="display: inline;"
+        hx-post="{% url 'delete_event' record.id %}"
+        hx-confirm="Are you sure you want to permanently delete '{{ record.eventName }}'?"
+        hx-target="body"
+        hx-swap="outerHTML"
+    >
         {% csrf_token %}
         <button title="Delete" class="action-icon">
             <i class="fas fa-trash-alt"></i>
