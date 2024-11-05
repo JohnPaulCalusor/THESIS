@@ -148,15 +148,10 @@ def index(request):
             'events' : upcoming_events,
         })
 
-
-
-@login_required
+@member_required
 def rate_event(request, event_id):
     event = get_object_or_404(Event, id=event_id)
-
-    existing_rating = EventRating.objects. \
-        filter(event=event, user=request.user).\
-        first()
+    existing_rating = EventRating.objects.filter(event=event, user=request.user).first()
 
     if request.method == 'POST':
         if existing_rating:
@@ -170,14 +165,18 @@ def rate_event(request, event_id):
             rating.user = request.user
             rating.updated_at = timezone.now()
             rating.save()
-            messages.success(request, 'Rating submitted successfully.')
-            return redirect('index')
+            messages.success(request, 'Feedback submitted successfully.')
+            
+            if request.headers.get('HX-Request'):
+                response = HttpResponse()
+                response['HX-Redirect'] = reverse('user_event_registration_table')
+                return response
+            return redirect('user_event_registration_table')
     else:
         if existing_rating:
             form = EventRatingForm(instance=existing_rating)
         else:
             form = EventRatingForm()
-
     return render(request, 'papsas_app/rate_event.html', {'form': form, 'event': event})
 
 # kulang tor
@@ -1514,7 +1513,9 @@ def update_event (request, id):
                 form.save()
                 print('update event')
                 messages.success(request, 'Updated successfully.')
-                return redirect('event_table')
+                response = HttpResponse()
+                response['HX-Refresh'] = 'true'
+                return response
             else:
                 return render(request, 'papsas_app/record/event_table.html', {
                     'error': 'Invalid form data.',
@@ -1724,7 +1725,7 @@ class EventListView(SingleTableView):
                 messages.error(request, 'Error updating user. Please check the form.')
                 return self.get(request, *args, **kwargs)
             
-@method_decorator(secretary_required, name='dispatch')
+@method_decorator(member_required, name='dispatch')
 class EventRegistrationListView(SingleTableView):
     model = EventRegistration
     table_class = EventRegistrationTable

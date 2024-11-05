@@ -33,17 +33,19 @@
         </div>
     </form>
 </div>
-
-<div id="table-container">
-    Total Records: {{ table.rows|length }}
-    {% render_table table %}
-</div>
 {% if messages %}
-    <div id="message-container">
-        {% for message in messages %}
-            {{ message }}
-        {% endfor %}
-    </div>
+<ul class="messages">
+    {% for message in messages %}
+        <div class="alert alert-warning alert-dismissible fade show custom-alert" role="alert">
+            <strong>{{ message }}</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">X</button>
+        </div>
+    {% endfor %}
+</ul>
 {% endif %}
+<div id="table-container">
+    {% render_table table %}
+    Total Records: {{ table.rows|length }}
+</div>
 
 {% endblock %}
