@@ -151,6 +151,7 @@ input, select {
   border: none;
   box-shadow: 0px 5px 10px 1px rgba(0,0,0, 0.05);
   outline: none;
+  font-weight: 300;
   transition: .3s;
 }
 
@@ -165,6 +166,28 @@ input:focus {
 .error-message{
   font-weight: 300;
 }
+.password-container {
+  position: relative;
+}
+
+.password-wrapper {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.password-wrapper input {
+  padding-right: 2.5rem; /* Add padding to make space for the icon */
+}
+
+.password-wrapper i {
+  position: absolute;
+  right: 20px;
+  margin-top: -10px;
+  cursor: pointer;
+  color: #333; /* Adjust the color as needed */
+}
+
 @media (max-width: 768px) {
   .two-forms {
     flex-direction: column;
