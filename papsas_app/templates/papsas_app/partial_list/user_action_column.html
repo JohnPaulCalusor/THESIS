@@ -2,16 +2,10 @@
     <a class="action-icon" title="Edit" onclick="fetchUserInfo('{{ record.id }}')">
         <i class="fas fa-edit"></i>
     </a>
-    <!-- <form action="{% url 'delete_account' record.id %}" method="post">
-        {% csrf_token %}
-        <button class="action-icon" title="Deactivate" type="submit"
-        hx-confirm = "Are you sure you want to deactivate this account?">
-            <i class="fas fa-trash-alt"></i>
-        </button>
-    </form> -->
+    <!-- Deactivated through backend -->
     <button class="action-icon" title="Deactivate?" type="submit" 
             hx-post="{% url 'delete_account' record.id %}"
-            hx-confirm="Are you sure you want to deactivate this account?"
+            hx-confirm="Are you sure you want to deactivate {{ record.first_name }} {{ record.last_name }}'s account?"
             hx-target="body"
             hx-swap="outerHTML">
         <i class="fas fa-trash-alt"></i>

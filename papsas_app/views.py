@@ -1470,7 +1470,9 @@ def update_venue(request, id):
             if form.is_valid():
                 form.save()
                 messages.success(request, 'Updated successfully.')
-                return redirect('venue_table')
+                response = HttpResponse()
+                response['HX-Refresh'] = 'true'  # This will trigger a full page refresh
+                return response
             else:
                 return render(request, 'papsas_app/record/venue_record.html', {
                     'error': 'Invalid form data.',

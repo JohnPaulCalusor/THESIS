@@ -57,7 +57,12 @@
         <h3>
             Update Venue
         </h3>
-        <form method="post">
+        <form method="post"
+        hx-post=""
+        hx-confirm="Are you sure you want to update this venue?"
+        hx-swap="none"
+        id="update-form"
+        >
             {% csrf_token %}
             <div class="form-group">
             <div class="form-group label">
