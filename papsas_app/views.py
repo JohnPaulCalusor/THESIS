@@ -552,6 +552,13 @@ def event(request):
             event.exclusive = exclusive
             event.save()
 
+            messages.success(request, 'Event posted successfully.')
+            
+            if request.headers.get('HX-Request'):
+                response = HttpResponse()
+                response['HX-Redirect'] = reverse('event_table')
+                return response
+            
             subject = f'Don’t Miss Out: Exciting New Event: {event.eventName}'
             message_template = (
                 'Dear {name},\n\n'
@@ -995,7 +1002,12 @@ def compose_venue(request):
         form = VenueForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('venue_table')
+            messages.success(request, 'Venue posted successfully.')
+            
+            if request.headers.get('HX-Request'):
+                response = HttpResponse()
+                response['HX-Redirect'] = reverse('venue_table')
+                return response
     return render(request, 'papsas_app/form/compose_venue.html', {
         'form': form,
     })
@@ -1070,7 +1082,12 @@ def compose_achievement(request):
         form = AchievementForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
-            return redirect('achievement_table')
+            messages.success(request, 'Achievement posted successfully.')
+            
+            if request.headers.get('HX-Request'):
+                response = HttpResponse()
+                response['HX-Redirect'] = reverse('achievement_table')
+                return response
         else:
             return render(request, 'papsas_app/form/compose_achievement.html', {
                 'form' : form,
@@ -1088,7 +1105,12 @@ def compose_news_offer(request):
         form = NewsForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
-            return redirect('news_offers_table')
+            messages.success(request, 'News & Offers posted successfully.')
+            
+            if request.headers.get('HX-Request'):
+                response = HttpResponse()
+                response['HX-Redirect'] = reverse('news_offers_table')
+                return response
         else:
             return render(request, 'papsas_app/form/compose_news_offers.html', {
                 'form' : form,

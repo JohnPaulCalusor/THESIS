@@ -7,23 +7,36 @@
 {% block body %}
 
 <div class="container">
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+            <div class="alert alert-warning alert-dismissible fade show custom-alert" role="alert">
+                <strong>{{ message }}</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">X</button>
+            </div>
+        {% endfor %}
+    </ul>
+    {% endif %}
     <div class="form-container">
-<h3> Venue Form</h3>
-<form action="{% url 'compose_venue' %}" method="post">
-    {% csrf_token %}
-    <div class="form-group">
+        <h3> Venue Form</h3>
+        <form method="post"
+            hx-post="{% url 'compose_venue' %}"
+            hx-confirm="Are you sure you want to post this venue?"
+        >
+            {% csrf_token %}
+            <div class="form-group">
+                <div class="form-group">
+            {{form.name.label}} {{form.name}}
+        </div>
         <div class="form-group">
-    {{form.name.label}} {{form.name}}
-</div>
-<div class="form-group">
-    {{form.address.label}} {{form.address}}
-</div>
-<div class="form-group">
-    {{form.capacity.label}} {{form.capacity}}
-</div>
-</div>
-    <button type="submit" class="btn">Submit</button>
-</form>
-</div>
+            {{form.address.label}} {{form.address}}
+        </div>
+        <div class="form-group">
+            {{form.capacity.label}} {{form.capacity}}
+        </div>
+        </div>
+            <button type="submit" class="btn">Submit</button>
+        </form>
+    </div>
 </div>
 {% endblock %}

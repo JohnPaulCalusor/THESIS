@@ -23,7 +23,6 @@ urlpatterns = [
     path('news_offers', views.news_offers, name="news_offers"),
     path('profile/<int:id>', views.profile, name="profile"),
     path('profile/<int:id>/tor', views.upload_tor, name="upload_tor"),
-    path('event/<int:event_id>/attendance_form/', views.attendance_form, name='attendance_form'),
     path('email_not_verified/<int:user_id>/', views.email_not_verified, name='email_not_verified'),
     path('resend_verification_code/<int:user_id>/', views.resend_verification_code, name='resend_verification_code'),
     # election
@@ -31,6 +30,7 @@ urlpatterns = [
     path('election/<int:id>/declare-candidacy', views.declare_candidacy, name="declare_candidacy"),
     path('election/manage/<int:id>', views.manage_election, name="manage_election"),
     # event
+    path('event/<int:event_id>/attendance_form/', views.attendance_form, name='attendance_form'),
     path('event/calendar/', views.event_calendar, name='event_calendar'),
     path('event/<int:event_id>/register/', views.event_registration_view, name='event_registration_view'),
     path('event/list', views.event_list, name='event_list'),
