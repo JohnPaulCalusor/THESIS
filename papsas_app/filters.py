@@ -23,17 +23,19 @@ class MembershipFilter(django_filters.FilterSet):
             ('4', 'Lifetime'),
         ]
     )
-    membershipVerification = django_filters.BooleanFilter(
-        widget=forms.Select(choices=[
-            ('', 'All'),
-            (True, 'Verified'),
-            (False, 'Not Verified')
-        ], attrs={'class': 'form-control'})
-    )
+    status = django_filters.ChoiceFilter(
+        choices=[
+            ('Approved', 'Approved'),
+            ('Pending', 'Pending'),
+            ('Declined', 'Declined'),
+        ], 
+        empty_label='All',
+        initial=''
+        )
 
     class Meta:
         model = UserMembership
-        fields = ['id', 'membership', 'membershipVerification']
+        fields = ['id', 'membership', 'status']
 
 class EventFilter(django_filters.FilterSet):
     id = django_filters.CharFilter(lookup_expr='icontains')

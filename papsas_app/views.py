@@ -532,7 +532,10 @@ def profile(request, id):
         'attended_events' : attended_event,
         'elected_officers' : elected_officer
     })
-logger = logging.getLogger(__name__)
+
+def change_profile(request):
+    form = ProfileForm(instance=request.user.profile)
+    return render(request, 'papsas_app/profile.html', {'form': form})
 
 # compose_event
 @officer_required

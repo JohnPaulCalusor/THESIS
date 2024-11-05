@@ -4,12 +4,14 @@ from django.core.exceptions import ValidationError
 from django.forms import ModelForm, TextInput, EmailInput
 
 class RegistrationForm(forms.ModelForm):
-    password = forms.CharField(widget=forms.PasswordInput(attrs={
+    password = forms.CharField(
+        widget=forms.PasswordInput(attrs={
         'placeholder': 'Password',
         'class': 'input-field',
         'required': True
-    }))
-    
+            }
+        )
+    )
 
     class Meta:
         model = User

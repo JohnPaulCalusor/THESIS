@@ -89,7 +89,7 @@
         </ul>
         {% if attended_event >= 2 and user.tor and has_declared is None %}
             <form method="post"
-            hx-post="{% url 'declare_candidacy' ongoingElection.id %}""
+            hx-post="{% url 'declare_candidacy' ongoingElection.id %}"
             hx-confirm="Are you sure you want to submit your candidacy?"
             hx-target="body"
             hx-swap="outerHTML"
