@@ -54,7 +54,7 @@ async function loadEvents() {
       modeBarStyle: { position: 'outside' } 
   };
   
-        Plotly.newPlot('boxplot-container', plotData, layout, config);
+        Plotly.newPlot('boxchart-container', plotData, layout, config);
     } catch (error) {
         console.error('Error loading box plot:', error);
     }

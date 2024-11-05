@@ -190,7 +190,7 @@ class Venue(models.Model):
 
 
 class Event(models.Model):
-    eventName = models.CharField(max_length=32, null=True)
+    eventName = models.CharField(max_length=255, null=True)
     exclusive = models.BooleanField(default=True)
     startDate = models.DateField(null=True)
     endDate = models.DateField(null=True)
@@ -229,7 +229,7 @@ class EventRating(models.Model):
         return f"{self.user.username}'s rating for {self.event.eventName}"
 
 class Achievement(models.Model):
-    name = models.CharField(max_length=32, null=True)
+    name = models.CharField(max_length=255, null=True)
     description = models.TextField(max_length=9999, null=True)
     postStamp = models.DateTimeField(auto_now_add=True)
     pubmat = models.ImageField(upload_to="papsas_app/pubmat/achievement", null=False, blank=True)
@@ -243,7 +243,7 @@ class Achievement(models.Model):
         return self.description
         
 class NewsandOffers(models.Model):
-    name = models.CharField(max_length=32, null=True)
+    name = models.CharField(max_length=255, null=True)
     description = models.TextField(max_length=9999, null=True)
     postStamp = models.DateTimeField(auto_now_add=True, null=True)
     pubmat = models.ImageField(upload_to="papsas_app/pubmat/newsandoffers", null=False, blank=True)
