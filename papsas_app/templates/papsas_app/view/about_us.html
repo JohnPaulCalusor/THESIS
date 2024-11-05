@@ -198,7 +198,7 @@
         </div>
     </div>
 </section>
-
+<button onclick="scrollToTop()" id="scrollUpButton" title="Go to top">↑</button>
 
 <footer class="footer">
     <div class="footer__container container">
@@ -224,6 +224,26 @@
         <p>&copy; 2024 PAPSAS, Inc. All Rights Reserved.</p>
     </div>
 </footer>
+
+<script>
+    // Show the button when the user scrolls down 20px from the top
+    window.onscroll = function() {
+        let button = document.getElementById("scrollUpButton");
+        if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+            button.style.display = "block";
+        } else {
+            button.style.display = "none";
+        }
+    };
+
+    // Function to scroll to the top with smooth behavior
+    function scrollToTop() {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth' // Smooth scroll effect
+        });
+    }
+</script>
 
 
 
