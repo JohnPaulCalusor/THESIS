@@ -1,0 +1,30 @@
+.my-indicator {
+    display: none;
+    color: #666;
+}
+.htmx-request .my-indicator {
+    display: inline-block !important;
+    opacity: 1;
+}
+
+.htmx-request.my-indicator {
+    display: inline-block !important;
+    opacity: 1;
+}
+
+.htmx-request.my-indicator ~ .action-buttons{
+    display: none !important;
+    opacity: 0 !important;
+}
+
+.actions-container {
+    display: flex;
+    flex-direction: row;
+    gap : 5px;
+    justify-content: center;
+    align-items: center;
+}
+
+.action-buttons > form{
+    display: inline
+}
