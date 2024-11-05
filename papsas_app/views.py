@@ -561,8 +561,8 @@ def event(request):
                 'Feel free to share this event with your colleagues—let’s grow together as a community!\n\n'
                 'Thank you for being an integral part of PAPSAS. We look forward to seeing you there!\n\n'
                 'Warm regards,\n'
-                '[Bien]\n'  # Replace with actual sender's name
-                '[Pogi sa Pinas]\n'
+                '[Name]\n'  # Replace with actual sender's name
+                '[PAPSAS INC.]\n'
                 'Philippine Association of Practitioners of Student Affairs and Services\n'
             )
             #dito ichcheck kung email_verified at kung practitioner or student
