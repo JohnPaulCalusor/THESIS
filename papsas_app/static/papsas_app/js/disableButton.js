@@ -7,6 +7,6 @@ function disableButton(button) {
 
     isProcessing = true;
     button.disabled = true;
-    button.innerHTML = 'Mag antay ka! Be patient because patient is a virtue';
+    button.innerHTML = 'Please wait.';
     button.form.submit();
 }

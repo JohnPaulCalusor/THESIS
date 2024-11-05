@@ -2051,7 +2051,7 @@ def box_plot(request, event_id = None):
     return JsonResponse (data)
 
 def box_event (request):
-    events = Event.objects.filter(startDate__lt=date.today()).order_by('startDate')
+    events = Event.objects.all().order_by('startDate')
     data = [{'id': event.id, 'name': event.eventName} for event in events]
     return JsonResponse(data, safe=False)
 
