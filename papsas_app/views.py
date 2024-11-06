@@ -538,11 +538,13 @@ def profile(request, id):
 def change_profile(request):
     user = request.user
     if request.method =='POST':
-        form = ProfileUpdateForm(request.POST, request.FILES)
+        form = ProfileUpdateForm(request.POST, request.FILES, instance=user)
         if form.is_valid():
             form.save()
             messages.success(request, 'Profile updated successfully.')
-            return redirect('profile', id=user.id)
+            response = HttpResponse()
+            response['HX-Refresh'] = 'true' 
+            return response
     profile(request, user.id)
         
 # compose_event

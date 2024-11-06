@@ -43,6 +43,16 @@
         </div>
         
        
+        {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <div class="alert alert-warning alert-dismissible fade show custom-alert" role="alert">
+                    <strong>{{ message }}</strong>
+                    <button type="button" class="btn-close" aria-label="Close">X</button>
+                </div>
+            {% endfor %}
+        </ul>
+        {% endif %}
         <div class="personal-info">
             <div class="title-activities"> 
                 <h1>Personal Information</h1>

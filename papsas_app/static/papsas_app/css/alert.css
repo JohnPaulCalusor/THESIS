@@ -6,6 +6,16 @@
     border-radius: 0.25rem;
 }
 
+.alert.hide {
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+
+.alert.fade-out {
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+
 .alert-warning {
     color: #664d03;
     background-color: #fff3cd;
