@@ -27,37 +27,39 @@
         >
             {% csrf_token %}
             <div class="form-group">
-                {{ form.eventName.label }} {{ form.eventName }}
+                <p>Event Name: </p> 
+                {{ form.eventName }}
             </div>
             <div class="form-group">
-                {{ form.startDate.label }} {{ form.startDate }}
+                <p>Start Date: </p> 
+                 {{ form.startDate }}
             </div>
             <div class="form-group">
-                {{ form.endDate.label }} {{ form.endDate }}
+                <p>End Date: </p>  {{ form.endDate }}
             </div>
             <div class="form-group">
-                {{ form.venue.label }} {{ form.venue }}
+                <p>Venue: </p>  {{ form.venue }}
             </div>
             <div class="form-group">
-                {{ form.address.label }} {{ form.address }}
+                <p>Address: </p>  {{ form.address }}
             </div>
             <div class="form-group">
-                {{ form.eventDescription.label }} {{ form.eventDescription }}
+                <p>Event Description: </p>  {{ form.eventDescription }}
             </div>
             <div class="form-group">
-                {{ form.pubmat.label }} {{ form.pubmat }}
+                <p>Public Material: </p>  {{ form.pubmat }}
             </div>
             <div class="form-group">
-                {{ form.price.label }} {{ form.price }}
+                <p>Price: </p>  {{ form.price }}
             </div>
             <div class="form-group">
-                {{ form.startTime.label }} {{ form.startTime }}
+                <p>Start Time: </p>  {{ form.startTime }}
             </div>
             <div class="form-group">
-                {{ form.endTime.label }} {{ form.endTime }}
+                <p>End Time: </p>  {{ form.endTime }}
             </div>
             <div class="form-group">
-                {{ form.exclusive.label }} {{ form.exclusive }}
+                <p>Exclusive: </p>  {{ form.exclusive }}
             </div>
 
             <button type="submit" class="btn">Submit</button>
