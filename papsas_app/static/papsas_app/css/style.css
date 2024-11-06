@@ -131,7 +131,7 @@ img {
   color: #ffffff;
   font-weight: 400;
 }
-.search-submit{
+.login-submit{
   background: red; /* Background color for the login container */
   padding: 10px 20px;
   border-radius: 25px; /* Adds rounded corners */
@@ -142,7 +142,7 @@ img {
   border: none;
 
 }
-.search-submit:hover{
+.login-submit:hover{
   color: rgb(255, 255, 255);
   background-color: #000000;
 }
@@ -163,7 +163,7 @@ img {
     margin-top: 5px;
     margin-left: 5px;
   }
-  .search-submit{
+  .login-submit{
     margin-left: 120px;
   }
 
@@ -875,7 +875,7 @@ img {
     
     margin-bottom: 20px;
   }
-  .search-submit{
+  .login-submit{
     margin-left: 120px;
     
   }
