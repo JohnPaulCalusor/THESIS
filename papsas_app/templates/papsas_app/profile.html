@@ -183,7 +183,13 @@
             id="update-form"
         >
             {% csrf_token %}
-            {{ updateForm.as_p }}
+            {{ updateForm.mobileNum }}
+            {{ updateForm.region }}
+            {{ updateForm.address }}
+            {{ updateForm.occupation }}
+            {{ updateForm.institution }}
+            {{ updateForm.profilePic }}
+            {{ updateForm.tor }}
             <button type="submit" class="btn">Update</button>
         </form>
     </div>
