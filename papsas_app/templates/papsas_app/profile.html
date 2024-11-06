@@ -24,13 +24,13 @@
             <div class="upload-btn-container">
                 <form action="{% url 'profile' user.id %}" method="post" enctype="multipart/form-data">
                     {% csrf_token %}
-                    <div class="verification">
+                    <!-- <div class="verification">
                         {% if user.email_verified %}
                             <span class="verified"><i class="fas fa-circle-check"></i></span>
                         {% else %}
                             <span class="unverified"><i class="fas fa-circle-xmark"></i></span>
                         {% endif %}
-                    </div>
+                    </div> -->
                     <label for="upload-pic" class="upload-btn">Upload New Picture</label>
                     
                     <p class="upload-note">At least 800×800 px recommended.<br>JPG or PNG is allowed</p>
@@ -56,9 +56,9 @@
         <div class="personal-info">
             <div class="title-activities"> 
                 <h1>Personal Information</h1>
-                <button class="update-button">
+                <!-- <button class="update-button">
                     Edit profile
-                </button>
+                </button> -->
             </div>
             <div class="info-row">
                 <div class="info-label">Full Name</div>
@@ -128,36 +128,45 @@
                 <div class="info-row-activity">
                     <div class="info-label-activity">Candidacies: </div>
                     {% for candidacy in candidacies %}
-                        <div class="info-value-activity">{{ candidacy }}</div>
+                        <div class="info-value-activity details">{{ candidacy }}</div>
                     {% endfor %}
                 </div>
                 {% endif %}
                 {% if elected_officers %}
-                    <div class="info-row-activity">
+                    <div class="info-row-activity details">
                         <div class="info-label-activity">Election: </div>
                         {% for officer in elected_officers %}
-                            <div class="info-value-activity">{{ officer }}</div>
+                            <div class="info-value-activity details">{{ officer }}</div>
                         {% endfor %}
                     </div>
                 {% endif %}
                 {% if attended_events %}
-                    <div class="info-row-activity">
+                    <div class="info-row-activity details">
                         <div class="info-label-activity">Events: </div>
                         {% for event in attended_events %}
-                        <div class="info-value-activity">{{ event }}</div>
+                        <div class="info-value-activity details">{{ event }}</div>
                         {% endfor %}
                     </div>
                 {% endif %}
             <!-- Add more recent activity blocks as needed -->
             </div>
 
-            <div class="personal-info">
-                <div class="title-activities"> 
-                    <h1>Account Settings</h1>
-                </div>
+        </div>
+        {% if user.id == viewUser.id %}
+        <div class="personal-info">
+            <div class="title-activities"> 
+                <h1>Account Settings</h1>
+            </div>
+            <div class="details">
                 <a href="{% url 'password_reset_confirm' viewUser.id %}" class="change-password-btn">Change Password</a>
             </div>
+            <div class="details">
+                <button class="update-button change-password-btn">
+                    Edit profile
+                </button>
+            </div>
         </div>
+        {% endif %}
     </div>
 </div>
 
@@ -174,20 +183,6 @@
             id="update-form"
         >
             {% csrf_token %}
-            <!-- <div class="form-group">
-                <div class="form-group label">
-                    <p>{{ form.name.label }}</p> 
-                    {{ form.name }}
-                </div>
-                <div class="form-group label">
-                    <p>{{ form.address.label }}</p> 
-                    {{ form.address }}
-                </div>
-                <div class="form-group label">
-                    <p>{{ form.capacity.label }}</p> 
-                    {{ form.capacity }}
-                </div>
-            </div> -->
             {{ updateForm.as_p }}
             <button type="submit" class="btn">Update</button>
         </form>

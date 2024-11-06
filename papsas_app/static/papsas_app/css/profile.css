@@ -5,14 +5,17 @@ body {
     justify-content: center;
     align-items: center;
     height: 100vh;
-    margin-top: 17rem;
+    margin-top: 50px;
     margin-bottom: 10rem;
+}
+
+.details{
+    padding: 5px;
 }
 
 .tor{
     justify-content: space-between;
 }
-
 
 .profile-card {
     background-color: white;
@@ -161,6 +164,10 @@ body {
 }
 .change-password-btn{
     color: red;
+    border: 0px solid black;
+    background-color: white;
+    cursor: pointer;
+    font-size: 1rem;
 }
 /* Media Queries for Mobile */
 @media (max-width: 768px) {

@@ -386,6 +386,7 @@ def resend_verification_code(request, user_id):
 
 @secretary_required
 def election(request):
+    today = date.today().isoformat()
     electionList = Election.objects.all()
     ongoingElection = Election.objects.filter(electionStatus=True)
 
@@ -406,6 +407,7 @@ def election(request):
         'ongoingElection': ongoingElection,
         'table': table,
         'filter': filter,
+        'today' : today,
     })
 
 @secretary_required
@@ -1022,7 +1024,9 @@ def compose_venue(request):
         'form': form,
     })
 
-@member_or_officer_required
+# @member_or_officer_required
+# for the meantime, open for all
+@login_required
 def event_list(request):
     events = Event.objects.all()
 
