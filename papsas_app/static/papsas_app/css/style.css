@@ -1083,4 +1083,17 @@ img {
     color: rgb(0, 0, 0);
     cursor: pointer;
   }
+  .profile{
+    margin-left: 100px;
+  }
+}
+@media (min-width: 1090.91px) and (max-width: 1241.82px) {
+  .profile{
+    margin-left: 100px;
+  }
+}
+@media (min-width: 820px) and (max-width: 1180px) {
+  #navProfile{
+    margin-left: 100px;
+  }
 }
