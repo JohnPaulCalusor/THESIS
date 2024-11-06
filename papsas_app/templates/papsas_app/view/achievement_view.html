@@ -8,20 +8,19 @@
 {% block body %}
 <h1 class="title-container">Achievements</h1>
     <div id="event_container">
-    
-    {% for achievement in achievements %}
-    <div class="event-card">
-        <div class="event-header">
-        <img src="{{ achievement.pubmat.url }}" alt="{{ achievement.name }}" class="event-image">
-        </div>
-        <div class="event-content">
-        <h3 class="event-description">{{ achievement.name }}</h3>
-        <p class="event-description">{{ achievement.description|linebreaks }}</p>
-        
-        </div>
+        {% for achievement in achievements %}
+            <div class="event-card">
+                <div class="event-header">
+                <img src="{{ achievement.pubmat.url }}" alt="{{ achievement.name }}" class="event-image">
+                </div>
+                <div class="event-content">
+                <h3 class="event-description">{{ achievement.name }}</h3>
+                <p class="event-description">{{ achievement.description|linebreaks }}</p>
+                
+                </div>
+            </div>
+        {% endfor %}
     </div>
-    {% endfor %}
-</div>
 
 <div class="pagination">
     <span class="step-links">

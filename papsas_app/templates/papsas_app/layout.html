@@ -197,12 +197,14 @@
                 </div>
             </header>
         </nav>
-    {% block body %}
-    {% endblock %}
+        <div id="body-container">
+            {% block body %}
+            {% endblock %}
+        </div>
     </div>
 
-<script src="static/papsas_app/js/scrollreveal.min.js"></script>
-<script src="static/papsas_app/js/main.js"></script>
+<script src="{% static 'papsas_app/js/scrollreveal.min.js' %}"></script>
+<script src="{% static 'papsas_app/js/main.js' %}"></script>
 <script>
     // Select all navigation links
     const navLinks = document.querySelectorAll('.nav__link');

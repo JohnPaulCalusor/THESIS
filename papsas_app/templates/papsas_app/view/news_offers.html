@@ -8,20 +8,18 @@
 {% block body %}
     <h1 class="title-container">News and Offers</h1>
         <div id="event_container">
-        
-        {% for news_offer in news_offers %}
-        <div class="event-card">
-            <div class="event-header">
-            <img src="{{ news_offer.pubmat.url }}" alt="{{news_offer.name}}" class="event-image">
+            {% for news_offer in news_offers %}
+            <div class="event-card">
+                <div class="event-header">
+                <img src="{{ news_offer.pubmat.url }}" alt="{{news_offer.name}}" class="event-image">
+                </div>
+                <div class="event-content">
+                <h3 class="event-description">{{ news_offer.name }}</h3>
+                <p class="event-description">{{ news_offer.description|linebreaks }}</p>
+                </div>
             </div>
-            <div class="event-content">
-            <h3 class="event-description">{{ news_offer.name }}</h3>
-            <p class="event-description">{{ news_offer.description|linebreaks }}</p>
-            
-            </div>
+            {% endfor %}
         </div>
-        {% endfor %}
-    </div>
     <div class="pagination">
         <span class="step-links">
             {% if news_offers.has_previous %}
@@ -63,7 +61,6 @@
         <div class="footer__bottom">
             <p>&copy; 2024 PAPSAS, Inc. All Rights Reserved.</p>
         </div>
-</section>
 <script>
     // Show the button when the user scrolls down 20px from the top
     window.onscroll = function() {
