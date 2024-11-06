@@ -13,7 +13,15 @@ body {
     max-width: 600px;
     margin: auto;
     margin-bottom: 50px;
+    
 }
+@media (max-width: 480px) {
+
+    .form-container{
+        margin-top: -5rem;
+    }
+  
+  }
 h1{
     text-align: center;
     font-size: 25px;
@@ -108,3 +116,4 @@ select {
 .back-button:hover{
     color: #ff0000;
 }
+

@@ -29,9 +29,10 @@
   
   }
   .institutional-name h1 {
-    font-size: 2rem;
+    font-size: 1.5rem;
     color: #ff0000;
     font-weight: 500;
+    margin-top: 20px;
   
   }
   
@@ -155,7 +156,7 @@
       margin-bottom: 30px;
     }
     .membership {
-      margin-top: 45rem; /* Add 100px margin-top for mobile screens */
+      margin-top: 40rem; /* Add 100px margin-top for mobile screens */
       padding: 10px;
       margin-bottom: -400px;
     }
@@ -183,6 +184,9 @@
   
     .membership_grid {
       grid-template-columns: 1fr; /* 1 column for small screens */
+    }
+    .institutional-name h1{
+      font-size: 1.25rem;
     }
   
   }
@@ -254,8 +258,8 @@
       padding-left: 0;
     }
   
-    .institutional-text h2 {
-      font-size: 16px; /* Adjust font size for readability */
+    .institutional-text{
+      font-size: 10px; /* Adjust font size for readability */
     }
   
     .institutional-text p {
