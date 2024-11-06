@@ -22,7 +22,7 @@ from .models import User, MembershipTypes, Vote, Event, Officer
 from django.db import models
 from django.contrib.auth.hashers import make_password
 # Imported Forms
-from .forms import AttendanceForm, EventRegistrationForm, EventForm, ProfileForm, RegistrationForm, LoginForm, MembershipRegistration, Attendance, VenueForm, AchievementForm, NewsForm, UserUpdateForm, EventRatingForm, TORForm
+from .forms import AttendanceForm, EventRegistrationForm, EventForm, ProfileForm, RegistrationForm, LoginForm, MembershipRegistration, Attendance, VenueForm, AchievementForm, NewsForm, UserUpdateForm, EventRatingForm, TORForm, ProfileUpdateForm
 from datetime import date, timedelta
 from django.contrib.auth.forms import PasswordResetForm
 from io import BytesIO
@@ -511,6 +511,7 @@ def profile(request, id):
         attended_event = Attendance.objects.filter( user = id )
         elected_officer = Officer.objects.filter(candidateID__candidate= id)
         user = User.objects.get( id = id)
+        updateForm = ProfileUpdateForm(instance=user)
     except:
         # subject to change
         return HttpResponse("Invalid user.", status=400)
@@ -530,7 +531,8 @@ def profile(request, id):
         'form' : form,
         'candidacies' : candidacies,
         'attended_events' : attended_event,
-        'elected_officers' : elected_officer
+        'elected_officers' : elected_officer,
+        'updateForm' : updateForm
     })
 
 def change_profile(request):

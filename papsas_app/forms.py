@@ -2,6 +2,7 @@ from django import forms
 from .models import Attendance, EventRegistration, Event, User, UserMembership, MembershipTypes, Venue, Achievement, NewsandOffers, EventRating
 from django.core.exceptions import ValidationError
 from django.forms import ModelForm, TextInput, EmailInput
+from django.utils import timezone
 
 class RegistrationForm(forms.ModelForm):
     password = forms.CharField(
@@ -110,8 +111,6 @@ class EventRatingForm(forms.ModelForm):
             'comment': forms.Textarea(attrs={'rows': 6}),
         }
 
-
-
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = User
@@ -131,10 +130,6 @@ occupation = [
     ('Student', 'Student'),
     ('Practitioner', 'Practitioner'),
 ]
-
-from django import forms
-from .models import Event
-from django.utils import timezone
 
 class EventForm(forms.ModelForm):
     class Meta:
@@ -275,4 +270,27 @@ class UserUpdateForm(forms.ModelForm):
         self.fields['birthdate'].label = 'Date of Birth'
         self.fields['region'].widget.attrs['class'] = 'input-field'    
         
+class ProfileUpdateForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ('mobileNum', 'region', 'address', 'occupation', 'institution', 'profilePic', 'tor')
+        widgets = {
+            'mobileNum': forms.TextInput(attrs={
+                'placeholder': 'Mobile Number',
+                'class': 'input-field'
+            }),
+            'address': forms.TextInput(attrs={
+                'placeholder': 'Address',
+                'class': 'input-field'
+            }),
+            'institution': forms.TextInput(attrs={
+                'placeholder': 'Institution',
+                'class': 'input-field'
+            }),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(UserUpdateForm, self).__init__(*args, **kwargs)
+        self.fields['birthdate'].label = 'Date of Birth'
+        self.fields['region'].widget.attrs['class'] = 'input-field'    
 

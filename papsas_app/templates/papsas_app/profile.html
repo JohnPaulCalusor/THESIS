@@ -2,12 +2,14 @@
 {% load static %}
 {% block head %}
     <link rel="stylesheet" href="{% static 'papsas_app/css/profile.css' %}">
+    <link rel="stylesheet" href="{% static 'papsas_app/css/update.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"> 
 {% endblock %}
 {% block body %}
 
 <div class="container">
     <div class="profile-card">
+
         <div class="profile-header">
             {% if viewUser.profilePic %}
                 
@@ -42,8 +44,11 @@
         
        
         <div class="personal-info">
-            <div class="title-activities tor "> 
+            <div class="title-activities"> 
                 <h1>Personal Information</h1>
+                <button class="update-button">
+                    Edit profile
+                </button>
             </div>
             <div class="info-row">
                 <div class="info-label">Full Name</div>
@@ -73,81 +78,110 @@
                 <div class="info-label">Birthdate</div>
                 <div class="info-value">{{ user.birthdate}}</div>
             </div>
-
         </div>
-
-
     
-    <div id="imageModal" class="modal">
-        <span class="close" onclick="closeModal()">&times;</span>
-        <img class="modal-content" id="modalImage">
-    </div>
-    <div class="personal-info">
-        <div class="title-activities"> 
-            <h1>Transcript of Records</h1>
+        <div id="imageModal" class="modal">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <img class="modal-content" id="modalImage">
         </div>
-        {% if user.tor %}
-        <div class="info-value">
-            <img src="{{ user.tor.url }}" alt="{{ user. }}" srcset="">
-        </div>
-    {% else %}
-    <div class="info-row">
+        <div class="personal-info">
+            <div class="title-activities"> 
+                <h1>Transcript of Records</h1>
+            </div>
+            {% if user.tor %}
+            <div class="info-value">
+                <img src="{{ user.tor.url }}" alt="{{ user. }}" srcset="">
+            </div>
+            {% else %}
+            <div class="info-row">
 
-        <div class="info-value">
-            <form action="{% url 'upload_tor' user.id %}" id="tor-form" method="post" enctype="multipart/form-data">
-                {% csrf_token %}
-                <input type="file" name="tor" id="upload-pic" class="file-input" accept="image/*" onchange="this.form.submit()"">
-                <button type="submit" class="upload-btn" style="display: none;">Submit</button>
-            </form>
+                <div class="info-value">
+                    <form action="{% url 'upload_tor' user.id %}" id="tor-form" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <input type="file" name="tor" id="upload-pic" class="file-input" accept="image/*" onchange="this.form.submit()"">
+                        <button type="submit" class="upload-btn" style="display: none;">Submit</button>
+                    </form>
+                </div>
+            </div>
+            {% endif %}
         </div>
-    </div>
-    {% endif %}
-    </div>
-    <div class="personal-info">
-    <div class="title-activities"> 
-        <h1>Recent Activities</h1>
-    </div>
+        <div class="personal-info">
+            <div class="title-activities"> 
+                <h1>Recent Activities</h1>
+            </div>
 
-    <div class="recent-activities-container"
-    >
-    <!-- hx-get="{% url 'get_profile' user.id %}"
-    hx-trigger="every 5s"
-    hx-swap="innerHTML" -->
-        {% if candidacies %}
-        <div class="info-row-activity">
-            <div class="info-label-activity">Candidacies: </div>
-            {% for candidacy in candidacies %}
-                <div class="info-value-activity">{{ candidacy }}</div>
-            {% endfor %}
-        {% endif %}
-        </div>
-        {% if elected_officers %}
-        <div class="info-row-activity">
-            <div class="info-label-activity">Election: </div>
-            {% for officer in elected_officers %}
-                <div class="info-value-activity">{{ officer }}</div>
-            {% endfor %}
-        {% endif %}
-        </div>
-        {% if attended_events %}
-        <div class="info-row-activity">
-            <div class="info-label-activity">Events: </div>
-            {% for event in attended_events %}
-            <div class="info-value-activity">{{ event }}</div>
-            {% endfor %}
-        {% endif %}
-        </div>
-        <!-- Add more recent activity blocks as needed -->
-    </div>
+            <div class="recent-activities-container">
+        <!-- hx-get="{% url 'get_profile' user.id %}"
+        hx-trigger="every 5s"
+        hx-swap="innerHTML" -->
+                {% if candidacies %}
+                <div class="info-row-activity">
+                    <div class="info-label-activity">Candidacies: </div>
+                    {% for candidacy in candidacies %}
+                        <div class="info-value-activity">{{ candidacy }}</div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                {% if elected_officers %}
+                    <div class="info-row-activity">
+                        <div class="info-label-activity">Election: </div>
+                        {% for officer in elected_officers %}
+                            <div class="info-value-activity">{{ officer }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                {% if attended_events %}
+                    <div class="info-row-activity">
+                        <div class="info-label-activity">Events: </div>
+                        {% for event in attended_events %}
+                        <div class="info-value-activity">{{ event }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            <!-- Add more recent activity blocks as needed -->
+            </div>
 
-    <div class="personal-info">
-        <div class="title-activities"> 
-            <h1>Account Settings</h1>
+            <div class="personal-info">
+                <div class="title-activities"> 
+                    <h1>Account Settings</h1>
+                </div>
+                <a href="{% url 'password_reset_confirm' viewUser.id %}" class="change-password-btn">Change Password</a>
+            </div>
         </div>
-        <a href="{% url 'password_reset_confirm' viewUser.id %}" class="change-password-btn">Change Password</a>
     </div>
-
 </div>
+
+<div id="update-container">
+    <div class="update-content">
+        <span class="upd-close-modal" onclick="closePopup()"><i class="fas fa-times"></i></span>
+        <h3>
+            Update Profile
+        </h3>
+        <form method="post"
+        hx-post=""
+        hx-confirm="Are you sure you want to update this venue?"
+        hx-swap="none"
+        id="update-form"
+        >
+            {% csrf_token %}
+            <!-- <div class="form-group">
+                <div class="form-group label">
+                    <p>{{ form.name.label }}</p> 
+                    {{ form.name }}
+                </div>
+                <div class="form-group label">
+                    <p>{{ form.address.label }}</p> 
+                    {{ form.address }}
+                </div>
+                <div class="form-group label">
+                    <p>{{ form.capacity.label }}</p> 
+                    {{ form.capacity }}
+                </div>
+            </div> -->
+            {{ updateForm.as_p }}
+            <button type="submit" class="btn">Update</button>
+        </form>
+    </div>
 </div>
 {% endblock %}
 
