@@ -407,7 +407,7 @@ def election(request):
         'ongoingElection': ongoingElection,
         'table': table,
         'filter': filter,
-        'today' : today,
+        'day' : today,
     })
 
 @secretary_required
