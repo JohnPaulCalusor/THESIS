@@ -290,7 +290,6 @@ class ProfileUpdateForm(forms.ModelForm):
         }
 
     def __init__(self, *args, **kwargs):
-        super(UserUpdateForm, self).__init__(*args, **kwargs)
-        self.fields['birthdate'].label = 'Date of Birth'
+        super(ProfileUpdateForm, self).__init__(*args, **kwargs)
         self.fields['region'].widget.attrs['class'] = 'input-field'    
 

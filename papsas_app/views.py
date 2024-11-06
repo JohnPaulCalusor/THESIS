@@ -512,9 +512,9 @@ def profile(request, id):
         elected_officer = Officer.objects.filter(candidateID__candidate= id)
         user = User.objects.get( id = id)
         updateForm = ProfileUpdateForm(instance=user)
-    except:
+    except Exception as e:
         # subject to change
-        return HttpResponse("Invalid user.", status=400)
+        return HttpResponse(f"Error - {e}", status=400)
     form = ProfileForm()
 
     if request.method =='POST':
@@ -536,9 +536,15 @@ def profile(request, id):
     })
 
 def change_profile(request):
-    form = ProfileForm(instance=request.user.profile)
-    return render(request, 'papsas_app/profile.html', {'form': form})
-
+    user = request.user
+    if request.method =='POST':
+        form = ProfileUpdateForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Profile updated successfully.')
+            return redirect('profile', id=user.id)
+    profile(request, user.id)
+        
 # compose_event
 @officer_required
 def event(request):
@@ -747,14 +753,14 @@ def update_account(request, id):
                         form.add_error('age', 'Birthdate and Age did not match. Please input the correct details')
 
                 if form.errors:
-                    return JsonResponse({'errors': form.errors}, status=400)  # Return errors if form is not valid
+                    return JsonResponse({'errors': form.errors}, status=400)
 
                 form.save()
                 messages.success(request, 'Updated successfully.')
                 return redirect('user_record')
 
             else:
-                return JsonResponse({'errors': form.errors}, status=400)  # Return errors if form is not valid
+                return JsonResponse({'errors': form.errors}, status=400)
 
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500) 

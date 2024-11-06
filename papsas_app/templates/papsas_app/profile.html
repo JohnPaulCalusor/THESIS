@@ -158,10 +158,10 @@
             Update Profile
         </h3>
         <form method="post"
-        hx-post=""
-        hx-confirm="Are you sure you want to update this venue?"
-        hx-swap="none"
-        id="update-form"
+            hx-post="{% url 'update_profile' %}"
+            hx-confirm="Are you sure you want to save these changes?"
+            hx-swap="none"
+            id="update-form"
         >
             {% csrf_token %}
             <!-- <div class="form-group">

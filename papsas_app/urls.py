@@ -22,6 +22,7 @@ urlpatterns = [
     path('become_member', views.become_member, name="become_member"),
     path('news_offers', views.news_offers, name="news_offers"),
     path('profile/<int:id>', views.profile, name="profile"),
+    path('profile/update', views.change_profile, name="update_profile"),
     path('profile/<int:id>/tor', views.upload_tor, name="upload_tor"),
     path('email_not_verified/<int:user_id>/', views.email_not_verified, name='email_not_verified'),
     path('resend_verification_code/<int:user_id>/', views.resend_verification_code, name='resend_verification_code'),
