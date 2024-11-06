@@ -125,18 +125,26 @@ img {
   font-size: 1.25rem;
   cursor: pointer;
 }
-.login-container {
-  background-image: linear-gradient(45deg, #ff0a0a, #dd5f5f); /* Background color for the login container */
-  padding: 10px 20px;
-  border-radius: 25px; /* Adds rounded corners */
-  text-align: center;
-  margin-top: -10px;
-  margin-right: 100px;
-}
+
 .login-container a {
   text-decoration: none;
   color: #ffffff;
   font-weight: 400;
+}
+.search-submit{
+  background: red; /* Background color for the login container */
+  padding: 10px 20px;
+  border-radius: 25px; /* Adds rounded corners */
+  text-align: center;
+  margin-top: -10px;
+  margin-right: 120px;
+  width: 100px;
+  border: none;
+
+}
+.search-submit:hover{
+  color: rgb(255, 255, 255);
+  background-color: #000000;
 }
 @media screen and (max-width: 767px) {
   .nav__menu {
@@ -155,9 +163,8 @@ img {
     margin-top: 5px;
     margin-left: 5px;
   }
-  .login-container{
-    width: 80%;
-    margin-left: 50px;
+  .search-submit{
+    margin-left: 120px;
   }
 
   .nav__toggle {
@@ -867,6 +874,10 @@ img {
   .video-feed-container {
     
     margin-bottom: 20px;
+  }
+  .search-submit{
+    margin-left: 120px;
+    
   }
 }
 
