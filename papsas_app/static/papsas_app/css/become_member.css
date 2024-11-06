@@ -29,10 +29,9 @@
   
   }
   .institutional-name h1 {
-    font-size: 1.5rem;
+    font-size: 2rem;
     color: #ff0000;
     font-weight: 500;
-    margin-top: 20px;
   
   }
   
@@ -156,7 +155,7 @@
       margin-bottom: 30px;
     }
     .membership {
-      margin-top: 40rem; /* Add 100px margin-top for mobile screens */
+      margin-top: 45rem; /* Add 100px margin-top for mobile screens */
       padding: 10px;
       margin-bottom: -400px;
     }
@@ -184,9 +183,6 @@
   
     .membership_grid {
       grid-template-columns: 1fr; /* 1 column for small screens */
-    }
-    .institutional-name h1{
-      font-size: 1.25rem;
     }
   
   }
@@ -258,8 +254,8 @@
       padding-left: 0;
     }
   
-    .institutional-text{
-      font-size: 10px; /* Adjust font size for readability */
+    .institutional-text h2 {
+      font-size: 16px; /* Adjust font size for readability */
     }
   
     .institutional-text p {
@@ -269,4 +265,70 @@
       margin-bottom: 30px;
       height: 15rem;
     }
+  }
+  @media (min-width: 745.45px) and (max-width: 1072.73px) {
+    .institutional {
+      flex-direction: column;
+      text-align: center;
+    }
+    .institutional-text {
+      max-width: 75%;
+      padding-left: 0;
+    }
+
+    .home__container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3rem;
+  }
+  .home__data {
+    max-width: 100%;
+    
+}
+.membership{
+  margin-top: 27rem;
+}
+.membership__button_1{
+  width: 120px;
+  padding: 10px;
+}
+.membership_grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* 4 equal columns */
+  gap:10px;
+  justify-items: center;
+}
+
+  }
+  @media (min-width: 930.91px) and (max-width: 1241.82px) {
+    .institutional {
+      flex-direction: column;
+      text-align: center;
+    }
+    .institutional-text {
+      max-width: 75%;
+      padding-left: 0;
+    }
+
+    .home__container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3rem;
+  }
+  .home__data {
+    max-width: 100%;
+}
+.membership__button_1{
+  width: 120px;
+  padding: 10px;
+}
+.membership_grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* 4 equal columns */
+  gap:10px;
+  justify-items: center;
+}
+
   }
