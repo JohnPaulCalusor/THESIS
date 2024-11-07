@@ -607,7 +607,7 @@ def event(request):
         form = EventForm
     return render(request, 'papsas_app/event_management.html', {'form': form})
 
-@login_required
+@login_required(login_url='/login')
 def attendance_form(request, event_id):
     try:
         # Get the event from the event_id in the URL
@@ -2003,7 +2003,7 @@ def generate_qr(request, event_id):
     event = get_object_or_404(Event, id=event_id)
     
     attendance_url = reverse('attendance_form', args=[event.id])
-    full_url = f"http://{settings.SITE_DOMAIN}{attendance_url}"
+    full_url = f"http://{settings.SITE_DOMAIN}{attendance_url}?next={attendance_url}"
 
     qr = qrcode.QRCode(version=1, box_size=10, border=5)
     qr.add_data(full_url)
