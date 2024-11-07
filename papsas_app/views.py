@@ -1994,7 +1994,12 @@ def get_expiring_memberships():
         )
     return expiring_memberships
 
+@login_required
 def generate_qr(request, event_id):
+
+    if not request.user.is_authenticated:
+        return redirect('login')
+
     event = get_object_or_404(Event, id=event_id)
     
     attendance_url = reverse('attendance_form', args=[event.id])
