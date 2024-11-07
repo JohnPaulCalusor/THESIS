@@ -276,6 +276,9 @@ class Attendance(models.Model):
     attended = models.BooleanField(default=False)
     date_attended = models.DateField(auto_now_add=True)
 
+    class Meta:
+        unique_together = ('user', 'event', 'date_attended')
+
     def __str__(self):
         return f"{self.user.first_name} attended {self.event.event.eventName}"
     

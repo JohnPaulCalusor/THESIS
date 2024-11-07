@@ -63,7 +63,6 @@
                 <canvas id="membershipGrowthChart"></canvas>
             </div>
             <div id="boxplot-container" class="chart-container">
-                <h3>Distribution of Event Ratings</h3>
                 <div id="boxchart-container">
                     <label for="event-select">Select Event:</label>
                     
@@ -75,17 +74,6 @@
             <div class="chart">
                 <h3>Membership Distribution</h3>
                 <canvas id="membershipChart"></canvas>
-            </div>
-        </div>
-            <!-- Chart Containers -->
-        <div class="region">
-            <div class="chart-container">
-                <h3>Attendance Over Time</h3>
-                <canvas id="attendanceOverTimeChart"></canvas>
-            </div>
-            <div class="chart-container">
-                <h3>Average Event Registration vs Average Attendance</h3>
-                <canvas id="avgRegVsAttendanceChart"></canvas>
             </div>
         </div>
 
@@ -100,11 +88,32 @@
                 <canvas id="RegionChart"></canvas>
             </div>
         </div>
+            <!-- Chart Containers -->
+        <div class="region">
+            <div class="chart-container">
+                <h3>Attendance Over Time</h3>
+                <canvas id="attendanceOverTimeChart"></canvas>
+            </div>
+            <div class="chart-container">
+                <h3>Average Event Registration vs Average Attendance</h3>
+                <canvas id="avgRegVsAttendanceChart"></canvas>
+            </div>
+        </div>
+        <div class="region">
+            <div class="chart-container">
+                <h3>Attendance per Day</h3>
+                <canvas id="attendanceChart"></canvas>
+            </div>
+        </div>
 
         <div class="region">
             <div class="chart-container">
                 <h3>Event Price vs Attendance</h3>
                 <canvas id="eventPriceVsAttendanceChart"></canvas>
+            </div>
+            <div class="chart-container">
+                <h3>Capacity Utilization</h3>
+                <canvas id="capacityUtilizationChart"></canvas>
             </div>
         </div>
     </div>
@@ -132,8 +141,8 @@
                 const datasets = [{
                     label: 'Dataset',
                     data: data.values,
-                    backgroundColor: data.values.map((_, index) => colorPalette[index % colorPalette.length]),
-                    borderColor: data.values.map((_, index) => colorPalette[index % colorPalette.length]),
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
                     borderWidth: 1,
                 }];
 
@@ -473,4 +482,8 @@ const updateTiles = async () => {
         };
 
     </script>
+    {% endblock %}
+
+    {% block script %}
+        <script src="{% static 'papsas_app/js/dashboard.js' %}"></script>
     {% endblock %}

@@ -610,32 +610,33 @@ def event(request):
 @login_required(login_url='/login')
 def attendance_form(request, event_id):
     try:
-        # Get the event from the event_id in the URL
         event = Event.objects.get(id=event_id)
     except Event.DoesNotExist:
         return HttpResponseNotFound('Event not found')
 
     if request.method == 'POST':
-        form = AttendanceForm(request.POST)
-        if form.is_valid():
-            user = request.user
-
-            event_registration = EventRegistration.objects.filter(user=user, event=event)
-            if event_registration.exists():
-                attendance, created = Attendance.objects.get_or_create(user=user, event=event_registration.first())
-                attendance.attended = form.cleaned_data['attended']
+        try:
+            form = AttendanceForm(request.POST)
+            if form.is_valid():
+                user = request.user
+                event_registration = EventRegistration.objects.get(user=user, event=event)
+                attendance = Attendance.objects.create(
+                    user=user,
+                    event=event_registration,
+                    attended=form.cleaned_data['attended']
+                )
                 attendance.save()
                 return redirect('index')
             else:
-                error_message = 'You are not registered for this event.'
-        else:
-            error_message = 'Invalid form submission'
+                error_message = 'Invalid form submission'
 
-        return render(request, 'papsas_app/form/attendance_form.html', {
-            'form': form, 
-            'event_id': event_id, 
-            'event': event,
-            'error_message': error_message})
+            return render(request, 'papsas_app/form/attendance_form.html', {
+                'form': form, 
+                'event_id': event_id, 
+                'event': event,
+                'error_message': error_message})
+        except Exception as e:
+            return HttpResponse(f'Error - {e}')
     else:
         form = AttendanceForm()
 
@@ -2149,3 +2150,33 @@ class FeedbackListView(SingleTableView):
         context['filter'] = self.filterset
         context['event'] = self.kwargs.get('event_id')
         return context
+
+def attendance_by_day(request):
+    attendance_by_day = Attendance.objects.values('date_attended__week_day').annotate(count=Count('id')).order_by('date_attended__week_day')
+
+    data = []
+    for item in attendance_by_day:
+        data.append({
+            'day_of_week': item['date_attended__week_day'],
+            'count': item['count']
+        })
+
+    return JsonResponse(data, safe=False)
+
+def capacity_utilization(request):
+    latest_events = Event.objects.order_by('-startDate')[:5]
+
+    data = []
+    for event in latest_events:
+        registered_attendees = EventRegistration.objects.filter(event=event).count()
+
+        attended_count = Attendance.objects.filter(event__event=event, attended=True).count()
+
+        data.append({
+            'event_name': event.eventName,
+            'venue_capacity': event.venue.capacity,
+            'registered_attendees': registered_attendees,
+            'attended_count': attended_count
+        })
+
+    return JsonResponse(data, safe=False)

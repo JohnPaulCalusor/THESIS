@@ -29,17 +29,18 @@ async function loadEvents() {
         const response = await fetch(`/get_event/${eventId}/rating/`);
         const data = await response.json();
   
-        // Plot the box plot with Plotly
         const plotData = [
             {
                 y: data.ratings,
                 type: 'box',
                 name: data.event.name,
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
             }
         ];
   
         const layout = {
-            title: `Event Ratings: ${data.event.name}`,
+            title: `Distribution of Event Ratings`,
             yaxis: { title: 'Rating' },
             height: 300,
             width : 500,

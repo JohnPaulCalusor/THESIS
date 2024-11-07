@@ -100,6 +100,8 @@ urlpatterns = [
     path('get_event/<int:event_id>/rating/', views.box_plot, name='get_event_rating' ),
     path('events/boxplot/', views.box_event, name="box_event"),
     path('get_event_price_vs_attendance_data/', views.get_event_price_vs_attendance_data, name='get_event_price_vs_attendance_data'),
+    path('attendance-by-day/', views.attendance_by_day, name='attendance_day'),
+    path('capacity-utilization/', views.capacity_utilization, name='capacity_utilization'),
 
     # table
     path('table/user/', views.UserListView.as_view(), name='user_table'),
@@ -118,5 +120,6 @@ urlpatterns = [
     #generate qr/event rating
     path('event/<int:event_id>/generate-qr/', views.generate_qr, name='generate_qr'),
     path('event/<int:event_id>/rate/', views.rate_event, name='rate_event'),
+    
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
