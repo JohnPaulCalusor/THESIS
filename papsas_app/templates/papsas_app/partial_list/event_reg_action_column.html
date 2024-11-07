@@ -9,29 +9,29 @@
         <form action="{% url 'decline_eventReg' record.id %}" method="post" style="display:inline;">
             {% csrf_token %}
             <button type="submit" class="action-icon" title="Decline">
-                <i class="fas fa-trash-alt"></i>
+                <i class="fa-solid fa-x"></i>
             </button>
         </form>
     {% elif record.status == 'Approved' %}
         <form action="{% url 'decline_eventReg' record.id %}" method="post" style="display:inline;">
             {% csrf_token %}
             <button type="submit" class="action-icon" title="Decline">
-                <i class="fas fa-times"></i>
+                <i class="fa-solid fa-x"></i>
             </button>
         </form>
     {% else %}
-        <form action="{% url 'delete_eventReg' record.id %}" method="post" style="display:inline;">
-            {% csrf_token %}
-            <button type="submit" class="action-icon" title="Delete">
-                <i class="fas fa-trash-alt"></i>
-            </button>
-        </form>  
         <form action="{% url 'approve_eventReg' record.id %}" method="post" style="display:inline;">
             {% csrf_token %}
             <button type="submit" class="action-icon" title="Approve">
                 <i class="fas fa-check"></i>
             </button>
         </form>
+        <form action="{% url 'delete_eventReg' record.id %}" method="post" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" class="action-icon" title="Delete">
+                <i class="fas fa-trash-alt"></i>
+            </button>
+        </form>  
     {% endif %}
 {% else %}
     {% if record.attendance.exists  %}

@@ -506,7 +506,7 @@ def vote(request):
             'has_declared' : has_declared
         })
 
-@login_required
+@login_required(login_url='/login')
 def profile(request, id):
     try:
         candidacies = Candidacy.objects.filter( candidate = id )
@@ -645,7 +645,7 @@ def attendance_form(request, event_id):
         'event': event  })
 
 # register event
-@login_required
+@login_required(login_url='/login')
 def event_registration_view(request, event_id):
     user = request.user
     event = get_object_or_404(Event, id=event_id)
@@ -769,7 +769,7 @@ def update_account(request, id):
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500) 
 
-@login_required
+@login_required(login_url='/login')
 def membership_registration(request, mem_id):
     form = MembershipRegistration(request.user, mem_id)
     membership = mem_id
@@ -1026,7 +1026,7 @@ def compose_venue(request):
 
 # @member_or_officer_required
 # for the meantime, open for all
-@login_required
+@login_required(login_url='/login')
 def event_list(request):
     events = Event.objects.all()
 
@@ -1994,7 +1994,7 @@ def get_expiring_memberships():
         )
     return expiring_memberships
 
-@login_required
+@login_required(login_url='/login')
 def generate_qr(request, event_id):
 
     if not request.user.is_authenticated:
