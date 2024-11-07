@@ -42,6 +42,9 @@
             <div class="sign-up-link">
                 Not a member yet? <a href="{% url 'register' %}"> Register here.</a>
             </div>
+
+            <input type="hidden" name="next" value="{{ next }}">
+
         </div>
     </form>
     <script>
