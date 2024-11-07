@@ -43,8 +43,7 @@
                 Not a member yet? <a href="{% url 'register' %}"> Register here.</a>
             </div>
 
-            <input type="hidden" name="next" value="{{ next }}">
-
+            <input type="hidden" name="next" value="{{ request.GET.next }}">
         </div>
     </form>
     <script>
