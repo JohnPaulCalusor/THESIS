@@ -38,11 +38,14 @@
         </div>
     </form>
 </div>
-
-
-<div id="table-container">
-    Total Records: {{ table.rows|length }}
-    {% render_table table %}
+<div class="container">
+    <div id="table-container">
+        {% render_table table %}
+        <div class="col-md-3 mb-3"> 
+            Total Records: {{ table.rows|length }}
+        </div>
+        
+    </div>
 </div>
 
 {% endblock %}

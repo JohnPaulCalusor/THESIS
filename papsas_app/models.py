@@ -108,7 +108,7 @@ class MembershipTypes(models.Model):
     fee = models.DecimalField(max_digits=10, decimal_places=2)
 
     def __str__(self):
-        return f'{self.type}'
+        return f'{self.id} - {self.type}'
     
     class Meta:
         ordering = ['id']

@@ -19,8 +19,8 @@ class MembershipFilter(django_filters.FilterSet):
         choices = [
             ('1', 'Regular'),
             ('2', 'Special'),
-            ('3', 'Affiliate'),
-            ('4', 'Lifetime'),
+            ('4', 'Affiliate'),
+            ('5', 'Lifetime'),
         ]
     )
     status = django_filters.ChoiceFilter(
