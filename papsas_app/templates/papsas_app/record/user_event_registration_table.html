@@ -41,9 +41,14 @@
     {% endfor %}
 </ul>
 {% endif %}
-<div id="table-container">
-    {% render_table table %}
-    Total Records: {{ table.rows|length }}
+<div class="container">
+    <div id="table-container">
+        <div class="col-md-3 mb-3"> 
+            Total Records: {{ table.rows|length }}
+        </div>
+        {% render_table table %}
+        
+    </div>
 </div>
 
 {% endblock %}
