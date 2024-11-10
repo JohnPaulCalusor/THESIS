@@ -7,7 +7,18 @@
 
 
 {% block body %}
+
 <div class="container">
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <div class="alert alert-warning alert-dismissible fade show custom-alert" role="alert">
+                    <strong>{{ message }}</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">X</button>
+                </div>
+            {% endfor %}
+        </ul>
+    {% endif %}
     <div class="form-container">
       <div class="back-button" onclick="window.history.back();">
         <i class="fas fa-arrow-left"></i>

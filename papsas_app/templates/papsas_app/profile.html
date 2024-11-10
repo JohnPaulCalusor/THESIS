@@ -63,31 +63,31 @@
             </div>
             <div class="info-row">
                 <div class="info-label">Full Name</div>
-                <div class="info-value">{{ user.first_name }} {{ user.last_name }}</div>
+                <div class="info-value">{{ viewUser.first_name }} {{ viewUser.last_name }}</div>
             </div>
             <div class="info-row">
                 <div class="info-label">Region</div>
-                <div class="info-value">{{ user.region }}</div>
+                <div class="info-value">{{ viewUser.region }}</div>
             </div>
             <div class="info-row">
                 <div class="info-label">Address</div>
-                <div class="info-value">{{ user.address }}</div>
+                <div class="info-value">{{ viewUser.address }}</div>
             </div>
             <div class="info-row">
                 <div class="info-label">Occupation</div>
-                <div class="info-value">{{ user.occupation }}</div>
+                <div class="info-value">{{ viewUser.occupation }}</div>
             </div>
             <div class="info-row">
                 <div class="info-label">Mobile Number</div>
-                <div class="info-value">{{ user.mobileNum }}</div>
+                <div class="info-value">{{ viewUser.mobileNum }}</div>
             </div>
             <div class="info-row">
                 <div class="info-label">Email</div>
-                <div class="info-value">{{ user.email}}</div>
+                <div class="info-value">{{ viewUser.email}}</div>
             </div>
             <div class="info-row">
                 <div class="info-label">Birthdate</div>
-                <div class="info-value">{{ user.birthdate}}</div>
+                <div class="info-value">{{ viewUser.birthdate}}</div>
             </div>
         </div>
     
@@ -101,7 +101,7 @@
             </div>
             {% if user.tor %}
             <div class="info-value">
-                <img src="{{ user.tor.url }}" alt="{{ user. }}" srcset="">
+                <img src="{{ viewUser.tor.url }}" alt="{{ viewUser }} TOR" srcset="">
             </div>
             {% else %}
             <div class="info-row">

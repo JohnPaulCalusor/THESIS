@@ -419,6 +419,7 @@ def manage_election(request, id):
         election = Election.objects.get(id=id)
         election.electionStatus = False
         election.save()
+        new_officer(request, election.numWinners)
         return redirect('election')
     
     table = ElectionTable(Election.objects.all())
@@ -447,7 +448,7 @@ def new_officer(request, num_winners):
         )
         officer.save()
 
-# @practitioner_required
+@login_required(login_url='/login')
 def vote(request):
     user = request.user
     ongoingElection = Election.objects.get( electionStatus = True )
@@ -609,6 +610,7 @@ def event(request):
 
 @login_required(login_url='/login')
 def attendance_form(request, event_id):
+    today = date.today()
     try:
         event = Event.objects.get(id=event_id)
     except Event.DoesNotExist:
@@ -617,33 +619,44 @@ def attendance_form(request, event_id):
     if request.method == 'POST':
         try:
             form = AttendanceForm(request.POST)
-            if form.is_valid():
-                user = request.user
-                event_registration = EventRegistration.objects.get(user=user, event=event)
-                attendance = Attendance.objects.create(
-                    user=user,
-                    event=event_registration,
-                    attended=form.cleaned_data['attended']
-                )
-                attendance.save()
-                return redirect('index')
+            if today < event.endDate:
+                if form.is_valid():
+                    user = request.user
+                    event_registration = EventRegistration.objects.get(user=user, event=event)
+                    attendance = Attendance.objects.create(
+                        user=user,
+                        event=event_registration,
+                        attended=form.cleaned_data['attended']
+                    )
+                    attendance.save()
+                    messages.success(request, 'Attendance is saved. Enjoy the event.')
+                    return redirect('index')
+                else:
+                    messages.error(request, 'Invalid attendance.')
             else:
-                error_message = 'Invalid form submission'
+                messages.error(request, f'{event.eventName} has already ended.')
+                return redirect('attendance_form', event_id=event_id)
+
 
             return render(request, 'papsas_app/form/attendance_form.html', {
                 'form': form, 
                 'event_id': event_id, 
                 'event': event,
-                'error_message': error_message})
+                })
+        except IntegrityError:
+            messages.error(request, 'You already have a record as of today.')
+            return redirect('attendance_form', event_id=event_id)
         except Exception as e:
-            return HttpResponse(f'Error - {e}')
+            messages.error(request, f'Error: {e}')
+            return redirect('attendance_form', event_id=event_id)
     else:
         form = AttendanceForm()
 
     return render(request, 'papsas_app/form/attendance_form.html', {
         'form': form, 
         'event_id': event_id,
-        'event': event  })
+        'event': event
+    })
 
 # register event
 @login_required(login_url='/login')
@@ -1348,22 +1361,21 @@ def get_total_events_count(request):
 @secretary_required
 def get_total_revenue(request):
     total_revenue = 0
-    events = Event.objects.all()  # Get all events
+    events = Event.objects.all()
 
     for event in events:
         approved_registrations = event.activity.filter(status='Approved')
-        registrations_count = approved_registrations.count()  # Count how many approved registrations for each event
-        if event.price:  # Ensure the price is not None
-            total_revenue += event.price * registrations_count  # Multiply price by number of approved registrations
+        registrations_count = approved_registrations.count() 
+        if event.price:
+            total_revenue += event.price * registrations_count
 
     return JsonResponse({'total_revenue': total_revenue})
 
 @secretary_required
 def get_membership_growth(request):
     today = timezone.now()
-    start_year = today.year - 10  # Adjust this to how many years you want to show
+    start_year = today.year - 10 
 
-    # Count new memberships by year
     growth_data = (
         UserMembership.objects.filter(registrationDate__year__gte=start_year)
         .annotate(year=TruncYear('registrationDate'))
@@ -1372,20 +1384,17 @@ def get_membership_growth(request):
         .order_by('year')
     )
 
-    # Prepare the response data
     labels = []
     values = []
     for data in growth_data:
-        labels.append(data['year'].year)  # TruncYear provides a date-like object
+        labels.append(data['year'].year)
         values.append(data['count'])
 
-    # Ensure all years in range are included, with 0 if no members
     for year in range(start_year, today.year + 1):
         if year not in labels:
             labels.append(year)
             values.append(0)
 
-    # Sort by year
     sorted_data = sorted(zip(labels, values))
     sorted_labels, sorted_values = zip(*sorted_data)
 
@@ -2178,5 +2187,20 @@ def capacity_utilization(request):
             'registered_attendees': registered_attendees,
             'attended_count': attended_count
         })
+
+    return JsonResponse(data, safe=False)
+
+def get_top_3_events(request):
+    attendance_data = Attendance.objects.values('event__event__eventName', 'event__event__id').\
+                       annotate(attendance_count=Count('id')).\
+                       order_by('-attendance_count')[:3]
+
+    data = [
+        {
+            'eventName': item['event__event__eventName'],
+            'attendanceCount': item['attendance_count']
+        }
+        for item in attendance_data
+    ]
 
     return JsonResponse(data, safe=False)

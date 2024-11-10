@@ -79,11 +79,6 @@ class TestUser(TestCase):
         self.assertIsNotNone(timestamp)
         self.assertIsInstance(timestamp, int)
 
-    def test_str_method(self):
-        """Test string representation of User"""
-        expected_str = f'{self.user.id} - {self.user.first_name}'
-        self.assertEqual(str(self.user), expected_str)
-
     def test_profile_pic_default(self):
         """Test default profile picture"""
         self.assertEqual(

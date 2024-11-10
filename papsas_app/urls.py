@@ -102,6 +102,7 @@ urlpatterns = [
     path('get_event_price_vs_attendance_data/', views.get_event_price_vs_attendance_data, name='get_event_price_vs_attendance_data'),
     path('attendance-by-day/', views.attendance_by_day, name='attendance_day'),
     path('capacity-utilization/', views.capacity_utilization, name='capacity_utilization'),
+    path('top_3_events/', views.get_top_3_events, name='top_3_events'),
 
     # table
     path('table/user/', views.UserListView.as_view(), name='user_table'),

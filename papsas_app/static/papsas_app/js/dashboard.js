@@ -39,6 +39,39 @@ function attendance_day() {
     .catch(error => console.error('Error fetching attendance data:', error));
 }
 
+function getTop3Events() {
+    fetch('/top_3_events/')
+      .then(response => response.json())
+      .then(data => {
+        const eventNames = data.map(item => item.eventName);
+        const attendanceCounts = data.map(item => item.attendanceCount);
+  
+        const ctx = document.getElementById('top3EventsChart').getContext('2d');
+        new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: eventNames,
+            datasets: [{
+              label: 'Attendance Count',
+              data: attendanceCounts,
+              backgroundColor: 'rgba(75, 192, 192, 0.2)',
+              borderColor: 'rgba(75, 192, 192, 1)',
+              borderWidth: 1
+            }]
+          },
+          options: {
+            scales: {
+              y: {
+                beginAtZero: true,
+                precision: 0
+              }
+            },
+          }
+        });
+      })
+      .catch(error => console.error('Error fetching top events data:', error));
+  }
+
 function capacity_utilization(){
     fetch('/capacity-utilization/')
     .then(response => response.json())
@@ -94,4 +127,5 @@ function capacity_utilization(){
 document.addEventListener('DOMContentLoaded', function(){
     attendance_day()
     capacity_utilization()
+    getTop3Events()
 })
