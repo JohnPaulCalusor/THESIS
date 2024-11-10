@@ -4,12 +4,13 @@ from django.conf import settings
 from ...models import UserMembership
 from ...views import get_expiring_memberships
 import logging
+from datetime import date
 
 class Command(BaseCommand):
     help = 'Check for memberships expiring in 3 days and send notifications'
 
     def handle(self, *args, **options):
-        logging.basicConfig(filename='/Users/macbookairm1/Documents/capstone/papsas/papsas_app/management/log/command.log', level=logging.INFO,
+        logging.basicConfig(filename='papsas_app/management/log/command.log', level=logging.INFO,
                         format='%(asctime)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S')
         
         expiring_memberships = get_expiring_memberships()
@@ -18,8 +19,12 @@ class Command(BaseCommand):
         
         for membership in expiring_memberships:
             user = membership.user.email
+            expirationDate = membership.expirationDate
+            today = date.today()
             subject = 'Your PAPSAS Membership is Expiring Soon'
-            message = f'Dear {membership.user.first_name},\n\nYour PAPSAS membership is set to expire in 3 days. Please renew your membership to continue enjoying our services.\n\nBest regards,\nPAPSAS Team'
+            expdate = expirationDate - today
+            # date = expiration date - today
+            message = f'Dear {membership.user.first_name},\n\nYour PAPSAS membership is set to expire in {expdate.days} day/s. Please renew your membership to continue enjoying our services.\n\nBest regards,\nPAPSAS Team'
             from_email = settings.DEFAULT_FROM_EMAIL
             recipient_list = [membership.user.email]
             

@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect, get_list_or_404, get_object_or_404
+from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.contrib.auth import login, logout, authenticate
@@ -1997,11 +1998,20 @@ class NewsAndOffersListView(SingleTableView):
 
 def get_expiring_memberships():
     today = timezone.now().date()
-    three_days_from_now = timezone.now().date() + timedelta(days=3)
+    one_day_from_now = today + timedelta(days=1)
+    fifteen_days_from_now = today + timedelta(days=15)
+    month_from_now = today + timedelta(days=30)
+    
     expiring_memberships = UserMembership.objects.filter(
-        expirationDate__gt = today,
-        expirationDate__lte = three_days_from_now
-        )
+        expirationDate__in=[
+            one_day_from_now,
+            fifteen_days_from_now,
+            month_from_now
+        ]
+    )
+
+    print(expiring_memberships)
+    
     return expiring_memberships
 
 @login_required(login_url='/login')
