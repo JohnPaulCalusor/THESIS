@@ -43,7 +43,6 @@ async function loadEvents() {
             title: `Distribution of Event Ratings`,
             yaxis: { title: 'Rating' },
             height: 300,
-            width : 500,
         };
   const config = {
       displayModeBar: true, 

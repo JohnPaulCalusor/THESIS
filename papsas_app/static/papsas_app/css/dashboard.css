@@ -17,7 +17,7 @@ body {
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    width: 24%;
+    width: 345px;
     height: 140px;
 }
 
@@ -114,4 +114,44 @@ h1 {
 h3{
     font-size: 16px;
     font-weight: 400;
+}
+
+@media (max-width: 768px) {
+    .container{
+        display: flex;
+        flex-direction: column;
+        flex-wrap: wrap;
+    }
+    .region, .tiles-container{
+        display: flex;
+        flex-wrap: wrap;
+    }
+    .tile{
+        width: 40vw;
+    }
+
+    .svg-container{
+        width: 80vw;
+    }
+}
+
+@media (max-width: 425px) {
+    .container{
+        margin: 0px;
+    }
+
+    .tiles-container{
+        display: flex !important;
+    }
+    .tile{
+        display: flex;
+        flex-direction: column;
+        padding: 5px;
+    }
+
+    .tile-content{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
 }
