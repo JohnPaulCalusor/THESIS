@@ -1,6 +1,5 @@
 .membership {
     padding: 2rem 1rem;
-    margin-top: 200px;
     background-color: #f3f1f1;
     text-align: center; /* Center content within the resources section */
     padding: 10px;
@@ -56,7 +55,12 @@
     padding-bottom: 30px;
 
   }
-  
+  .become_member {
+    background-color: var(--first-color);
+    padding: 5rem 0 2rem;
+    display: flex;
+
+  }
   .titleContainer {
     height: 30rem;
   }
@@ -265,6 +269,9 @@
       margin-bottom: 30px;
       height: 15rem;
     }
+    .become_member{
+      margin-bottom: -35rem;
+    }
   }
   @media (min-width: 745.45px) and (max-width: 1072.73px) {
     .institutional {
@@ -284,7 +291,6 @@
   }
   .home__data {
     max-width: 100%;
-    
 }
 .membership{
   margin-top: 27rem;
@@ -298,6 +304,9 @@
   grid-template-columns: repeat(2, 1fr); /* 4 equal columns */
   gap:10px;
   justify-items: center;
+}
+.become_member{
+  margin-bottom: -25rem;
 }
 
   }
@@ -330,6 +339,9 @@
   gap:10px;
   justify-items: center;
 }
+.become_member{
+  margin-bottom: -25rem;
+}
 
   }
   @media (min-width: 1090.91px) and (max-width: 1241.82px) {
@@ -360,6 +372,9 @@
   grid-template-columns: repeat(2, 1fr); /* 4 equal columns */
   gap:10px;
   justify-items: center;
+}
+.become_member{
+  margin-bottom: -25rem;
 }
 
   }

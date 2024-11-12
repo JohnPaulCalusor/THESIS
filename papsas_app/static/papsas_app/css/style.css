@@ -10,13 +10,10 @@
 }
 
 #navProfile {
-    border-radius: 100%;
-    display: flex;
+   display: flexbox;
+   margin-left: 6rem
 }
 
-#profile {
-    width: 200px;
-}
 /*=============== GOOGLE FONTS ===============*/
 @import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap");
 
@@ -214,11 +211,9 @@ img {
 /*=============== HOME ===============*/
 .home {
   background-color: var(--first-color);
-  padding: 9rem 0 2rem;
-  height: 50vh;
-  margin-top: -100px;
-  display: grid;
-   
+  padding: 5rem 0 2rem;
+  display: flex;
+  margin-bottom: -35rem;
 }
 
 .home__container {
@@ -749,6 +744,10 @@ img {
   }
 
 }
+.video-papsas{
+  margin-top: 50rem;
+}
+
 .video_title{
   text-align: center;
   padding: 20px;
@@ -758,9 +757,6 @@ img {
   display: flex;
   flex-direction: column; /* Set to row to align videos horizontally */
   gap: 20px;
-  margin-top: 250px;
-  padding-top: 100px;
-  padding-bottom: 100px;
   align-items: center;
   background-color: #f3f1f1;
   width: 100%;
@@ -789,7 +785,7 @@ img {
 .video-title-container{
   font-size: 30px;
   color: red;
-  margin-top: -50px;
+  margin-top: 30px;
   text-transform: uppercase;
 }
 .video-wrapper video {
@@ -881,13 +877,8 @@ img {
   }
 }
 
-.video-papsas {
-  margin-top: 100px;
-}
 @media only screen and (max-width: 828px) {
-  #navProfile{
-    margin-left: 11.5rem;
-  }
+
 }
 
 /* iPad Air portrait (width: 768px - 820px) */
@@ -919,9 +910,7 @@ img {
     cursor: pointer;
   }
 
-  .home {
-    margin-bottom: 30rem;
-  }
+
 
   .nav {
     height: calc(var(--header-height) + 1.5rem);
@@ -983,9 +972,7 @@ img {
     cursor: pointer;
   }
 
-  .home {
-    margin-bottom: 30rem;
-  }
+
 
   .nav {
     height: calc(var(--header-height) + 1.5rem);
@@ -1048,9 +1035,6 @@ img {
     cursor: pointer;
   }
 
-  .home {
-    margin-bottom: 30rem;
-  }
 
   .nav {
     height: calc(var(--header-height) + 1.5rem);
@@ -1083,17 +1067,9 @@ img {
     color: rgb(0, 0, 0);
     cursor: pointer;
   }
-  .profile{
-    margin-left: 100px;
-  }
+
 }
-@media (min-width: 1090.91px) and (max-width: 1241.82px) {
-  .profile{
-    margin-left: 100px;
-  }
-}
+
 @media (min-width: 820px) and (max-width: 1180px) {
-  #navProfile{
-    margin-left: 100px;
-  }
+
 }

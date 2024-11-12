@@ -295,12 +295,12 @@
     background-color: #f3f1f1;
     padding: 2rem 0;
     margin-top: 1rem;
+
   }
   
   .partners__container {
     padding-inline: 16px;
     display: grid;
-    grid-template-columns: repeat(1, 1fr);
     gap: 2rem;
     text-align: center;
   }

@@ -136,7 +136,7 @@
                                     <li class="nav__item"><a href="{% url 'news_offers' %}" class="nav__link">News and Offers</a></li>
                                     <li class="nav__item"><a href="{% url 'logout' %}" class="nav__link">Logout</a></li>
                                 {% if user.profilePic %}
-                                    <li class="nav__item"><a href="{% url 'profile' user.id %}">
+                                    <li class="nav__item"><a href="{% url 'profile' user.id %}"> 
                                             <img src="{{ user.profilePic.url }}" alt="profilePic" id="navProfile" class="profile">
                                         </a>
                                     </li>
