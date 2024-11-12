@@ -49,5 +49,19 @@ p{
     .election-dashboard{
         display: flex;
         flex-direction: column;
+        gap: 15x;
+        margin: 0px;
+        justify-content: center;
+        align-items: center;
     }
+
+    .container{
+        margin: 0;
+    }
+
+    .past-elections, .new-election{
+        width: 90vw;
+    }
+
+
 }
