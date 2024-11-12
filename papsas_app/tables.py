@@ -148,6 +148,7 @@ class VoteTable(tables.Table):
     candidate = tables.Column(accessor='candidate', verbose_name='Candidate')
     election = tables.Column(accessor='election.title', verbose_name='Election')
     vote_count = tables.Column(accessor='vote_count', verbose_name='Vote Count')
+    actions = tables.TemplateColumn(template_name='papsas_app/partial_list/vote_action_column.html', orderable=False, verbose_name='Actions')
 
     class Meta:
         model = Candidacy

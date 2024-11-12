@@ -29,7 +29,9 @@ urlpatterns = [
     # election
     path('election', views.election, name="election"),
     path('election/<int:id>/declare-candidacy', views.declare_candidacy, name="declare_candidacy"),
+    path('election/delete/candidate/<int:id>', views.delete_candidacy, name="delete_candidacy"),
     path('election/delete/<int:id>', views.delete_election, name="delete_election"),
+    path('election/update/<int:id>', views.update_election, name="update_election"),
     path('election/manage/<int:id>', views.manage_election, name="manage_election"),
     # event
     path('event/<int:event_id>/attendance_form/', views.attendance_form, name='attendance_form'),

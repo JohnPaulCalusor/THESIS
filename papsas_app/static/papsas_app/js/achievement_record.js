@@ -37,14 +37,6 @@ function showUpdate(achievementId) {
         .catch(error => console.error('Error:', error));
 }
 
-// Optional: Close update form
-
-
-// setTimeout(function(){
-//     const element = document.getElementById('message-container');
-//     element.remove();
-// }, 5000);
-
 function showPopup() {
     document.querySelector('#update-container').style.display = 'block';
     document.body.insertAdjacentHTML('beforeend', '<div class="popup-overlay"></div>');

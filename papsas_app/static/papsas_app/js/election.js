@@ -1,59 +1,40 @@
 document.addEventListener('DOMContentLoaded', function(){
-
+    document.querySelectorAll('.edit-btn').forEach(button =>{
+        button.addEventListener('click', function(){
+            const id = this.dataset.id;
+            showUpdate(id)
+            console.log(id)
+        })
+    })
 })
 
-let pollingInterval;
+function showUpdate(electionId) {
+    const updateContainer = document.getElementById('details-container');
+    id = electionId
 
-function openForm(id){
-    document.getElementById('overlay').style.display = 'block';
-    document.getElementById("popup_container").style.display = "block";
-    const dataContainer = document.getElementById('data-container')
-    const tableBody = document.getElementById('electionData');
-
-    function fetchData(){
-        fetch(`get-candidates/${id}/`)
+    fetch(`/election/update/${id}`)
         .then(response => response.json())
         .then(data => {
-            const candidates = data.officers;
-            candidates.sort((a, b) => b.total_votes - a.total_votes);
-            console.log(candidates)
-            tableBody.innerHTML = '';
-            var rank = 0
-    
-            dataContainer.innerHTML = `
-            <p> Number of Elected Officers : ${data.num_elected}</p>
-            `
-            dataContainer.append();
-    
-            candidates.forEach(candidate => {
-                rank += 1
-                const tableRow = document.createElement('tr');
-                tableRow.innerHTML = `
-                    <td>${rank}</td>   
-                    <td>${candidate.name}</td>   
-                    <td>${candidate.total_votes}</td>   
-                `
-                tableBody.appendChild(tableRow);
-            })
+            document.getElementById('id_title').value = data.title;
+            document.getElementById('id_numWinners').value = data.numWinners;
+            document.getElementById('id_endDate').value = data.endDate;
+
+            
+            const form = updateContainer.querySelector('form');
+            const updateUrl = `/election/update/${id}`;
+            form.setAttribute("hx-post", updateUrl);
+            form.setAttribute("hx-confirm", `Are you sure you want to update '${data.title}' `);
+            
+            htmx.process(form);
+            updateContainer.style.display = 'block';
         })
-    }
-    fetchData();
-    pollingInterval = setInterval(fetchData, 5000);
-
-
+        .catch(error => console.error('Error:', error));
 }
 
-function closeForm() {
-    document.getElementById('popup_container').style.display = "none";
-    document.getElementById('overlay').style.display = 'none'; // Hide the overlay
-
-    if (pollingInterval) {
-        clearInterval(pollingInterval);
+function closePopup() {
+    document.querySelector('#details-container').style.display = 'none';
+    const overlay = document.querySelector('.popup-overlay');
+    if (overlay) {
+        overlay.remove();
     }
-
-    document.getElementById('dataContainer').innerHTML = '';
-}
-
-function fetchAttendanceData(url) {
-    htmx.ajax('GET', url, {target: '#attendees-body'});
 }

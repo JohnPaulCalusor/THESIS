@@ -1,5 +1,5 @@
 from django import forms
-from .models import Attendance, EventRegistration, Event, User, UserMembership, MembershipTypes, Venue, Achievement, NewsandOffers, EventRating
+from .models import Attendance, EventRegistration, Event, User, UserMembership, MembershipTypes, Venue, Achievement, NewsandOffers, EventRating, Election
 from django.core.exceptions import ValidationError
 from django.forms import ModelForm, TextInput, EmailInput
 from django.utils import timezone
@@ -199,6 +199,12 @@ class VenueForm(forms.ModelForm):
     class Meta:
         model = Venue
         fields = ('name', 'address', 'capacity')
+
+class ElectionForm(forms.ModelForm):
+    class Meta:
+        model = Election
+        fields = ('title', 'endDate', 'numWinners')
+
 
 class AchievementForm(forms.ModelForm):
     class Meta:

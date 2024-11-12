@@ -23,7 +23,7 @@ from .models import User, MembershipTypes, Vote, Event, Officer
 from django.db import models
 from django.contrib.auth.hashers import make_password
 # Imported Forms
-from .forms import AttendanceForm, EventRegistrationForm, EventForm, ProfileForm, RegistrationForm, LoginForm, MembershipRegistration, Attendance, VenueForm, AchievementForm, NewsForm, UserUpdateForm, EventRatingForm, TORForm, ProfileUpdateForm
+from .forms import AttendanceForm, EventRegistrationForm, EventForm, ProfileForm, RegistrationForm, LoginForm, MembershipRegistration, Attendance, VenueForm, AchievementForm, NewsForm, UserUpdateForm, EventRatingForm, TORForm, ProfileUpdateForm, ElectionForm
 from datetime import date, timedelta
 from django.contrib.auth.forms import PasswordResetForm
 from io import BytesIO
@@ -387,6 +387,7 @@ def resend_verification_code(request, user_id):
 
 @secretary_required
 def election(request):
+    form = ElectionForm()
     today = date.today().isoformat()
     electionList = Election.objects.all()
     ongoingElection = Election.objects.filter(electionStatus=True)
@@ -405,6 +406,7 @@ def election(request):
         messages.success(request, 'Election started successfully.')
 
     return render(request, 'papsas_app/record/election.html', {
+        'form' : form,
         'electionList': electionList,
         'ongoingElection': ongoingElection,
         'table': table,
@@ -1592,7 +1594,6 @@ def update_event (request, id):
             form = EventForm(request.POST, request.FILES, instance = event)
             if form.is_valid:
                 form.save()
-                print('update event')
                 messages.success(request, 'Updated successfully.')
                 response = HttpResponse()
                 response['HX-Refresh'] = 'true'
@@ -1619,6 +1620,43 @@ def update_event (request, id):
         return render(request, 'papsas_app/record/event_table.html', {
             'error': f'Error found: {e}',
             })
+
+@secretary_required
+@csrf_exempt
+def delete_candidacy (request, id):
+    try:
+        candidate = get_object_or_404( Candidacy, id = id) 
+        if request.method == "POST":
+            candidate.delete()
+            messages.success(request, 'Deleted successfully.')
+            return redirect(request.META.get('HTTP_REFERER', '/')) 
+
+    except Exception as e:
+        return render(request, 'papsas_app/record/event_table.html', {
+            'error': f'Error found: {e}',
+            })
+
+@secretary_required
+def update_election(request, id):
+    election = get_object_or_404(Election, id=id)
+    try:
+        if request.method == "POST":
+            form = ElectionForm(request.POST, instance = election)
+            if form.is_valid():
+                form.save()
+                messages.success(request, 'Updated successfully.')
+                response = HttpResponse()
+                response['HX-Refresh'] = 'true'
+                return response
+        data = {
+            'title' : election.title,
+            'numWinners' : election.numWinners,
+            'endDate' : election.endDate
+        }
+        return JsonResponse( data )
+    except Exception as e:
+        messages.error( request, f'Error : {e}')
+        return redirect ( 'election' )
 
 #JS fetching
 @secretary_required
