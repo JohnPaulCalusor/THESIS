@@ -415,6 +415,7 @@ th.orderable a{
 }
 .action-buttons {
     display: flex;
+    justify-content: center;
     align-items: center;
     gap: 10px; /* Add spacing between the buttons */
     margin-left: 10px;
