@@ -71,6 +71,15 @@
                     {{ form.institution }}
                 </div>
 
+                <div class="terms-checkbox">
+                    <input type="checkbox" id="terms" name="terms" required>
+                    <label for="terms">
+                      I have read and agree to the 
+                      <a href="#" onclick="showModal('terms'); return false;">Terms and Conditions</a> 
+                      and <a href="#" onclick="showModal('privacy'); return false;">Privacy Policy</a> of PAPSAS, Inc.
+                    </label>
+                </div>                
+
                 <div class="input-submit">
                     <button type="submit" class="submit-btn">Register</button>
                 </div>
@@ -91,6 +100,22 @@
         </div>
     </form>
     
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Terms and Conditions</h2>
+                <span class="modal-close">&times;</span>
+            </div>
+            <div class="modal-body" id="modal-text">
+            </div>
+            <div class="modal-footer">
+                <button onclick="closeModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="{% static 'papsas_app/js/register.js' %}"></script>
+
     <script>
         function disableSubmitButton(form) {
             const button = form.querySelector('.submit-btn');

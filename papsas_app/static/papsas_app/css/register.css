@@ -193,3 +193,119 @@ input:focus {
     flex-direction: column;
   }
 }
+
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6); /* Semi-transparent background */
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* Ensure modal is on top */
+  animation: fadeIn 0.3s ease-in-out; /* Fade-in effect */
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modal-content {
+  background-color: #ffffff;
+  border-radius: 8px;
+  padding: 20px;
+  width: 90%;
+  max-width: 600px;
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+  position: relative;
+  animation: slideIn 0.3s ease-out; /* Slide-in effect */
+}
+
+@keyframes slideIn {
+  from { transform: translateY(-20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+  margin-bottom: 15px;
+}
+
+.modal-header h2 {
+  font-size: 1.5em;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+}
+
+.modal-close {
+  font-size: 1.5em;
+  color: #555;
+  cursor: pointer;
+}
+
+.modal-body {
+  max-height: 60vh;
+  overflow-y: auto;
+  padding-right: 10px;
+  font-size: 1em;
+  color: #444;
+  line-height: 1.6;
+  font-weight: normal; /* Ensure consistent text style */
+}
+
+.modal-body p,
+.modal-body li {
+  font-weight: normal; /* No bold text inside body */
+  color: #444;
+  margin: 10px 0;
+}
+
+.modal-body h3,
+.modal-body h4 {
+  font-weight: 600;
+  color: #333;
+  margin-top: 20px;
+}
+
+.modal-footer {
+  text-align: right;
+  border-top: 1px solid #eee;
+  padding-top: 10px;
+  margin-top: 15px;
+}
+
+.modal-footer button {
+  padding: 8px 16px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.2s;
+}
+
+.modal-footer button:hover {
+  background-color: #0056b3;
+}
+
+.terms-checkbox {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.terms-checkbox input[type="checkbox"] {
+  margin-right: 8px; 
+  width: 18px;
+  height: 18px;
+  vertical-align: middle;
+}
