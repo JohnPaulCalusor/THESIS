@@ -402,6 +402,7 @@ def election(request):
         endDate = request.POST['endDate']
         newElection = Election(electionStatus=True, startDate=date.today(), title=title, numWinners=num_winners, endDate=endDate)
         newElection.save()
+        messages.success(request, 'Election started successfully.')
 
     return render(request, 'papsas_app/record/election.html', {
         'electionList': electionList,
@@ -421,6 +422,7 @@ def manage_election(request, id):
         election.electionStatus = False
         election.save()
         new_officer(request, election.numWinners)
+        messages.success(request, 'Election closed successfully.')
         return redirect('election')
     
     table = ElectionTable(Election.objects.all())
@@ -1263,7 +1265,6 @@ def delete_account(request, id):
     user = get_object_or_404(User, id=id)
     try:
         if request.method == 'POST':
-            print(2)
             user.is_active = False
             user.save()
             messages.success(request, 'Deactivated   user successfully.')  # Add a success message
@@ -1272,6 +1273,30 @@ def delete_account(request, id):
         print(1)
         messages.error(request, f'Error: {e}')  # Add an error message
         return redirect('user_table') 
+
+@csrf_exempt
+@secretary_required
+def delete_election(request, id):
+    election = get_object_or_404(Election, id=id)
+    try:
+        if request.method == 'POST':
+            election.delete()
+            messages.success(request, 'Election deleted successfully.')
+            return redirect('election')
+    except Exception as e:
+        messages.error(request, f'Error : {e}')
+        return redirect('election')
+
+@secretary_required
+def delete_eventReg(request, id):
+    eventReg = get_object_or_404( EventRegistration, id = id)
+    if request.method == "POST":
+        eventReg = EventRegistration.objects.get( id = id)
+        eventReg.delete()
+        messages.success(request, 'Registration deleted successfully.')
+        return redirect(request.META.get('HTTP_REFERER', '/')) 
+    return HttpResponseForbidden()
+
 
 #htmx functions
 

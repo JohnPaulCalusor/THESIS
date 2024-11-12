@@ -133,6 +133,7 @@ class ElectionTable(tables.Table):
     startDate = tables.Column(orderable= True, verbose_name= "Opening Date")
     endDate = tables.Column(orderable= True, verbose_name= "Closing Date")
     numWinners = tables.Column(orderable= True, verbose_name="Officer Spot/s")
+    actions = tables.TemplateColumn(template_name='papsas_app/partial_list/election_action_column.html', orderable=False, verbose_name='Actions')
     
 
     def render_title(self, record):
