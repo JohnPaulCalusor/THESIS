@@ -183,6 +183,10 @@ img {
 .nav__link {
   color: var(--text-color);
   font-weight: 200;
+  gap: 5px;            
+  cursor: pointer;
+  display: flex;
+  align-items: center;
   
 }
 .nav__close {
@@ -624,7 +628,7 @@ img {
   display: block;
 }
 .dropdown__icon {
-  font-size: 0.9rem;
+  font-size: 0.5rem;
   margin-left: 5px;
   color: red;
 }

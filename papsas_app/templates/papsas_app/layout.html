@@ -35,7 +35,7 @@
                                 {% if officer.position == 'Secretary' %}
                                 <li class="nav__item"><a href="{% url 'admin_dashboard' %}"class="nav__link">Dashboard</a></li>
                                 <li class="nav__item dropdown">
-                                        <a href="{% url 'user_table' %}" class="nav__link">Records<i class='bx bx-chevron-down dropdown__icon'></i></a>
+                                        <a href="{% url 'user_table' %}" class="nav__link">Records<i class="fas fa-chevron-down"></i></a>
                                         <ul class="dropdown-content">
                                             <li><a href="{% url 'user_table' %}">Account</a></li>
                                             <li><a href="{% url 'membership_table' %}">Members</a></li>
@@ -46,13 +46,13 @@
                                         </ul>
                                 </li>
                                 <li class="nav__item"> <a href="{% url 'election' %}"class="nav__link">Election</a></li>
-                                <li class="nav__item dropdown"><a href="{% url 'event_list' %}" class="nav__link">Event<i class='bx bx-chevron-down dropdown__icon'></i></a>
+                                <li class="nav__item dropdown"><a href="{% url 'event_list' %}" class="nav__link">Event<i class="fas fa-chevron-down"></i></a>
                                     <ul class="dropdown-content"> 
                                         <li><a href="{% url 'event_list' %}">Event List</a></li>
                                         <li><a href="{% url 'event_calendar' %}">Calendar</a></li>
                                     </ul>
                                 </li>
-                                <li class="nav__item dropdown"><a href="{% url 'event' %}" class="nav__link">Compose<i class='bx bx-chevron-down dropdown__icon'></i></a>
+                                <li class="nav__item dropdown"><a href="{% url 'event' %}" class="nav__link">Compose<i class="fas fa-chevron-down"></i></a>
                                     <ul class="dropdown-content">
                                         <li><a href="{% url 'event' %}">Event</a></li>
                                         <li><a href="{% url 'compose_venue'%}">Venue</a></li>
@@ -69,20 +69,20 @@
                                 {% else %}
                                 <!-- If user is an officer but not secretary -->
                                 <li class="nav__item dropdown">
-                                    <a href="{% url 'venue_record' %}" class="nav__link">Records<i class='bx bx-chevron-down dropdown__icon'></i></a>
+                                    <a href="{% url 'venue_record' %}" class="nav__link">Records<i class="fas fa-chevron-down"></i></a>
                                     <ul class="dropdown-content">
                                         <li><a href="{% url 'venue_table' %}">Venue</a></li>
                                         <li><a href="{% url 'achievement_table' %}">Achievement</a></li>
                                         <li><a href="{% url 'news_offers_table' %}">News and Offers</a></li>
                                     </ul>
                                 </li>
-                                <li class="nav__item dropdown"><a href=""class="nav__link">Event<i class='bx bx-chevron-down dropdown__icon'></i></a>
+                                <li class="nav__item dropdown"><a href=""class="nav__link">Event<i class="fas fa-chevron-down"></i></a>
                                     <ul class="dropdown-content"> 
                                         <li><a href="{% url 'event_list' %}">Event List</a></li>
                                         <li><a href="{% url 'event_calendar' %}">Calendar</a></li>
                                     </ul>
                                 </li>
-                                <li class="nav__item dropdown"><a href=""class="nav__link">Compose<i class='bx bx-chevron-down dropdown__icon'></i></a>
+                                <li class="nav__item dropdown"><a href=""class="nav__link">Compose<i class="fas fa-chevron-down"></i></a>
                                     <ul class="dropdown-content">
                                         <li><a href="{% url 'compose_venue'%}">Venue</a></li>
                                         <li><a href="{% url 'compose_achievement' %}">Achievement</a></li>
@@ -102,7 +102,7 @@
                             <ul class="nav__list">
                                 <li class="nav__item"><a href="{% url 'index' %}" class="nav__link">Home</a></li>
                                 <li class="nav__item dropdown">
-                                    <a href="{% url 'about' %}" class="nav__link">About Us<i class='bx bx-chevron-down dropdown__icon'></i></a>
+                                    <a href="{% url 'about' %}" class="nav__link">About Us<i class="fas fa-chevron-down"></i></a>
                                     <ul class="dropdown-content">
                                         <li><a href="{% url 'about' %}#section-1">Officers</a></li>
                                         <li><a href="{% url 'about' %}#section-2">Resources</a></li>
@@ -111,7 +111,7 @@
                                 </li>
                                 {% if is_member.status == 'Approved' %}
                                     <li class="nav__item dropdown">
-                                        <a href="{% url 'user_membership_table' %}" class="nav__link">Records<i class='bx bx-chevron-down dropdown__icon'></i></a>
+                                        <a href="{% url 'user_membership_table' %}" class="nav__link">Records<i class="fas fa-chevron-down"></i></a>
                                         <ul class="dropdown-content">
                                             <li><a href="{% url 'user_membership_table' %}">Membership</a></li>
                                             <li><a href="{% url 'user_event_registration_table' %}">Event Registration</a></li>
@@ -126,7 +126,7 @@
                                 {% else %}
                                     <li class="nav__item"><a href="{% url 'become_member' %}" class="nav__link">Become a Member</a></li>
                                 {% endif %}
-                                    <li class="nav__item dropdown"><a href="{% url 'event_list' %}" class="nav__link">Event<i class='bx bx-chevron-down dropdown__icon'></i></a>
+                                    <li class="nav__item dropdown"><a href="{% url 'event_list' %}" class="nav__link">Event<i class="fas fa-chevron-down"></i></a>
                                         <ul class="dropdown-content"> 
                                             <li><a href="{% url 'event_list' %}">Event List</a></li>
                                             <li><a href="{% url 'event_calendar' %}">Calendar</a></li>
@@ -163,7 +163,7 @@
                                     <a href="{% url 'index' %}" class="nav__link">Home</a>
                                 </li>
                                 <li class="nav__item dropdown">
-                                    <a href="{% url 'about' %}" class="nav__link">About Us<i class='bx bx-chevron-down dropdown__icon'></i></a>
+                                    <a href="{% url 'about' %}" class="nav__link">About Us<i class="fas fa-chevron-down"></i></a>
                                     <ul class="dropdown-content">
                                         <li><a href="{% url 'about' %}#section-1">Officers</a></li>
                                         <li><a href="{% url 'about' %}#section-2">Resources</a></li>
