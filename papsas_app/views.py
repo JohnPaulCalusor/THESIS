@@ -471,7 +471,8 @@ def vote(request):
         selected_candidates = request.POST.getlist('candidates')
 
         if not selected_candidates:
-            return HttpResponse("No candidate selected." , status=400)
+            messages.error(request, 'Please select a candidate.')
+            return redirect('vote')
         try:
             user_voted = Vote.objects.filter( voterID = user, election = ongoingElection)
         except Vote.DoesNotExist:
@@ -572,11 +573,6 @@ def event(request):
 
             messages.success(request, 'Event posted successfully.')
             
-            if request.headers.get('HX-Request'):
-                response = HttpResponse()
-                response['HX-Redirect'] = reverse('event_table')
-                return response
-            
             subject = f'Don’t Miss Out: Exciting New Event: {event.eventName}'
             message_template = (
                 'Dear {name},\n\n'
@@ -606,6 +602,11 @@ def event(request):
                     send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [user.email])
                 except Exception as e:
                     logger.error("Error sending email: %s", e)
+
+            if request.headers.get('HX-Request'):
+                response = HttpResponse()
+                response['HX-Redirect'] = reverse('event_table')
+                return response
 
             return redirect('event_table')
     else:
