@@ -913,7 +913,7 @@ def event_calendar(request):
 # Password Reset Request View (Sends Verification Code)
 def password_reset_request(request):
     form = PasswordResetForm()
-    email_not_found = False  # Flag to indicate email not found
+    email_not_found = False  
 
     if request.method == 'POST':
         form = PasswordResetForm(request.POST)
@@ -921,16 +921,15 @@ def password_reset_request(request):
             email = form.cleaned_data['email']
             try:
                 user = User.objects.get(email=email)
-                # Additional code for handling verification...
             except ObjectDoesNotExist:
-                email_not_found = True  # Set flag if email is not found
+                email_not_found = True 
             except Exception as e:
                 form.add_error('email', e)
 
             if email_not_found:
                 return render(request, 'papsas_app/password_reset.html', {
                     'form': form,
-                    'email_not_found': email_not_found  # Pass flag to template
+                    'email_not_found': email_not_found 
                 })
 
             # Verification code generation logic if email exists
@@ -947,9 +946,14 @@ def password_reset_request(request):
                 send_mail(subject, message, 'your_email@example.com', [user.email])
 
             return redirect('password_reset_verify', user_id=user.id)
+        
+        else:
+            form.fields['email'].widget.attrs.update({
+                'placeholder': 'Enter your email address',
+                'class': 'password-reset'
+            })
 
     else:
-        # Set placeholder and CSS class directly in views
         form.fields['email'].widget.attrs.update({
             'placeholder': 'Enter your email address',
             'class': 'password-reset'
@@ -957,8 +961,9 @@ def password_reset_request(request):
 
     return render(request, 'papsas_app/password_reset.html', {
         'form': form,
-        'email_not_found': email_not_found  # Pass flag to template
+        'email_not_found': email_not_found  
     })
+
 
 
 
