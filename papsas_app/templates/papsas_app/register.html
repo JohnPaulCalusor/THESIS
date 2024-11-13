@@ -130,7 +130,7 @@
 
             toggleIcons.forEach(icon => {
                 icon.addEventListener('click', function() {
-                    const targetId = this.getAttribute('data-target');
+                    const targetId = this.getAttribute('#id_password');
                     const passwordField = document.getElementById(targetId);
 
                     // Toggle the type attribute
