@@ -590,28 +590,28 @@ def event(request):
                 'Feel free to share this event with your colleagues—let’s grow together as a community!\n\n'
                 'Thank you for being an integral part of PAPSAS. We look forward to seeing you there!\n\n'
                 'Warm regards,\n'
-                '[Name]\n'  # Replace with actual sender's name
+                '[Name]\n'
                 '[PAPSAS INC.]\n'
                 'Philippine Association of Practitioners of Student Affairs and Services\n'
             )
-            #dito ichcheck kung email_verified at kung practitioner or student
+
             if event.exclusive:
-                users_to_email = User.objects.filter(email_verified=True)
-            else:
                 users_to_email = User.objects.filter(occupation='Practitioner', email_verified=True)
+            else:
+                users_to_email = User.objects.filter(email_verified=True)
 
             for user in users_to_email:
-                message = message_template.format(name=user.first_name, event_name=event.eventName)
+                message = message_template.format(name=user.first_name)
                 try:
                     send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [user.email])
                 except Exception as e:
                     logger.error("Error sending email: %s", e)
 
-
             return redirect('event_table')
     else:
         form = EventForm
     return render(request, 'papsas_app/event_management.html', {'form': form})
+
 
 @login_required(login_url='/login')
 def attendance_form(request, event_id):
