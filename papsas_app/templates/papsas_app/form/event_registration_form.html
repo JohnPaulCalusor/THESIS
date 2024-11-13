@@ -44,19 +44,32 @@
                 </form>
             {% endif %}
         {% else %}
-            <form method="post" enctype="multipart/form-data">
-                {% csrf_token %}
-                <div class="form-group">
-                    <div class="form-group label">Amount: {{ form.amount }}</div>
-                </div>
-                <div class="form-group">
-                    <div class="form-group label">Upload Receipt: {{ form.receipt }}</div>
-                </div>
-                <div class="form-group">
-                    <div class="form-group label">Reference Number: {{ form.reference_number }}</div>
-                </div>
-                <button type="submit" class="btn">Register</button>
-            </form>
+            {% if event.endDate <= today %}
+                <h1> The event has already ended.</h1>
+                <p> Thank you for your interest in this event. Unfortunately, it has already concluded. Please check our upcoming events for more opportunities, or feel free to contact us if you have any further questions! </p>
+            {% else %}
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <div class="form-group label">Amount: {{ form.amount }}</div>
+                    </div>
+                    <div class="form-group">
+                        <div class="form-group label">Upload Receipt: {{ form.receipt }}</div>
+                    </div>
+                    <div class="form-group">
+                        <div class="form-group label">Reference Number: {{ form.reference_number }}</div>
+                    </div>
+                    {% if event.exclusive %}
+                        {% if user.occupation == 'Practitioner' %}
+                            <button type="submit" class="btn">Register</button>
+                        {% else %}
+                            <button type="submit" class="btn" disabled>Not eligible</button>
+                        {% endif %}
+                    {% else %}
+                        <button type="submit" class="btn">Register</button>
+                    {% endif %}
+                </form>
+            {% endif %}
         {% endif %}
     </div>
 </div>
