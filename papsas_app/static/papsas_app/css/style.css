@@ -186,8 +186,11 @@ img {
   gap: 5px;            
   cursor: pointer;
   display: flex;
-  align-items: center;
+  justify-content: center;
   
+}
+.nav__link i{
+  margin-top: 4px;
 }
 .nav__close {
   position: absolute;
