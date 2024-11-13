@@ -39,12 +39,13 @@
     </form>
 </div>
 <div class="container">
+    <div class="table-wrapper">
     <div id="table-container">
         {% render_table table %}
         <div class="col-md-3 mb-3"> 
             Total Records: {{ table.rows|length }}
         </div>
-        
+    </div>
     </div>
 </div>
 

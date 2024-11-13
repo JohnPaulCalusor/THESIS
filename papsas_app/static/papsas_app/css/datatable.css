@@ -26,6 +26,12 @@ table {
     padding-left: 1.5rem; /* Add some padding for spacing */
     padding-right: 1.5rem; /* Add some padding for spacing */
 }
+.table-wrapper {
+    overflow-x: auto; /* Enable horizontal scrolling */
+    width: 100%; /* Ensure it takes the full width of the container */
+    margin-top: 10px;
+}
+
 
 .header-bold {
     font-weight: bold;

@@ -43,10 +43,12 @@
         {% endfor %}
     </ul>
     {% endif %}
+    <div class="table-wrapper">
     <div id="table-container">
         {% render_table table %}
         <div class="col-md-3 mb-3 d-flex align-items-end">Total Records: {{ table.rows|length }}</div>
     </div>
+</div>
 </div>
 
 <div id="update-container">

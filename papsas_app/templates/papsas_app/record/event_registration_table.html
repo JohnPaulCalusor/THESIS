@@ -45,11 +45,12 @@
         </div>
     </form>
 </div>
-
+<div class="table-wrapper">
 <div id="table-container">
     Total Records: {{ table.rows|length }}
     {% render_table table %}
 
+</div>
 </div>
 
 {% endblock %}

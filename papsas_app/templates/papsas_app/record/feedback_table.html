@@ -40,6 +40,7 @@
     </form>
 </div>
 <div class="container">
+    <div class="table-wrapper">
     <div id="table-container">
         <div class="col-md-3 mb-3 d-flex align-items-end">Total Records: {{ table.rows|length }}</div>
         {% render_table table %}
@@ -52,6 +53,7 @@
         {% endif %}
         
     </div>
+</div>
 </div>
 
 

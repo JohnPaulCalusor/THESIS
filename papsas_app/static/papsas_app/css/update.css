@@ -100,3 +100,46 @@ h4{
     text-align: center;
 }
 
+@media (max-width: 768px) {
+    .update-content {
+        width: 90%; /* Take almost full width */
+        max-width: 100%;
+        padding: 15px; /* Reduce padding */
+    }
+
+    .two-forms {
+        flex-direction: column; /* Stack form fields vertically */
+        gap: 10px; /* Reduce gap between fields */
+    }
+
+    .input-two, .input-box {
+        width: 100%; /* Make each input box take full width */
+    }
+
+    h3 {
+        font-size: 24px; /* Adjust font size */
+    }
+
+    .btn {
+        padding: 8px 12px; /* Reduce button padding */
+        font-size: 16px; /* Adjust font size */
+    }
+}
+
+/* Small screens, such as mobile phones */
+@media (max-width: 480px) {
+    .update-content {
+        width: 95%;
+        padding: 10px;
+    }
+
+    h3 {
+        font-size: 30px;
+        text-align: left;
+    }
+
+    .btn {
+        font-size: 14px;
+        padding: 8px 10px;
+    }
+}
