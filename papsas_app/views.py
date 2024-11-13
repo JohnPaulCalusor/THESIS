@@ -913,22 +913,27 @@ def event_calendar(request):
 # Password Reset Request View (Sends Verification Code)
 def password_reset_request(request):
     form = PasswordResetForm()
+    email_not_found = False  # Flag to indicate email not found
+
     if request.method == 'POST':
-        # email = request.POST.get('email')
         form = PasswordResetForm(request.POST)
         if form.is_valid():
             email = form.cleaned_data['email']
             try:
-                user = User.objects.get(email=email)    
-
+                user = User.objects.get(email=email)
+                # Additional code for handling verification...
             except ObjectDoesNotExist:
-                form.add_error('email', 'Enter existing email.')
-                return redirect('password_reset')
+                email_not_found = True  # Set flag if email is not found
             except Exception as e:
-                print(e)    
                 form.add_error('email', e)
-                return redirect('password_reset')
-            
+
+            if email_not_found:
+                return render(request, 'papsas_app/password_reset.html', {
+                    'form': form,
+                    'email_not_found': email_not_found  # Pass flag to template
+                })
+
+            # Verification code generation logic if email exists
             if (user.verification_code is None or 
                 user.verification_code_expiration is None or 
                 timezone.now() > user.verification_code_expiration):
@@ -938,17 +943,23 @@ def password_reset_request(request):
                 user.save()
 
                 subject = 'Password Reset Verification Code'
-                message = f'Dear {user.first_name},\n\nYour verification code is: {user.verification_code}\n\nPlease enter this code to reset your password.\n\nBest regards,\nPhilippine Association of Practioners of Student Affairs and Services'
+                message = f'Dear {user.first_name},\n\nYour verification code is: {user.verification_code}\n\nPlease enter this code to reset your password.\n\nBest regards,\nPhilippine Association of Practitioners of Student Affairs and Services'
                 send_mail(subject, message, 'your_email@example.com', [user.email])
 
             return redirect('password_reset_verify', user_id=user.id)
-        else:
-            print(form.errors)
-            return render(request, 'papsas_app/password_reset.html', {'form': form})  
+
     else:
-        form.fields['email'].widget.attrs['placeholder'] = 'Enter your email address'
-        form.fields['email'].widget.attrs['class'] = 'password-reset'
-        return render(request, 'papsas_app/password_reset.html', {'form': form})
+        # Set placeholder and CSS class directly in views
+        form.fields['email'].widget.attrs.update({
+            'placeholder': 'Enter your email address',
+            'class': 'password-reset'
+        })
+
+    return render(request, 'papsas_app/password_reset.html', {
+        'form': form,
+        'email_not_found': email_not_found  # Pass flag to template
+    })
+
 
 
 def password_reset_verify(request, user_id):
