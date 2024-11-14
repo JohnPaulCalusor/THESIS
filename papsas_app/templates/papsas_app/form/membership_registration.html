@@ -21,8 +21,26 @@
             <h1> Your membership registration is on process.</h1>
             <p> Please wait for an email of the approval of your registration. Thank you!</p>
         {% elif  is_member.status == 'Approved' %}
-        <h1> You are already registered as {{ is_member.membership }} member.</h1>
-        <p> You can now access the member area.</p>
+            {% if days_until_expiration < 30 %}
+                {% if latest_pending_membership %}
+                    <h1> Your membership registration is on process.</h1>
+                    <p> Please wait for an email of the approval of your registration. Thank you!</p>
+                {% else %}
+                    <form action="{% url 'membership_registration' membership %}" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <div class="form-group label">
+                                {{form}}
+                            </div>
+                        </div>
+                        <button type="submit" class="btn">Submit</button>
+                    </form>
+                {% endif %}
+            {% else %}
+                <h1> You are already registered as {{ is_member.membership }} member.</h1>
+                <p> You can now access the member area.</p>
+            {% endif %}
+
         {% else %}
         <h1> Your registration has been declined. </h1>
         <p> Please contact us for more information. You may try to register again. </p>

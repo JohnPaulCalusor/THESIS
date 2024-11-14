@@ -99,7 +99,7 @@
             <div class="title-activities"> 
                 <h1>Transcript of Records</h1>
             </div>
-            {% if user.tor %}
+            {% if viewUser.tor %}
             <div class="info-value">
                 <img src="{{ viewUser.tor.url }}" alt="{{ viewUser }} TOR" srcset="">
             </div>
@@ -166,6 +166,9 @@
                 <button class="update-button change-password-btn">
                     Edit Personal Information
                 </button>
+            </div>
+            <div class="details">
+                <a href="{% url 'membership_registration' is_member.membership.id %}" class="change-password-btn">Renew Membership</a>
             </div>
         </div>
         {% endif %}

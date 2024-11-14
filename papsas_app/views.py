@@ -47,14 +47,23 @@ def is_member(request):
     today = date.today()
     user = request.user
     if user.is_authenticated:
+        # Last update
+        # try:
+        #     membership = UserMembership.objects.filter(user=user).latest('id')
+        #     if membership.status == 'Approved':
+        #         return True
+        #     else:
+        #         return False
+        # except:
+        #     return False
         try:
-            membership = UserMembership.objects.filter(user=user).latest('id')
-            if membership.status == 'Approved':
+            is_member = user.member.filter( expirationDate__gt=today, status = 'Approved' ).latest('id')
+            if is_member:
                 return True
             else:
                 return False
         except:
-            return False
+            is_member = False
         
 def is_officer(request):
     # check if user is officer
@@ -521,28 +530,28 @@ def profile(request, id):
         elected_officer = Officer.objects.filter(candidateID__candidate= id)
         user = User.objects.get( id = id)
         updateForm = ProfileUpdateForm(instance=user)
+        form = ProfileForm()
+
+        if request.method =='POST':
+            # save the image as profilePic from 
+            form = ProfileForm(request.POST, request.FILES)
+            if form.is_valid():
+                profilePic = form.cleaned_data['profilePic']
+                user.profilePic = profilePic
+                user.save()
+                return redirect('profile', id = id)
+            
+        return render(request, 'papsas_app/profile.html/', {
+            'viewUser' : user,
+            'form' : form,
+            'candidacies' : candidacies,
+            'attended_events' : attended_event,
+            'elected_officers' : elected_officer,
+            'updateForm' : updateForm
+        })
     except Exception as e:
         # subject to change
         return HttpResponse(f"Error - {e}", status=400)
-    form = ProfileForm()
-
-    if request.method =='POST':
-        # save the image as profilePic from 
-        form = ProfileForm(request.POST, request.FILES)
-        if form.is_valid():
-            profilePic = form.cleaned_data['profilePic']
-            user.profilePic = profilePic
-            user.save()
-            return redirect('profile', id = id)
-        
-    return render(request, 'papsas_app/profile.html/', {
-        'viewUser' : user,
-        'form' : form,
-        'candidacies' : candidacies,
-        'attended_events' : attended_event,
-        'elected_officers' : elected_officer,
-        'updateForm' : updateForm
-    })
 
 def change_profile(request):
     user = request.user
@@ -791,36 +800,46 @@ def update_account(request, id):
 
 @login_required(login_url='/login')
 def membership_registration(request, mem_id):
-    form = MembershipRegistration(request.user, mem_id)
-    membership = mem_id
+    user = request.user
+    try:
+        form = MembershipRegistration(request.user, mem_id)
+        membership = mem_id
+        try:
+            latest_pending_membership = UserMembership.objects.filter( user = user,  status = 'Pending' ).latest('id')
+        except:
+            latest_pending_membership = None
 
-    if request.method == 'POST':
-        memType = MembershipTypes.objects.get( id = mem_id )
-        form = MembershipRegistration(request.user, mem_id, data=request.POST, files = request.FILES)
-        infinite = timedelta(days=36500)
-        if form.is_valid():
-            user_membership = form.save(commit=False)
-            user_membership.user = request.user
-            user_membership.membership_type = memType
-            user_membership.save()
+        if request.method == 'POST':
+            memType = MembershipTypes.objects.get( id = mem_id )
+            form = MembershipRegistration(request.user, mem_id, data=request.POST, files = request.FILES)
+            infinite = timedelta(days=36500)
+            if form.is_valid():
+                user_membership = form.save(commit=False)
+                user_membership.user = request.user
+                user_membership.membership_type = memType
+                user_membership.save()
 
-            if memType.duration is not None:
-                user_membership.expirationDate = user_membership.registrationDate + memType.duration
+                if memType.duration is not None:
+                    user_membership.expirationDate = user_membership.registrationDate + memType.duration
+                else:
+                    user_membership.expirationDate = user_membership.registrationDate + infinite
+                user_membership.save()
+                return redirect('user_membership_table')
             else:
-                user_membership.expirationDate = user_membership.registrationDate + infinite
-            user_membership.save()
-            return redirect('index')
+                return render(request, 'papsas_app/form/membership_registration.html', {
+                'form' : form,
+                'membership' : membership
+            })
+
         else:
             return render(request, 'papsas_app/form/membership_registration.html', {
-            'form' : form,
-            'membership' : membership
-        })
+                'form' : form,
+                'membership' : membership,
+                'latest_pending_membership' : latest_pending_membership
+            })
+    except Exception as e:
+        return HttpResponse(f' Error : {e} ')
 
-    else:
-        return render(request, 'papsas_app/form/membership_registration.html', {
-            'form' : form,
-            'membership' : membership,
-        })
 
 @secretary_required
 def membership_record(request):
@@ -834,10 +853,9 @@ def membership_record(request):
     
 @secretary_required 
 def approve_membership(request, id): 
-    userID = id 
     try:
         if request.method == 'POST': 
-            user_membership = UserMembership.objects.get(user=userID) 
+            user_membership = UserMembership.objects.get( id = id) 
             user_membership.status = 'Approved' 
             user_membership.save()
 
@@ -852,10 +870,9 @@ def approve_membership(request, id):
 
 @secretary_required 
 def decline_membership(request, id): 
-    userID = get_object_or_404( User, id = id )
     try:
         if request.method == 'POST': 
-            user_membership = UserMembership.objects.get(user=userID) 
+            user_membership = UserMembership.objects.get( id = id ) 
             user_membership.status = 'Declined' 
             user_membership.save()
 

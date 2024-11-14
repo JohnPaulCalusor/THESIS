@@ -3,7 +3,7 @@
 <div class="actions-container">
     <div class="action-buttons">
         <form method="post"
-            hx-post="{% url 'approve_membership' record.user.id %}"
+            hx-post="{% url 'approve_membership' record.id %}"
             hx-confirm="Are you sure you want to approve {{ record.user.first_name }} {{ record.user.last_name }}'s membership?"
             hx-indicator="#loading-indicator-{{ record.user.id }}"
             hx-target="body"
@@ -15,7 +15,7 @@
             </button>
         </form>
         <form method="post"
-            hx-post="{% url 'decline_membership' record.user.id %}"
+            hx-post="{% url 'decline_membership' record.id %}"
             hx-confirm="Are you sure you want to decline {{ record.user.first_name }} {{ record.user.last_name }}'s membership?"
             hx-indicator="#loading-indicator-{{ record.user.id }}"
             hx-target="body"
