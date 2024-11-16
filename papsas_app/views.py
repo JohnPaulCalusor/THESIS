@@ -803,7 +803,6 @@ def membership_registration(request, mem_id):
     user = request.user
     try:
         form = MembershipRegistration(request.user, mem_id)
-        membership = mem_id
         try:
             latest_pending_membership = UserMembership.objects.filter( user = user,  status = 'Pending' ).latest('id')
         except:

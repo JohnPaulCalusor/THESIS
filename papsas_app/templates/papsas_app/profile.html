@@ -167,9 +167,11 @@
                     Edit Personal Information
                 </button>
             </div>
+            {% if is_member %}
             <div class="details">
-                <a href="{% url 'membership_registration' is_member.membership.id %}" class="change-password-btn">Renew Membership</a>
+                <a href=""{% url 'membership_registration' is_member.membership.id %}" " class="change-password-btn">Renew Membership</a>
             </div>
+            {% endif %}
         </div>
         {% endif %}
     </div>

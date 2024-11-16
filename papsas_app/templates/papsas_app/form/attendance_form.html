@@ -10,33 +10,56 @@
 
 <div class="container">
     {% if messages %}
-        <ul class="messages">
-            {% for message in messages %}
-                <div class="alert alert-warning alert-dismissible fade show custom-alert" role="alert">
-                    <strong>{{ message }}</strong>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">X</button>
-                </div>
-            {% endfor %}
-        </ul>
+    <ul class="messages">
+        {% for message in messages %}
+        <div class="alert alert-warning alert-dismissible fade show custom-alert" role="alert">
+            <strong>{{ message }}</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">X</button>
+        </div>
+        {% endfor %}
+    </ul>
     {% endif %}
     <div class="form-container">
-      <h3>Attendance Form</h3>
+        {% if today < event.startDate or today > event.endDate %}
+                <h3>
+                    {{ event.eventName }} has
+                    {% if today < event.startDate %}
+                        not yet started
+                    {% elif today > event.endDate %}
+                        ended.
+                    {% endif %}
+                </h3>
+                <p>
+                    Date of Start : 
+                    <strong>
+                        {{ event.startDate }}
+                    </strong>
+                </p>
+                <p>
+                    Date of End : 
+                    <strong>
+                        {{ event.endDate }}
+                    </strong>
+                </p>
+        {% else %}
+        <h3>Attendance Form</h3>
 
-      <p>Event: {{ event.eventName }}</p>
+            <p>Event: {{ event.eventName }}</p>
 
-      <label for="user_first_name">Your Name: {{ request.user.first_name }}</label><br>
-      
-      <form method="post" action="{% url 'attendance_form' event_id %}">
-        {% csrf_token %}
+            <label for="user_first_name">Your Name: {{ request.user.first_name }}</label><br>
 
-        {{ form.as_p }}
+            <form method="post" action="{% url 'attendance_form' event_id %}">
+                {% csrf_token %}
 
-        <button type="submit" class="btn">Submit</button>
-        
-        {% if error_message %}
-          <div class="message">{{ error_message }}</div>
+                {{ form.as_p }}
+
+                <button type="submit" class="btn">Submit</button>
+
+                {% if error_message %}
+                <div class="message">{{ error_message }}</div>
+                {% endif %}
+            </form>
+        </div>
         {% endif %}
-      </form>
-    </div>
-  </div>
+</div>
 {% endblock %}

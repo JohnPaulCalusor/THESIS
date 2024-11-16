@@ -194,6 +194,7 @@ class MembershipRegistration(forms.ModelForm):
         self.user = user
         self.fields['membership'] = forms.ModelChoiceField(queryset = MembershipTypes.objects.all(), initial=membership)
         self.fields['verificationID'].label = 'Identification'
+        self.fields['membership'].disabled = True
 
 class VenueForm(forms.ModelForm):
     class Meta:
