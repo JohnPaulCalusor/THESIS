@@ -81,8 +81,8 @@
                 <h3>User Distribution by Region</h3>
                 <select id="filterDropdown" onchange="updateRegionChart()">
                     <option value="all" selected>All</option>
-                    <option value="top">Top 5 Regions</option>
-                    <option value="least">Least 5 Regions</option>
+                    <option value="top5">Top 5 Regions</option>
+                    <option value="least5">Least 5 Regions</option>
                 </select>
                 <canvas id="RegionChart"></canvas>
             </div>
@@ -280,9 +280,9 @@
 
 let regionChart = null;
 
-const fetchUserDistributionByRegionData = async (url, ctx) => {
+const fetchUserDistributionByRegionData = async (filterValue, ctx) => {
     try {
-        const response = await fetch(`${url}?_=${new Date().getTime()}`);
+        const response = await fetch(`{% url "get_user_distribution_by_region" %}?filter=${filterValue}`);
         if (!response.ok) throw new Error('Network response was not ok');
         const data = await response.json();
 
@@ -291,10 +291,9 @@ const fetchUserDistributionByRegionData = async (url, ctx) => {
         }
 
         const datasets = [{
-            label: 'User  Distribution by Region',
+            label: 'User Distribution by Region',
             data: data.values,
-            backgroundColor: data.values.map((_, index) => colorPalette[index % colorPalette.length]),
-            borderColor: data.values.map((_, index) => colorPalette[index % colorPalette.length]),
+            borderColor: colorPalette[0],
             borderWidth: 1,
         }];
 
@@ -369,11 +368,11 @@ const fetchEventPriceVsAttendanceData = async (url, ctx) => {
 };
 
 
-const updateRegionChart = async () => {
-        const filterValue = document.getElementById('filterDropdown').value;
-        const regionCtx = document.getElementById('RegionChart').getContext('2d');
-        regionChart = await fetchData(`{% url "get_user_distribution_by_region" %}?filter=${filterValue}`, regionCtx, 'bar', regionChart);
-    };
+        const updateRegionChart = async () => {
+            const filterValue = document.getElementById('filterDropdown').value;
+            const regionCtx = document.getElementById('RegionChart').getContext('2d');
+            await fetchUserDistributionByRegionData(filterValue, regionCtx);
+        };
 
 const updateTiles = async () => {
     try {

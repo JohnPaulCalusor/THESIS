@@ -859,7 +859,7 @@ def approve_membership(request, id):
             user_membership.save()
 
             subject = 'Membership Approved'
-            message = f'Dear {user_membership.user.first_name},\n\nYour membership has been approved.\n\nBest regards,\nPASAS INC.'
+            message = f'Dear {user_membership.user.first_name},\n\nYour membership has been approved.\n\nBest regards,\nPAPSAS INC.'
             send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [user_membership.user.email])
             messages.success(request, 'Membership approval successful.')
             return redirect('membership_table') 
@@ -1488,34 +1488,37 @@ def get_event_rating(request):
 
 @secretary_required
 def get_user_distribution_by_region(request):
-    filter_type = request.GET.get('filterType', 'all')
+    filter_value = request.GET.get('filter', 'all')
 
-    users_by_region = User.objects.exclude(region__isnull=True).values('region').annotate(total=Count('id')).order_by('-total')
+    data = (
+        User.objects.values('region')
+        .annotate(count=Count('id'))
+    )
 
-    labels = [region['region'] for region in users_by_region] if users_by_region else []
-    values = [region['total'] for region in users_by_region] if users_by_region else []
+    top_5_data = list(data.order_by('-count')[:5]) 
+    top_5_labels = [item['region'] for item in top_5_data]
+    top_5_values = [item['count'] for item in top_5_data]
 
-    top_5 = users_by_region[:5] if users_by_region else []
-    least_5 = users_by_region[::-1][:5] if users_by_region else []
+    least_5_data = list(data.order_by('count')[:5]) 
+    least_5_labels = [item['region'] for item in least_5_data]
+    least_5_values = [item['count'] for item in least_5_data]
 
-    if filter_type == 'top5':
+    if filter_value == 'top5':
         response_data = {
-            'labels': [region['region'] for region in top_5],
-            'values': [region['total'] for region in top_5],
+            'labels': top_5_labels,
+            'values': top_5_values,
         }
-    elif filter_type == 'least5':
+    elif filter_value == 'least5':
         response_data = {
-            'labels': [region['region'] for region in least_5],
-            'values': [region['total'] for region in least_5],
+            'labels': least_5_labels,
+            'values': least_5_values,
         }
-    else:
+    else: 
+        all_labels = [item['region'] for item in data]
+        all_values = [item['count'] for item in data]
         response_data = {
-            'labels': labels,
-            'values': values,
-            'top_5_labels': [region['region'] for region in top_5],
-            'top_5_values': [region['total'] for region in top_5],
-            'least_5_labels': [region['region'] for region in least_5],
-            'least_5_values': [region['total'] for region in least_5],
+            'labels': all_labels,
+            'values': all_values,
         }
 
     return JsonResponse(response_data)
