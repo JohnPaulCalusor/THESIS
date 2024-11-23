@@ -80,12 +80,13 @@ Election
                         {% csrf_token %}
                         <button type="submit" class="submit-btn">Stop Election</button>
                     </form>
-
-                    <a href="{% url 'election_table' election.id %}" class="submit-btn">
-                        <button class="submit-btn">
-                            View Election Progress
-                        </button>
-                    </a>
+                    <div>
+                        <a href="{% url 'election_table' election.id %}" >
+                            <button class="submit-btn">
+                                View Election Progress
+                            </button>
+                        </a>
+                    </div>
 
                     {% endif %}
                     {% endfor %}
