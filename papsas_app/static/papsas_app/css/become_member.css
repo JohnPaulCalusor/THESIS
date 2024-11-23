@@ -109,7 +109,6 @@
     
   }
   .member-img{
-    margin-bottom: 30px;
     height: 30rem;
   }
   .membership__button_1 a {
@@ -197,17 +196,18 @@
     max-width: 1500px;
     width: 100%;
     padding: 20px;
+    gap: 20px;
     box-sizing: border-box;
   }
   .institutional-image {
     flex: 1;
-    max-width: 50%;
+    max-width: 30%;
     border-radius: 20px;
   }
   .institutional-text {
     flex: 1;
     max-width: 50%;
-    padding-left: 20px;
+
   }
   .institutional-text h2 {
     margin-top: 0;

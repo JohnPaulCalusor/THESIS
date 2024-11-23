@@ -159,6 +159,9 @@ def index(request):
             'events' : upcoming_events,
         })
 
+def contact(request):
+    return render(request,'papsas_app/view/contact_us.html')
+
 @member_required
 def rate_event(request, event_id):
     event = get_object_or_404(Event, id=event_id)
