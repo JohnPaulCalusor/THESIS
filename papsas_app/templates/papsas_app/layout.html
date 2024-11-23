@@ -42,21 +42,18 @@
                                             <li><a href="{% url 'event_table' %}">Event</a></li>
                                             <li><a href="{% url 'venue_table' %}">Venue</a></li>
                                             <li><a href="{% url 'achievement_table' %}">Achievement</a></li>
-                                            <li><a href="{% url 'news_offers_table' %}">News and Offers</a></li>
+                                
                                         </ul>
                                 </li>
                                 <li class="nav__item"> <a href="{% url 'election' %}"class="nav__link">Election</a></li>
-                                <li class="nav__item dropdown"><a href="{% url 'event_list' %}" class="nav__link">Event<i class="fa-solid fa-caret-down"></i></a>
-                                    <ul class="dropdown-content"> 
-                                        <li><a href="{% url 'event_list' %}">Event List</a></li>
-                                    </ul>
+                                <li class="nav__item dropdown"><a href="{% url 'event_list' %}" class="nav__link">Event</a>
                                 </li>
                                 <li class="nav__item dropdown"><a href="{% url 'event' %}" class="nav__link">Compose<i class="fa-solid fa-caret-down"></i></a>
                                     <ul class="dropdown-content">
                                         <li><a href="{% url 'event' %}">Event</a></li>
                                         <li><a href="{% url 'compose_venue'%}">Venue</a></li>
                                         <li><a href="{% url 'compose_achievement' %}">Achievement</a></li>
-                                        <li><a href="{% url 'compose_news_offer' %}">News and Offers</a></li>
+                           
                                     </ul>
                                 </li>
                                 <li class="nav__item"><a href="{% url 'logout' %}"class="nav__link">Logout</a></li>
@@ -72,19 +69,16 @@
                                     <ul class="dropdown-content">
                                         <li><a href="{% url 'venue_table' %}">Venue</a></li>
                                         <li><a href="{% url 'achievement_table' %}">Achievement</a></li>
-                                        <li><a href="{% url 'news_offers_table' %}">News and Offers</a></li>
+                                 
                                     </ul>
                                 </li>
-                                <li class="nav__item dropdown"><a href=""class="nav__link">Event<i class="fa-solid fa-caret-down"></i></a>
-                                    <ul class="dropdown-content"> 
-                                        <li><a href="{% url 'event_list' %}">Event List</a></li>
-                                    </ul>
+                                <li class="nav__item dropdown"><a href="{% url 'event_list' %}"class="nav__link">Event</a>
                                 </li>
                                 <li class="nav__item dropdown"><a href=""class="nav__link">Compose<i class="fa-solid fa-caret-down"></i></a>
                                     <ul class="dropdown-content">
                                         <li><a href="{% url 'compose_venue'%}">Venue</a></li>
                                         <li><a href="{% url 'compose_achievement' %}">Achievement</a></li>
-                                        <li><a href="{% url 'compose_news_offer' %}">News and Offers</a></li>
+                                  
                                     </ul>
                                 </li>
                                 <li class="nav__item"><a href="{% url 'logout' %}"class="nav__link">Logout</a></li>
@@ -124,13 +118,12 @@
                                 {% else %}
                                     <li class="nav__item"><a href="{% url 'become_member' %}" class="nav__link">Become a Member</a></li>
                                 {% endif %}
-                                    <li class="nav__item dropdown"><a href="{% url 'event_list' %}" class="nav__link">Event<i class="fa-solid fa-caret-down"></i></a>
-                                        <ul class="dropdown-content"> 
-                                            <li><a href="{% url 'event_list' %}">Event List</a></li>
-                                        </ul>
+                                    <li class="nav__item dropdown"><a href="{% url 'event_list' %}" class="nav__link">Event</a>
                                     </li>
                                     <li class="nav__item"><a href="{% url 'achievement' %}" class="nav__link">Achievements</a></li>
-                                    <li class="nav__item"><a href="{% url 'news_offers' %}" class="nav__link">News and Offers</a></li>
+                                    <li class="nav__item">
+                                        <a href="{% url 'contact' %}" class="nav__link">Contact</a>
+                                    </li>
                                     <li class="nav__item"><a href="{% url 'logout' %}" class="nav__link">Logout</a></li>
                                 {% if user.profilePic %}
                                     <li class="nav__item"><a href="{% url 'profile' user.id %}"> 
