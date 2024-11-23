@@ -263,34 +263,39 @@ def logout_view(request):
 def login_view(request):
     if request.user.is_authenticated:
         return redirect('index')
-    
-    if request.method == 'POST':
-        email = request.POST['email']
-        password = request.POST['password']
-        user = authenticate(request, username=email, password=password)
-        if user is not None:
-            if user.email_verified and user.is_active:
-                login(request, user)
-                return HttpResponseRedirect(reverse("index"))
-            elif not user.email_verified:
-                return redirect('email_not_verified', user_id=user.id)
+
+
+    try:
+        if request.method == 'POST':
+            email = request.POST['email']
+            password = request.POST['password']
+            user = authenticate(request, username=email, password=password)
+            if user is not None:
+                if user.email_verified and user.is_active:
+                    login(request, user)
+                    return HttpResponseRedirect(reverse("index"))
+                elif not user.email_verified:
+                    return redirect('email_not_verified', user_id=user.id)
+                else:
+                    form = LoginForm(request.POST)
+                    return render(request, 'papsas_app/login.html', {
+                        'message' : 'Your account is not active.',
+                        'form' : form
+                    })
             else:
                 form = LoginForm(request.POST)
                 return render(request, 'papsas_app/login.html', {
-                    'message' : 'Your account is not active.',
+                    'message' : 'Invalid email and/or password',
                     'form' : form
-                })
+                    })
         else:
-            form = LoginForm(request.POST)
+            form = LoginForm()
             return render(request, 'papsas_app/login.html', {
-                'message' : 'Invalid email and/or password',
                 'form' : form
-                })
-    else:
-        form = LoginForm()
-        return render(request, 'papsas_app/login.html', {
-            'form' : form
-        })
+            })
+    except Exception as e:
+        return HttpResponse(f'Error: {e}')
+
 
 def verify_email(request, user_id):
     try:  
