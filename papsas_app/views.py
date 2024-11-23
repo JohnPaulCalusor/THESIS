@@ -162,8 +162,40 @@ def index(request):
             'events' : upcoming_events,
         })
 
+
 def contact(request):
-    return render(request,'papsas_app/view/contact_us.html')
+    try:
+        if request.method == 'POST':
+            form = ContactForm(request.POST)
+            if form.is_valid():
+                subject = form.cleaned_data['subject']
+                message = form.cleaned_data['message']
+                email_from = form.cleaned_data['email']
+
+                # Create the email
+                email = EmailMessage(
+                    subject=subject,
+                    body=f' From {request.user.email}\n {message}',
+                    from_email=email_from,  # Use your default sender email
+                    to=['noreply.papsasinc@gmail.com'],  # Recipient email
+                    reply_to=[email_from],  # User's email in the reply-to
+                )
+
+                # Send the email
+                try:
+                    email.send(fail_silently=False)
+                    messages.success(request, "Your message has been sent successfully.")
+                except Exception as e:
+                    messages.error(request, "There was an error sending your message.")
+
+                return redirect('contact')
+        else:
+            form = ContactForm(initial={'email': request.user.email})
+
+        return render(request, 'papsas_app/view/contact_us.html', {'form': form})
+    except Exception as e:
+        return HttpResponse(f'Error - {e}')
+
 
 @member_required
 def rate_event(request, event_id):
@@ -2341,33 +2373,3 @@ def get_top_3_events(request):
     ]
 
     return JsonResponse(data, safe=False)
-
-
-
-def contact_us(request):
-    if request.method == 'POST':
-        form = ContactForm(request.POST)
-        if form.is_valid():
-            subject = form.cleaned_data['subject']
-            message = form.cleaned_data['message']
-            email_from = form.cleaned_data['email']
-
-            # Send the email to the noreply address
-            try:
-                send_mail(
-                    subject,
-                    message,
-                    email_from,  # Send from the user's email
-                    ['noreply.papsasinc@gmail.com'],  # Send to this email
-                    fail_silently=False,
-                )
-                messages.success(request, "Your message has been sent successfully.")
-            except Exception as e:
-                # Optionally, you can log the exception message for debugging
-                messages.error(request, "There was an error sending your message.")
-
-            return redirect('contact_us')  # Redirect after POST to prevent resubmission on refresh
-    else:
-        form = ContactForm(initial={'email': request.user.email})  # Pre-fill the email field with user's email
-
-    return render(request, 'papsas_app/contact.html', {'form': form})
