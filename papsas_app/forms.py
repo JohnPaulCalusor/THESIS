@@ -300,3 +300,7 @@ class ProfileUpdateForm(forms.ModelForm):
         super(ProfileUpdateForm, self).__init__(*args, **kwargs)
         self.fields['region'].widget.attrs['class'] = 'input-field'    
 
+class ContactForm(forms.Form):
+    email = forms.EmailField()  # This will be pre-filled with the user's email
+    subject = forms.CharField(max_length=255)
+    message = forms.CharField(widget=forms.Textarea)

@@ -124,6 +124,7 @@ urlpatterns = [
     #generate qr/event rating
     path('event/<int:event_id>/generate-qr/', views.generate_qr, name='generate_qr'),
     path('event/<int:event_id>/rate/', views.rate_event, name='rate_event'),
+    path('contact/', views.contact_us, name='contact_us'),
     
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -24,7 +24,7 @@ from .models import User, MembershipTypes, Vote, Event, Officer
 from django.db import models
 from django.contrib.auth.hashers import make_password
 # Imported Forms
-from .forms import AttendanceForm, EventRegistrationForm, EventForm, ProfileForm, RegistrationForm, LoginForm, MembershipRegistration, Attendance, VenueForm, AchievementForm, NewsForm, UserUpdateForm, EventRatingForm, TORForm, ProfileUpdateForm, ElectionForm
+from .forms import AttendanceForm, EventRegistrationForm, EventForm, ProfileForm, RegistrationForm, LoginForm, MembershipRegistration, Attendance, VenueForm, AchievementForm, NewsForm, UserUpdateForm, EventRatingForm, TORForm, ProfileUpdateForm, ElectionForm, ContactForm
 from datetime import date, timedelta
 from django.contrib.auth.forms import PasswordResetForm
 from io import BytesIO
@@ -40,6 +40,9 @@ from .tables import UserTable, MembershipTable, EventTable, EventRegistrationTab
 from .filters import UserFilter, ElectionFilter, MembershipFilter, EventFilter, EventRegistrationFilter, AttendanceFilter, VenueFilter, AchievementFilter, NewsAndOfferFilter, CandidateFilter, FeedbackFilter
 from django_filters.views import FilterView
 from django.contrib.auth.password_validation import validate_password
+from django.core.mail import EmailMessage
+
+
 
 
 # Create your views here.
@@ -2338,3 +2341,33 @@ def get_top_3_events(request):
     ]
 
     return JsonResponse(data, safe=False)
+
+
+
+def contact_us(request):
+    if request.method == 'POST':
+        form = ContactForm(request.POST)
+        if form.is_valid():
+            subject = form.cleaned_data['subject']
+            message = form.cleaned_data['message']
+            email_from = form.cleaned_data['email']
+
+            # Send the email to the noreply address
+            try:
+                send_mail(
+                    subject,
+                    message,
+                    email_from,  # Send from the user's email
+                    ['noreply.papsasinc@gmail.com'],  # Send to this email
+                    fail_silently=False,
+                )
+                messages.success(request, "Your message has been sent successfully.")
+            except Exception as e:
+                # Optionally, you can log the exception message for debugging
+                messages.error(request, "There was an error sending your message.")
+
+            return redirect('contact_us')  # Redirect after POST to prevent resubmission on refresh
+    else:
+        form = ContactForm(initial={'email': request.user.email})  # Pre-fill the email field with user's email
+
+    return render(request, 'papsas_app/contact.html', {'form': form})

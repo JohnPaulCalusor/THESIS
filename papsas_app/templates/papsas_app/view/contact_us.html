@@ -4,6 +4,7 @@
 {% block head %}
     <link rel="stylesheet" href="{% static 'papsas_app/css/contact.css' %}">
 {% endblock %}
+
 {% block body %}
     <div class="container">
         <div class="form">
@@ -15,15 +16,15 @@
 
                 <div class="info">
                     <div class="information">
-                        <img src="img/location.png" class="icon" alt="" />
+                        <img src="{% static 'papsas_app/img/location.png' %}" class="icon" alt="Location Icon" />
                         <p>FAITH Colleges, Tanauan City, Batangas, Philippines</p>
                     </div>
                     <div class="information">
-                        <img src="img/email.png" class="icon" alt="" />
+                        <img src="{% static 'papsas_app/img/email.png' %}" class="icon" alt="Email Icon" />
                         <p>papsasinc.national@gmail.com</p>
                     </div>
                     <div class="information">
-                        <img src="img/phone.png" class="icon" alt="" />
+                        <img src="{% static 'papsas_app/img/phone.png' %}" class="icon" alt="Phone Icon" />
                         <p>(043) 778 0656</p>
                     </div>
                 </div>
@@ -42,15 +43,16 @@
             </div>
 
             <div class="contact-form">
-                <form action="index.html" autocomplete="off">
+                <form method="POST" action="{% url 'contact_us' %}">
+                    {% csrf_token %}
                     <h3 class="title">Contact us</h3>
                     <div class="input-container">
                         <div class="input-title">Email:</div>
-                        <input type="email" name="email" id="email" class="input" required />
+                        <input type="email" name="email" id="email" class="input" value="{{ user.email }}" readonly required />
                     </div>
                     <div class="input-container">
-                        <div class="input-title">Subject</div>
-                        <input type="tel" name="suject" id="suject" class="input" required />
+                        <div class="input-title">Subject:</div>
+                        <input type="text" name="subject" id="subject" class="input" required />
                     </div>
                     <div class="input-container textarea">
                         <div class="input-title">Message:</div>
@@ -58,6 +60,7 @@
                     </div>
                     <input type="submit" value="Send" class="btn" />
                 </form>
+                      
             </div>
         </div>
     </div>
