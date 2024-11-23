@@ -35,7 +35,6 @@ urlpatterns = [
     path('election/manage/<int:id>', views.manage_election, name="manage_election"),
     # event
     path('event/<int:event_id>/attendance_form/', views.attendance_form, name='attendance_form'),
-    path('event/calendar/', views.event_calendar, name='event_calendar'),
     path('event/<int:event_id>/register/', views.event_registration_view, name='event_registration_view'),
     path('event/list', views.event_list, name='event_list'),
     # membership

@@ -331,9 +331,10 @@ const fetchEventPriceVsAttendanceData = async (url, ctx) => {
         }
 
         const scatterData = data.values.map(event => ({
-            x: event.event__price,
-            y: event.attendance_count
-        }));
+    x: event.event__price,
+    y: event.attendance_count,
+    eventName: event.event__eventName // Ensure this matches the updated field name
+}));
 
         eventPriceVsAttendanceChart = new Chart(ctx, {
             type: 'scatter',
@@ -357,6 +358,16 @@ const fetchEventPriceVsAttendanceData = async (url, ctx) => {
                         title: {
                             display: true,
                             text: 'Attendance Count'
+                        }
+                    }
+                },
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function(tooltipItem) {
+                                const eventData = tooltipItem.raw;
+                                return `${eventData.eventName}: Price Php${eventData.x}, Attendance ${eventData.y}`;
+                            }
                         }
                     }
                 }

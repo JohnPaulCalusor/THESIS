@@ -1,3 +1,4 @@
+from venv import logger
 from django.shortcuts import render, redirect, get_list_or_404, get_object_or_404
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
@@ -924,18 +925,6 @@ def get_user_info(request, id):
         'institution' : user.institution,
     }
     return JsonResponse (user_data)
-    
-@member_or_officer_required
-def event_calendar(request):
-    events = Event.objects.all().order_by('startDate')
-    data = []
-    for event in events:
-        data.append({
-            'title': event.eventName,
-            'start': event.startDate,
-            'end': event.endDate
-        })
-    return render(request, 'papsas_app/event_calendar.html', {'events': data})
 
 # Password Reset Request View (Sends Verification Code)
 def password_reset_request(request):
@@ -2241,7 +2230,7 @@ def box_event (request):
 def get_event_price_vs_attendance_data(request):
     events_data = (
         EventRegistration.objects
-        .values('event__price')
+        .values('event__id', 'event__price', 'event__eventName')  # Use the correct field name
         .annotate(attendance_count=Count('attendance'))
     )
 
