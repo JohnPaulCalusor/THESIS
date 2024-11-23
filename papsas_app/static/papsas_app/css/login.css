@@ -24,7 +24,6 @@ body {
   text-align: center;
 }
 
-
 .login-header .login-icon {
   max-width: 300px;
   margin-top: -40px;
@@ -67,7 +66,6 @@ body {
   text-align: right;
   font-weight: 300;
   font-size: 14px;
-  
 }
 
 .forgot-password a {
@@ -118,22 +116,30 @@ body {
 @media (max-width: 768px) {
   .login-box {
     padding: 20px;
-    max-width: 100%;
   }
 
   .input-box input {
-    font-size: 16px;
+    font-size: 13px;
+    padding: 10px;
   }
 
   .submit-btn {
     font-size: 14px;
     padding: 10px;
   }
+
+  .forgot-password {
+    font-size: 12px;
+  }
+
+  .sign-up-link {
+    font-size: 12px;
+  }
 }
 
 @media (max-width: 480px) {
   .login-body {
-    padding: 5px;
+    padding: 20px;
   }
 
   .login-box {
@@ -141,16 +147,20 @@ body {
   }
 
   .login-header .login-icon {
-    max-width: 80px;
-  }
-
-  .input-box input {
-    padding: 8px;
-    font-size: 14px;
+    max-width: 200px;
+    margin-top: -20px;
   }
 
   .submit-btn {
-    padding: 10px;
     font-size: 14px;
+    padding: 8px;
+  }
+
+  .forgot-password {
+    font-size: 11px;
+  }
+
+  .sign-up-link {
+    font-size: 11px;
   }
 }

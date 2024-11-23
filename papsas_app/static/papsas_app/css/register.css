@@ -107,12 +107,6 @@ body {
   background-color: #000000;
 }
 
-@media (max-width: 768px) {
-  .two-forms {
-    flex-direction: column;
-  }
-}
-
 .modal {
   display: none; /* Hidden by default */
   position: fixed;
@@ -243,40 +237,66 @@ input[type="number"]::-webkit-inner-spin-button {
 input[type="number"] {
     -moz-appearance: textfield; 
 }
-@media (max-width: 768px) {
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .register-border {
+    max-width: 500px;
+    padding: 20px;
+  }
+
+  .login-header h1 {
+    font-size: 22px;
+  }
+
   .two-forms {
     flex-direction: column;
   }
 
   .input-box {
-    margin-bottom: 15px;
     margin-right: 0;
+    margin-bottom: 10px;
   }
 
-  .input-box input,
-  .input-box select,
-  .input-box textarea {
-    font-size: 16px;
+  .input-box:last-child {
+    margin-bottom: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .register-border {
+    padding: 15px;
   }
 
   .login-header h1 {
     font-size: 20px;
   }
 
-  .register-border {
-    padding: 20px;
-    max-width: 100%;
-  }
-
   .submit-btn {
     font-size: 14px;
     padding: 10px;
+  }
+
+  .modal-content {
+    padding: 15px;
+    max-width: 90%;
+  }
+
+  .modal-header h2 {
+    font-size: 1.25em;
+  }
+
+  .modal-body {
+    font-size: 0.9em;
   }
 }
 
 @media (max-width: 480px) {
   .login-body {
-    padding: 5px;
+    padding: 10px;
+  }
+
+  .register-border {
+    padding: 10px;
   }
 
   .login-header h1 {
@@ -286,21 +306,29 @@ input[type="number"] {
   .input-box input,
   .input-box select,
   .input-box textarea {
+    font-size: 12px;
     padding: 8px;
-    font-size: 14px;
   }
 
   .submit-btn {
+    font-size: 12px;
+    padding: 8px;
+  }
+
+  .terms-checkbox label {
+    font-size: 12px;
+  }
+
+  .modal-content {
     padding: 10px;
-    font-size: 14px;
+    font-size: 0.85em;
   }
 
-  .register-border {
-    padding: 15px;
-    max-width: 100%;
+  .modal-header h2 {
+    font-size: 1.1em;
   }
 
-  .password-wrapper i {
-    font-size: 18px;
+  .modal-body {
+    font-size: 0.85em;
   }
 }
