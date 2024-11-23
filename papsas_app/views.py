@@ -465,7 +465,9 @@ def new_officer(request, num_winners):
 @login_required(login_url='/login')
 def vote(request):
     user = request.user
+        
     ongoingElection = Election.objects.get( electionStatus = True )
+    filling_period = ongoingElection.startDate + timedelta(days=7)
     attended_event = Attendance.objects.filter( user = user, attended = True ).count()
     # candidates = Candidacy.objects.filter( election = ongoingElection )
     candidates = Candidacy.objects.filter(election=ongoingElection).annotate(vote_count=Count('nominee'))
@@ -519,7 +521,8 @@ def vote(request):
             'ongoingElection' : ongoingElection,
             'votes' : Vote.objects.filter( voterID = user, election = ongoingElection),
             'user' : request.user,
-            'has_declared' : has_declared
+            'has_declared' : has_declared,
+            'filling_period' : filling_period
         })
 
 @login_required(login_url='/login')
@@ -801,8 +804,10 @@ def update_account(request, id):
 @login_required(login_url='/login')
 def membership_registration(request, mem_id):
     user = request.user
+    
     try:
         form = MembershipRegistration(request.user, mem_id)
+        membership = mem_id
         try:
             latest_pending_membership = UserMembership.objects.filter( user = user,  status = 'Pending' ).latest('id')
         except:
@@ -823,11 +828,16 @@ def membership_registration(request, mem_id):
                 else:
                     user_membership.expirationDate = user_membership.registrationDate + infinite
                 user_membership.save()
-                return redirect('user_membership_table')
+                try:
+                    messages.success (request, 'Successfully registered.')
+                    return redirect('membership_registration', mem_id = mem_id)
+                except Exception as e:
+                    return HttpResponse(f'Error - {e}')
             else:
                 return render(request, 'papsas_app/form/membership_registration.html', {
                 'form' : form,
-                'membership' : membership
+                'membership' : membership.id,
+                'latest_pending_membership' : latest_pending_membership
             })
 
         else:

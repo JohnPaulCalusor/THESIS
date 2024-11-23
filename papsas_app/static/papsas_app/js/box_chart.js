@@ -48,9 +48,9 @@ async function loadEvents() {
       displayModeBar: true, 
       displaylogo: false, 
       modeBarButtonsToRemove: [
-          'hoverClosestCartesian', 'hoverCompareCartesian'
+          'hoverClosestCartesian', 'hoverCompareCartesian', 'resetScale2d', 'zoomIn2d', 'zoomOut2d', 'toImage'
       ],
-      modeBarButtons: [['resetScale2d', 'zoomIn2d', 'zoomOut2d', 'toImage' ]],  
+      modeBarButtons: [[ ]],  
       modeBarStyle: { position: 'outside' } 
   };
   

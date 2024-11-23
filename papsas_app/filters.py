@@ -7,14 +7,14 @@ class UserFilter(django_filters.FilterSet):
     email = django_filters.CharFilter(lookup_expr='icontains')
     first_name = django_filters.CharFilter(lookup_expr='icontains')
     last_name = django_filters.CharFilter(lookup_expr='icontains')
-    id = django_filters.CharFilter(lookup_expr='icontains')
+    # id = django_filters.CharFilter(lookup_expr='icontains')
 
     class Meta:
         model = User
         fields = ['id', 'email', 'first_name', 'last_name']
 
 class MembershipFilter(django_filters.FilterSet):
-    id = django_filters.CharFilter(lookup_expr='icontains')
+    # id = django_filters.CharFilter(lookup_expr='icontains')
     membership = django_filters.MultipleChoiceFilter(
         choices = [
             ('1', 'Regular'),
@@ -38,7 +38,7 @@ class MembershipFilter(django_filters.FilterSet):
         fields = ['id', 'membership', 'status']
 
 class EventFilter(django_filters.FilterSet):
-    id = django_filters.CharFilter(lookup_expr='icontains')
+    # id = django_filters.CharFilter(lookup_expr='icontains')
     eventName = django_filters.CharFilter(lookup_expr='icontains')
     startDate = django_filters.DateFilter(
         field_name='startDate',
@@ -68,7 +68,7 @@ class EventFilter(django_filters.FilterSet):
         fields = ['id', 'eventName', 'startDate', 'endDate']
 
 class EventRegistrationFilter(django_filters.FilterSet):
-    id = django_filters.CharFilter(lookup_expr='icontains')
+    # id = django_filters.CharFilter(lookup_expr='icontains')
     user = django_filters.CharFilter(method='user_filter')
     status = django_filters.CharFilter(
         widget=forms.Select(choices=[
@@ -86,7 +86,7 @@ class EventRegistrationFilter(django_filters.FilterSet):
         return queryset.filter(user__first_name__icontains=value) | queryset.filter(user__last_name__icontains=value)
 
 class AttendanceFilter(django_filters.FilterSet):
-    id = django_filters.CharFilter(lookup_expr='icontains')
+    # id = django_filters.CharFilter(lookup_expr='icontains')
     user = django_filters.CharFilter(method='user_filter')
     attended = django_filters.CharFilter(
         widget=forms.Select(choices=[
@@ -103,7 +103,7 @@ class AttendanceFilter(django_filters.FilterSet):
         return queryset.filter(user__first_name__icontains=value) | queryset.filter(user__last_name__icontains=value)
     
 class VenueFilter(django_filters.FilterSet):
-    id = django_filters.CharFilter(lookup_expr='icontains')
+    # id = django_filters.CharFilter(lookup_expr='icontains')
     name = django_filters.CharFilter(lookup_expr='icontains',
                                      widget=forms.TextInput(attrs={'id': 'name-id'}))
     address = django_filters.CharFilter(lookup_expr='icontains',
@@ -114,7 +114,7 @@ class VenueFilter(django_filters.FilterSet):
         fields = ['id', 'name', 'address']
 
 class AchievementFilter(django_filters.FilterSet):
-    id = django_filters.CharFilter(lookup_expr='icontains')
+    # id = django_filters.CharFilter(lookup_expr='icontains')
     name = django_filters.CharFilter(lookup_expr='icontains',
                                      widget=forms.TextInput(attrs={'id': 'name-id'}))
 
@@ -123,7 +123,7 @@ class AchievementFilter(django_filters.FilterSet):
         fields = ['id', 'name']
 
 class NewsAndOfferFilter(django_filters.FilterSet):
-    id = django_filters.CharFilter(lookup_expr='icontains')
+    # id = django_filters.CharFilter(lookup_expr='icontains')
     name = django_filters.CharFilter(lookup_expr='icontains',
                                      widget=forms.TextInput(attrs={'id': 'name-id'}))
 

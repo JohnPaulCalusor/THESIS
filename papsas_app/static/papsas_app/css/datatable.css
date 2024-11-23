@@ -436,7 +436,7 @@ th.orderable a{
     display: flex;
     align-items: center;
 }
-
+x
 /* used in attendance_record.html */
 #details-container{
     display: none;
@@ -446,13 +446,15 @@ th.orderable a{
     display: flex;
     flex-wrap: wrap;
     margin-top: 30px;
+    justify-center : center;
+    align-items: end;
     
 }
 
 #filter-form .row .col-md-3 {
-    margin-right: 15px; /* Add space between inputs */
-    margin-bottom: 1rem; /* Add vertical space between rows if they wrap */
+    margin-right: 15px; /* Add space between inputs */ /* Add vertical space between rows if they wrap */
     width: 288px;
+    margin-top: 5px;
     
 }
 
@@ -475,14 +477,14 @@ th.orderable a{
     display: flex;
     gap: 10px; /* Adds space between the buttons */
     height: 38px;
-    margin-top: 25px;
+
 }
 .search-submit{
     background-color: #000;
     display: flex;
     font-size: 16px;
-    padding: 5px;
     width: 100px;
+    align-items: center;
     justify-content: center;
     color: #ffffff;
     border: none;

@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
+from django.contrib.auth.hashers import make_password
 
 # Register your models here.
 
@@ -9,6 +10,10 @@ class UserAdmin(admin.ModelAdmin):
     list_display = ('id' ,'first_name', 'username','email_verified')
     # disables admin to change anything
     # readonly_fields = ('password',)
+    def save_model(self, request, obj, form, change):
+        if 'password' in form.changed_data:
+            obj.password = make_password(obj.password)  # Hash the password
+        super().save_model(request, obj, form, change)
 
 # register user
 

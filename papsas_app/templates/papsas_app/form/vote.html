@@ -64,7 +64,12 @@
                     </div>
                     {% endfor %}
                 </div>
-                <button type="submit" class="cast-vote"> Cast Vote </button>
+                {% if today < filling_period %}
+                    <button type="submit" class="cast-vote" disabled> Filling Candidacy Period </button>
+                {% else  %}
+                    <button type="submit" class="cast-vote"> Cast Vote </button>
+                {% endif %}
+                
             </form>
 
         </div>
