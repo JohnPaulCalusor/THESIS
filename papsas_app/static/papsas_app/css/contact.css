@@ -36,8 +36,6 @@ textarea {
   position: relative;
 }
 
-
-
 form {
   padding: 2.3rem 2.2rem;
   z-index: 10;
@@ -200,90 +198,71 @@ textarea.input {
   transform: scale(1.05);
 }
 
-
-
-@media (max-width: 850px) {
+@media screen and (max-width: 1024px) {
   .form {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr; /* Single column layout for smaller screens */
+    box-shadow: none;
   }
 
-  .contact-info:before {
-    bottom: initial;
-    top: -75px;
-    right: 65px;
-    transform: scale(0.95);
-  }
-
-  .contact-form:before {
-    top: -13px;
-    left: initial;
-    right: 70px;
-  }
-
-  .square {
-    transform: translate(140%, 43%);
-    height: 350px;
-  }
-
-  .big-circle {
-    bottom: 75%;
-    transform: scale(0.9) translate(-40%, 30%);
-    right: 50%;
-  }
-
-  .text {
-    margin: 1rem 0 1.5rem 0;
-  }
-
-  .social-media {
-    padding: 1.5rem 0 0 0;
-  }
-}
-
-@media (max-width: 480px) {
-  .container {
-    padding: 1.5rem;
-  }
-
-  .contact-info:before {
-    display: none;
-  }
-
-  .square,
-  .big-circle {
-    display: none;
-  }
-
-  form,
   .contact-info {
-    padding: 1.7rem 1.6rem;
+    padding: 1.5rem; /* Adjust padding for smaller devices */
   }
 
-  .text,
-  .information,
-  .social-media p {
-    font-size: 0.8rem;
+  form {
+    padding: 1.5rem; /* Adjust padding */
   }
 
   .title {
-    font-size: 1.15rem;
+    font-size: 1.3rem; /* Slightly smaller font size for titles */
+  }
+  
+  .btn {
+    font-size: 0.9rem; /* Smaller button font size */
+    padding: 0.5rem 1rem;
   }
 
   .social-icons a {
     width: 30px;
     height: 30px;
-    line-height: 30px;
+    line-height: 30px; /* Adjust size of social media icons */
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .container {
+    padding: 1rem; /* Reduce padding for smaller screens */
   }
 
-  .icon {
-    width: 23px;
+  .text {
+    margin: 1rem 0 1.5rem 0; /* Adjust margins */
+    font-size: 0.9rem; /* Smaller text size */
+  }
+
+  .information {
+    font-size: 0.85rem; /* Reduce information text size */
   }
 
   .input {
-    padding: 0.45rem 1.2rem;
+    font-size: 12px; /* Smaller font size in inputs */
   }
 
   .btn {
-    padding: 0.45rem 1.2rem;
+    font-size: 0.85rem; /* Adjust button size */
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .title {
+    font-size: 1.2rem; /* Reduce title size further for small screens */
+  }
+
+  .btn {
+    padding: 0.4rem 0.8rem; /* Compact button padding */
+  }
+
+  .social-icons a {
+    width: 28px;
+    height: 28px;
+    line-height: 28px; /* Smaller social icons */
   }
 }
