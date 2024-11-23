@@ -188,31 +188,41 @@
             id="update-form"
         >
             {% csrf_token %}
+            <div class="login_box">
+                <div class="two-forms">
+                    <div class="input-box">
+                        <p>Mobile Number:</p>
+                        {{ updateForm.mobileNum }}
+                    </div>
+                    <div class="input-box">
+                        <p>Region:</p>
+                        {{ updateForm.region }}
+                    </div>
+                </div>
+                <div class="two-forms">
+                    <div class="input-box">
+                        <p>Address:</p>
+                        {{ updateForm.address }}
+                    </div>
+                    <div class="input-box">
+                        <p>Occupation:</p>
+                        {{ updateForm.occupation }}
+                    </div>
+                </div>
+                <div class="two-forms">
             <div class="input-box">
-                <p>Mobile Number</p>
-                {{ updateForm.mobileNum }}
-            </div>
-            <div class="input-box">
-                <p>Region</p>
-                {{ updateForm.region }}
-            </div>
-            <div class="input-box">
-                <p>Address</p>
-                {{ updateForm.address }}
-            </div>
-            <div class="input-box">
-                <p>Occupation</p>
-                {{ updateForm.occupation }}
-            </div>
-            <div class="input-box">
-                <p>Institutionr</p>
+                <p>Institution:</p>
                 {{ updateForm.institution }}
             </div>
+        </div>
+            <div class="two-forms">
             <div class="input-box">
-                <p>Transcript of Records</p>
+                <p>Transcript of Records: </p>
                 {{ updateForm.tor }}
             </div>
+        </div>
             <button type="submit" class="btn">Update</button>
+        </div>
         </form>
     </div>
 </div>
