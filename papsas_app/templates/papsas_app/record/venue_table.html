@@ -58,9 +58,7 @@
 <div id="update-container">
     <div class="update-content">
         <span class="upd-close-modal" onclick="closePopup()"><i class="fas fa-times"></i></span>
-        <h3>
-            Update Venue
-        </h3>
+        <h3>Update Venue Form</h3>
         <form method="post"
         hx-post=""
         hx-confirm="Are you sure you want to update this venue?"
@@ -68,21 +66,28 @@
         id="update-form"
         >
             {% csrf_token %}
-            <div class="form-group">
-            <div class="form-group label">
-                <p>{{ form.name.label }}</p> 
-                {{ form.name }}
-            </div>
-            <div class="form-group label">
-                <p>{{ form.address.label }}</p> 
-                {{ form.address }}
-            </div>
-            <div class="form-group label">
-                <p>{{ form.capacity.label }}</p> 
-                {{ form.capacity }}
-            </div>
+            <div class="login_box">
+                <div class="two-forms">
+                    <div class="input-box">
+                        <p>Venue Name: </p> 
+                        {{ form.name }}
+                    </div>
+                </div>
+                <div class="two-forms">
+                    <div class="input-box">
+                        <p>Address: </p> 
+                        {{ form.address }}
+                    </div>
+                </div>
+                <div class="two-forms">
+                    <div class="input-box">
+                        <p>Capacity: </p> 
+                        {{ form.capacity }}
+                    </div>
+                </div>
         </div>
             <button type="submit" class="btn">Update</button>
+        </div>
         </form>
     </div>
 </div>

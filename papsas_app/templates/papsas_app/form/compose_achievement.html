@@ -19,24 +19,34 @@
     </ul>
     {% endif %}
     <div class="form-container">
-        <h3>Achievement</h3>
+        <h3>Achievement Form</h3>
         <form method="post" enctype="multipart/form-data"
             hx-post="{% url 'compose_achievement' %}" 
             hx-confirm="Are you sure you want to post this achievement?"
         >
             {% csrf_token %}
-            <div class="form-group">
-                <div class="form-group label">
-                {{ form.name.label }} {{ form.name }}
-            </div>
-            <div class="form-group label">
-                {{ form.description.label }} {{ form.description }}
-            </div>
-                <div class="form-group">
+            <div class="login_box">
+                <div class="two-forms">
+                    <div class="input-box">
+                        <p>Title: </p> 
+                        {{ form.name }}
+                    </div>
+                </div>
+                <div class="two-forms">
+                    <div class="input-box">
+                        <p>Description: </p> 
+                        {{ form.description }}
+                    </div>
+                </div>
+                <div class="two-forms">
+                    <div class="input-box">
+                        <p>Public Material: </p> 
                         {{ form.pubmat }}
+                    </div>
                 </div>
             </div>
             <button type="submit" class="btn">Submit</button>
+        </div>
         </form>
     </div>
 </div>

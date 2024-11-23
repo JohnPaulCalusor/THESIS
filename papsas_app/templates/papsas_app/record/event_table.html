@@ -64,7 +64,7 @@
         <span class="upd-close-modal" >
             <i class="fas fa-times"></i>
         </span>
-        <h3>Update Event</h3>
+        <h3>Update Event Form</h3>
         <div>
             <img id="img" alt="event-pubmat">
         </div>
@@ -76,47 +76,62 @@
             id="update-form"
             >
                 {% csrf_token %}
+                <div class="login_box">
+                    <div class="two-forms">
                     <div class="input-box">
-                        <p>Event Name</p>
+                        <p>Event Name: </p>
                         {{ form.eventName}}
                     </div>
+                </div>
+                <div class="two-forms">
                     <div class="input-box">
-                        <p>Start Date</p>
+                        <p>Start Date: </p>
                         {{ form.startDate}}
                     </div>
                     <div class="input-box">
-                        <p>End Date</p>
+                        <p>End Date: </p>
                         {{ form.endDate}}
                     </div>
+                </div>
+                <div class="two-forms">
                     <div class="input-box">
-                        <p>Venue</p>
+                        <p>Venue: </p>
                         {{ form.venue}}
                     </div>
+                
                     <div class="input-box">
-                        <p>Exclusive</p>
+                        <p>Exclusive: </p>
                         {{ form.exclusive}}
                     </div>
+                </div>
+                <div class="two-forms">
                     <div class="input-box">
-                        <p>Event Description</p>
+                        <p>Event Description: </p>
                         {{ form.eventDescription}}
                     </div>
+                </div>
+                <div class="two-forms">
                     <div class="input-box">
-                        <p>Public Material</p>
+                        <p>Public Material: </p>
                         {{ form.pubmat}}
                     </div>
                     <div class="input-box">
-                        <p>Price</p>
+                        <p>Price: </p>
                         {{ form.price}}
                     </div>
+                </div>
+                <div class="two-forms">
                     <div class="input-box">
-                        <p>Start Time</p>
+                        <p>Start Time: </p>
                         {{ form.startTime}}
                     </div>
                     <div class="input-box">
-                        <p>End Time</p>
+                        <p>End Time: </p>
                         {{ form.endTime}}
                     </div>
+                </div>
                 <button type="submit" class="btn">Update</button>
+            </div>
             </form>
         </div>
     </div>

@@ -74,54 +74,63 @@
         hx-confirm="Are you sure you want to update this account?"
         >
             {% csrf_token %}
-            <div class="input-box">
-                <p>Email</p>
-                {{ form.email }}
+            <div class="login_box">
+                <div class="two-forms">
+                <div class="input-box">
+                    <p>Email: </p>
+                    {{ form.email }}
+                </div>
             </div>
             <div class="two-forms">
-                <div class="input-two">
-                    <p>First Name</p>
+                <div class="input-box">
+                    <p>First Name: </p>
                     {{ form.first_name }}
                 </div>
-                <div class="input-two">
-                    <p>Last Name</p>
+                <div class="input-box">
+                    <p>Last Name: </p>
                     {{ form.last_name }}
                 </div>
             </div>
             <div class="two-forms">
-                <div class="input-two">
-                    <p>Mobile Number</p>
+                <div class="input-box">
+                    <p>Mobile Number: </p>
                     {{ form.mobileNum }}
                 </div>
-                <div class="input-two">
-                    <p>Address</p>
+                <div class="input-box">
+                    <p>Address: </p>
                     {{ form.address }}
                 </div>
             </div>
+            <div class="two-forms">
             <div class="input-box">
-                <p>Region</p>
+                <p>Region: </p>
                 {{ form.region }}
             </div>
+        </div>
             <div class="two-forms">
-                <div class="input-two">
-                    <p>Birthdate</p>
+                <div class="input-box">
+                    <p>Birthdate: </p>
                     {{ form.birthdate }}
                 </div>
-                <div class="input-two">
-                    <p>Age</p>
+                <div class="input-box">
+                    <p>Age: </p>
                     {{ form.age }}
                 </div>
             </div>
+            <div class="two-forms">
                 <div class="input-box">
-                    <p>Occupation</p>
+                    <p>Occupation: </p>
                     {{ form.occupation }}
                 </div>
                 <div class="input-box">
-                    <p>Institution</p>
+                    <p>Institution: </p>
                     {{ form.institution }}
                 </div>
+            </div>
             <button type="submit" class="btn update-btn">Update</button>
+        
             <div id="error-container" class="mt-3" style="color: red;"></div>
+        </div>
         </form>
     </div>
 </div>
