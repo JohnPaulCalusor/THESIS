@@ -3,6 +3,13 @@
 {% load static %}
 {% block head %}
     <link rel="stylesheet" href="{% static 'papsas_app/css/contact.css' %}">
+    <script>
+        // Function to disable the submit button once the form is submitted
+        function disableButton() {
+            document.getElementById('submit-btn').disabled = true;
+            document.getElementById('submit-btn').value = "Sending...";
+        }
+    </script>
 {% endblock %}
 
 {% block body %}
@@ -16,15 +23,15 @@
 
                 <div class="info">
                     <div class="information">
-                        <img src="{% static 'papsas_app/img/location.png' %}" class="icon" alt="Location Icon" />
+                        <img src="img/location.png" class="icon" alt="" />
                         <p>FAITH Colleges, Tanauan City, Batangas, Philippines</p>
                     </div>
                     <div class="information">
-                        <img src="{% static 'papsas_app/img/email.png' %}" class="icon" alt="Email Icon" />
+                        <img src="img/email.png" class="icon" alt="" />
                         <p>papsasinc.national@gmail.com</p>
                     </div>
                     <div class="information">
-                        <img src="{% static 'papsas_app/img/phone.png' %}" class="icon" alt="Phone Icon" />
+                        <img src="img/phone.png" class="icon" alt="" />
                         <p>(043) 778 0656</p>
                     </div>
                 </div>
@@ -42,8 +49,9 @@
                 </div>
             </div>
 
+
             <div class="contact-form">
-                <form method="POST" action="{% url 'contact' %}">
+                <form method="POST" action="{% url 'contact' %}" onsubmit="disableButton()">
                     {% csrf_token %}
                     <h3 class="title">Contact us</h3>
                     <div class="input-container">
@@ -58,9 +66,8 @@
                         <div class="input-title">Message:</div>
                         <textarea name="message" id="message" class="input" required></textarea>
                     </div>
-                    <input type="submit" value="Send" class="btn" />
+                    <input type="submit" value="Send" class="btn" id="submit-btn" />
                 </form>
-                      
             </div>
         </div>
     </div>
