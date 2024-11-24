@@ -4,6 +4,13 @@
 {% block head %}
 
 <link rel="stylesheet" href="{% static 'papsas_app/css/event_management.css' %}">
+<script>
+    function disableButton() {
+        const submitButton = document.getElementById('submitBtn');
+        submitButton.disabled = true;
+        submitButton.innerText = 'Submitting...';
+    }
+</script>
 {% endblock %}
 
 
@@ -22,7 +29,7 @@
     <div class="form-container ">
         <h3>Event Management Form</h3>
         <form method="post" id="eventForm" enctype="multipart/form-data"
-            hx-post="{% url 'event' %}"
+            hx-post="{% url 'event' %}" onsubmit="disableButton()"
             hx-confirm="Are you sure you want to post this event?">
             {% csrf_token %}
             
@@ -77,7 +84,7 @@
                         </div>
                     </div>
             </div>
-            <button type="submit" class="btn">Submit</button>
+            <button type="submit" class="btn" id="submitBtn">Submit</button>
         </form>
     </div>
 </div>

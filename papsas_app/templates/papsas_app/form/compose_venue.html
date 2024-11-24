@@ -2,12 +2,6 @@
 {% load static %}
 {% block head %}
 <link rel="stylesheet" href="{% static 'papsas_app/css/compose_venue.css' %}">
-<script>
-    function disableButton(button) {
-        button.disabled = true;
-        button.innerText = 'Submitting...'; 
-    }
-</script>
 {% endblock %}
 
 {% block body %}
@@ -51,7 +45,7 @@
             </div>
         </div>
 
-            <button type="submit" class="btn" onclick="disableButton(this)">Submit</button>
+            <button type="submit" class="btn">Submit</button>
         </div>
         </form>
     </div>
