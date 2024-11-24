@@ -47,6 +47,7 @@
                 </ul>
                 {% endif %}
                 <div id="voteContainer">
+                {% if candidates %}
                     {% for candidate in candidates %}
                     <div>
                         <input id="candidate-{{ candidate.id }}" type="checkbox" name="candidates" class="hidden-checkbox" value="{{ candidate.id }}" />
@@ -63,13 +64,15 @@
                         </label>
                     </div>
                     {% endfor %}
+                {% else %}
+                <p>No candidates yet.</p>
+                {% endif %}
                 </div>
                 {% if today < filling_period %}
                     <button type="submit" class="cast-vote" disabled> Filling Candidacy Period </button>
                 {% else  %}
                     <button type="submit" class="cast-vote"> Cast Vote </button>
                 {% endif %}
-                
             </form>
 
         </div>

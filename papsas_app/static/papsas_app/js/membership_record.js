@@ -1,3 +1,9 @@
+function disableButton() {
+    const approveButton = querySelector('#approve-button');
+    const declineButton = querySelector('#decline-button');
+    approveButton.disabled = true;
+    declineButton.disabled = true;}
+
 document.addEventListener('DOMContentLoaded', function(){
     const statusColumn = document.querySelectorAll('.status-column')
     statusColumn.forEach(column => {
@@ -13,4 +19,9 @@ document.addEventListener('DOMContentLoaded', function(){
             }
         }
     });
+
+    const form = document.querySelector('form');
+    form.onsubmit = disableButton();
+
+
 })

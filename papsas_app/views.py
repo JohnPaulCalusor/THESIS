@@ -162,7 +162,7 @@ def index(request):
             'events' : upcoming_events,
         })
 
-
+@login_required(login_url='/login')
 def contact(request):
     try:
         if request.method == 'POST':
@@ -175,7 +175,7 @@ def contact(request):
                 # Create the email
                 email = EmailMessage(
                     subject=subject,
-                    body=f' From {request.user.email}\n {message}',
+                    body=f' From {request.user.email},\n {message}',
                     from_email=email_from,  # Use your default sender email
                     to=['noreply.papsasinc@gmail.com'],  # Recipient email
                     reply_to=[email_from],  # User's email in the reply-to
@@ -837,8 +837,9 @@ def update_account(request, id):
 
                 form.save()
                 messages.success(request, 'Updated successfully.')
-                return redirect('user_record')
-
+                response = HttpResponse()
+                response['HX-Refresh'] = 'true' 
+                return response
             else:
                 return JsonResponse({'errors': form.errors}, status=400)
 
@@ -2085,15 +2086,22 @@ class VenueListView(SingleTableView):
         return table
 
     def get_queryset(self):
-        queryset = Venue.objects.all()
-        self.filterset = self.filterset_class(self.request.GET, queryset=queryset)
-        return self.filterset.qs
+        try:
+            queryset = Venue.objects.all()
+            self.filterset = self.filterset_class(self.request.GET, queryset=queryset)
+            return self.filterset.qs
+        except Exception as e:
+            return HttpResponse(f'{e}')
     
     def get_context_data(self, **kwargs):
-        context = super(VenueListView, self).get_context_data(**kwargs)
-        context['filter'] = self.filterset
-        context['form'] = VenueForm
-        return context
+        try:
+            context = super(VenueListView, self).get_context_data(**kwargs)
+            context['filter'] = self.filterset
+            context['form'] = VenueForm
+            return context
+        except Exception as e:
+            return HttpResponse(f'{e}')
+
 
 @method_decorator(officer_required, name='dispatch')
 class AchievementListView(SingleTableView):

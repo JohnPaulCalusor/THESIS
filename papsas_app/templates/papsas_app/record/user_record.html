@@ -69,8 +69,10 @@
     <div class="update-content">
         <span class="upd-close-modal" onclick="closePopup()"><i class="fas fa-times"></i></span>
         <h3>Update User Record</h3>
-        <form class="popup-form"
+        <form class="popup-form" method="post"
         hx-post=""
+        hx-swap="none"
+        id="update-form"
         hx-confirm="Are you sure you want to update this account?"
         >
             {% csrf_token %}
