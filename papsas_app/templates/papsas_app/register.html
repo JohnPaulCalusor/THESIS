@@ -121,7 +121,6 @@
     <script src="{% static 'papsas_app/js/register.js' %}"></script>
 
     <script>
-        // Disable submit button during submission
         function disableSubmitButton(form) {
             const button = form.querySelector('.submit-btn');
             button.disabled = true;
@@ -147,20 +146,22 @@
             });
         });
 
-        // Function to validate the mobile number input
-        function validateMobileNumber() {
-            var mobileInput = document.getElementById("id_mobileNum");
-            var errorMessage = document.getElementById("mobile-error");
+function validateMobileNumber() {
+    var mobileInput = document.getElementById("id_mobileNum");
+    var errorMessage = document.getElementById("mobile-error");
 
-            // Remove non-numeric characters
-            mobileInput.value = mobileInput.value.replace(/[^0-9]/g, '');
+    mobileInput.value = mobileInput.value.replace(/[^0-9]/g, '');
 
-            // Show error message if input contains non-numeric characters
-            if (mobileInput.value !== mobileInput.value.replace(/[^0-9]/g, '')) {
-                errorMessage.style.display = "inline";
-            } else {
-                errorMessage.style.display = "none";
-            }
-        }
+    if (mobileInput.value.length > 11) {
+        mobileInput.value = mobileInput.value.substring(0, 11);
+    }
+
+    if (mobileInput.value.length > 0 && mobileInput.value.length < 11) {
+        errorMessage.style.display = "inline";
+        errorMessage.textContent = "Please enter a valid 11-digit mobile number.";
+    } else {
+        errorMessage.style.display = "none";
+    }
+}
     </script>
 {% endblock %}
