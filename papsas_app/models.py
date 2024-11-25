@@ -181,7 +181,7 @@ class Officer(models.Model):
         return f"{self.candidateID.candidate.first_name} was elected ({self.termStart} - {self.termEnd})"
 
 class Venue(models.Model):
-    name = models.CharField(max_length=32, null=True)
+    name = models.CharField(max_length=64, null=True)
     address = models.CharField(max_length=64, null=True)
     capacity = models.IntegerField()
 
@@ -213,6 +213,9 @@ class Event(models.Model):
     
     def average_rating(self):
         return self.ratings.aggregate(Avg('rating'))['rating__avg']
+
+    class Meta:
+        ordering = ['-id']
     
 class EventRating(models.Model):
     event = models.ForeignKey('Event', on_delete=models.CASCADE, related_name='ratings')
@@ -280,5 +283,6 @@ class Attendance(models.Model):
         unique_together = ('user', 'event', 'date_attended')
 
     def __str__(self):
-        return f"{self.user.first_name} attended {self.event.event.eventName}"
+        return f"{self.user.first_name} attended {self.event.event.eventName} at {self.date_attended}"
+
     

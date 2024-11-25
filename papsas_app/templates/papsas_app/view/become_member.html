@@ -59,7 +59,11 @@
                         {% endif %}
                     <p></p>
                     {% if user.is_authenticated %}
-                        <a href="{% url 'membership_registration' mem.id %}"><button class="membership__button_1">Register</button></a>
+                        {% if user.occupation == 'Practitioner' %}
+                            <a href="{% url 'membership_registration' mem.id %}"><button class="membership__button_1">Register</button></a>
+                        {% else %}
+                            <button type="submit" class="membership__button_1" disabled>Not eligible</button>
+                        {% endif %}
                     {% else %}
                         <a href="{% url 'login' %}"><button class="membership__button_1">Register</button></a>
                     {% endif %}

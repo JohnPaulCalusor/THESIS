@@ -13,7 +13,7 @@ Election
 
 {% block body %}
 <div class="container">
-    <div>
+    <div class="message-container">
         {% if messages %}
         <ul class="messages">
             {% for message in messages %}
@@ -116,5 +116,5 @@ Election
 {% endblock %}
 
 {% block script %}
-<script src="{% static 'papsas_app/js/election.js' %}"></script>
+    <script src="{% static 'papsas_app/js/election.js' %}"></script>
 {% endblock %}

@@ -38,7 +38,7 @@
                                         <a href="{% url 'user_table' %}" class="nav__link">Records<i class="fa-solid fa-caret-down"></i></a>
                                         <ul class="dropdown-content">
                                             <li><a href="{% url 'user_table' %}">Account</a></li>
-                                            <li><a href="{% url 'membership_table' %}">Members</a></li>
+                                            <li><a href="{% url 'membership_table' %}">Membership</a></li>
                                             <li><a href="{% url 'event_table' %}">Event</a></li>
                                             <li><a href="{% url 'venue_table' %}">Venue</a></li>
                                             <li><a href="{% url 'achievement_table' %}">Achievement</a></li>
@@ -165,9 +165,6 @@
                                 </li>
                                 <li class="nav__item">
                                     <a href="{% url 'achievement' %}" class="nav__link">Achievements</a>
-                                </li>
-                                <li class="nav__item">
-                                    <a href="{% url 'contact' %}" class="nav__link">Contact</a>
                                 </li>
                                 <div class="login-container">
                                     <a href="{% url 'login' %}" class="login-submit">Login</a>

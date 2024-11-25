@@ -642,7 +642,6 @@ def event(request):
                 'Feel free to share this event with your colleagues—let’s grow together as a community!\n\n'
                 'Thank you for being an integral part of PAPSAS. We look forward to seeing you there!\n\n'
                 'Warm regards,\n'
-                '[Name]\n'
                 '[PAPSAS INC.]\n'
                 'Philippine Association of Practitioners of Student Affairs and Services\n'
             )
@@ -726,6 +725,8 @@ def event_registration_view(request, event_id):
     user = request.user
     event = get_object_or_404(Event, id=event_id)
     form = EventRegistrationForm(user=request.user, event=event)
+    total_reg = EventRegistration.objects.filter(event=event).count()
+    capacity = event.venue.capacity
     try:
         has_registered = EventRegistration.objects.get( user= user, event = event)
         
@@ -759,11 +760,12 @@ def event_registration_view(request, event_id):
             except ValidationError as e:
                 messages.error(request, f"Registration failed: {e}")
     else:
-
         return render(request, 'papsas_app/form/event_registration_form.html', {
             'form': form,
             'event': event,
-            'has_registered' : has_registered
+            'has_registered' : has_registered,
+            'capacity' : capacity,
+            'total_reg' : total_reg,
         })
 
 def about(request):

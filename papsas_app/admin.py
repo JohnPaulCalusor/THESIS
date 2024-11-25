@@ -15,6 +15,7 @@ class UserAdmin(admin.ModelAdmin):
             obj.password = make_password(obj.password)  # Hash the password
         super().save_model(request, obj, form, change)
 
+
 # register user
 
 admin.site.register(User, UserAdmin)

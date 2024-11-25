@@ -293,12 +293,13 @@ class ProfileUpdateForm(forms.ModelForm):
             'institution': forms.TextInput(attrs={
                 'placeholder': 'Institution',
                 'class': 'input-field'
-            }),
+            })
         }
 
     def __init__(self, *args, **kwargs):
         super(ProfileUpdateForm, self).__init__(*args, **kwargs)
-        self.fields['region'].widget.attrs['class'] = 'input-field'    
+        self.fields['region'].widget.attrs['class'] = 'input-field'   
+        self.fields['occupation'].disabled = True 
 
 class ContactForm(forms.Form):
     email = forms.EmailField()  # This will be pre-filled with the user's email
