@@ -209,6 +209,7 @@ img {
 }
 .nav__link:hover, .nav__link.active{
   color: #ff0000;
+  text-decoration: none;
 }
 .profile{
   height: 40px;
