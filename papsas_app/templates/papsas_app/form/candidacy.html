@@ -12,7 +12,7 @@
 {% endblock %}
 
 {% block body %}
-
+<section class="candidacy-form">
 <div class="container-fluid">
     <div class="row justify-content-center">
         <div class="col-11 col-sm-10 col-md-10 col-lg-6 col-xl-5 text-center p-0 mt-3 mb-2">
@@ -145,6 +145,53 @@
         </div>
     </div>
 </div>
+</section>
+<section class="voting-process">
+    <div class="voting-title">
+        <h2>FILLING OF CANDIDACY PERIOD</h2>
+        <p>November 26, 2024 - December 1, 2024</p>
+        <p>Please select up to two candidates to cast your vote.</p>
+
+        <div class="profile-container">
+
+            <!-- Profile Card 1 -->
+            <label class="profile-card">
+                <input type="checkbox" id="profile1">
+                <div class="profile-content">
+                    <img src="media/papsas_app/images/president.jpg" alt="Profile 1">
+                    <span>Profile 1</span>
+                    <a href="#" class="view-profile">View Candidacy</a>
+                </div>
+            </label>
+        
+            <!-- Profile Card 2 -->
+            <label class="profile-card">
+                <input type="checkbox" id="profile2">
+                <div class="profile-content">
+                    <img src="media/papsas_app/images/president.jpg" alt="Profile 2">
+                    <span>Profile 2</span>
+                    <a href="#" class="view-profile">View Candidacy</a>
+                </div>
+            </label>
+        
+            <!-- Profile Card 3 -->
+            <label class="profile-card">
+                <input type="checkbox" id="profile3">
+                <div class="profile-content">
+                    <img src="media/papsas_app/images/president.jpg" alt="Profile 3">
+                    <span>Profile 3</span>
+                    <a href="#" class="view-profile">View Candidacy</a>
+                </div>
+            </label>
+            
+        </div>
+
+        <!-- Submit Button -->
+        <div class="submit-container" style="text-align: center; margin-top: 20px;">
+            <button type="button" id="submit-vote" class="submit-vote-button">Submit Vote</button>
+        </div>
+    </div>
+</section>
 {% endblock %}
 
 {% block script %}

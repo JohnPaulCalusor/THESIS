@@ -7,7 +7,14 @@
 html{
     height: 100%;
 }
-
+.candidacy-form{
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+}
 p{
     color: grey;
 }
@@ -342,7 +349,133 @@ p{
     margin-bottom: 50px;
     padding: 20px;
   }
-  
+  .voting-title h2{
+    text-transform: uppercase;
+    color: #ff0000;
+    font-weight: 600;
+    text-align: center;
+
+  }
+  .voting-title p{
+    color: grey;
+    text-align: center;
+
+  }
+ .voting-process{
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    background-color: #f5f5f5;
+ } 
+ 
+ .profile-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px; /* Increased gap for larger cards */
+    justify-content: center;
+}
+
+.profile-card {
+    width: 300px; /* Extra-large width */
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    padding: 20px; /* Larger padding */
+    position: relative;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.profile-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.profile-card img {
+    width: 100%;
+    height: 250px; /* Extra-large image height */
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+.profile-card input[type="checkbox"] {
+    display: none;
+}
+
+.profile-card input[type="checkbox"]:checked + .profile-content {
+    border: 3px solid #ff0000; /* Thicker border for larger cards */
+}
+
+.profile-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    border-radius: 12px;
+    padding: 15px;
+}
+
+.profile-name {
+    font-size: 20px; /* Larger font size for profile name */
+    font-weight: bold;
+}
+
+.view-profile {
+    display: inline-block;
+    padding: 10px 20px; /* Larger button */
+    background-color: #ff0000;
+    color: #fff;
+    text-decoration: none;
+    font-size: 16px; /* Larger text */
+    border-radius: 6px;
+    transition: background-color 0.3s ease;
+}
+
+.view-profile:hover {
+    background-color: #000000;
+    color: #ffffff;
+    text-decoration: none;
+}
+.submit-vote-button {
+    background-color: #ff0000;
+    width: 20rem;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-bottom: 20px;
+}
+
+.submit-vote-button:hover {
+    background-color: #000000;
+}   
+@media (max-width: 768px) {
+    .voting-title h2 {
+        font-size: 2rem; /* Slightly smaller for tablets */
+    }
+
+    .voting-title p {
+        font-size: 1rem; /* Adjust font size for paragraphs */
+    }
+}
+
+@media (max-width: 480px) {
+    .voting-title h2 {
+        font-size: 1.5rem; /* Smaller for mobile screens */
+    }
+
+    .voting-title p {
+        font-size: 0.9rem; /* Smaller for mobile paragraphs */
+    }
+}
   @media (max-width: 768px) {
     .form-row {
       flex-direction: column;
