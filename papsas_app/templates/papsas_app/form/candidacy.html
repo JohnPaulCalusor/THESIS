@@ -8,11 +8,11 @@
 
 {% block head %}
 <link rel="stylesheet" href="{% static 'papsas_app/css/candidacy.css' %}">
-<link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css'>
 <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.0.3/css/font-awesome.css'>
 {% endblock %}
 
 {% block body %}
+
 <div class="container-fluid">
     <div class="row justify-content-center">
         <div class="col-11 col-sm-10 col-md-10 col-lg-6 col-xl-5 text-center p-0 mt-3 mb-2">
@@ -40,7 +40,7 @@
                                     <h2 class="steps">Step 1 - 4</h2>
                                 </div>
                             </div> 
-                            <div class="container">
+                            <div class="table-container">
                                 <p class="heading">For a member to declare his/her candidacy, one must have:</p>
                                 <table class="requirements-table">
                                     <thead>
@@ -148,5 +148,84 @@
 {% endblock %}
 
 {% block script %}
-<script src="{% static 'papsas_app/js/candidacy.js' %}"></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js'></script>
+<script>
+                // Wait for DOM to be ready
+                $(document).ready(function(){
+
+            var current_fs, next_fs, previous_fs; //fieldsets
+            var opacity;
+            var current = 1;
+            var steps = $("fieldset").length;
+
+            setProgressBar(current);
+
+            $(".next").click(function(){
+
+            current_fs = $(this).parent();
+            next_fs = $(this).parent().next();
+
+            //Add Class Active
+            $("#progressbar li").eq($("fieldset").index(next_fs)).addClass("active");
+
+            //show the next fieldset
+            next_fs.show();
+            //hide the current fieldset with style
+            current_fs.animate({opacity: 0}, {
+            step: function(now) {
+            // for making fielset appear animation
+            opacity = 1 - now;
+
+            current_fs.css({
+            'display': 'none',
+            'position': 'relative'
+            });
+            next_fs.css({'opacity': opacity});
+            },
+            duration: 500
+            });
+            setProgressBar(++current);
+            });
+
+            $(".previous").click(function(){
+
+            current_fs = $(this).parent();
+            previous_fs = $(this).parent().prev();
+
+            //Remove class active
+            $("#progressbar li").eq($("fieldset").index(current_fs)).removeClass("active");
+
+            //show the previous fieldset
+            previous_fs.show();
+
+            //hide the current fieldset with style
+            current_fs.animate({opacity: 0}, {
+            step: function(now) {
+            // for making fielset appear animation
+            opacity = 1 - now;
+
+            current_fs.css({
+            'display': 'none',
+            'position': 'relative'
+            });
+            previous_fs.css({'opacity': opacity});
+            },
+            duration: 500
+            });
+            setProgressBar(--current);
+            });
+
+            function setProgressBar(curStep){
+            var percent = parseFloat(100 / steps) * curStep;
+            percent = percent.toFixed();
+            $(".progress-bar")
+            .css("width",percent+"%")
+            }
+
+            $(".submit").click(function(){
+            return false;
+            })
+
+            });
+</script>
 {% endblock %}

@@ -4,6 +4,9 @@
     font-family: Arial, sans-serif;
 }
 
+html{
+    height: 100%;
+}
 
 p{
     color: grey;
