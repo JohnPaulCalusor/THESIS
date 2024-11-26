@@ -7,7 +7,7 @@ from django.contrib.auth.hashers import make_password
 from .models import User, MembershipTypes, Vote, Candidacy, Officer, Election, Event, EventRegistration, UserMembership, Venue, Attendance, NewsandOffers, Achievement, EventRating
 
 class UserAdmin(admin.ModelAdmin):
-    list_display = ('id' ,'first_name', 'username','email_verified')
+    list_display = ('id' ,'first_name', 'last_name', 'username','email_verified')
     # disables admin to change anything
     # readonly_fields = ('password',)
     def save_model(self, request, obj, form, change):

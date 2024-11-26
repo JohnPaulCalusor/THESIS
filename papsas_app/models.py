@@ -92,7 +92,7 @@ class User(AbstractUser):
         ]
     )
     region = models.CharField(max_length=64, choices=Regions, default='Region',)
-    address = models.CharField(max_length=32)
+    address = models.CharField(max_length=256)
     occupation = models.CharField(max_length=16, choices=occupation, default='Occupation')
     age = models.IntegerField(
         null=True,
