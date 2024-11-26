@@ -1,0 +1,348 @@
+*{
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+}
+
+
+p{
+    color: grey;
+}
+
+#heading{
+    text-transform: uppercase;
+    color: #ff0000;
+    font-weight: 600;
+}
+
+#msform{
+    text-align: center;
+    position: relative;
+    margin-top: 20px;
+}
+
+#msform fieldset{
+    background: white;
+    border: 0 none;
+    border-radius: 0.5rem;
+    box-sizing: border-box;
+    width: 100%;
+    margin: 0;
+    padding-bottom: 20px;
+    position: relative;
+}
+
+.form-card{
+    text-align: center;
+}
+
+#msform fieldset:not(:first-of-type){
+    display: none;
+}
+
+#msform input, #msform textarea{
+    padding: 8px 15px 8px 15px;
+    border: 1px solid #ccc;
+    border-radius: 0px;
+    margin-top: 2px;
+    width: 100%;
+    box-sizing: border-box;
+    color: #2C3E50;
+    background-color: #ffffff;
+    font-size: 16px;
+    letter-spacing: 1px;
+}
+
+#msform input:focus, #msform textarea:focus{
+    -moz-box-shadow: none !important;
+    -webkit-box-shadow: none !important;
+    box-shadow: none !important;
+    border: px solid #ff0000;
+    outline-width: 0;
+}
+
+#msform .action-button{
+    width: 100px;
+    background: #ff0000;
+    font-weight: bold;
+    color: white;
+    border: 0 none;
+    border-radius: 0px;
+    cursor: pointer;
+    padding: 10px 5px;
+    margin: 10px 0px 10px 5px;
+    font-family: Arial, sans-serif;
+    float: right;
+}
+#msform .action-button:hover,
+#msform .action-button:focus {
+    background-color: #ff0000
+}
+
+#msform .action-button-previous {
+    width: 100px;
+    background: #616161;
+    font-weight: bold;
+    color: white;
+    border: 0 none;
+    border-radius: 0px;
+    cursor: pointer;
+    padding: 10px 5px;
+    margin: 10px 5px 10px 0px;
+    float: right
+}
+
+#msform .action-button-previous:hover,
+#msform .action-button-previous:focus {
+    background-color: #000000
+}
+
+.card {
+    z-index: 0;
+    border: none;
+    position: relative
+}
+
+.fs-title {
+    font-size: 25px;
+    color: #ff0000;
+    margin-bottom: 15px;
+    font-weight: normal;
+    text-align: left
+}
+
+.purple-text {
+    color: #ff0000;
+    font-weight: normal
+}
+
+.steps {
+    font-size: 25px;
+    color: gray;
+    margin-bottom: 10px;
+    font-weight: normal;
+    text-align: right
+}
+
+.fieldlabels {
+    color: gray;
+    text-align: left
+}
+
+#progressbar {
+    margin-bottom: 30px;
+    overflow: hidden;
+    color: lightgrey
+}
+
+#progressbar .active {
+    color: #ff0000
+}
+
+#progressbar li {
+    list-style-type: none;
+    font-size: 15px;
+    width: 25%;
+    float: left;
+    position: relative;
+    font-weight: 400
+}
+
+#progressbar #account:before {
+    font-family: FontAwesome;
+    content: "\f0ea";
+}
+
+#progressbar #personal:before {
+    font-family: FontAwesome;
+    content: "\f15c"
+}
+
+#progressbar #payment:before {
+    font-family: FontAwesome; /* Make sure to use the correct Font Awesome version */
+    content: "\f02d";
+    
+}
+
+#progressbar #confirm:before {
+    font-family: FontAwesome;
+    content: "\f00c"
+}
+
+#progressbar li:before {
+    width: 50px;
+    height: 50px;
+    line-height: 45px;
+    display: block;
+    font-size: 20px;
+    color: #ffffff;
+    background: lightgray;
+    border-radius: 50%;
+    margin: 0 auto 10px auto;
+    padding: 2px
+}
+
+#progressbar li:after {
+    content: '';
+    width: 100%;
+    height: 2px;
+    background: lightgray;
+    position: absolute;
+    left: 0;
+    top: 25px;
+    z-index: -1
+}
+
+#progressbar li.active:before,
+#progressbar li.active:after {
+    background: #ff0000
+}
+
+.progress {
+    height: 20px
+}
+
+.progress-bar {
+    background-color: #ff0000
+}
+
+.fit-image {
+    width: 100%;
+    object-fit: cover
+}
+
+
+.container {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #ffffff;
+    font-family: Arial, sans-serif;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Heading styling */
+.heading {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #ff0000;
+    text-align: left;
+}
+
+/* Table styling */
+.requirements-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 15px 0;
+}
+
+.requirements-table th,
+.requirements-table td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: left;
+    font-size: 16px;
+}
+
+.requirements-table th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+    color: #333;
+}
+
+.requirements-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.requirements-table tr:hover {
+    background-color: #f1f1f1;
+}
+
+/* Link styling */
+.guidelines-link {
+    display: inline-block;
+    margin-top: 10px;
+    font-size: 16px;
+    color: #ff0000;
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s ease;
+}
+
+.guidelines-link:hover {
+    color: #000000;
+    text-decoration: none;
+}
+  
+.form-container {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #ffffff;
+    font-family: Arial, sans-serif;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .form-row {
+    display: flex;
+    gap: 20px;
+  }
+  
+  .form-group {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  label {
+    margin-bottom: 5px;
+    font-weight: 400;
+    text-align: left;
+  }
+  
+  input[type="text"], input[type="file"] {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  input[type="file"] {
+    padding: 3px;
+  }
+  textarea {
+    width: 100%;
+    height: 300px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    resize: vertical; /* Allows the user to resize vertically */
+    overflow-y: auto; /* Adds a scroll for overflowing content */
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    box-sizing: border-box;
+  }
+  .finish {
+    width: 100%;
+    
+    
+  }
+  .finish p{
+    text-align: justify;
+    color: #000000;
+    margin-top: -30px;
+    margin-bottom: 50px;
+    padding: 20px;
+  }
+  
+  @media (max-width: 768px) {
+    .form-row {
+      flex-direction: column;
+    }
+  }
+  

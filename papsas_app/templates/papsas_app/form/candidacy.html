@@ -1,0 +1,152 @@
+{% extends 'papsas_app/layout.html' %}
+
+{% load static %}
+
+{% block title %}
+    Candidacy
+{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{% static 'papsas_app/css/candidacy.css' %}">
+<link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css'>
+<link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.0.3/css/font-awesome.css'>
+{% endblock %}
+
+{% block body %}
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-11 col-sm-10 col-md-10 col-lg-6 col-xl-5 text-center p-0 mt-3 mb-2">
+            <div class="card px-0 pt-4 pb-0 mt-3 mb-3">
+                <h2 id="heading">FILLING OF CANDIDACY PERIOD</h2>
+                <p>November 26, 2024 - December 1, 2024</p>
+                <form id="msform">
+                    <!-- progressbar -->
+                    <ul id="progressbar">
+                        <li class="active" id="account"><strong>Requirement</strong></li>
+                        <li id="personal"><strong>Candicacy Form</strong></li>
+                        <li id="payment"><strong>Credentials</strong></li>
+                        <li id="confirm"><strong>Finish</strong></li>
+                    </ul>
+                    <div class="progress">
+                        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div> <br> <!-- fieldsets -->
+                    <fieldset>
+                        <div class="form-card">
+                            <div class="row">
+                                <div class="col-7">
+                                    <h2 class="fs-title">Requirements Information:</h2>
+                                </div>
+                                <div class="col-5">
+                                    <h2 class="steps">Step 1 - 4</h2>
+                                </div>
+                            </div> 
+                            <div class="container">
+                                <p class="heading">For a member to declare his/her candidacy, one must have:</p>
+                                <table class="requirements-table">
+                                    <thead>
+                                        <tr>
+                                            
+                                            <th>Requirement</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>Attended at least two events</td>
+                                            <td class="icon"></td> <!-- Check icon -->
+                                        </tr>
+                                        <tr>
+                                            <td>Masteral Degree</td>
+                                            <td class="icon"></td> <!-- X icon -->
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <p>
+                                    <a href="link-to-guidelines.html" target="_blank" class="guidelines-link">Click here to read the full guidelines for filling candidacy.</a>
+                                </p>
+                            </div>
+                        </div> <input type="button" name="next" class="next action-button" value="Next" />
+                    </fieldset>
+                    <fieldset>
+                        <div class="form-card">
+                            <div class="row">
+                                <div class="col-7">
+                                    <h2 class="fs-title">Candicacy Form: </h2>
+                                </div>
+                                <div class="col-5">
+                                    <h2 class="steps">Step 2 - 4</h2>
+                                </div>
+                            </div> 
+                            <div class="form-container">
+                                <div class="form-row">
+                                  <div class="form-group">
+                                    <label for="name">Name:</label>
+                                    <input type="text" id="name" name="name" required>
+                                  </div>
+                                  <div class="form-group">
+                                    <label for="region">Region:</label>
+                                    <input type="text" id="region" name="region" required>
+                                  </div>
+                                </div>
+                                <div class="form-row">
+                                  <div class="form-group">
+                                    <label for="institution">Institution:</label>
+                                    <input type="text" id="institution" name="institution" required>
+                                  </div>
+                                  <div class="form-group">
+                                    <label for="position">Position (Institution):</label>
+                                    <input type="text" id="position" name="position" required>
+                                  </div>
+                                </div>
+                                <div class="form-group">
+                                  <label for="transcript">Transcript of Records:</label>
+                                  <input type="file" id="transcript" name="transcript" required>
+                                </div>
+                              </div>
+                              
+                        </div> <input type="button" name="next" class="next action-button" value="Next" /> <input type="button" name="previous" class="previous action-button-previous" value="Previous" />
+                    </fieldset>
+                    <fieldset>
+                        <div class="form-card">
+                            <div class="row">
+                                <div class="col-7">
+                                    <h2 class="fs-title">Credential:</h2>
+                                </div>
+                                <div class="col-5">
+                                    <h2 class="steps">Step 3 - 4</h2>
+                                </div>
+                            </div> 
+                            <div class="form-container">
+                                <div class="form-group">
+                                <label for="credentials">Credentials (Provide two paragraphs about your credentials):</label>
+                                <textarea id="credentials" name="credentials" rows="10" maxlength="2500" placeholder="Type your credentials here..."></textarea>
+                              </div>
+                            </div>
+                        </div> <input type="button" name="next" class="next action-button" value="Submit" /> <input type="button" name="previous" class="previous action-button-previous" value="Previous" />
+                    </fieldset>
+                    <fieldset>
+                        <div class="form-card">
+                            <div class="row">
+                                <div class="col-7">
+                                    <h2 class="fs-title">Finish:</h2>
+                                </div>
+                                <div class="col-5">
+                                    <h2 class="steps">Step 4 - 4</h2>
+                                </div>
+                            </div> <br><br>
+                            <div class="finish">
+                           <p>Thank you for applying for candidacy. We appreciate your commitment to serve the PAPSAS INC. Please note that the election will officially begin on December 2, 2024. We wish you the best of luck in your campaign and look forward to seeing the positive impact you aim to make.</p>
+                        </div>
+                        </div>
+                        <input type="button" name="next" class="next action-button" value="Home"/>
+                    </fieldset>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script src="{% static 'papsas_app/js/candidacy.js' %}"></script>
+{% endblock %}
