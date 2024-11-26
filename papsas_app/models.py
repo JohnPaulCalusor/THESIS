@@ -66,6 +66,12 @@ provinces = [
     ('surigao_del_norte', 'Surigao del Norte')
 ]
 
+events = [
+    ('Interactive Youth Forum', 'Interactive Youth Forum'),
+    ('National Convention', 'National Convention'),
+    ('National Research Conference', 'National Research Conference')
+]
+
 
 
 class User(AbstractUser):
@@ -213,7 +219,7 @@ class Venue(models.Model):
 
 
 class Event(models.Model):
-    eventName = models.CharField(max_length=255, null=True)
+    eventName = models.CharField(max_length=255, choices=events, null=True)
     exclusive = models.BooleanField(default=True)
     startDate = models.DateField(null=True)
     endDate = models.DateField(null=True)

@@ -50,9 +50,16 @@
 
             <form method="post" action="{% url 'attendance_form' event_id %}">
                 {% csrf_token %}
-
-                {{ form.as_p }}
-
+                <div>
+                    <span> Attended:    </span> {{ form.attended }}
+                </div>
+                {% if today != event.endDate %}
+                <!-- Poll in the last attendance -->
+                    <div>
+                        <label for="next_location"> Suggest next location: </label>
+                        {{ form.next_location }}
+                    </div>
+                {% endif %}
                 <button type="submit" class="btn">Submit</button>
 
                 {% if error_message %}
