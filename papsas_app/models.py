@@ -147,9 +147,9 @@ class UserMembership(models.Model):
     membership = models.ForeignKey(MembershipTypes, on_delete=models.CASCADE)
     registrationDate = models.DateField(auto_now_add=True)
     expirationDate = models.DateField(null=True, blank=True)
-    receipt = models.ImageField(upload_to="papsas_app/reciept", null=False, blank=False) 
+    receipt = models.ImageField(upload_to="papsas_app/reciept", null=False, blank=False, default="papsas_app/reciept/receipt.png") 
     reference_number = models.BigIntegerField(null=False)
-    verificationID = models.ImageField(upload_to="papsas_app/verificationID", null=False, blank=False) 
+    verificationID = models.ImageField(upload_to="papsas_app/verificationID", null=False, blank=False, default="papsas_app/verificationID/valid_id.jpg") 
     status = models.CharField(max_length=10, choices=status, default='Pending')
 
     def __str__ (self):
@@ -233,7 +233,7 @@ class Event(models.Model):
     postStamp = models.DateTimeField(auto_now_add=True, null=True) #date na pinost
 
     def __str__(self):
-        return f'{self.id} - {self.eventName}'
+        return f'{self.id} - {self.eventName} {self.startDate.year} - Date : {self.startDate} to {self.endDate} - {self.exclusive}'
     
     def short_description(self):
         if len(self.description) > 100:
@@ -244,7 +244,7 @@ class Event(models.Model):
         return self.ratings.aggregate(Avg('rating'))['rating__avg']
 
     class Meta:
-        ordering = ['-id']
+        ordering = ['-startDate']
     
 class EventRating(models.Model):
     event = models.ForeignKey('Event', on_delete=models.CASCADE, related_name='ratings')
@@ -296,7 +296,9 @@ class EventRegistration(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name="activity")
     receipt = models.ImageField(upload_to="papsas_app/reciept", null=False) 
     reference_number = models.IntegerField(null = False)
-    registered_at = models.DateTimeField(auto_now_add=True, null=True)
+    # registered_at = models.DateTimeField(auto_now_add=True, null=True) remove after creating dummy
+    registered_at = models.DateTimeField(null=True)
+                                         
     status = models.CharField(max_length=10, choices=status, default='Pending')
 
     def __str__(self):
@@ -306,7 +308,7 @@ class Attendance(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='audience')
     event = models.ForeignKey(EventRegistration, on_delete=models.CASCADE, related_name='attendance')
     attended = models.BooleanField(default=False)
-    date_attended = models.DateField(auto_now_add=True)
+    date_attended = models.DateField(null=True, blank=True)
     next_location = models.CharField(choices=provinces, max_length=128, null= True)
 
     class Meta:
