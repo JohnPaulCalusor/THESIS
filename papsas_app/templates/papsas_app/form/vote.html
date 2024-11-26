@@ -11,103 +11,120 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"> 
 {% endblock %}
 {% block body %}
-    {% if ongoingElection %}
-    <div class="election-title">
-        <h2> {{ ongoingElection.startDate.year }} {{ ongoingElection.title }} Election</h2>
-        <p> {{ ongoingElection.startDate}} </p>
-    </div>
-    {% endif %}
-    <div class="candidate-title">
-        <h2>
-            Candidates
-        </h2>
-    </div>
+    {% if filling_period < today %}
+        {% if ongoingElection %}
+        <div class="election-title">
+            <h2> {{ ongoingElection.startDate.year }} {{ ongoingElection.title }} Election</h2>
+            <p> {{ ongoingElection.startDate}} </p>
+        </div>
+        {% endif %}
+        <div class="candidate-title">
+            <h2>
+                Candidates
+            </h2>
+        </div>
 
-    <div  class="cast-your-vote">
-        <h4>
-            Cast your Vote
-        </h4>
-        <div class="container">
-            <!-- vote form -->
-            <form method="post" id="voteForm"
-                hx-post="{% url 'vote' %}"
-                hx-confirm="Are you sure you want to submit your vote?"
+        <div  class="cast-your-vote">
+            <h4>
+                Cast your Vote
+            </h4>
+            <div class="container">
+                <!-- vote form -->
+                <form method="post" id="voteForm"
+                    hx-post="{% url 'vote' %}"
+                    hx-confirm="Are you sure you want to submit your vote?"
+                    hx-target="body"
+                    hx-swap="outerHTML"
+                >
+                    {% csrf_token %}
+                    {% if messages %}
+                    <ul class="messages">
+                        {% for message in messages %}
+                            <div class="alert alert-warning alert-dismissible fade show custom-alert" role="alert">
+                                <strong>{{ message }}</strong>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">X</button>
+                            </div>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                    <div id="voteContainer">
+                    {% if candidates %}
+                        {% for candidate in candidates %}
+                        <div>
+                            <input id="candidate-{{ candidate.id }}" type="checkbox" name="candidates" class="hidden-checkbox" value="{{ candidate.id }}" />
+                            <label for="candidate-{{candidate.id}}" class="candidate-label"> 
+                                <div class="candidateContainer">
+                                    <img src="{{ candidate.candidate.profilePic.url }}" alt="{{ candidate.candidate.first_name }} picture">
+                                    <p>
+                                        {{ candidate.candidate.first_name }} 
+                                    </p>
+                                    <a href="{% url 'profile' candidate.candidate.id %}" class="btn">
+                                        View Profile
+                                    </a>
+                                </div>
+                            </label>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                    <p>No candidates yet.</p>
+                    {% endif %}
+                    </div>
+                    {% if today < filling_period %}
+                        <button type="submit" class="cast-vote" disabled> Filling Candidacy Period </button>
+                    {% else  %}
+                        <button type="submit" class="cast-vote"> Cast Vote </button>
+                    {% endif %}
+                </form>
+
+            </div>
+        </div>
+        {% else %}
+        <div class="candidacy-container">
+            <h2>
+                Filling of Candidacy Period
+            </h2>
+            <!-- <div class="election-title-background "> -->
+            <div class="try">
+                <div>
+                    <p>
+                        <strong>Process for filing candidacy</strong>
+                    </p>
+                    <ul>
+                        <li>
+                            <span>Fill out the </span><a href="">candidacy form</a>
+                        </li>
+                    </ul>
+                </div>
+                <div>
+                    <p>
+                        <strong>
+                            For a member to declare his/her candidacy, one must have:
+                        </strong>
+                    </p>
+                    <ul>
+                        <li> 
+                            Attended at least two events {% if attended_event >= 2 %}<i class="fas fa-circle-check"></i>{% else %}<i class="fas fa-circle-xmark"></i>{% endif %}
+                        </li>
+                        <li> 
+                            Masteral Degree {% if user.tor %}<i class="fas fa-circle-check"></i>{% else %}<i class="fas fa-circle-xmark"></i>{% endif %}
+                        </li>
+                    </ul>
+                </div>
+            {% if attended_event >= 2 and user.tor and has_declared is None %}
+                <form method="post"
+                hx-post="{% url 'declare_candidacy' ongoingElection.id %}"
+                hx-confirm="Are you sure you want to submit your candidacy?"
                 hx-target="body"
                 hx-swap="outerHTML"
-            >
-                {% csrf_token %}
-                {% if messages %}
-                <ul class="messages">
-                    {% for message in messages %}
-                        <div class="alert alert-warning alert-dismissible fade show custom-alert" role="alert">
-                            <strong>{{ message }}</strong>
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">X</button>
-                        </div>
-                    {% endfor %}
-                </ul>
-                {% endif %}
-                <div id="voteContainer">
-                {% if candidates %}
-                    {% for candidate in candidates %}
-                    <div>
-                        <input id="candidate-{{ candidate.id }}" type="checkbox" name="candidates" class="hidden-checkbox" value="{{ candidate.id }}" />
-                        <label for="candidate-{{candidate.id}}" class="candidate-label"> 
-                            <div class="candidateContainer">
-                                <img src="{{ candidate.candidate.profilePic.url }}" alt="{{ candidate.candidate.first_name }} picture">
-                                <p>
-                                    {{ candidate.candidate.first_name }} 
-                                </p>
-                                <a href="{% url 'profile' candidate.candidate.id %}" class="btn">
-                                    View Profile
-                                </a>
-                            </div>
-                        </label>
-                    </div>
-                    {% endfor %}
-                {% else %}
-                <p>No candidates yet.</p>
-                {% endif %}
-                </div>
-                {% if today < filling_period %}
-                    <button type="submit" class="cast-vote" disabled> Filling Candidacy Period </button>
-                {% else  %}
-                    <button type="submit" class="cast-vote"> Cast Vote </button>
-                {% endif %}
-            </form>
-
+                >
+                    {% csrf_token %}
+                    <button type="submit" class="cast-vote">Declare Candidacy</button>
+                </form>
+            {% endif %}    
+            </div>
         </div>
-    </div>
-
-
-        <!-- candidacy form -->
-        <div class="election-title-background">
-        <h2>
-            Declaration of Candidacy
-        </h2>
-        <p>
-            For a member to declare his/her candidacy, one must have:
-        </p>
-        <ul>
-            <li> 
-                Attended at least two events {% if attended_event >= 2 %}<i class="fas fa-circle-check"></i>{% else %}<i class="fas fa-circle-xmark"></i>{% endif %}
-            </li>
-            <li> 
-                Masteral Degree {% if user.tor %}<i class="fas fa-circle-check"></i>{% else %}<i class="fas fa-circle-xmark"></i>{% endif %}
-            </li>
-        </ul>
-        {% if attended_event >= 2 and user.tor and has_declared is None %}
-            <form method="post"
-            hx-post="{% url 'declare_candidacy' ongoingElection.id %}"
-            hx-confirm="Are you sure you want to submit your candidacy?"
-            hx-target="body"
-            hx-swap="outerHTML"
-            >
-                {% csrf_token %}
-                <button type="submit" class="cast-vote">Declare Candidacy</button>
-            </form>
-        {% endif %}
-    
-    </div>
+        <!-- The filling period is True, show candidacy Form -->
+    {% endif %}
 
 </div>
     <!-- <input type="hidden" id="num-officers" value="{{ ongoingElection.numWinners }}"> -->

@@ -43,6 +43,29 @@ status = [
     ('Declined', 'Declined')
 ]
 
+provinces = [
+    ('aklan', 'Aklan'),
+    ('palawan', 'Palawan'),
+    ('benguet', 'Benguet'),
+    ('pangasinan', 'Pangasinan'),
+    ('metro_manila', 'Metro Manila'),
+    ('cebu', 'Cebu'),
+    ('davao_del_sur', 'Davao del Sur'),
+    ('pampanga', 'Pampanga'),
+    ('iloilo', 'Iloilo'),
+    ('negros_occidental', 'Negros Occidental'),
+    ('zambales', 'Zambales'),
+    ('cavite', 'Cavite'),
+    ('ilocos_sur', 'Ilocos Sur'),
+    ('la_union', 'La Union'),
+    ('batangas', 'Batangas'),
+    ('camiguin', 'Camiguin'),
+    ('bohol', 'Bohol'),
+    ('misamis_oriental', 'Misamis Oriental'),
+    ('albay', 'Albay'),
+    ('surigao_del_norte', 'Surigao del Norte')
+]
+
 
 
 class User(AbstractUser):
@@ -278,6 +301,7 @@ class Attendance(models.Model):
     event = models.ForeignKey(EventRegistration, on_delete=models.CASCADE, related_name='attendance')
     attended = models.BooleanField(default=False)
     date_attended = models.DateField(auto_now_add=True)
+    next_location = models.CharField(choices=provinces, max_length=128, null= True)
 
     class Meta:
         unique_together = ('user', 'event', 'date_attended')
