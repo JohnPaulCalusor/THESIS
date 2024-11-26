@@ -43,16 +43,22 @@
                 </p>
         {% else %}
         <h3>Attendance Form</h3>
-
-            <p>Event: {{ event.eventName }}</p>
-
-            <label for="user_first_name">Your Name: {{ request.user.first_name }}</label><br>
+        <div class="two-forms">
+            <div class="input-box">
+                Event: <p>{{ event.eventName }}</p>
+            </div>
+            <div class="input-box">
+                <label for="user_first_name">Name: <p>{{ request.user.first_name }}</p></label>
+            </div>
+        </div>
 
             <form method="post" action="{% url 'attendance_form' event_id %}">
                 {% csrf_token %}
-                <div>
-                    <span> Attended:    </span> {{ form.attended }}
-                </div>
+                
+                    <div class="input-box">
+                     Attended: <p>{{ form.attended }}</p>
+                    </div>
+                
                 {% if today != event.endDate %}
                 <!-- Poll in the last attendance -->
                     <div>

@@ -63,10 +63,20 @@ Election
                 <form method="post" hx-post="{% url 'election' %}"
                     hx-confirm="Are you sure you want to start an election?" hx-target="body" hx-swap="outerHTML">
                     {% csrf_token %}
-                    <input type="text" name="title" placeholder="Election Name" required>
-                    <input type="number" name="num_candidates" required placeholder="Number of Candidates">
-                    <label for="endDate"> End Date: </label>
-                    <input type="date" name="endDate" placeholder="End Date" required min="{{ day }}">
+                    
+                        <div class="input-box">
+                        <input type="text" name="title" placeholder="Election Name" required>
+                        </div>
+
+                        <div class="input-box">
+                            <input type="number" name="num_candidates" required placeholder="Number of Candidates">
+                        </div>
+                        <div class="input-box">
+                            
+                        <label for="endDate"> End Date: </label>
+                        <input type="date" name="endDate" placeholder="End Date" required min="{{ day }}">
+                    </div>
+
                     <button type="submit" class="submit-btn">Start Election</button>
                 </form>
                 {% else %}
