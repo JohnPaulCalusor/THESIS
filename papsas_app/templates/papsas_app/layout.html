@@ -116,7 +116,9 @@
                                         {% endif %}
                                     {% endfor %}
                                 {% else %}
-                                    <li class="nav__item"><a href="{% url 'become_member' %}" class="nav__link">Become a Member</a></li>
+                                    {% if user.occupation == 'Practitioner' %}
+                                        <li class="nav__item"><a href="{% url 'become_member' %}" class="nav__link">Become a Member</a></li>
+                                    {% endif %}
                                 {% endif %}
                                     <li class="nav__item dropdown"><a href="{% url 'event_list' %}" class="nav__link">Event</a>
                                     </li>

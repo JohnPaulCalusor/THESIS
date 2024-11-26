@@ -534,7 +534,7 @@ def vote(request):
             user_voted = None
         if user_voted:
             messages.error(request, 'You already voted for this election.')
-            return render(request, 'papsas_app/form/vote.html', {
+            return render(request, 'papsas_app/form/candidacy.html', {
                 'attended_event' : attended_event,  
                 'has_declared' : has_declared
             })
@@ -559,7 +559,7 @@ def vote(request):
         
         return redirect('vote')
     else:
-        return render(request, 'papsas_app/form/vote.html', {
+        return render(request, 'papsas_app/form/candidacy.html', {
             'candidates' : candidates,
             'attended_event' : attended_event,
             'ongoingElection' : ongoingElection,
@@ -772,10 +772,16 @@ def about(request):
     return render(request, 'papsas_app/view/about_us.html')
 
 def become_member(request):
-    memType = MembershipTypes.objects.all()
-    return render(request, 'papsas_app/view/become_member.html', {
-        'memType' : memType
-    })
+    try:
+        memType = MembershipTypes.objects.all()
+        if request.user.occupation == 'Practitioner':
+            return render(request, 'papsas_app/view/become_member.html', {
+                'memType' : memType
+            })
+        else:
+            return redirect('index')
+    except Exception as e:
+        return HttpResponse(f'Error - {e}')
 
 def news_offers(request):
     news_offers = NewsandOffers.objects.all().order_by('-id')
