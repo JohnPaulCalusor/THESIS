@@ -16,6 +16,9 @@ table {
     font-weight: 400;
     color: red;
 }
+.total_record p{
+    font-weight: 300;
+}
 .no-existing{
     text-align: center;
 }

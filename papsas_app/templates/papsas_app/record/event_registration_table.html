@@ -54,9 +54,11 @@
     </form>
 </div>
 <div class="table-wrapper">
-<div id="table-container">
-    Total Records: {{ table.rows|length }}
+<div id="total_record">
+    <p>Total Records: {{ table.rows|length }}
     {% render_table table %}
+    </p>
+
 
 </div>
 </div>
