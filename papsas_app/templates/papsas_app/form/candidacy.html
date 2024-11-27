@@ -111,22 +111,33 @@
                         </div> <input type="button" name="next" class="next action-button" value="Next" /> <input type="button" name="previous" class="previous action-button-previous" value="Previous" />
                     </fieldset>
                     <fieldset>
-                        <div class="form-card">
-                            <div class="row">
-                                <div class="col-7">
-                                    <h2 class="fs-title">Credential:</h2>
+                        <form action="" method="POST">
+                            {% csrf_token %} <!-- CSRF token for security if you're using Django -->
+                            <div class="form-card">
+                                <div class="row">
+                                    <div class="col-7">
+                                        <h2 class="fs-title">Credential:</h2>
+                                    </div>
+                                    <div class="col-5">
+                                        <h2 class="steps">Step 3 - 4</h2>
+                                    </div>
                                 </div>
-                                <div class="col-5">
-                                    <h2 class="steps">Step 3 - 4</h2>
+                                <div class="form-container">
+                                    <div class="form-group">
+                                        <label for="credentials">Credentials (Provide two paragraphs about your credentials):</label>
+                                        <textarea 
+                                            id="credentials" 
+                                            name="credentials" 
+                                            rows="10" 
+                                            maxlength="2500" 
+                                            placeholder="Type your credentials here..."
+                                            required></textarea>
+                                    </div>
                                 </div>
-                            </div> 
-                            <div class="form-container">
-                                <div class="form-group">
-                                <label for="credentials">Credentials (Provide two paragraphs about your credentials):</label>
-                                <textarea id="credentials" name="credentials" rows="10" maxlength="2500" placeholder="Type your credentials here..."></textarea>
-                              </div>
                             </div>
-                        </div> <input type="button" name="next" class="next action-button" value="Submit" /> <input type="button" name="previous" class="previous action-button-previous" value="Previous" />
+                            <input type="submit" name="next" class="next action-button" value="Submit" />
+                            <input type="button" name="previous" class="previous action-button-previous" value="Previous" />
+                        
                     </fieldset>
                     <fieldset>
                         <div class="form-card">
@@ -144,6 +155,7 @@
                         </div>
                         <input type="button" name="next" class="next action-button" value="Home"/>
                     </fieldset>
+                </form>
                 </form>
             </div>
         </div>
