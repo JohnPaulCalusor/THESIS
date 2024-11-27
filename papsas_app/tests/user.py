@@ -1,8 +1,3 @@
-import os
-import django
-
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'papsas.settings')
-django.setup()
 #  Create 1000 dummy account
 import random
 from django.utils import timezone
@@ -18,7 +13,7 @@ institutions = [
     'Mindanao State University', 'Cebu Normal University', 'Pampanga Agricultural College', 'Bicol University', 
     'Western Mindanao State University', 'Technological University of the Philippines', 
     'Lyceum of the Philippines University', 'Batangas State University', 'Central Philippine University', 
-    'Silliman University', 'Xavier University', 'University of San Carlos', 'Pamantasan ng Lungsod ng Maynila'
+    'Silliman University', 'Xavier University', 'University of San Carlos', 'Pamantasan ng Lungsod ng Maynila','Batangas State University'
 ]
 
 # List of regions
@@ -116,36 +111,23 @@ from papsas_app.models import User, UserMembership, MembershipTypes
 import random
 from datetime import timedelta, date
 from faker import Faker
-
 fake=Faker()
-# Membership types
 membership_types = {
     1: {'type': 'Regular', 'duration': 1},  # Duration in years
     2: {'type': 'Special', 'duration': 2},
     3: {'type': 'Affiliate', 'duration': 2},
     4: {'type': 'Lifetime', 'duration': 100}
 }
-
-# Status options
-status_choices = ['Approved', 'Pending', 'Declined']
-
-# Get users with IDs between 1875 and 2887
-users = User.objects.filter(id__gte=1875, id__lte=2887)
-
-# Get all membership types
+status_choices = ['Approved', 'Declined']
+users = User.objects.filter(id__gte=47, id__lte=1441, email_verified = True)
 membership_regular = MembershipTypes.objects.get(type="Regular")
 membership_special = MembershipTypes.objects.get(type="Special")
 membership_affiliate = MembershipTypes.objects.get(type="Affiliate")
 membership_lifetime = MembershipTypes.objects.get(type="Lifetime")
-
-# Iterate over the users and create UserMembership records
 for user in users:
-    # Check if the user has expired memberships
     last_membership = UserMembership.objects.filter(user=user).last()
     if last_membership and last_membership.expirationDate > date.today():
-        continue  # Skip if there's an active membership
-
-    # Select a random membership type
+        continue
     membership_id = random.choice(list(membership_types.keys()))
     membership_type = membership_types[membership_id]
     membership = None
@@ -157,22 +139,12 @@ for user in users:
         membership = membership_affiliate
     elif membership_id == 4:
         membership = membership_lifetime
-
-    # Calculate expiration date based on membership duration
-    registration_date = fake.date_this_decade(before_today=True, after_today=False)  # Random registration date
+    registration_date = fake.date_this_decade(before_today=True, after_today=False)
     expiration_date = registration_date + timedelta(days=365 * membership_type['duration'])
-
-    receipt = 'papsas_app/reciept/receipt_cLFzPSW.png'
-    verificationID = 'papsas_app/verificationID/valid_id_InrPyVg.jpg'
-
-
-    # Generate a random reference number
+    receipt = 'papsas_app/reciept/receipt.png'
+    verificationID = 'papsas_app/verificationID/valid_id.jpg'
     reference_number = random.randint(100000, 999999)
-
-    # Select a random status
     status = random.choice(status_choices)
-
-    # Create the UserMembership record
     user_membership = UserMembership(
         user=user,
         membership=membership,
@@ -181,8 +153,6 @@ for user in users:
         reference_number=reference_number,
         status=status
     )
-
-    # Save the record
     user_membership.save()
 
 print("User memberships created successfully.")
@@ -198,35 +168,25 @@ from papsas_app.models import User, Event, EventRegistration
 import random
 from faker import Faker
 from datetime import datetime
-
 fake = Faker()
-
 events = Event.objects.all()
-status_choices = ['Approved', 'Pending', 'Declined']
-receipt_path = 'papsas_app/reciept/receipt_cLFzPSW.png'
-
-users = User.objects.filter(id__gte=1875, id__lte=2887)
+status_choices = ['Approved', 'Declined']
+receipt_path = 'papsas_app/reciept/receipt.png'
+users = User.objects.filter(id__gte=1, id__lte=1441)
 total_registrations = 0
-
 for _ in range(1000):
     event = random.choice(events)
-
     if event.exclusive:
         eligible_users = users.filter(occupation='Practitioner')
     else:
         eligible_users = users
-
     if eligible_users.exists():
         user = random.choice(eligible_users)
         reference_number = random.randint(100000, 999999)
-
         registration_status = random.choice(status_choices)
-
-        # Calculate the range for registered_at
         start_date = event.startDate
         one_month_before = start_date - timedelta(days=30)
         registered_at = fake.date_time_between(start_date=one_month_before, end_date=start_date)
-
         registration = EventRegistration(
             user=user,
             event=event,
@@ -235,11 +195,8 @@ for _ in range(1000):
             registered_at=registered_at,
             status=registration_status
         )
-
         registration.save()
-
         total_registrations += 1
-
 print(f"{total_registrations} EventRegistration records created successfully.")
 
 
@@ -269,3 +226,33 @@ for _ in range(1100):
     attendance.save()
     total_attendance += 1
 print(f"{total_attendance} Attendance records created successfully.")
+
+from papsas_app.models import User, Event, EventRegistration, EventRating
+import random
+from faker import Faker
+from datetime import timedelta
+fake = Faker()
+registrations = EventRegistration.objects.filter(status="Approved")
+total_ratings = 0
+for _ in range(500):
+    registration = random.choice(registrations)
+    if EventRating.objects.filter(event=registration.event, user=registration.user).exists():
+        continue
+    rating = random.randint(3, 5)
+    comment = fake.sentence(nb_words=10) if random.choice([True, False]) else None
+    end_date = registration.event.endDate
+    created_at = fake.date_time_between(start_date=end_date + timedelta(days=1), end_date=end_date + timedelta(days=30))
+    updated_at = created_at
+    event_rating = EventRating(
+        event=registration.event,
+        user=registration.user,
+        rating=rating,
+        comment=comment,
+        created_at=created_at,
+        updated_at=updated_at,
+    )
+    event_rating.save()
+    total_ratings += 1
+    if total_ratings >= 500:
+        break
+print(f"{total_ratings} EventRating records created successfully.")

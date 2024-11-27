@@ -511,7 +511,7 @@ def vote(request):
     user = request.user
         
     ongoingElection = Election.objects.get( electionStatus = True )
-    filling_period = ongoingElection.startDate + timedelta(days=7)
+    filing_period = ongoingElection.startDate + timedelta(days=7)
     attended_event = Attendance.objects.filter( user = user, attended = True ).count()
     # candidates = Candidacy.objects.filter( election = ongoingElection )
     candidates = Candidacy.objects.filter(election=ongoingElection).annotate(vote_count=Count('nominee'))
@@ -566,7 +566,7 @@ def vote(request):
             'votes' : Vote.objects.filter( voterID = user, election = ongoingElection),
             'user' : request.user,
             'has_declared' : has_declared,
-            'filling_period' : filling_period
+            'filing_period' : filing_period
         })
 
 @login_required(login_url='/login')
@@ -773,13 +773,19 @@ def about(request):
 
 def become_member(request):
     try:
+        user = request.user
         memType = MembershipTypes.objects.all()
-        if request.user.occupation == 'Practitioner':
+        if user.is_authenticated:
+            if request.user.occupation == 'Practitioner':
+                return render(request, 'papsas_app/view/become_member.html', {
+                    'memType' : memType
+                })
+            else:
+                return redirect('index')
+        else:
             return render(request, 'papsas_app/view/become_member.html', {
                 'memType' : memType
-            })
-        else:
-            return redirect('index')
+            })          
     except Exception as e:
         return HttpResponse(f'Error - {e}')
 
@@ -1149,15 +1155,18 @@ def compose_venue(request):
 # for the meantime, open for all
 @login_required(login_url='/login')
 def event_list(request):
-    events = Event.objects.all()
+    try:
+        events = Event.objects.all()
 
-    paginator = Paginator(events, 5) 
-    page_number = request.GET.get('page')
-    events_page = paginator.get_page(page_number)
+        paginator = Paginator(events, 5) 
+        page_number = request.GET.get('page')
+        events_page = paginator.get_page(page_number)
 
-    return render(request, 'papsas_app/view/event_view.html', {
-        'events': events_page,
-    })
+        return render(request, 'papsas_app/view/event_view.html', {
+            'events': events_page,
+        })
+    except Exception as e:
+        return HttpResponse(f'Error - {e}')
 
 # view all event with its attendance and registration records
 

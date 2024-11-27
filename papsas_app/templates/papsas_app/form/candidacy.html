@@ -19,7 +19,7 @@
         <div class="col-11 col-sm-10 col-md-10 col-lg-6 col-xl-5 text-center p-0 mt-3 mb-2">
             <div class="px-0 pt-4 pb-0 mt-3 mb-3">
                 <h2 id="heading">FILLING OF CANDIDACY PERIOD</h2>
-                <p>November 26, 2024 - December 1, 2024</p>
+                <p>{{ ongoingElection.startDate }} - {{filing_period}}</p>
                 <form id="msform">
                     <!-- progressbar -->
                     <ul id="progressbar">
@@ -54,11 +54,11 @@
                                     <tbody>
                                         <tr>
                                             <td>Attended at least two events</td>
-                                            <td class="icon"></td> <!-- Check icon -->
+                                            <td class="icon">{% if attended_event >= 2 %}<i class="fas fa-circle-check"></i>{% else %}<i class="fas fa-circle-xmark"></i>{% endif %}</td> <!-- Check icon -->
                                         </tr>
                                         <tr>
                                             <td>Masteral Degree</td>
-                                            <td class="icon"></td> <!-- X icon -->
+                                            <td class="icon">{% if user.tor %}<i class="fas fa-circle-check"></i>{% else %}<i class="fas fa-circle-xmark"></i>{% endif %}</td> <!-- X icon -->
                                         </tr>
                                     </tbody>
                                 </table>
@@ -66,7 +66,12 @@
                                     <a href="link-to-guidelines.html" target="_blank" class="guidelines-link">Click here to read the full guidelines for filling candidacy.</a>
                                 </p>
                             </div>
-                        </div> <input type="button" name="next" class="next action-button" value="Next" />
+                        </div> 
+                        {% if attended_event >= 2 and user.tor and has_declared is None %}
+                            <input type="button" name="next" class="next action-button" value="Next" />
+                        {% else %}
+                            <input type="button" name="next" class="next action-button" value="Next" />
+                        {% endif %}
                     </fieldset>
                     <fieldset>
                         <div class="form-card">
@@ -82,26 +87,25 @@
                                 <div class="form-row">
                                   <div class="form-group">
                                     <label for="name">Name:</label>
-                                    <input type="text" id="name" name="name" required>
+                                    <input type="text" id="name" name="name" value='{{ request.user.first_name }} {{ request.user.last_name }}' required disabled>
                                   </div>
                                   <div class="form-group">
                                     <label for="region">Region:</label>
-                                    <input type="text" id="region" name="region" required>
+                                    <input type="text" id="region" name="region" value='{{ request.user.region }}' disabled required>
                                   </div>
                                 </div>
                                 <div class="form-row">
                                   <div class="form-group">
                                     <label for="institution">Institution:</label>
-                                    <input type="text" id="institution" name="institution" required>
-                                  </div>
-                                  <div class="form-group">
-                                    <label for="position">Position (Institution):</label>
-                                    <input type="text" id="position" name="position" required>
+                                    <input type="text" id="institution" name="institution" value='{{ request.user.institution }}' required disabled>
                                   </div>
                                 </div>
                                 <div class="form-group">
-                                  <label for="transcript">Transcript of Records:</label>
-                                  <input type="file" id="transcript" name="transcript" required>
+                                    <label for="transcript">Transcript of Records:</label>
+                                    <input type="file" id="transcript" name="transcript" required>
+                                    {% if request.user.tor %}
+                                        <img src='{{ request.user.tor.url }}' alt="User's TOR">
+                                    {% endif %}
                                 </div>
                               </div>
                               

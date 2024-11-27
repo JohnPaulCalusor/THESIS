@@ -69,7 +69,8 @@ provinces = [
 events = [
     ('Interactive Youth Forum', 'Interactive Youth Forum'),
     ('National Convention', 'National Convention'),
-    ('National Research Conference', 'National Research Conference')
+    ('National Research Conference', 'National Research Conference'),
+    ('Volunteerism Forum', 'Volunteerism Forum')
 ]
 
 
@@ -181,6 +182,7 @@ class Candidacy(models.Model):
     candidate = models.ForeignKey(User, on_delete=models.CASCADE, related_name="candidate")
     candidacyStatus = models.BooleanField(null=True, default=True)
     election = models.ForeignKey(Election, on_delete=models.CASCADE, related_name="elections")
+    credentials = models.TextField(max_length=9999, null=True)
     
     def __str__(self):
         return f"{self.candidate.first_name} running for Election {self.election.title} {self.election.startDate.year}"
@@ -251,8 +253,8 @@ class EventRating(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     rating = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
     comment = models.TextField(blank=True, null=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add= True, null=True)
+    updated_at = models.DateTimeField(auto_now_add= True, null=True)
 
     class Meta:
         unique_together = ('event', 'user')
@@ -296,9 +298,7 @@ class EventRegistration(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name="activity")
     receipt = models.ImageField(upload_to="papsas_app/reciept", null=False) 
     reference_number = models.IntegerField(null = False)
-    # registered_at = models.DateTimeField(auto_now_add=True, null=True) remove after creating dummy
-    registered_at = models.DateTimeField(null=True)
-                                         
+    registered_at = models.DateTimeField(auto_now_add=True, null=True)
     status = models.CharField(max_length=10, choices=status, default='Pending')
 
     def __str__(self):
@@ -308,7 +308,7 @@ class Attendance(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='audience')
     event = models.ForeignKey(EventRegistration, on_delete=models.CASCADE, related_name='attendance')
     attended = models.BooleanField(default=False)
-    date_attended = models.DateField(null=True, blank=True)
+    date_attended = models.DateField(auto_now_add=True, null=True)
     next_location = models.CharField(choices=provinces, max_length=128, null= True)
 
     class Meta:
