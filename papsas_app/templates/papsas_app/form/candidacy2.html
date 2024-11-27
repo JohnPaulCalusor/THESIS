@@ -1,0 +1,161 @@
+{% extends 'papsas_app/layout.html' %}
+
+{% load static %}
+
+{% block title %}
+Candidacy
+{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{% static 'papsas_app/css/candidacy.css' %}">
+<link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.0.3/css/font-awesome.css'>
+<link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css'>
+
+<style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: #f4f4f4;
+    }
+    .container {
+      max-width: 600px;
+      margin-top:100px;
+      padding: 20px;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      display: none;
+    }
+    .container.active {
+      display: block;
+    }
+    .buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+    }
+    button {
+      padding: 10px 20px;
+      border: none;
+      background: #007bff;
+      color: #fff;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+    }
+    table th, table td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+    table th {
+      background-color: #f4f4f4;
+    }
+  </style>
+
+{% endblock %}
+
+{% block body %}
+<div class="container active" id="step1">
+    <h2>Step 1: Requirements</h2>
+    <p>For a member to declare his/her candidacy, one must have:</p>
+    <p>{{ ongoingElection.startDate }} - {{filing_period}}</p>
+    <table>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Requirement</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>1</td>
+                <td>Must have attended at least 2 events.</td>
+                <td>{% if attended_event >= 2 %}<i class="fas fa-circle-check"></i>{% else %}<i class="fas fa-circle-xmark"></i>{% endif %}</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>Must have Masteral Degree</td>
+                <td>{% if attended_event >= 2 %}<i class="fas fa-circle-check"></i>{% else %}<i class="fas fa-circle-xmark"></i>{% endif %}</td>
+            </tr>
+        </tbody>
+    </table>
+    <div class="buttons">
+        <button onclick="nextStep(2)">Next</button>
+    </div>
+</div>
+
+<!-- Step 2: Details Container -->
+<div class="container" id="step2">
+    <h2>Step 2: Candidacy Details</h2>
+    <p>Please confirm your information:</p>
+    <ul>
+        <label for="name">Name:</label>
+        <input type="text" name="name" value="{{ user.first_name }} {{user.last_name}}" disabled>
+        <label for="region">Region:</label>
+        <input type="text" value="{{ user.region }}" disabled>
+        <label for="institution">Institution:</label>
+        <input type="text" value="{{ user.institution }}" disabled>
+    </ul>
+    <img src="{{ user.tor.url }}" alt="User's TOR">
+    <div class="buttons">
+        <button onclick="previousStep(1)">Back</button>
+        <button onclick="nextStep(3)">Next</button>
+    </div>
+</div>
+
+<!-- Step 3: Credentials Container -->
+<div class="container" id="step3">
+    <h2>Step 3: Credentials</h2>
+    <p>Provide your credentials here:</p>
+    <form method="post" action="{% url 'declare_candidacy' ongoingElection.id %}">
+        {% csrf_token %}
+        <div>
+            <label for="credentials">Credentials:</label>
+            <textarea id="credentials" name="credentials" required></textarea>
+        </div>
+
+        <div class="buttons">
+            <button onclick="previousStep(2)">Back</button>
+            <button type="submit">Submit</button>
+        </div>
+    </form>
+</div>
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <div class="alert alert-warning alert-dismissible fade show custom-alert" role="alert">
+        <strong>{{ message }}</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">X</button>
+    </div>
+    {% endfor %}
+</ul>
+{% endif %}
+{% endblock %}
+
+{% block script %}
+<script>
+  function nextStep(step) {
+    document.querySelectorAll('.container').forEach(container => container.classList.remove('active'));
+    document.getElementById(`step${step}`).classList.add('active');
+  }
+
+  function previousStep(step) {
+    document.querySelectorAll('.container').forEach(container => container.classList.remove('active'));
+    document.getElementById(`step${step}`).classList.add('active');
+  }
+
+  function restart() {
+    nextStep(1);
+  }
+</script>
+{% endblock %}
