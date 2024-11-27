@@ -2412,3 +2412,27 @@ def get_top_3_events(request):
     ]
 
     return JsonResponse(data, safe=False)
+
+def attendance_chart_data(request, event_type):
+    # Get the latest event of the specified type
+    latest_event = Event.objects.filter(eventName=event_type).order_by('-startDate').first()
+    
+    # Ensure the event exists
+    if not latest_event:
+        return JsonResponse({"error": "Event not found"}, status=404)
+    
+    # Get top 5 `next_location` values for the filtered event
+    top_locations = Attendance.objects.filter(event__event=latest_event) \
+        .values('next_location') \
+        .annotate(count=Count('next_location')) \
+        .order_by('-count')[:5]
+    
+    # Prepare data for Chart.js
+    labels = [location['next_location'] for location in top_locations]
+    data = [location['count'] for location in top_locations]
+    
+    return JsonResponse({
+        "labels": labels,
+        "data": data,
+        "event_name": latest_event.eventName
+    })

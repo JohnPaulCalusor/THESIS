@@ -94,8 +94,15 @@
                 <canvas id="attendanceOverTimeChart"></canvas>
             </div>
             <div class="chart-container">
-                <h3>Top 3 Most Attended Events</h3>
-                <canvas id="top3EventsChart"></canvas>
+                <h3>Attendance Chart for <span id="event-name"></span></h3>
+                <label for="event-filter">Filter by Event:</label>
+                <select id="event-filter">
+                    <option value="Interactive Youth Forum">Interactive Youth Forum</option>
+                    <option value="National Convention">National Convention</option>
+                    <option value="National Research Conference">National Research Conference</option>
+                    <option value="Volunteerism Forum">Volunteerism Forum</option>
+                </select>
+                <canvas id="nextLocationChart"></canvas>                
             </div>
         </div>
         <div class="region">

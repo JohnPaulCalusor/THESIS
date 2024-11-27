@@ -106,7 +106,7 @@ urlpatterns = [
     path('attendance-by-day/', views.attendance_by_day, name='attendance_day'),
     path('capacity-utilization/', views.capacity_utilization, name='capacity_utilization'),
     path('top_3_events/', views.get_top_3_events, name='top_3_events'),
-
+    path('attendance_chart_data/<str:event_type>/', views.attendance_chart_data, name='attendance_chart_data'),
     # table
     path('table/user/', views.UserListView.as_view(), name='user_table'),
     path('table/membership/', views.MembershipListView.as_view(), name="membership_table"),

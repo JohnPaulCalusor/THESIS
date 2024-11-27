@@ -124,8 +124,75 @@ function capacity_utilization(){
     .catch(error => console.error('Error fetching capacity utilization data:', error));
 }
 
+function next_location(){
+// Reference to the dropdown and chart container
+const eventFilter = document.getElementById("event-filter");
+const eventName = document.getElementById("event-name");
+const ctx = document.getElementById("nextLocationChart").getContext("2d");
+let chartInstance; // Store Chart.js instance for updates
+
+// Function to fetch and update chart data
+function updateChart(eventType) {
+    fetch(`/attendance_chart_data/${encodeURIComponent(eventType)}/`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.error) {
+                console.error(data.error);
+                return;
+            }
+
+            // Update the event name
+            eventName.textContent = data.event_name;
+
+            // Update the chart
+            if (chartInstance) {
+                chartInstance.destroy(); // Destroy the old chart before creating a new one
+            }
+
+            chartInstance = new Chart(ctx, {
+                type: "bar",
+                data: {
+                    labels: data.labels, // Locations
+                    datasets: [{
+                        label: "Attendance Count",
+                        data: data.data, // Counts
+                        backgroundColor: "rgba(75, 192, 192, 0.2)",
+                        borderColor: "rgba(75, 192, 192, 1)",
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { display: false },
+                        title: { display: true, text: "Top 5 Locations for Event Attendance" }
+                    },
+                    scales: {
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+        })
+        .catch(error => console.error("Error loading chart data:", error));
+}
+
+// Event listener for dropdown change
+eventFilter.addEventListener("change", (e) => {
+    updateChart(e.target.value);
+});
+
+// Initialize chart with the first event type
+updateChart(eventFilter.value);
+}
+
 document.addEventListener('DOMContentLoaded', function(){
     attendance_day()
     capacity_utilization()
     getTop3Events()
+    next_location()
 })
