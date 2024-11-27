@@ -142,7 +142,10 @@ p{
 #progressbar {
     margin-bottom: 30px;
     overflow: hidden;
-    color: lightgrey
+    color: lightgrey;
+    display: flex;
+    justify-content: center;
+    margin-left: -2rem;
 }
 
 #progressbar .active {
