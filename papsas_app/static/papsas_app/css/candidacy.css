@@ -220,8 +220,19 @@ p{
     width: 100%;
     object-fit: cover
 }
+.form-group p{
+    text-align: left;
+    border: 1px solid #ccc; /* Add a border similar to an input box */ 
+    padding: 8px 12px; /* Add padding to make it look like an input box */ /* Optional: subtle shadow for depth */
+    margin: 8px 0; /* Space between paragraphs */
+    display: inline-block; /* Inline block for better control of width */
+    width: 100%; /* Optional: set to match input width */
+    font-family: Arial, sans-serif; /* Match font style with input */
+}
+.form-group label{
+    font-weight: bold;
 
-
+}
 .container {
     max-width: 800px;
     margin: 20px auto;

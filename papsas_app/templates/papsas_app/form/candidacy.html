@@ -87,22 +87,21 @@
                                 <div class="form-row">
                                   <div class="form-group">
                                     <label for="name">Name:</label>
-                                    <input type="text" id="name" name="name" value='{{ request.user.first_name }} {{ request.user.last_name }}' required disabled>
+                                    <p>{{ request.user.first_name }} {{ request.user.last_name }}</p>
                                   </div>
                                   <div class="form-group">
                                     <label for="region">Region:</label>
-                                    <input type="text" id="region" name="region" value='{{ request.user.region }}' disabled required>
+                                    <p>{{ request.user.region }}</p>
                                   </div>
                                 </div>
                                 <div class="form-row">
                                   <div class="form-group">
                                     <label for="institution">Institution:</label>
-                                    <input type="text" id="institution" name="institution" value='{{ request.user.institution }}' required disabled>
+                                    <p>{{ request.user.institution }}</p>
                                   </div>
                                 </div>
                                 <div class="form-group">
                                     <label for="transcript">Transcript of Records:</label>
-                                    <input type="file" id="transcript" name="transcript" required>
                                     {% if request.user.tor %}
                                         <img src='{{ request.user.tor.url }}' alt="User's TOR">
                                     {% endif %}
