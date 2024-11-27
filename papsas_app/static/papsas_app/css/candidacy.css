@@ -45,6 +45,14 @@ p{
 .form-card{
     text-align: center;
 }
+.form-card-finish {
+    text-align: center;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add a subtle shadow */
+    background-color: #fff; /* Optional: ensure a white background for contrast */
+}
+
 
 #msform fieldset:not(:first-of-type){
     display: none;
@@ -255,7 +263,12 @@ p{
     color: #ff0000;
     text-align: left;
 }
-
+.best {
+    display: flex;
+    text-align: right;
+    justify-content: right;
+    font-weight: 600;
+}
 /* Table styling */
 .requirements-table {
     width: 100%;
@@ -360,7 +373,6 @@ p{
     text-align: justify;
     color: #000000;
     margin-top: -30px;
-    margin-bottom: 50px;
     padding: 20px;
   }
   .voting-title h2{
