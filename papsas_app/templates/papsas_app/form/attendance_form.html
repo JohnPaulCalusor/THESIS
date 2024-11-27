@@ -59,7 +59,7 @@
                      Attended: <p>{{ form.attended }}</p>
                     </div>
                 
-                {% if today != event.endDate %}
+                {% if today == event.endDate %}
                 <!-- Poll in the last attendance -->
                     <div>
                         <label for="next_location"> Suggest next location: </label>

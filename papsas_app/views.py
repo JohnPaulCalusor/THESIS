@@ -692,11 +692,12 @@ def attendance_form(request, event_id):
                     messages.success(request, 'Attendance is saved. Enjoy the event.')
                     return redirect('index')
                 else:
-                    messages.error(request, 'Invalid attendance.')
+                    for field, errors in form.errors.items():
+                        for error in errors:
+                            messages.error(request, f"Error in {field}: {error}")
             else:
                 messages.error(request, f'{event.eventName} has already ended.')
                 return redirect('attendance_form', event_id=event_id)
-
 
             return render(request, 'papsas_app/form/attendance_form.html', {
                 'form': form, 
@@ -753,7 +754,7 @@ def event_registration_view(request, event_id):
             try:
                 form.save()  # No need for commit=False here
                 messages.success(request, "You have successfully registered for the event.")
-                return redirect( 'event_registration_table', event_id = event.id )
+                return redirect( 'user_event_registration_table' )
             except IntegrityError:
                 messages.error(request, "You are already registered for this event.")
             except ValidationError as e:

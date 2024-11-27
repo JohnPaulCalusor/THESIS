@@ -309,7 +309,7 @@ class Attendance(models.Model):
     event = models.ForeignKey(EventRegistration, on_delete=models.CASCADE, related_name='attendance')
     attended = models.BooleanField(default=False)
     date_attended = models.DateField(auto_now_add=True, null=True)
-    next_location = models.CharField(choices=provinces, max_length=128, null= True)
+    next_location = models.CharField(choices=provinces, max_length=128, null= True, blank=True)
 
     class Meta:
         unique_together = ('user', 'event', 'date_attended')
