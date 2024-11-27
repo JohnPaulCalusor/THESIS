@@ -415,7 +415,7 @@ const updateTiles = async () => {
             const regionCtx = document.getElementById('RegionChart').getContext('2d');
             const eventPriceVsAttendanceCtx = document.getElementById('eventPriceVsAttendanceChart').getContext('2d');
 
-            membershipChart = await fetchData('{% url "get_membership_data" %}', membershipCtx, 'bar', membershipChart);
+            membershipChart = await fetchData('{% url "get_membership_data" %}', membershipCtx, 'doughnut', membershipChart);
             attendanceOverTimeChart = await fetchAttendanceOverTimeData('{% url "get_attendance_over_time_data" %}', attendanceOverTimeCtx);
             membershipGrowthChart = await fetchMembershipGrowthData('{% url "get_membership_growth" %}', membershipGrowthCtx);
             regionChart = await fetchData('{% url "get_user_distribution_by_region" %}', regionCtx, 'bar', regionChart);

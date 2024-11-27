@@ -1478,6 +1478,7 @@ def get_attendance_over_time_data(request):
         .annotate(month=TruncMonth('date_attended'))
         .values('month')
         .annotate(count=Count('id'))
+        .order_by('month')
         .values_list('month', 'count')
     )
     
