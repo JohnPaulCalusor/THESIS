@@ -1474,10 +1474,16 @@ def get_attendance_over_time_data(request):
     data = {"labels": [], "values": []}
     
     attendances = Attendance.objects.filter(attended=True)
-    attendances_by_day = attendances.annotate(day=TruncDay('date_attended')).values('day').annotate(count=Count('id')).values_list('day', 'count')
+    attendances_by_year = (
+        attendances
+        .annotate(year=TruncYear('date_attended'))
+        .values('year')
+        .annotate(count=Count('id'))
+        .values_list('year', 'count')
+    )
     
-    for day, count in attendances_by_day:
-        data["labels"].append(day.strftime("%Y-%m-%d"))
+    for year, count in attendances_by_year:
+        data["labels"].append(year.strftime("%Y"))
         data["values"].append(count)
     
     return JsonResponse(data)
