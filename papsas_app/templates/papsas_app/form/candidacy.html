@@ -13,6 +13,7 @@
 {% endblock %}
 
 {% block body %}
+{% if filing_period > today %}
 <section class="candidacy-form">
 <div class="container-fluid">
     <div class="row justify-content-center">
@@ -22,11 +23,13 @@
                 <p>{{ ongoingElection.startDate }} - {{filing_period}}</p>
                 <div id="msform">
                     <!-- progressbar -->
-                    <ul id="progressbar">
-                        <li class="active" id="account"><strong>Requirement</strong></li>
-                        <li id="personal"><strong>Candicacy Form</strong></li>
-                        <li id="payment"><strong>Credentials</strong></li>
-                    </ul>
+                    <div class="progress-container">
+                         <ul id="progressbar">
+                             <li class="active" id="account"><strong>Requirement</strong></li>
+                             <li id="personal"><strong>Candicacy Form</strong></li>
+                             <li id="payment"><strong>Credentials</strong></li>
+                         </ul>
+                    </div>
                     <div class="progress">
                         <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuemin="0" aria-valuemax="100"></div>
                     </div> <br> <!-- fieldsets -->
@@ -69,7 +72,7 @@
                         {% if attended_event >= 2 and user.tor and has_declared is None %}
                             <input type="button" name="next" class="next action-button" value="Next" />
                         {% else %}
-                            <input type="button" name="next" class="next action-button" value="Next" />
+                            <input type="button" name="next" class="next action-button" value="Next" disabled />
                         {% endif %}
                     </fieldset>
                     <fieldset>
@@ -145,6 +148,7 @@
     </div>
 </div>
 </section>
+{% else %}
 <section class="voting-process">
     <div class="voting-title">
         <h2>PAPSAS ELECTION 2024</h2>
@@ -191,6 +195,7 @@
         </div>
     </div>
 </section>
+{% endif %}
 <div id="guidelinesModal" class="modal">
     <div class="modal_content">
         <span class="close" onclick="closeModal()">&times;</span>

@@ -2277,21 +2277,29 @@ def upload_tor(request, id):
             return redirect('profile', id = id)
         
 def declare_candidacy(request, id):
-    user = request.user
-    election = Election.objects.get( id = id )
-    attended_event = Attendance.objects.filter( user = user, attended = True ).count()
-    if request.method == 'POST':
-        if attended_event >= 2 and user.tor:
-            # Create a new Candidacy record
-            candidacy = Candidacy(
-                candidate=user,
-                election=election
-            )
-            candidacy.save()
-            messages.success(request, 'Candidacy submitted successfully.')
-            return redirect('vote')
-        else:
-            messages.error(request, 'You must attend at least 2 events and have your TOR to declare your candidacy.')
+    try:
+        user = request.user
+        election = Election.objects.get( id = id )
+        attended_event = Attendance.objects.filter( user = user, attended = True ).count()
+        if request.method == 'POST':
+            try:
+                if attended_event >= 2 and user.tor:
+                    candidacy = Candidacy(
+                        candidate=user,
+                        election=election,
+                        credentials = request.POST.get('credentials')
+                    )
+                    candidacy.save()
+                    messages.success(request, 'Candidacy submitted successfully.')
+                    return redirect('vote')
+                else:
+                    messages.error(request, 'You must attend at least 2 events and have your TOR to declare your candidacy.')
+                    return redirect('vote')
+            except Exception as e:
+                return HttpResponse(f'Error - {e}')
+    except Exception as e:
+        return HttpResponse(f'Error - {e}')
+
 
 def box_plot(request, event_id = None):
     if event_id:
