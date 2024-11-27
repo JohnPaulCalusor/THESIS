@@ -28,7 +28,7 @@ h1{
     margin-bottom: 10px;
 }
 p{
-    text-align: center;
+    text-align: left;
     font-weight: 300;
     margin-bottom: 10px;
 }
@@ -36,7 +36,9 @@ h3 {
     text-align: center;
     color: #ff0000;
     font-size: 24px;
-    margin-bottom: 15px;
+    margin-bottom: 30px;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 15px;
 }
 
 .two-forms {

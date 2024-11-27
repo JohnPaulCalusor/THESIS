@@ -45,8 +45,8 @@
         <p> Please contact us for more information. You may try to register again. </p>
         <form action="{% url 'membership_registration' membership %}" method="post" enctype="multipart/form-data">
             {% csrf_token %}
-            <div class="form-group">
-                <div class="form-group label">
+            <div class="two-forms">
+                <div class="input-box">
                     {{form}}
                 </div>
             </div>
@@ -70,8 +70,8 @@
         {% else %}
         <form action="{% url 'membership_registration' membership %}" method="post" enctype="multipart/form-data">
             {% csrf_token %}
-            <div class="form-group">
-                <div class="form-group label">
+            <div class="two-forms">
+                <div class="input-box">
                     {{form}}
                 </div>
             </div>
