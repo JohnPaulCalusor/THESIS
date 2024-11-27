@@ -1,35 +1,41 @@
 body {
     font-family: Arial, sans-serif;
     margin: 20px;
-    background-color: #f9f9f9;
+    background-color: #f4f7fc;
 }
 .tiles-container {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     gap: 20px;
     margin-top: 15px;
 }
 
 .tile {
-    display: flex;
-    align-items: center;
-    background-color: #ffffff;
+    background-color: #ffffff; /* Light background for tiles */
+    border-radius: 12px; /* Rounded corners */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Soft shadow */
     padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    width: 345px;
-    height: 140px;
+    width: 380px;
+    height: 210px; /* Adjust the width */
+    text-align: left;
+    justify-content: left;
+    padding-left: 35px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
-
-.icon {
+.tile:hover {
+    transform: translateY(-5px); /* Slight hover effect */
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+}
+.tile .icon {
+    background-color: #f4f7fc; /* Blue background for icon */
+    color: white; /* White icon color */
+    border-radius: 50%;
+    width: 70px;
+    height: 70px;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    margin-right: 15px;
-    padding-right: 10px;
+    font-size: 24px; /* Icon size */
 }
 
 .icon i {
@@ -37,51 +43,63 @@ body {
     color: #000000;
 }
 
-.tile-content {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-}
-
-.tile-data {
-    font-size: 30px;
-    font-weight: bold;
-    color: #000000;
-}
-
-.title-data {
+.tile-content .title-data {
     font-size: 16px;
+    color: #6c757d; /* Muted text color */
+    margin-bottom: 10px;
     font-weight: 300;
-    color: #000000;
+    padding-top: 20px;
+    padding-left: 15px;
 }
 
-.chart-container {
+/* Data styling */
+.tile-content .tile-data {
+    font-size: 26px;
+    font-weight: 600;
+    color: #000000; /* Darker color for data */
+    padding-left: 15px;
+}
+
+.chart-container { 
     width: 100%;
     padding: 20px;
     margin-top: 20px;
+    height: 80%;
     position: relative;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     background-color: #ffffff;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+   
+}
+.chart-container:hover {
+    transform: translateY(-5px); /* Slight hover effect */
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
 }
 .chart {
     background-color: #ffffff;
     padding: 20px;
-    width: 49%;
+    width: 40%;
+    height: 100%;
     margin-top: 20px;
     position: relative;
     border-radius: 8px;
+    align-items: center;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.chart:hover {
+    transform: translateY(-5px); /* Slight hover effect */
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
 }
 
 .region {
-    
-    width: 100%;
     text-align: center;
     display: flex; /* Add this line */
     justify-content: center; /* Add this line */
     align-items: center;
     gap: 10px;
+    
 }
 .icon{
     display: flex;
@@ -114,6 +132,7 @@ h1 {
 h3{
     font-size: 16px;
     font-weight: 400;
+    
 }
 
 @media (max-width: 768px) {

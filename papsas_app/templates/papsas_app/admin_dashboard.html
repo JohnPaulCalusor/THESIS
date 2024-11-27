@@ -19,7 +19,7 @@
                     <i class="fas fa-users"></i> <!-- Icon for Members -->
                 </div>
                 <div class="tile-content">
-                    <div class="title-data">Total Count of Members</div>
+                    <div class="title-data">Total Members</div>
                     <div class="tile-data" id="membersCount">0</div>
 
                 </div>
@@ -53,20 +53,31 @@
                     <div class="tile-data" id="eventRating">{{ event_rating }}</div>
                 </div>
             </div>
-        </div>
+           
 
-            
+        </div>
         <div class="region">
             <div class="chart-container">
+                <h3>User Distribution by Region</h3>
+                <select id="filterDropdown" onchange="updateRegionChart()">
+                    <option value="all" selected>All</option>
+                    <option value="top5">Top 5 Regions</option>
+                    <option value="least5">Least 5 Regions</option>
+                </select>
+                <canvas id="RegionChart"></canvas>
+            </div>
+
+
+        </div>
+        <div class="region">
+            <div class="chart">
                 <h3>Membership Growth Over Time</h3>
                 <canvas id="membershipGrowthChart"></canvas>
             </div>
-            <div id="boxplot-container" class="chart-container">
+            <div id="boxplot-container" class="chart">
                 <div id="boxchart-container">
                     <label for="event-select">Select Event:</label>
-                    
                     <select id="event-select" onchange="loadBoxPlot()">
-                        <!-- Event options will be populated dynamically -->
                     </select>
                 </div>
             </div>
@@ -78,53 +89,38 @@
 
         <div class="region">
             <div class="chart-container">
-                <h3>User Distribution by Region</h3>
-                <select id="filterDropdown" onchange="updateRegionChart()">
-                    <option value="all" selected>All</option>
-                    <option value="top5">Top 5 Regions</option>
-                    <option value="least5">Least 5 Regions</option>
-                </select>
-                <canvas id="RegionChart"></canvas>
-            </div>
-        </div>
-            <!-- Chart Containers -->
-        <div class="region">
-            <div class="chart-container">
                 <h3>Attendance Over Time</h3>
                 <canvas id="attendanceOverTimeChart"></canvas>
             </div>
+
             <div class="chart-container">
-                <h3>Attendance Chart for <span id="event-name"></span></h3>
-                <label for="event-filter">Filter by Event:</label>
-                <select id="event-filter">
-                    <option value="Interactive Youth Forum">Interactive Youth Forum</option>
-                    <option value="National Convention">National Convention</option>
-                    <option value="National Research Conference">National Research Conference</option>
-                    <option value="Volunteerism Forum">Volunteerism Forum</option>
-                </select>
-                <canvas id="nextLocationChart"></canvas>                
+                <h3>Event Price per Attendance</h3>
+                <canvas id="eventPriceVsAttendanceChart"></canvas>
             </div>
-        </div>
-        <div class="region">
-            <div class="chart-container">
-                <h3>Attendance per Day</h3>
-                <canvas id="attendanceChart"></canvas>
-            </div>
+
         </div>
 
         <div class="region">
-            <div class="chart-container">
-                <h3>Event Price vs Attendance</h3>
-                <canvas id="eventPriceVsAttendanceChart"></canvas>
-            </div>
-            <div class="chart-container">
-                <h3>Capacity Utilization</h3>
-                <canvas id="capacityUtilizationChart"></canvas>
-            </div>
+        <div class="chart-container">
+            <h3><span id="event-name"> </span>'s Attendance</h3>
+            <label for="event-filter">Filter by Event:</label>
+            <select id="event-filter">
+                <option value="Interactive Youth Forum">Interactive Youth Forum</option>
+                <option value="National Convention">National Convention</option>
+                <option value="National Research Conference">National Research Conference</option>
+                <option value="Volunteerism Forum">Volunteerism Forum</option>
+            </select>
+            <canvas id="nextLocationChart"></canvas>                
         </div>
-    </div>
+        <div class="chart-container">
+            <h3>Capacity Utilization</h3>
+            <canvas id="capacityUtilizationChart"></canvas>
+        </div>
+
+        </div>
+
     <script>
-        const colorPalette = [
+const colorPalette = [
             '#FF4D4D', '#FF9999', '#CC0000', '#FF6666', '#FFB2B2', 
             '#FF1A1A', '#FF7F7F', '#D50000', '#A30000', '#FFCCCC'
         ];
