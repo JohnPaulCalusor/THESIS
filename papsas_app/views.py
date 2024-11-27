@@ -16,7 +16,7 @@ import random, json, logging, qrcode
 from django.contrib import messages
 from django.db import IntegrityError
 from django.utils import timezone
-from django.db.models.functions import TruncDay
+from django.db.models.functions import TruncDay, TruncMonth, TruncYear
 from django.utils.dateformat import DateFormat
 from django.core.exceptions import ValidationError
 from django.http import JsonResponse
@@ -31,7 +31,6 @@ from io import BytesIO
 from django.contrib.auth.views import PasswordResetView
 from django.db.models import Count, Avg, Q
 from django.core.exceptions import ObjectDoesNotExist
-from django.db.models.functions import TruncYear
 from functools import wraps
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
@@ -1474,16 +1473,16 @@ def get_attendance_over_time_data(request):
     data = {"labels": [], "values": []}
     
     attendances = Attendance.objects.filter(attended=True)
-    attendances_by_year = (
+    attendances_by_month = (
         attendances
-        .annotate(year=TruncYear('date_attended'))
-        .values('year')
+        .annotate(month=TruncMonth('date_attended'))
+        .values('month')
         .annotate(count=Count('id'))
-        .values_list('year', 'count')
+        .values_list('month', 'count')
     )
     
-    for year, count in attendances_by_year:
-        data["labels"].append(year.strftime("%Y"))
+    for month, count in attendances_by_month:
+        data["labels"].append(month.strftime("%Y-%m"))
         data["values"].append(count)
     
     return JsonResponse(data)
