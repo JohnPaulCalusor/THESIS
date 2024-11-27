@@ -631,7 +631,8 @@ img {
 
 /* Hover effect for dropdown links */
 .dropdown-content a:hover {
-  background-color: #f1f1f1;
+  text-decoration: none;
+  color: #ff0000;
 }
 
 /* Show dropdown content on hover */

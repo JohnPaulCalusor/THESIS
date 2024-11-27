@@ -435,7 +435,14 @@ p{
     border-radius: 6px;
     transition: background-color 0.3s ease;
 }
-
+.guidelines-link{
+    border: none;
+    background-color: #ffff;
+}
+.guidelines-link:hover{
+    border: none;
+    background-color: #ffff;
+}
 .view-profile:hover {
     background-color: #000000;
     color: #ffffff;
@@ -457,9 +464,100 @@ p{
 .submit-vote-button:hover {
     background-color: #000000;
 }   
+
+/* Modal background */
+.modal{
+    display: none; /* Hidden by default */
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    height: 100%;
+    overflow: auto; /* Enable scrolling */
+    background-color: rgba(0, 0, 0, 0.5); /* Black with opacity */
+}
+
+/* Modal content */
+.modal_content {
+    background-color: #fff;
+    margin: 10% auto; /* Center vertically and horizontally */
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    width: 50%; /* Adjust modal width */
+    max-height: 70%; /* Restrict height */
+    overflow-y: auto; /* Make it scrollable if content overflows */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+ol{
+    padding-left: 40px;
+}
+ul{
+    padding-left: 40px;
+}
+h3{
+    padding-left: 10px;
+}
+/* Close button */
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover,
+.close:focus {
+    color: #000;
+    text-decoration: none;
+}
+
+/* Headings */
+.modal-content h2,
+.modal-content h3 {
+    font-family: Arial, sans-serif;
+    color: #333;
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+
+/* Paragraphs and lists */
+.modal-content p {
+    font-family: Arial, sans-serif;
+    color: #555;
+    line-height: 1.6;
+}
+
+.modal-content ul,
+.modal-content ol {
+    margin-left: 20px;
+    color: #555;
+}
+
+/* Scrollbar styling (optional, for modern browsers) */
+.modal-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.modal-content::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.modal-content::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+}
+
+.modal-content::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
 @media (max-width: 768px) {
     .voting-title h2 {
         font-size: 2rem; /* Slightly smaller for tablets */
+        margin-top: 50px;
     }
 
     .voting-title p {

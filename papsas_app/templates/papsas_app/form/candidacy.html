@@ -63,7 +63,7 @@
                                     </tbody>
                                 </table>
                                 <p>
-                                    <a href="link-to-guidelines.html" target="_blank" class="guidelines-link">Click here to read the full guidelines for filling candidacy.</a>
+                                    <button class="guidelines-link" onclick="openModal()">Click here to read the full guidelines for filling candidacy.</button>
                                 </p>
                             </div>
                         </div> 
@@ -197,6 +197,57 @@
         </div>
     </div>
 </section>
+<div id="guidelinesModal" class="modal">
+    <div class="modal_content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <h2>Guidelines for Filing Candidacy</h2>
+        <p>
+            To ensure a smooth process and compliance with the qualifications for candidacy, please carefully follow these guidelines:
+        </p>
+        <h3>Eligibility Requirements</h3>
+        <ul>
+            <li><strong>Event Participation:</strong>
+                <ul>
+                    <li>Candidates must have attended at least two (2) official events prior to filing their candidacy.</li>
+                    <li>Event participation must be documented with certificates or a confirmation from the organizing body.</li>
+                </ul>
+            </li>
+            <li><strong>Educational Background:</strong>
+                <ul>
+                    <li>Candidates must possess a Master’s degree or higher.</li>
+                    <li>A certified true copy of the diploma or transcript must be submitted as proof.</li>
+                </ul>
+            </li>
+        </ul>
+        <h3>Application Process</h3>
+        <ol>
+            <li><strong>Complete the Candidacy Form:</strong>
+                <ul>
+                    <li>Obtain the official candidacy form from the designated office or website.</li>
+                    <li>Fill out all fields accurately and legibly.</li>
+                </ul>
+            </li>
+            <li><strong>Submit Required Documents:</strong>
+                <ul>
+                    <li>Proof of attendance at two (2) events (certificates or equivalent).</li>
+                    <li>A certified true copy of your Master’s degree or transcript.</li>
+                </ul>
+            </li>
+            <li><strong>Submission Deadline:</strong>
+                <ul>
+                    <li>All candidacy documents must be submitted on or before the designated deadline. Late submissions will not be accepted.</li>
+                </ul>
+            </li>
+        </ol>
+        <h3>Important Reminders</h3>
+        <ul>
+            <li>Ensure all information provided is truthful and accurate. Misrepresentation may result in disqualification.</li>
+            <li>Keep copies of all documents submitted for your records.</li>
+            <li>Direct any questions or concerns to the official contact person or office handling candidacy filings.</li>
+        </ul>
+        <p>By following these guidelines, you ensure a seamless candidacy process and adherence to the requirements. Good luck!</p>
+    </div>
+</div>
 {% endblock %}
 
 {% block script %}
@@ -279,5 +330,22 @@
             })
 
             });
+</script>
+<script>
+    function openModal() {
+        document.getElementById("guidelinesModal").style.display = "block";
+    }
+
+    function closeModal() {
+        document.getElementById("guidelinesModal").style.display = "none";
+    }
+
+    // Close modal when clicking outside of the modal content
+    window.onclick = function(event) {
+        var modal = document.getElementById("guidelinesModal");
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    };
 </script>
 {% endblock %}
