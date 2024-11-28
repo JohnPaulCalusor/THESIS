@@ -8,7 +8,7 @@ async function loadEvents() {
         events.forEach(event => {
             const option = document.createElement('option');
             option.value = event.id;
-            option.textContent = event.name;
+            option.textContent = event.name + " " + event.year;
             select.appendChild(option);
         });
   
@@ -33,9 +33,14 @@ async function loadEvents() {
             {
                 y: data.ratings,
                 type: 'box',
-                name: data.event.name,
-                backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                borderColor: 'rgba(75, 192, 192, 1)',
+                name: data.event.name + " " + data.event.year,
+                marker: {
+                    color: 'hsl(4.3,100%,59.4%, 0.6)' // Background color for data points
+                },
+                line: {
+                    color: 'hsl(4.3,100%,59.4%, 1)', // Border color for the box
+                    width: 3 // Border width
+                }
             }
         ];
   

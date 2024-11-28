@@ -59,12 +59,12 @@
         <div class="region">
             <div class="chart-container">
                 <h3>User Distribution by Region</h3>
+                <canvas id="RegionChart"></canvas>
                 <select id="filterDropdown" onchange="updateRegionChart()">
                     <option value="all" selected>All</option>
                     <option value="top5">Top 5 Regions</option>
                     <option value="least5">Least 5 Regions</option>
                 </select>
-                <canvas id="RegionChart"></canvas>
             </div>
 
 
@@ -102,15 +102,15 @@
 
         <div class="region">
         <div class="chart-container">
-            <h3><span id="event-name"> </span>'s Attendance {{ IYF }} </h3>
+            <h3>Recommended Venue for next <span id="event-name"></h3>
+            <canvas id="nextLocationChart"></canvas>                
             <label for="event-filter">Filter by Event:</label>
             <select id="event-filter">
-                <option value="Interactive Youth Forum">Interactive Youth Forum {{ IYF }} </option>
+                <option value="Interactive Youth Forum">Interactive Youth Forum {{ IYF.startDate.year }} </option>
                 <option value="National Convention">National Convention {{ NC.startDate.year }} </option>
                 <option value="National Research Conference">National Research Conference {{ NRC.startDate.year }} </option>
                 <option value="Volunteerism Forum">Volunteerism Forum {{ VF.startDate.year }}  </option>
             </select>
-            <canvas id="nextLocationChart"></canvas>                
         </div>
         <div class="chart-container">
             <h3>Capacity Utilization</h3>
@@ -123,8 +123,7 @@
 {% block script %}
     <script>
 const colorPalette = [
-            '#FF4D4D', '#FF9999', '#CC0000', '#FF6666', '#FFB2B2', 
-            '#FF1A1A', '#FF7F7F', '#D50000', '#A30000', '#FFCCCC'
+            '#ff3f30', 'hsl(4.3,100%,59.4%, 0.6)'
         ];
 
         let membershipChart, attendanceVsCapacityChart, attendanceOverTimeChart, membershipGrowthChart;
@@ -142,9 +141,9 @@ const colorPalette = [
                 const datasets = [{
                     label: 'Dataset',
                     data: data.values,
-                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                    borderColor: 'rgba(75, 192, 192, 1)',
-                    borderWidth: 1,
+                    backgroundColor: colorPalette[1],
+                    borderColor: colorPalette[0],
+                    borderWidth: 3,
                 }];
 
                 return new Chart(ctx, {
@@ -229,7 +228,7 @@ const colorPalette = [
         };
 
 
-        const fetchMembershipGrowthData = async (url, ctx) => {
+const fetchMembershipGrowthData = async (url, ctx) => {
     try {
         const response = await fetch(`${url}?_=${new Date().getTime()}`);
         if (!response.ok) throw new Error('Network response was not ok');
@@ -299,7 +298,8 @@ const fetchUserDistributionByRegionData = async (filterValue, ctx) => {
             label: 'User Distribution by Region',
             data: data.values,
             borderColor: colorPalette[0],
-            borderWidth: 1,
+            backgroundColor: colorPalette[1],
+            borderWidth: 3,
         }];
 
         regionChart = new Chart(ctx, {
@@ -338,6 +338,7 @@ const fetchEventPriceVsAttendanceData = async (url, ctx) => {
         const scatterData = data.values.map(event => ({
     x: event.event__price,
     y: event.attendance_count,
+    z: event.event__startDate,
     eventName: event.event__eventName // Ensure this matches the updated field name
 }));
 
@@ -347,7 +348,7 @@ const fetchEventPriceVsAttendanceData = async (url, ctx) => {
                 datasets: [{
                     label: 'Event Price vs Attendance',
                     data: scatterData,
-                    backgroundColor: 'rgba(75, 192, 192, 1)',
+                    backgroundColor: colorPalette[0],
                 }]
             },
             options: {
@@ -371,7 +372,7 @@ const fetchEventPriceVsAttendanceData = async (url, ctx) => {
                         callbacks: {
                             label: function(tooltipItem) {
                                 const eventData = tooltipItem.raw;
-                                return `${eventData.eventName}: Price Php${eventData.x}, Attendance ${eventData.y}`;
+                                return `${eventData.eventName} ${eventData.z}: Price Php${eventData.x}, Attendance ${eventData.y}`;
                             }
                         }
                     }
@@ -433,8 +434,6 @@ const updateTiles = async () => {
             updateRegionChart();
         };
     </script>
-{% endblock %}
 
-{% block script %}
     <script src="{% static 'papsas_app/js/dashboard.js' %}"></script>
 {% endblock %}

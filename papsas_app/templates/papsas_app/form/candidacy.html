@@ -175,6 +175,10 @@ Candidacy
 {% else %}
 <section class="voting-process">
     <div class="voting-title">
+
+        <h2>PAPSAS {{ ongoingElection.title }} ELECTION {{ ongoingElection.startDate.year }}</h2>
+        <p>{{ filing_period }} - {{ ongoingElection.endDate }} </p>
+        <p>Please select up to {{ ongoingElection.numWinners }} candidate/s to cast your vote.</p>
         {% if messages %}
         <ul class="messages">
             {% for message in messages %}
@@ -185,9 +189,6 @@ Candidacy
             {% endfor %}
         </ul>
         {% endif %}
-        <h2>PAPSAS {{ ongoingElection.title }} ELECTION {{ ongoingElection.startDate.year }}</h2>
-        <p>{{ filing_period }} - {{ ongoingElection.endDate }} </p>
-        <p>Please select up to two candidates to cast your vote.</p>
         <form action="{% url 'vote' %}" method="post">
             {% csrf_token %}
             <div class="profile-container">
@@ -198,7 +199,7 @@ Candidacy
                             <div class="profile-content">
                                 <img src="{{ candidate.candidate.profilePic.url }}" alt="Candidate Profile">
                                 <span> {{ candidate.candidate.first_name }} {{ candidate.candidate.last_name }} </span>
-                                <a href="#" class="view-profile">View Candidacy</a>
+                                <a href="{% url 'credential' %}" class="view-profile">View Candidacy</a>
                             </div>
                         </label>
                     {% endfor %}

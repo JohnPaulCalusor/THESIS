@@ -2327,6 +2327,7 @@ def box_plot(request, event_id = None):
         'event': {
             'id': event.id,
             'name': event.eventName,
+            'year': event.startDate.year
         },
         'ratings': ratings
     }
@@ -2335,14 +2336,14 @@ def box_plot(request, event_id = None):
 
 def box_event (request):
     events = Event.objects.all().order_by('startDate')
-    data = [{'id': event.id, 'name': event.eventName} for event in events]
+    data = [{'id': event.id, 'name': event.eventName, 'year': event.startDate.year } for event in events]
     return JsonResponse(data, safe=False)
 
 @secretary_required
 def get_event_price_vs_attendance_data(request):
     events_data = (
         EventRegistration.objects
-        .values('event__id', 'event__price', 'event__eventName')  # Use the correct field name
+        .values('event__id', 'event__price', 'event__eventName', 'event__startDate')  # Use the correct field name
         .annotate(attendance_count=Count('attendance'))
     )
 
@@ -2446,5 +2447,9 @@ def attendance_chart_data(request, event_type):
     return JsonResponse({
         "labels": labels,
         "data": data,
-        "event_name": latest_event.eventName
+        "event_name": latest_event.eventName,
+        "date": latest_event.startDate.year,
     })
+
+def credentials(request):
+    return render(request, 'papsas_app/view/credential.html')

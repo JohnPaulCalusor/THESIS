@@ -90,16 +90,16 @@ function capacity_utilization(){
             {
               label: 'Venue Capacity',
               data: venueCaps,
-              backgroundColor: 'rgba(75, 192, 192, 0.2)',
-              borderColor: 'rgba(75, 192, 192, 1)',
-              borderWidth: 1
+              backgroundColor: 'hsl(7, 11%, 50%, 0.6)',
+              borderColor: '#8e7673',
+              borderWidth: 3
             },
             {
               label: 'Attended',
               data: attendedCounts,
-              backgroundColor: 'rgba(255, 99, 132, 0.2)',
-              borderColor: 'rgba(255, 99, 132, 1)',
-              borderWidth: 1
+              backgroundColor: 'hsl(4, 100%, 41%, 0.6)',
+              borderColor: 'hsl(4, 100%, 41%)',
+              borderWidth: 3
             }
           ]
         },
@@ -113,7 +113,6 @@ function capacity_utilization(){
           plugins: {
             title: {
               display: true,
-              text: 'Capacity Utilization'
             }
           },
           responsive: true,
@@ -161,16 +160,15 @@ function updateChart(eventType) {
                     datasets: [{
                         label: "Attendance Count",
                         data: data.data, // Counts
-                        backgroundColor: "rgba(75, 192, 192, 0.2)",
-                        borderColor: "rgba(75, 192, 192, 1)",
-                        borderWidth: 1
+                        backgroundColor: "hsl(4.3,100%,59.4%, 0.6)",
+                        borderColor: "hsl(4.3,100%,59.4%, 1)",
+                        borderWidth: 3
                     }]
                 },
                 options: {
                     responsive: true,
                     plugins: {
                         legend: { display: false },
-                        title: { display: true, text: "Top 5 Locations for Event Attendance" }
                     },
                     scales: {
                         y: { beginAtZero: true }
