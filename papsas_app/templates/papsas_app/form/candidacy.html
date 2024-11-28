@@ -175,49 +175,41 @@ Candidacy
 {% else %}
 <section class="voting-process">
     <div class="voting-title">
-        <h2>PAPSAS ELECTION 2024</h2>
-        <p>November 26, 2024 - December 1, 2024</p>
+        {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <div class="alert alert-warning alert-dismissible fade show custom-alert" role="alert">
+                    <strong>{{ message }}</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">X</button>
+                </div>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        <h2>PAPSAS {{ ongoingElection.title }} ELECTION {{ ongoingElection.startDate.year }}</h2>
+        <p>{{ filing_period }} - {{ ongoingElection.endDate }} </p>
         <p>Please select up to two candidates to cast your vote.</p>
+        <form action="{% url 'vote' %}" method="post">
+            {% csrf_token %}
+            <div class="profile-container">
+                {% if candidates %}
+                    {% for candidate in candidates %}
+                        <label class="profile-card">
+                            <input type="checkbox" id="candidate-{{ candidate.id }}" value="{{ candidate.id }}" name="candidates">
+                            <div class="profile-content">
+                                <img src="{{ candidate.candidate.profilePic.url }}" alt="Candidate Profile">
+                                <span> {{ candidate.candidate.first_name }} {{ candidate.candidate.last_name }} </span>
+                                <a href="#" class="view-profile">View Candidacy</a>
+                            </div>
+                        </label>
+                    {% endfor %}
+                {% endif %}
+                <!-- Submit Button -->
+            </div>
+            <div class="submit-container" style="text-align: center; margin-top: 20px;">
+                <button type="submit" id="submit-vote" class="submit-vote-button">Submit Vote</button>
+            </div>
+        </form>
 
-        <div class="profile-container">
-
-            <!-- Profile Card 1 -->
-            <label class="profile-card">
-                <input type="checkbox" id="profile1">
-                <div class="profile-content">
-                    <img src="media/papsas_app/images/president.jpg" alt="Profile 1">
-                    <span>Profile 1</span>
-                    <a href="#" class="view-profile">View Candidacy</a>
-                </div>
-            </label>
-
-            <!-- Profile Card 2 -->
-            <label class="profile-card">
-                <input type="checkbox" id="profile2">
-                <div class="profile-content">
-                    <img src="media/papsas_app/images/president.jpg" alt="Profile 2">
-                    <span>Profile 2</span>
-                    <a href="#" class="view-profile">View Candidacy</a>
-                </div>
-            </label>
-
-            <!-- Profile Card 3 -->
-            <label class="profile-card">
-                <input type="checkbox" id="profile3">
-                <div class="profile-content">
-                    <img src="media/papsas_app/images/president.jpg" alt="Profile 3">
-                    <span>Profile 3</span>
-                    <a href="#" class="view-profile">View Candidacy</a>
-                </div>
-            </label>
-
-        </div>
-
-        <!-- Submit Button -->
-        <div class="submit-container" style="text-align: center; margin-top: 20px;">
-            <button type="button" id="submit-vote" class="submit-vote-button">Submit Vote</button>
-        </div>
-    </div>
 </section>
 {% endif %}
 <div id="guidelinesModal" class="modal">

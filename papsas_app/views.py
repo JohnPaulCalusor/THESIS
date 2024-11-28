@@ -508,17 +508,15 @@ def new_officer(request, num_winners):
 @login_required(login_url='/login')
 def vote(request):
     user = request.user
-        
-    ongoingElection = Election.objects.get( electionStatus = True )
+
+    ongoingElection = Election.objects.get(electionStatus=True)
     filing_period = ongoingElection.startDate + timedelta(days=7)
-    attended_event = Attendance.objects.filter( user = user, attended = True ).count()
-    # candidates = Candidacy.objects.filter( election = ongoingElection )
+    attended_event = Attendance.objects.filter(user=user, attended=True).count()
     candidates = Candidacy.objects.filter(election=ongoingElection).annotate(vote_count=Count('nominee'))
-    print(candidates)
 
     try:
-        has_declared = Candidacy.objects.get( candidate = user , election = ongoingElection )
-    except:
+        has_declared = Candidacy.objects.get(candidate=user, election=ongoingElection)
+    except Candidacy.DoesNotExist:
         has_declared = None
 
     if request.POST:
@@ -527,46 +525,50 @@ def vote(request):
         if not selected_candidates:
             messages.error(request, 'Please select a candidate.')
             return redirect('vote')
-        try:
-            user_voted = Vote.objects.filter( voterID = user, election = ongoingElection)
-        except Vote.DoesNotExist:
-            user_voted = None
+
+        user_voted = Vote.objects.filter(voterID=user, election=ongoingElection).exists()
         if user_voted:
             messages.error(request, 'You already voted for this election.')
             return render(request, 'papsas_app/form/candidacy.html', {
-                'attended_event' : attended_event,  
-                'has_declared' : has_declared
+                'attended_event': attended_event,
+                'has_declared': has_declared,
             })
 
-        vote = Vote.objects.create(voterID=user, election = ongoingElection)
         num_selected = len(selected_candidates)
         req_selected = ongoingElection.numWinners
-        if num_selected <= req_selected:
-            for candidate_id in selected_candidates:
-                try:
-                    candidate_obj = Candidacy.objects.get(id = candidate_id, election = ongoingElection)
-                    vote.candidateID.add(candidate_obj)
-                    messages.success(request, 'You have voted successfully.')
-                except Candidacy.DoesNotExist:
-                    return HttpResponse("Invalid candidate.", status=400)
-        elif num_selected == 0:
-            messages.error(request, 'Please select a candidate.')
+
+        if num_selected == 0:
+            messages.error(request, 'You must pick at least one candidate.')
             return redirect('vote')
-        else:
-            messages.error(request, 'You voted above the limit.')
+
+        if num_selected > req_selected:
+            messages.error(request, f'You can only vote for up to {req_selected} candidates.')
             return redirect('vote')
-        
+
+        # Create the vote only after all validations have passed
+        vote = Vote.objects.create(voterID=user, election=ongoingElection)
+
+        for candidate_id in selected_candidates:
+            try:
+                candidate_obj = Candidacy.objects.get(id=candidate_id, election=ongoingElection)
+                vote.candidateID.add(candidate_obj)
+            except Candidacy.DoesNotExist:
+                return HttpResponse("Invalid candidate.", status=400)
+
+        messages.success(request, 'Your vote has been recorded successfully.')
         return redirect('vote')
+
     else:
         return render(request, 'papsas_app/form/candidacy.html', {
-            'candidates' : candidates,
-            'attended_event' : attended_event,
-            'ongoingElection' : ongoingElection,
-            'votes' : Vote.objects.filter( voterID = user, election = ongoingElection),
-            'user' : request.user,
-            'has_declared' : has_declared,
-            'filing_period' : filing_period
+            'candidates': candidates,
+            'attended_event': attended_event,
+            'ongoingElection': ongoingElection,
+            'votes': Vote.objects.filter(voterID=user, election=ongoingElection),
+            'user': request.user,
+            'has_declared': has_declared,
+            'filing_period': filing_period,
         })
+
 
 @login_required(login_url='/login')
 def profile(request, id):
