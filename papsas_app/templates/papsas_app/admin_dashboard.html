@@ -122,11 +122,32 @@
 
 {% block script %}
     <script>
-const colorPalette = [
-            '#ff3f30', 'hsl(4.3,100%,59.4%, 0.6)'
+const borderPalette = [
+            '#ff3f30',   // bright red
+            '#4CAF50',   // green
+            '#2196F3',   // blue
+            '#FF9800',   // orange
+            '#9C27B0',   // purple
+            '#795548',   // brown
+            '#607D8B',   // blue-grey
+            '#FF5722',   // deep orange
+            '#009688',   // teal
+            '#673AB7'    // deep purple
         ];
+const bgPalette = [
+    'hsla(4, 100%, 59%, 0.6)',    // bright red
+    'hsla(122, 39%, 49%, 0.6)',   // green
+    'hsla(207, 90%, 54%, 0.6)',   // blue
+    'hsla(32, 100%, 52%, 0.6)',   // orange
+    'hsla(291, 64%, 42%, 0.6)',   // purple
+    'hsla(16, 25%, 38%, 0.6)',    // brown
+    'hsla(200, 18%, 46%, 0.6)',   // blue-grey
+    'hsla(14, 100%, 57%, 0.6)',   // deep orange
+    'hsla(174, 100%, 29%, 0.6)',  // teal
+    'hsla(261, 51%, 51%, 0.6)'    // deep purple
+]
 
-        let membershipChart, attendanceVsCapacityChart, attendanceOverTimeChart, membershipGrowthChart;
+let membershipChart, attendanceVsCapacityChart, attendanceOverTimeChart, membershipGrowthChart;
 
         const fetchData = async (url, ctx, chartType, chartInstance) => {
             try {
@@ -141,8 +162,8 @@ const colorPalette = [
                 const datasets = [{
                     label: 'Dataset',
                     data: data.values,
-                    backgroundColor: colorPalette[1],
-                    borderColor: colorPalette[0],
+                    backgroundColor: data.values.map((_, index) => 
+                    bgPalette[index % bgPalette.length]),
                     borderWidth: 3,
                 }];
 
@@ -171,7 +192,12 @@ const colorPalette = [
                                     maxTicksLimit: 20
                                 }
                             }
-                        }
+                        },
+                        plugins: {
+                            legend: {
+                                display: false,  // Ensure the legend is hidden here
+                            },
+                        },
                     }
                 });
             } catch (error) {
@@ -196,7 +222,7 @@ const colorPalette = [
                         datasets: [{
                             label: 'Attendance Over Time',
                             data: data.values,
-                            borderColor: colorPalette[0],
+                            borderColor: borderPalette[0],
                             fill: false,
                             tension: 0.1
                         }]
@@ -247,7 +273,7 @@ const fetchMembershipGrowthData = async (url, ctx) => {
                 datasets: [{
                     label: 'Membership Growth',
                     data: data.values,
-                    borderColor: colorPalette[0],
+                    borderColor: borderPalette[0],
                     fill: false,
                     tension: 0.1
                 }]
@@ -297,8 +323,8 @@ const fetchUserDistributionByRegionData = async (filterValue, ctx) => {
         const datasets = [{
             label: 'User Distribution by Region',
             data: data.values,
-            borderColor: colorPalette[0],
-            backgroundColor: colorPalette[1],
+            borderColor: borderPalette[0],
+            backgroundColor: bgPalette[0],
             borderWidth: 3,
         }];
 
@@ -313,6 +339,7 @@ const fetchUserDistributionByRegionData = async (filterValue, ctx) => {
                 maintainAspectRatio: false,
                 plugins: {
                     legend: {
+                        display: false,
                         position: 'bottom',
                     },
                 },
@@ -348,7 +375,7 @@ const fetchEventPriceVsAttendanceData = async (url, ctx) => {
                 datasets: [{
                     label: 'Event Price vs Attendance',
                     data: scatterData,
-                    backgroundColor: colorPalette[0],
+                    backgroundColor: bgPalette[0],
                 }]
             },
             options: {

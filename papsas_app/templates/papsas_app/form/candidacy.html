@@ -188,6 +188,7 @@ Candidacy
             {% endfor %}
         </ul>
         {% endif %}
+        {% if votes is None %}
         <form action="{% url 'vote' %}" method="post">
             {% csrf_token %}
             <div class="profile-container">
@@ -198,7 +199,7 @@ Candidacy
                             <div class="profile-content">
                                 <img src="{{ candidate.candidate.profilePic.url }}" alt="Candidate Profile">
                                 <span> {{ candidate.candidate.first_name }} {{ candidate.candidate.last_name }} </span>
-                                <a href="{% url 'credential' %}" class="view-profile">View Candidacy</a>
+                                <a href="{% url 'credential' candidate.id %}" class="view-profile">View Candidacy</a>
                             </div>
                         </label>
                     {% endfor %}
@@ -209,6 +210,7 @@ Candidacy
                 <button type="submit" id="submit-vote" class="submit-vote-button">Submit Vote</button>
             </div>
         </form>
+        {% else %}
             <div class="form-card-finish">
                 <div class="row">
                     <div class="col-7">
@@ -225,6 +227,7 @@ Candidacy
                 </div>
                 </div>
             </div>
+        {% endif %}
 </section>
 {% endif %}
 <div id="guidelinesModal" class="modal">

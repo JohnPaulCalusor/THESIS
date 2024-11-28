@@ -29,7 +29,7 @@ urlpatterns = [
     path('resend_verification_code/<int:user_id>/', views.resend_verification_code, name='resend_verification_code'),
     # election
     path('election', views.election, name="election"),
-    path('election/credential', views.credentials, name="credential"),
+    path('election/credential/<int:candidate_id>', views.credentials, name="credential"),
     path('election/<int:id>/declare-candidacy', views.declare_candidacy, name="declare_candidacy"),
     path('election/delete/candidate/<int:id>', views.delete_candidacy, name="delete_candidacy"),
     path('election/delete/<int:id>', views.delete_election, name="delete_election"),

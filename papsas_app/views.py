@@ -559,11 +559,17 @@ def vote(request):
         return redirect('vote')
 
     else:
+        try:
+            votes = Vote.objects.get(voterID=user, election=ongoingElection)
+        except Vote.DoesNotExist:
+            votes = None
+        except Exception as e:
+            return HttpResponse(f'Error - {e}')
         return render(request, 'papsas_app/form/candidacy.html', {
             'candidates': candidates,
             'attended_event': attended_event,
             'ongoingElection': ongoingElection,
-            'votes': Vote.objects.filter(voterID=user, election=ongoingElection),
+            'votes': votes,
             'user': request.user,
             'has_declared': has_declared,
             'filing_period': filing_period,
@@ -2451,5 +2457,8 @@ def attendance_chart_data(request, event_type):
         "date": latest_event.startDate.year,
     })
 
-def credentials(request):
-    return render(request, 'papsas_app/view/credential.html')
+def credentials(request, candidate_id):
+    candidate = Candidacy.objects.get( id = candidate_id )
+    return render(request, 'papsas_app/view/credential.html', {
+        'candidate' : candidate
+    })
