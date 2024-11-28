@@ -1457,7 +1457,16 @@ def get_event_reg(request, id):
 
 @secretary_required
 def admin_dashboard(request):
-    return render(request, 'papsas_app/admin_dashboard.html')
+    IYF = Event.objects.filter(eventName='Interactive Youth Forum').latest('id')
+    NC = Event.objects.filter(eventName='National Convention').latest('id')
+    NRC = Event.objects.filter(eventName='National Research Conference').latest('id')
+    VF = Event.objects.filter(eventName='Volunteerism Forum').latest('id')
+    return render(request, 'papsas_app/admin_dashboard.html', {
+        'IYF' : IYF,
+        'NC' : NC,
+        'NRC' : NRC,
+        'VF' : VF
+    })
 
 @secretary_required
 def get_membership_distribution_data(request):
@@ -2293,7 +2302,6 @@ def declare_candidacy(request, id):
                         credentials = request.POST.get('credentials')
                     )
                     candidacy.save()
-                    messages.success(request, 'Candidacy submitted successfully.')
                     return redirect('vote')
                 else:
                     messages.error(request, 'You must attend at least 2 events and have your TOR to declare your candidacy.')

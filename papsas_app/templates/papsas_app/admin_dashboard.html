@@ -105,10 +105,10 @@
             <h3><span id="event-name"> </span>'s Attendance</h3>
             <label for="event-filter">Filter by Event:</label>
             <select id="event-filter">
-                <option value="Interactive Youth Forum">Interactive Youth Forum</option>
-                <option value="National Convention">National Convention</option>
-                <option value="National Research Conference">National Research Conference</option>
-                <option value="Volunteerism Forum">Volunteerism Forum</option>
+                <option value="Interactive Youth Forum">Interactive Youth Forum {{ IYF.startDate.year }} </option>
+                <option value="National Convention">National Convention {{ NC.startDate.year }} </option>
+                <option value="National Research Conference">National Research Conference {{ NRC.startDate.year }} </option>
+                <option value="Volunteerism Forum">Volunteerism Forum {{ VF.startDate.year }}  </option>
             </select>
             <canvas id="nextLocationChart"></canvas>                
         </div>

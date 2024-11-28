@@ -123,7 +123,7 @@ Candidacy
                         </fieldset>
                         <fieldset>
                             <form method="post" action="{% url 'declare_candidacy' ongoingElection.id %}">
-                                {% csrf_token %} <!-- CSRF token for security if you're using Django -->
+                                {% csrf_token %}
                                 <div class="form-card">
                                     <div class="row">
                                         <div class="col-7">

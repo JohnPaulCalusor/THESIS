@@ -13,7 +13,7 @@
             <img src="{{ event.pubmat.url }}" alt="" class="event-image">
         </div>
         <div class="event-content">
-            <h3>{{ event.eventName }}</h3>
+            <h3>{{ event.eventName }} {{ event.startDate.year }}</h3>
             <p class="event-description">{{ event.eventDescription }}</p>
             <p class="event-date">{{ event.startDate }} - {{ event.endDate }}</p>
         </div>
