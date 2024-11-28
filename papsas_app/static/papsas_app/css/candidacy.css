@@ -4,9 +4,6 @@
     font-family: Arial, sans-serif;
 }
 
-html{
-    height: 100%;
-}
 .candidacy-form{
     font-family: Arial, sans-serif;
     display: flex;
@@ -522,13 +519,13 @@ p{
     overflow-y: auto; /* Make it scrollable if content overflows */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
-ol{
+.modal_content ol{
     padding-left: 40px;
 }
-ul{
+.modal_content ul{
     padding-left: 40px;
 }
-h3{
+.modal_content h3{
     padding-left: 10px;
 }
 /* Close button */
