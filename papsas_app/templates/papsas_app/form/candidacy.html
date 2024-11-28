@@ -117,7 +117,8 @@ Candidacy
                                     </div>
                                 </div>
 
-                            </div> <input type="button" name="next" class="next action-button" value="Next" /> <input
+                            </div> <input type="button" name="next" class="next action-button" value="Next" /> 
+                            <input
                                 type="button" name="previous" class="previous action-button-previous"
                                 value="Previous" />
                         </fieldset>
@@ -143,9 +144,10 @@ Candidacy
                                     </div>
                                 </div>
                                 <input type="submit" name="next" class="next action-button" value="Submit" />
-                                <input type="button" name="previous" class="previous action-button-previous"
-                                    value="Previous" />
                             </form>
+                            <input
+                            type="button" name="previous" class="previous action-button-previous"
+                            value="Previous" />
                         </fieldset>
                     </div>
                     {% else %}
@@ -177,7 +179,6 @@ Candidacy
 
         <h2>PAPSAS {{ ongoingElection.title }} ELECTION {{ ongoingElection.startDate.year }}</h2>
         <p>{{ filing_period }} - {{ ongoingElection.endDate }} </p>
-        <p>Please select up to {{ ongoingElection.numWinners }} candidate/s to cast your vote.</p>
         {% if messages %}
         <ul class="messages">
             {% for message in messages %}
@@ -189,6 +190,7 @@ Candidacy
         </ul>
         {% endif %}
         {% if votes is None %}
+        <p>Please select up to {{ ongoingElection.numWinners }} candidate/s to cast your vote.</p>
         <form action="{% url 'vote' %}" method="post">
             {% csrf_token %}
             <div class="profile-container">
@@ -211,22 +213,28 @@ Candidacy
             </div>
         </form>
         {% else %}
+<div class="row justify-content-center">
+    <div class="col-11 col-sm-10 col-md-10 col-lg-6 col-xl-5 text-center p-0 mb-2">
+        <div class="px-0 pb-0 mb-3">
             <div class="form-card-finish">
                 <div class="row">
-                    <div class="col-7">
-                        <h2 class="fs-title">Dear Voters,</h2>
+                    <div class="message-title">
+                        <h3 class="">Dear Voters,</h3>
                     </div>
                 </div> <br><br>
                 <div class="finish">
                     <p>On behalf of the Philippine Association of Practitioners of Student Affairs and Services, Inc. (PAPSAS, Inc.), we extend our heartfelt gratitude to you for your active participation in the recent PAPSAS Board Election 2021.
-                        <br>Your involvement in this democratic process reflects your commitment to our shared mission of enhancing student affairs and services. By casting your vote, you have contributed to shaping the future leadership of our organization, ensuring that our collective goals remain aligned with excellence, innovation, and collaboration.
-                        <br>We deeply value the trust and confidence you have placed in the candidates and in our electoral process. It is through your engagement that PAPSAS, Inc. continues to thrive as a beacon of leadership and service.
-                        <br>Thank you once again for your time, effort, and support. We look forward to working together as we embark on another year of inspiring and empowering the next generation.</p>
+                        <br><br>Your involvement in this democratic process reflects your commitment to our shared mission of enhancing student affairs and services. By casting your vote, you have contributed to shaping the future leadership of our organization, ensuring that our collective goals remain aligned with excellence, innovation, and collaboration.
+                        <br><br>We deeply value the trust and confidence you have placed in the candidates and in our electoral process. It is through your engagement that PAPSAS, Inc. continues to thrive as a beacon of leadership and service.
+                        <br><br>Thank you once again for your time, effort, and support. We look forward to working together as we embark on another year of inspiring and empowering the next generation.</p>
                     <div class="best">
                     <p>Warm regards, <br> PAPSAS, INC.</p>
                 </div>
                 </div>
             </div>
+        </div>
+    </div>
+</div>
         {% endif %}
 </section>
 {% endif %}

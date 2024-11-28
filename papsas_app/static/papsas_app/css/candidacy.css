@@ -268,6 +268,7 @@ p{
     text-align: right;
     justify-content: right;
     font-weight: 600;
+    margin-bottom: -20px
 }
 /* Table styling */
 .requirements-table {
@@ -370,10 +371,10 @@ p{
     
   }
   .finish p{
-    text-align: justify;
+    text-align: justify !important;
     color: #000000;
     margin-top: -30px;
-    padding: 20px;
+    padding: 30px;
   }
   .voting-title h2{
     text-transform: uppercase;
@@ -381,6 +382,12 @@ p{
     font-weight: 600;
     text-align: center;
 
+  }
+  .message-title h3{
+    padding-left: 20px;
+    text-transform: uppercase;
+    color: #ff0000;
+    font-weight: 600;
   }
   .voting-title p{
     color: grey;
