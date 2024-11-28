@@ -63,6 +63,7 @@ body {
 
 ul {
   list-style: none;
+  margin-bottom: 0 !important;
 }
 
 a {
@@ -80,7 +81,7 @@ img {
   min-height: 90%;
 }
 
-.logo{
+.papsas-logo{
   width: 200px;
   margin-left: 100px;
   
@@ -162,7 +163,7 @@ img {
     transition: .4s;
     
   }
-  .logo{
+  .papsas-logo{
     margin-top: 5px;
     margin-left: 5px;
   }
@@ -911,7 +912,7 @@ img {
     transition: .4s;
   }
 
-  .logo {
+  .papsas-logo {
     margin-top: 5px;
     margin-left: 5px;
   }
@@ -973,7 +974,7 @@ img {
     transition: .4s;
   }
 
-  .logo {
+  .papsas-logo {
     margin-top: 5px;
     margin-left: 5px;
   }
@@ -1036,7 +1037,7 @@ img {
     transition: .4s;
   }
 
-  .logo {
+  .papsas-logo {
     margin-top: 5px;
     margin-left: 5px;
   }

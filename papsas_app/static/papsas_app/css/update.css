@@ -1,4 +1,7 @@
 /* Modal Overlay */
+*{
+    font-family: 'Poppins', sans-serif;
+}
 #update-container {
     display: none; /* Hidden by default */
     position: fixed; /* Stay in place */

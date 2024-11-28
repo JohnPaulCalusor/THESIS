@@ -1,4 +1,6 @@
-
+*{
+    font-family: 'Poppins', sans-serif;
+}
 #details-container img {
     width: 100%;
     height: auto;

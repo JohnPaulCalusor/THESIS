@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="icon" type="image/jpg" href="/media/papsas_app/images/papsas_logo.png">
+    
     <!-- import htmx -->
     <script src="https://unpkg.com/htmx.org@1.9.2"></script>
     <script src="{% static 'papsas_app/js/alert.js' %}"></script>
@@ -24,7 +25,7 @@
         <nav>
             <header class="header">
                 <div class="nav-bar">
-                    <a href="{% url 'index' %}"><img src="/media/papsas_app/images/papsas.png" class="logo" alt='papsas_logo'></a> 
+                    <a href="{% url 'index' %}"><img src="/media/papsas_app/images/papsas.png" class="papsas-logo" alt='papsas_logo'></a> 
                     {% if user.is_authenticated %}
                     <div class="nav__menu" id="nav-menu">
                         <ul class="nav__list">

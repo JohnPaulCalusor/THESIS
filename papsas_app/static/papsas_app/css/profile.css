@@ -1,4 +1,7 @@
 
+*{
+    font-family: 'Poppins', sans-serif;
+}
 body {
     background-color: #f9f9f9;
     display: flex;
@@ -116,7 +119,9 @@ body {
     display: flex;
     border-bottom: 1px solid #f1f1f1;
     color: red;
-    
+}
+.title-activities h1{
+    font-size: 20px;
 }
 
 .info-label-activity{
@@ -165,7 +170,7 @@ body {
 .change-password-btn{
     color: red;
     border: none;
-    background-color: #f9f9f9;
+    background-color: #ffffff;
     cursor: pointer;
     font-size: 1rem;
 }

@@ -1,3 +1,6 @@
+*{
+    font-family: 'Poppins', sans-serif;
+}
 .alert {
     position: relative;
     padding: 1rem 1.25rem;

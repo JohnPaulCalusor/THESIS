@@ -1,4 +1,7 @@
 /* Overlay background with blur effect when the popup is displayed */
+*{
+    font-family: 'Poppins', sans-serif;
+}
 #popup_container {
     position: fixed;
     top: 0;

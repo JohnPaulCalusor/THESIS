@@ -8,12 +8,14 @@ Candidacy
 
 {% block head %}
 <link rel="stylesheet" href="{% static 'papsas_app/css/candidacy.css' %}">
+<link rel="stylesheet" href="{% static 'papsas_app/css/style.css' %}">
 <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.0.3/css/font-awesome.css'>
 <link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css'>
 {% endblock %}
 
 {% block body %}
 {% if filing_period > today %}
+<body>
 <section class="candidacy-form">
     <div class="container-fluid">
         <div class="row justify-content-center">
@@ -296,6 +298,7 @@ Candidacy
             Good luck!</p>
     </div>
 </div>
+</body>
 {% endblock %}
 
 {% block script %}
