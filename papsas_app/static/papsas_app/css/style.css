@@ -108,13 +108,12 @@ img {
   z-index: 100;
 }
 
-.nav {
+.nav-bar {
   height: var(--header-height);
   display: flex;
   justify-content: space-between;
   align-items: center;
   background-color: #ffffff;
-  
   
 }
 
@@ -305,7 +304,7 @@ img {
 
 /* For medium devices */
 @media screen and (min-width: 768px) {
-  .nav {
+  .nav-bar {
     height: calc(var(--header-height) + 1.5rem);
   }
   .nav__toggle, 
@@ -929,7 +928,7 @@ img {
 
 
 
-  .nav {
+  .nav-bar {
     height: calc(var(--header-height) + 1.5rem);
   }
 
@@ -991,7 +990,7 @@ img {
 
 
 
-  .nav {
+  .nav-bar {
     height: calc(var(--header-height) + 1.5rem);
   }
 
@@ -1053,7 +1052,7 @@ img {
   }
 
 
-  .nav {
+  .nav-bar {
     height: calc(var(--header-height) + 1.5rem);
   }
 
