@@ -1457,10 +1457,11 @@ def get_event_reg(request, id):
 
 @secretary_required
 def admin_dashboard(request):
-    IYF = Event.objects.filter(eventName='Interactive Youth Forum').latest('id')
-    NC = Event.objects.filter(eventName='National Convention').latest('id')
-    NRC = Event.objects.filter(eventName='National Research Conference').latest('id')
-    VF = Event.objects.filter(eventName='Volunteerism Forum').latest('id')
+    IYF = Event.objects.filter(eventName='Interactive Youth Forum').order_by('-id').first()
+    NC = Event.objects.filter(eventName='National Convention').order_by('-id').first()
+    NRC = Event.objects.filter(eventName='National Research Conference').order_by('-id').first()
+    VF = Event.objects.filter(eventName='Volunteerism Forum').order_by('-id').first()
+    
     return render(request, 'papsas_app/admin_dashboard.html', {
         'IYF' : IYF,
         'NC' : NC,
