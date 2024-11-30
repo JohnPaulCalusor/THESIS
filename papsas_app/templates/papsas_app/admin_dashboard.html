@@ -123,29 +123,30 @@
 {% block script %}
     <script>
 const borderPalette = [
-            '#ff3f30',   // bright red
-            '#4CAF50',   // green
-            '#2196F3',   // blue
-            '#FF9800',   // orange
-            '#9C27B0',   // purple
-            '#795548',   // brown
-            '#607D8B',   // blue-grey
-            '#FF5722',   // deep orange
-            '#009688',   // teal
-            '#673AB7'    // deep purple
-        ];
+    '#FF0000',   // pure red
+    '#E53935',   // deep red
+    '#D32F2F',   // crimson red
+    '#C62828',   // dark red
+    '#B71C1C',   // maroon
+    '#FF5252',   // coral red
+    '#FF1744',   // bright red
+    '#D50000',   // vivid red
+    '#F44336',   // soft red
+    '#E57373'    // light red
+];
+
 const bgPalette = [
-    'hsla(4, 100%, 59%, 0.6)',    // bright red
-    'hsla(122, 39%, 49%, 0.6)',   // green
-    'hsla(207, 90%, 54%, 0.6)',   // blue
-    'hsla(32, 100%, 52%, 0.6)',   // orange
-    'hsla(291, 64%, 42%, 0.6)',   // purple
-    'hsla(16, 25%, 38%, 0.6)',    // brown
-    'hsla(200, 18%, 46%, 0.6)',   // blue-grey
-    'hsla(14, 100%, 57%, 0.6)',   // deep orange
-    'hsla(174, 100%, 29%, 0.6)',  // teal
-    'hsla(261, 51%, 51%, 0.6)'    // deep purple
-]
+    'hsla(0, 100%, 50%, 0.6)',    // pure red
+    'hsla(0, 78%, 45%, 0.6)',     // deep red
+    'hsla(0, 67%, 40%, 0.6)',     // crimson red
+    'hsla(0, 62%, 36%, 0.6)',     // dark red
+    'hsla(0, 74%, 29%, 0.6)',     // maroon
+    'hsla(0, 100%, 64%, 0.6)',    // coral red
+    'hsla(0, 92%, 57%, 0.6)',     // bright red
+    'hsla(0, 100%, 41%, 0.6)',    // vivid red
+    'hsla(0, 86%, 60%, 0.6)',     // soft red
+    'hsla(0, 100%, 70%, 0.6)'     // light red
+];
 
 let membershipChart, attendanceVsCapacityChart, attendanceOverTimeChart, membershipGrowthChart;
 
@@ -162,8 +163,8 @@ let membershipChart, attendanceVsCapacityChart, attendanceOverTimeChart, members
                 const datasets = [{
                     label: 'Dataset',
                     data: data.values,
-                    backgroundColor: data.values.map((_, index) => 
-                    bgPalette[index % bgPalette.length]),
+                    backgroundColor: bgPalette, 
+                    borderColor: borderPalette,
                     borderWidth: 3,
                 }];
 
@@ -195,7 +196,7 @@ let membershipChart, attendanceVsCapacityChart, attendanceOverTimeChart, members
                         },
                         plugins: {
                             legend: {
-                                display: false,  // Ensure the legend is hidden here
+                                display: true,  // Ensure the legend is hidden here
                             },
                         },
                     }
@@ -275,7 +276,7 @@ const fetchMembershipGrowthData = async (url, ctx) => {
                     data: data.values,
                     borderColor: borderPalette[0],
                     fill: false,
-                    tension: 0.1
+                    tension: 0.6
                 }]
             },
             options: {
