@@ -50,8 +50,8 @@
 <div class="table-wrapper">
 <div id="total_record">
     
-    <p>{% render_table table %}
-    Total Records: {{ table.rows|length }}
+    <p>Total Records: {{ table.rows|length }}{% render_table table %}
+    
     </p>
 </div>
 </div>

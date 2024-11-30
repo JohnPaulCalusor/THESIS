@@ -56,10 +56,11 @@
     {% endif %}
     <div class="table-wrapper">
     <div id="table-container">
-        {% render_table table %}
         <div class="total_record"> 
             <p>Total Records: {{ table.rows|length }}</p>
         </div>
+        {% render_table table %}
+
     </div>
     </div>
     
