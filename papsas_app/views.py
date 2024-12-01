@@ -219,7 +219,6 @@ def rate_event(request, event_id):
                 response = HttpResponse()
                 response['HX-Redirect'] = reverse('user_event_registration_table')
                 return response
-            return redirect('user_event_registration_table')
     else:
         if existing_rating:
             form = EventRatingForm(instance=existing_rating)
@@ -625,54 +624,50 @@ def event(request):
     if request.method == 'POST':
         form = EventForm(request.POST, request.FILES)
         if form.is_valid():
-            event = form.save(commit=False)
-            exclusive = request.POST.get('exclusive', False)
-            if exclusive == 'on':
-                exclusive = True
-            else:
-                exclusive = False
-            event.exclusive = exclusive
-            event.save()
+            try:
+                event = form.save(commit=False)
+                exclusive = request.POST.get('exclusive', False)
+                if exclusive == 'on':
+                    exclusive = True
+                else:
+                    exclusive = False
+                event.exclusive = exclusive
+                event.save()
 
-            messages.success(request, 'Event posted successfully.')
-            
-            subject = f'Don’t Miss Out: Exciting New Event: {event.eventName}'
-            message_template = (
-                'Dear {name},\n\n'
-                'We hope this message finds you well! We are thrilled to announce an upcoming event hosted by the Philippine Association of Practitioners of Student Affairs and Services (PAPSAS) that promises to be both enriching and transformative.\n\n'
-                '📅 Event Details:\n'
-                f'- Event Name: {event.eventName}\n'
-                f'- Date: {event.startDate}\n'
-                f'- Time: {event.startTime}\n'
-                f'- Venue: {event.venue}\n\n'
-                'This is not just another event; it’s a chance to elevate your practice and make meaningful connections. Don’t wait too long! Spaces are limited, and we want to ensure that you are part of this unique experience.\n\n'
-                'Feel free to share this event with your colleagues—let’s grow together as a community!\n\n'
-                'Thank you for being an integral part of PAPSAS. We look forward to seeing you there!\n\n'
-                'Warm regards,\n'
-                '[PAPSAS INC.]\n'
-                'Philippine Association of Practitioners of Student Affairs and Services\n'
-            )
+                messages.success(request, 'Event posted successfully.')
+                
+                subject = f'Don’t Miss Out: Exciting New Event: {event.eventName}'
+                message_template = (
+                    'Dear {name},\n\n'
+                    'We hope this message finds you well! We are thrilled to announce an upcoming event hosted by the Philippine Association of Practitioners of Student Affairs and Services (PAPSAS) that promises to be both enriching and transformative.\n\n'
+                    '📅 Event Details:\n'
+                    f'- Event Name: {event.eventName}\n'
+                    f'- Date: {event.startDate}\n'
+                    f'- Time: {event.startTime}\n'
+                    f'- Venue: {event.venue}\n\n'
+                    'This is not just another event; it’s a chance to elevate your practice and make meaningful connections. Don’t wait too long! Spaces are limited, and we want to ensure that you are part of this unique experience.\n\n'
+                    'Feel free to share this event with your colleagues—let’s grow together as a community!\n\n'
+                    'Thank you for being an integral part of PAPSAS. We look forward to seeing you there!\n\n'
+                    'Warm regards,\n'
+                    '[PAPSAS INC.]\n'
+                    'Philippine Association of Practitioners of Student Affairs and Services\n'
+                )
 
-            if event.exclusive:
-                users_to_email = User.objects.filter(occupation='Practitioner', email_verified=True)
-            else:
-                users_to_email = User.objects.filter(email_verified=True)
+                if event.exclusive:
+                    users_to_email = User.objects.filter(occupation='Practitioner', email_verified=True)
+                else:
+                    users_to_email = User.objects.filter(email_verified=True)
 
-            for user in users_to_email:
-                message = message_template.format(name=user.first_name)
-                try:
-                    send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [user.email])
-                except Exception as e:
-                    logger.error("Error sending email: %s", e)
-
-            if request.headers.get('HX-Request'):
-                response = HttpResponse()
-                response['HX-Redirect'] = reverse('event_table')
-                return response
-
-            return redirect('event_table')
-    else:
-        form = EventForm
+                if request.headers.get('HX-Request'):
+                    response = HttpResponse()
+                    response['HX-Redirect'] = reverse('event_table')
+                    return response
+            except Exception as e:
+                messages.error(request, f'Error - {e}')
+                return render(request, 'papsas_app/event_management.html', {'form': form})
+        else:
+            return render(request, 'papsas_app/event_management.html', {'form': form})
+    form = EventForm()
     return render(request, 'papsas_app/event_management.html', {'form': form})
 
 

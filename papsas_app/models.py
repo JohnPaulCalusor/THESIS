@@ -228,7 +228,7 @@ class Event(models.Model):
     venue = models.ForeignKey(Venue, on_delete=models.CASCADE, null=True)
     eventDescription = models.TextField(max_length=9999, null=True)
     eventStatus = models.BooleanField(default=True)
-    pubmat = models.ImageField(upload_to="papsas_app/pubmat/event", null=False, blank=True)
+    pubmat = models.ImageField(upload_to="papsas_app/pubmat/event", null=False)
     price = models.DecimalField(max_digits=10, decimal_places=2, null=True)
     startTime = models.TimeField(null=True)
     endTime = models.TimeField(null=True)
@@ -244,6 +244,11 @@ class Event(models.Model):
     
     def average_rating(self):
         return self.ratings.aggregate(Avg('rating'))['rating__avg']
+    
+    def save(self, *args, **kwargs):
+        if self.endDate and self.startDate and self.endDate < self.startDate:
+            raise ValueError("The end date cannot be less than start Date.")
+        super().save(*args, **kwargs)
 
     class Meta:
         ordering = ['-startDate']
@@ -266,7 +271,7 @@ class Achievement(models.Model):
     name = models.CharField(max_length=255, null=True)
     description = models.TextField(max_length=9999, null=True)
     postStamp = models.DateTimeField(auto_now_add=True)
-    pubmat = models.ImageField(upload_to="papsas_app/pubmat/achievement", null=False, blank=True)
+    pubmat = models.ImageField(upload_to="papsas_app/pubmat/achievement", null=False)
 
     def __str__(self):
         return f'{self.id} - {self.name}'
@@ -283,7 +288,7 @@ class NewsandOffers(models.Model):
     name = models.CharField(max_length=255, null=True)
     description = models.TextField(max_length=9999, null=True)
     postStamp = models.DateTimeField(auto_now_add=True, null=True)
-    pubmat = models.ImageField(upload_to="papsas_app/pubmat/newsandoffers", null=False, blank=True)
+    pubmat = models.ImageField(upload_to="papsas_app/pubmat/newsandoffers", null=False)
 
     def short_description(self):
         if len(self.description) > 100:

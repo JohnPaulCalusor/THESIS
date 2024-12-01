@@ -1,8 +1,11 @@
+from datetime import datetime
 from django import forms
 from .models import Attendance, EventRegistration, Event, User, UserMembership, MembershipTypes, Venue, Achievement, NewsandOffers, EventRating, Election
 from django.core.exceptions import ValidationError
 from django.forms import ModelForm, TextInput, EmailInput
 from django.utils import timezone
+from django.core.validators import MinValueValidator
+
 
 class RegistrationForm(forms.ModelForm):
     password = forms.CharField(
@@ -132,18 +135,37 @@ occupation = [
 ]
 
 class EventForm(forms.ModelForm):
+    price = forms.DecimalField(
+        widget=forms.NumberInput(attrs={'min': '0'}),
+    )
     class Meta:
         model = Event
         fields = ('eventName', 'startDate', 'endDate', 'venue', 'exclusive', 'eventDescription', 'pubmat', 'price', 'startTime', 'endTime')
         widgets = {
             'startDate': forms.DateInput(attrs={
                 'type': 'date',
-                'min': timezone.now().date().isoformat()  # Set minimum date to today
+                'min': timezone.now().date().isoformat(),  # Set minimum date to today
+                'onchange' : "document.querySelector('#id_endDate').setAttribute('min', document.getElementById('id_startDate').value)"
+
             }),
-            'endDate': forms.DateInput(attrs={'type': 'date'}),
+            'endDate': forms.DateInput(attrs={
+                'type': 'date',
+                'min' : timezone.now().date().isoformat(),
+                # 'onchange': "this.setAttribute('min', document.getElementById('id_startDate').value)"
+                'onchange' : "document.querySelector('#id_startDate').setAttribute('max', document.getElementById('id_endDate').value)"
+            }),
             'startTime': forms.DateInput(attrs={'type': 'time'}),
             'endTime': forms.DateInput(attrs={'type': 'time'}),
         }
+    def __init__(self, *args, **kwargs):
+        super(EventForm, self).__init__(*args, **kwargs)
+        # Set the min attribute for endDate based on startDate
+        if 'startDate' in self.data:
+            try:
+                start_date = self.data.get('startDate')
+                self.fields['endDate'].widget.attrs['min'] = start_date
+            except ValueError:
+                pass  # Handle the case where the date is not valid
 
     def clean_pubmat(self):
         pubmat = self.cleaned_data.get('pubmat')
@@ -153,6 +175,47 @@ class EventForm(forms.ModelForm):
         if not pubmat:  # If no image uploaded during creation
             raise forms.ValidationError("Image is required when creating a new achievement.")
         return pubmat
+    
+    def clean(self):
+        cleaned_data = super().clean()
+        start_date = cleaned_data.get('startDate')
+        end_date = cleaned_data.get('endDate')
+
+        if start_date and end_date:
+            # Convert to datetime objects to ensure proper comparison
+            if isinstance(start_date, str):
+                start_date = datetime.strptime(start_date, '%Y-%m-%d').date()
+            if isinstance(end_date, str):
+                end_date = datetime.strptime(end_date, '%Y-%m-%d').date()
+
+            if start_date > end_date:
+                raise forms.ValidationError({
+                    'startDate': "Start date must be less than or equal to end date.",
+                    'endDate': "End date must be greater than or equal to start date."
+                })
+        
+        return cleaned_data
+
+    def __init__(self, *args, **kwargs):
+        super(EventForm, self).__init__(*args, **kwargs)
+        
+        # Add custom validators to ensure date validation
+        self.fields['startDate'].validators.append(self.validate_start_date)
+        self.fields['endDate'].validators.append(self.validate_end_date)
+
+    def validate_start_date(self, value):
+        # Ensure start date is not after end date if end date exists
+        if self.data.get('endDate'):
+            end_date = datetime.strptime(self.data.get('endDate'), '%Y-%m-%d').date()
+            if value > end_date:
+                raise forms.ValidationError("Start date must be less than or equal to end date.")
+
+    def validate_end_date(self, value):
+        # Ensure end date is not before start date if start date exists
+        if self.data.get('startDate'):
+            start_date = datetime.strptime(self.data.get('startDate'), '%Y-%m-%d').date()
+            if value < start_date:
+                raise forms.ValidationError("End date must be greater than or equal to start date.")
     
 class EventRegistrationForm(forms.ModelForm):
     class Meta:
