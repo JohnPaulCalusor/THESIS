@@ -132,6 +132,31 @@ let chartInstance; // Store Chart.js instance for updates
 
 // Function to fetch and update chart data
 function updateChart(eventType) {
+  const borderPalette = [
+    '#FF0000',   // pure red
+    '#E53935',   // deep red
+    '#D32F2F',   // crimson red
+    '#C62828',   // dark red
+    '#B71C1C',   // maroon
+    '#FF5252',   // coral red
+    '#FF1744',   // bright red
+    '#D50000',   // vivid red
+    '#F44336',   // soft red
+    '#E57373'    // light red
+  ];
+  
+  const bgPalette = [
+    'hsla(0, 100%, 50%, 0.6)',    // pure red
+    'hsla(0, 78%, 45%, 0.6)',     // deep red
+    'hsla(0, 67%, 40%, 0.6)',     // crimson red
+    'hsla(0, 62%, 36%, 0.6)',     // dark red
+    'hsla(0, 74%, 29%, 0.6)',     // maroon
+    'hsla(0, 100%, 64%, 0.6)',    // coral red
+    'hsla(0, 92%, 57%, 0.6)',     // bright red
+    'hsla(0, 100%, 41%, 0.6)',    // vivid red
+    'hsla(0, 86%, 60%, 0.6)',     // soft red
+    'hsla(0, 100%, 70%, 0.6)'     // light red
+  ];
     fetch(`/attendance_chart_data/${encodeURIComponent(eventType)}/`)
         .then(response => {
             if (!response.ok) {
@@ -160,9 +185,9 @@ function updateChart(eventType) {
                     datasets: [{
                         label: "Attendance Count",
                         data: data.data, // Counts
-                        backgroundColor: "hsl(4.3,100%,59.4%, 0.6)",
-                        borderColor: "hsl(4.3,100%,59.4%, 1)",
-                        borderWidth: 3
+                        backgroundColor: bgPalette, 
+                        borderColor: borderPalette,
+                        borderWidth: 3,
                     }]
                 },
                 options: {

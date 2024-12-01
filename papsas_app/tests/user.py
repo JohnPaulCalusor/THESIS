@@ -212,7 +212,7 @@ provinces = [
 ]
 approved_registrations = EventRegistration.objects.filter(status='Approved')
 total_attendance = 0
-for _ in range(1100):
+for _ in range(6000):
     registration = random.choice(approved_registrations)
     event = registration.event
     start_date = event.startDate
@@ -256,3 +256,37 @@ for _ in range(500):
     if total_ratings >= 500:
         break
 print(f"{total_ratings} EventRating records created successfully.")
+
+# Create a record for each event
+from papsas_app.models import User, Event, EventRegistration
+import random
+from faker import Faker
+from datetime import timedelta
+fake = Faker()
+events = Event.objects.all()
+status_choices = ['Approved']
+receipt_path = 'papsas_app/reciept/receipt.png'
+users = User.objects.filter(id__gte=1, id__lte=1441)
+total_registrations = 0
+for event in events:
+    if event.exclusive:
+        eligible_users = users.filter(occupation='Practitioner')
+    else:
+        eligible_users = users
+    for user in eligible_users:
+        reference_number = random.randint(100000, 999999)
+        registration_status = random.choice(status_choices)
+        start_date = event.startDate
+        one_month_before = start_date - timedelta(days=30)
+        registered_at = fake.date_time_between(start_date=one_month_before, end_date=start_date)
+        registration = EventRegistration(
+            user=user,
+            event=event,
+            receipt=receipt_path,
+            reference_number=reference_number,
+            registered_at=registered_at,
+            status=registration_status
+        )
+        registration.save()
+        total_registrations += 1
+print(f"{total_registrations} EventRegistration records created successfully.")
