@@ -172,7 +172,10 @@ let membershipChart, attendanceVsCapacityChart, attendanceOverTimeChart, members
                     type: chartType,
                     data: {
                         labels: data.labels,
-                        datasets: datasets
+                        datasets: datasets,
+                        backgroundColor: bgPalette, 
+                        borderColor: borderPalette,
+                        borderWidth: 3,
                     },
                     options: {
                         responsive: true,
@@ -324,8 +327,8 @@ const fetchUserDistributionByRegionData = async (filterValue, ctx) => {
         const datasets = [{
             label: 'User Distribution by Region',
             data: data.values,
-            borderColor: borderPalette[0],
-            backgroundColor: bgPalette[0],
+            borderColor: borderPalette,
+            backgroundColor: bgPalette,
             borderWidth: 3,
         }];
 
@@ -333,7 +336,10 @@ const fetchUserDistributionByRegionData = async (filterValue, ctx) => {
             type: 'bar',
             data: {
                 labels: data.labels,
-                datasets: datasets
+                datasets: datasets,
+                backgroundColor: bgPalette, 
+                borderColor: borderPalette,
+                borderWidth: 3,
             },
             options: {
                 responsive: true,
@@ -376,7 +382,7 @@ const fetchEventPriceVsAttendanceData = async (url, ctx) => {
                 datasets: [{
                     label: 'Event Price vs Attendance',
                     data: scatterData,
-                    backgroundColor: bgPalette[0],
+                    backgroundColor: bgPalette,
                 }]
             },
             options: {

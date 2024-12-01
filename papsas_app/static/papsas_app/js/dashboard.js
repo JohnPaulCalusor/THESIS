@@ -76,7 +76,7 @@ function capacity_utilization(){
     fetch('/capacity-utilization/')
     .then(response => response.json())
     .then(data => {
-      const eventNames = data.map(item => item.event_name);
+      const eventLabels = data.map(item => `${item.event_name} (${item.start_date})`);
       const venueCaps = data.map(item => item.venue_capacity);
       const registeredAttendees = data.map(item => item.registered_attendees);
       const attendedCounts = data.map(item => item.attended_count);
@@ -85,7 +85,7 @@ function capacity_utilization(){
       new Chart(ctx, {
         type: 'bar',
         data: {
-          labels: eventNames,
+          labels: eventLabels,
           datasets: [
             {
               label: 'Venue Capacity',

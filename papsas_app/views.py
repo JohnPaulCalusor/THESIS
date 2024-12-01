@@ -744,7 +744,7 @@ def event_registration_view(request, event_id):
         return HttpResponseNotFound()
     except Exception as e:
         print(f'error: {e}')
-        return HttpResponseNotFound()
+        return HttpResponseNotFound(f'error - {e}')
     
     if request.method == 'POST':
         # Include the user and event in the POST data
@@ -2412,7 +2412,8 @@ def capacity_utilization(request):
             'event_name': event.eventName,
             'venue_capacity': event.venue.capacity,
             'registered_attendees': registered_attendees,
-            'attended_count': attended_count
+            'attended_count': attended_count,
+            'start_date' : f'{event.startDate.month}-{event.startDate.year}'
         })
 
     return JsonResponse(data, safe=False)
