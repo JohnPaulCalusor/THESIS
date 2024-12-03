@@ -658,6 +658,13 @@ def event(request):
                 else:
                     users_to_email = User.objects.filter(email_verified=True)
 
+                for user in users_to_email:
+                    message = message_template.format(name=user.first_name)
+                    try:
+                        send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [user.email])
+                    except Exception as e:
+                        logger.error("Error sending email: %s", e)
+
                 if request.headers.get('HX-Request'):
                     response = HttpResponse()
                     response['HX-Redirect'] = reverse('event_table')

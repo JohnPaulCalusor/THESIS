@@ -2,6 +2,13 @@
 *{
     font-family: 'Poppins', sans-serif;
 }
+
+.winner-row {
+    background-color: #d4edda; /* Light green */
+    font-weight: bold;
+}
+
+
 table {
     width: 100%;
     border-collapse: collapse;

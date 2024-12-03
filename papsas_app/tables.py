@@ -150,16 +150,21 @@ class VoteTable(tables.Table):
     vote_count = tables.Column(accessor='vote_count', verbose_name='Vote Count')
     actions = tables.TemplateColumn(template_name='papsas_app/partial_list/vote_action_column.html', orderable=False, verbose_name='Actions')
 
-    class Meta:
-        model = Candidacy
-        template_name = "django_tables2/bootstrap.html"
-        fields = ("id" ,"candidate", "election", "vote_count")
-
     def render_candidate(self, value):
         return f"{value.first_name} {value.last_name}"
 
     def render_vote_count(self, value):
         return value or 0
+
+    class Meta:
+        model = Candidacy
+        template_name = "django_tables2/bootstrap.html"
+        fields = ("id" ,"candidate", "election", "vote_count")
+        order_by = ['-vote_count']
+        row_attrs = {
+            'class': lambda record: 'winner-row' if getattr(record, 'is_winner', False) else ''
+        }
+
     
 class FeedbackTable(tables.Table):
     
