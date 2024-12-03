@@ -161,9 +161,6 @@ class VoteTable(tables.Table):
         template_name = "django_tables2/bootstrap.html"
         fields = ("id" ,"candidate", "election", "vote_count")
         order_by = ['-vote_count']
-        row_attrs = {
-            'class': lambda record: 'winner-row' if getattr(record, 'is_winner', False) else ''
-        }
 
     
 class FeedbackTable(tables.Table):
