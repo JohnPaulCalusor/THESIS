@@ -3,11 +3,11 @@
     font-family: 'Poppins', sans-serif;
 }
 
-.winner-row {
+.table-success {
     background-color: #d4edda; /* Light green */
+    color: #155724;          /* Dark green text */
     font-weight: bold;
 }
-
 
 table {
     width: 100%;

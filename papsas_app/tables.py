@@ -148,7 +148,12 @@ class VoteTable(tables.Table):
     candidate = tables.Column(accessor='candidate', verbose_name='Candidate')
     election = tables.Column(accessor='election.title', verbose_name='Election')
     vote_count = tables.Column(accessor='vote_count', verbose_name='Vote Count')
-    actions = tables.TemplateColumn(template_name='papsas_app/partial_list/vote_action_column.html', orderable=False, verbose_name='Actions')
+    election_status = tables.Column(verbose_name="Status", accessor="is_elected")
+    actions = tables.TemplateColumn(
+        template_name='papsas_app/partial_list/vote_action_column.html',
+        orderable=False,
+        verbose_name='Actions'
+    )
 
     def render_candidate(self, value):
         return f"{value.first_name} {value.last_name}"
@@ -156,10 +161,19 @@ class VoteTable(tables.Table):
     def render_vote_count(self, value):
         return value or 0
 
+    def render_election_status(self, value):
+        return "Top Candidate" if value else "N/A"
+    
+    def row_attrs(self, record):
+        if record.status == "Top Candidate":
+            return {"class": "table-success"}
+        return {}
+
+
     class Meta:
         model = Candidacy
         template_name = "django_tables2/bootstrap.html"
-        fields = ("id" ,"candidate", "election", "vote_count")
+        fields = ("id", "candidate", "election", "vote_count")
         order_by = ['-vote_count']
 
     

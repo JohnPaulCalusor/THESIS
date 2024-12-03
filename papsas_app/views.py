@@ -29,7 +29,7 @@ from datetime import date, timedelta
 from django.contrib.auth.forms import PasswordResetForm
 from io import BytesIO
 from django.contrib.auth.views import PasswordResetView
-from django.db.models import Count, Avg, Q
+from django.db.models import Count, Avg, Q, F, Case, When, BooleanField
 from django.core.exceptions import ObjectDoesNotExist
 from functools import wraps
 from django.conf import settings
@@ -2271,11 +2271,22 @@ class ElectionListView(SingleTableView):
 
     def get_queryset(self):
         election_id = self.kwargs.get('election_id')
-        # Annotate vote counts for each candidacy
+        num_winners = Election.objects.get(id=election_id).numWinners  # Assuming `numWinners` is a field in Election
+
         queryset = (
             Candidacy.objects.filter(election=election_id)
             .annotate(vote_count=Count('nominee'))
             .select_related('candidate', 'election')
+            .order_by('-vote_count')
+        )
+        elected_candidates = list(queryset.values_list('id', flat=True)[:num_winners])
+
+        queryset = queryset.annotate(
+            is_elected=Case(
+                When(id__in=elected_candidates, then=True),
+                default=False,
+                output_field=BooleanField(),
+            )
         )
         self.filterset = self.filterset_class(self.request.GET, queryset=queryset)
         return self.filterset.qs
