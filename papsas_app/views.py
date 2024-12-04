@@ -673,6 +673,8 @@ def event(request):
                     response = HttpResponse()
                     response['HX-Redirect'] = reverse('event_table')
                     return response
+                else:
+                    return redirect('event_table')
             except Exception as e:
                 messages.error(request, f'Error - {e}')
                 return render(request, 'papsas_app/event_management.html', {'form': form})
@@ -704,7 +706,7 @@ def attendance_form(request, event_id):
                     )
                     attendance.save()
                     messages.success(request, 'Attendance is saved. Enjoy the event.')
-                    return redirect('index')
+                    return redirect('attendance_form', event_id=event_id)
                 else:
                     for field, errors in form.errors.items():
                         for error in errors:
