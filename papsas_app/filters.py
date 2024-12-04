@@ -161,15 +161,17 @@ class ElectionFilter(django_filters.FilterSet):
         fields = ['id', 'title', 'startDate', 'endDate']
 
 class CandidateFilter(django_filters.FilterSet):
-    name = django_filters.CharFilter(lookup_expr='icontains',
-                                     widget=forms.TextInput(attrs={'id': 'name-id'}))
+    # name = django_filters.CharFilter(lookup_expr='icontains',
+    #                                  widget=forms.TextInput(attrs={'id': 'name-id'}))
+    first_name = django_filters.CharFilter(field_name="candidate__first_name", lookup_expr="icontains", label="First Name")
+    last_name = django_filters.CharFilter(field_name="candidate__last_name", lookup_expr="icontains", label="Last Name")
 
     class Meta:
         model = Candidacy
-        fields = ['id']
+        fields = ['id', 'first_name', 'last_name']
 
     def filter_name(self, queryset, name, value):
-        return queryset.filter(candidate__first_name__icontains=value) | queryset.filter(candidate__last_name__icontains=value)
+        return queryset.filter(candidate__candidate__first_name__icontains=value) | queryset.filter(candidate__candidate__last_name__icontains=value)
 
 class FeedbackFilter(django_filters.FilterSet):
     name = django_filters.CharFilter(lookup_expr='icontains')

@@ -560,19 +560,20 @@ def vote(request):
     else:
         try:
             votes = Vote.objects.get(voterID=user, election=ongoingElection)
+            return render(request, 'papsas_app/form/candidacy.html', {
+                'candidates': candidates,
+                'attended_event': attended_event,
+                'ongoingElection': ongoingElection,
+                'votes': votes,
+                'user': request.user,
+                'has_declared': has_declared,
+                'filing_period': filing_period,
+            })
         except Vote.DoesNotExist:
             votes = None
+            return redirect('index')
         except Exception as e:
             return HttpResponse(f'Error - {e}')
-        return render(request, 'papsas_app/form/candidacy.html', {
-            'candidates': candidates,
-            'attended_event': attended_event,
-            'ongoingElection': ongoingElection,
-            'votes': votes,
-            'user': request.user,
-            'has_declared': has_declared,
-            'filing_period': filing_period,
-        })
 
 
 @login_required(login_url='/login')
