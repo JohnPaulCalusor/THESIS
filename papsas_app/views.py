@@ -508,7 +508,10 @@ def new_officer(request, num_winners):
 def vote(request):
     user = request.user
 
-    ongoingElection = Election.objects.get(electionStatus=True)
+    try:
+        ongoingElection = Election.objects.get(electionStatus=True)
+    except Election.DoesNotExist:
+        return redirect('index')
     filing_period = ongoingElection.startDate + timedelta(days=7)
     attended_event = Attendance.objects.filter(user=user, attended=True).count()
     candidates = Candidacy.objects.filter(election=ongoingElection).annotate(vote_count=Count('nominee'))
@@ -560,20 +563,20 @@ def vote(request):
     else:
         try:
             votes = Vote.objects.get(voterID=user, election=ongoingElection)
-            return render(request, 'papsas_app/form/candidacy.html', {
-                'candidates': candidates,
-                'attended_event': attended_event,
-                'ongoingElection': ongoingElection,
-                'votes': votes,
-                'user': request.user,
-                'has_declared': has_declared,
-                'filing_period': filing_period,
-            })
         except Vote.DoesNotExist:
             votes = None
             return redirect('index')
         except Exception as e:
             return HttpResponse(f'Error - {e}')
+        return render(request, 'papsas_app/form/candidacy.html', {
+            'candidates': candidates,
+            'attended_event': attended_event,
+            'ongoingElection': ongoingElection,
+            'votes': votes,
+            'user': request.user,
+            'has_declared': has_declared,
+            'filing_period': filing_period,
+        })
 
 
 @login_required(login_url='/login')
