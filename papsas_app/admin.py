@@ -21,6 +21,9 @@ class EventRegistrationAdmin(admin.ModelAdmin):
 class UserMembershipAdmin(admin.ModelAdmin):
     search_fields = ['id__icontains', 'user__email']
 
+class UserAdmin(admin.ModelAdmin):
+    search_fields = ['id__icontains', 'email']
+
 # register user
 
 admin.site.register(User, UserAdmin)

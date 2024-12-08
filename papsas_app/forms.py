@@ -269,6 +269,10 @@ class ElectionForm(forms.ModelForm):
         model = Election
         fields = ('title', 'endDate', 'numWinners')
 
+    def __init__(self, *args, **kwargs):
+        super(ElectionForm, self).__init__(*args, **kwargs)
+        self.fields['endDate'].label = 'End Date'
+        self.fields['numWinners'].label = 'Number of candidates'
 
 class AchievementForm(forms.ModelForm):
     class Meta:

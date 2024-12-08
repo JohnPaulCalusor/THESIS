@@ -513,6 +513,7 @@ def vote(request):
     except Election.DoesNotExist:
         return redirect('index')
     filing_period = ongoingElection.startDate + timedelta(days=7)
+    voting_period = filing_period + timedelta(days=1)
     attended_event = Attendance.objects.filter(user=user, attended=True).count()
     candidates = Candidacy.objects.filter(election=ongoingElection).annotate(vote_count=Count('nominee'))
 
@@ -565,7 +566,6 @@ def vote(request):
             votes = Vote.objects.get(voterID=user, election=ongoingElection)
         except Vote.DoesNotExist:
             votes = None
-            return redirect('index')
         except Exception as e:
             return HttpResponse(f'Error - {e}')
         return render(request, 'papsas_app/form/candidacy.html', {
@@ -576,6 +576,7 @@ def vote(request):
             'user': request.user,
             'has_declared': has_declared,
             'filing_period': filing_period,
+            'voting_period' : voting_period
         })
 
 

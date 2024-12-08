@@ -45,7 +45,6 @@ async function loadEvents() {
         ];
   
         const layout = {
-            title: `Distribution of Event Ratings`,
             yaxis: { title: 'Rating' },
             height: 300,
         };

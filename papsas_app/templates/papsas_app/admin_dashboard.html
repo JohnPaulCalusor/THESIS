@@ -75,6 +75,7 @@
                 <canvas id="membershipGrowthChart"></canvas>
             </div>
             <div id="boxplot-container" class="chart">
+                <h3>Distribution of Event Ratings</h3>
                 <div id="boxchart-container">
                     <label for="event-select">Select Event:</label>
                     <select id="event-select" onchange="loadBoxPlot()">
@@ -439,7 +440,8 @@ const updateTiles = async () => {
 
         const revenueResponse = await fetch('{% url "get_total_revenue" %}');
         const revenueData = await revenueResponse.json();
-        document.getElementById('totalRevenue').innerText = '₱ ' + revenueData.total_revenue;
+        const formattedRevenue = new Intl.NumberFormat().format(revenueData.total_revenue);
+        document.getElementById('totalRevenue').innerText = '₱ ' + formattedRevenue;
 
         const ratingResponse = await fetch('{% url "get_event_rating" %}');
         const ratingData = await ratingResponse.json();

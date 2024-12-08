@@ -161,7 +161,7 @@ Candidacy
                         </div> <br><br>
                         <div class="finish">
                             <p>Thank you for applying for candidacy. We appreciate your commitment to serve the
-                                PAPSAS INC. Please note that the election will officially begin on December 2, 2024.
+                                PAPSAS INC. Please note that the voting period will officially begin on {{ voting_period }}.
                                 We wish you the best of luck in your campaign and look forward to seeing the
                                 positive impact you aim to make.</p>
                             <div class="best">
@@ -180,7 +180,7 @@ Candidacy
     <div class="voting-title">
 
         <h2>PAPSAS {{ ongoingElection.title }} ELECTION {{ ongoingElection.startDate.year }}</h2>
-        <p>{{ filing_period }} - {{ ongoingElection.endDate }} </p>
+        <p>{{ voting_period }} - {{ ongoingElection.endDate }} </p>
         {% if messages %}
         <ul class="messages">
             {% for message in messages %}
