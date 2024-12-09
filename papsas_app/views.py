@@ -514,7 +514,7 @@ def vote(request):
         return redirect('index')
     filing_period = ongoingElection.startDate + timedelta(days=7)
     voting_period = filing_period + timedelta(days=1)
-    attended_event = Attendance.objects.filter(user=user, attended=True).count()
+    attended_event = Attendance.objects.filter(user=user, attended=True)
     candidates = Candidacy.objects.filter(election=ongoingElection).annotate(vote_count=Count('nominee'))
 
     try:
