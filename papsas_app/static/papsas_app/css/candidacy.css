@@ -604,7 +604,86 @@ p{
 .modal-content::-webkit-scrollbar-thumb:hover {
     background: #555;
 }
+.check-icon {
+    color: green; /* Makes the check icon green */
+}
 
+.x-icon {
+    color: red; /* Makes the X icon red */
+}
+
+.icon i {
+    font-size: 1.2em; /* Adjust the icon size if needed */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.personal-info {
+    margin-top: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    border: 1px solid #ddd;
+    margin-bottom: 20px;
+
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 0;
+}
+
+.info-label {
+    font-weight: bold;
+    color: #000000;
+    font-weight: 400;
+}
+
+.info-value {
+    color: #000000;
+    font-weight: 300;
+}
+.info-value-activity{
+    color: #000000;
+    font-weight: 300;
+    
+}
+.title{
+    font-weight: bold;
+    margin-bottom: 20px;
+    margin-top: -10px;
+    display: flex;
+
+}
+.title-activities{
+    font-weight: bold;
+    margin-bottom: 20px;
+    margin-top: -10px;
+    display: flex;
+    border-bottom: 1px solid #f1f1f1;
+    color: red;
+}
+.title-activities h1{
+    font-size: 20px;
+}
+
+.info-label-activity{
+    font-weight: 500;
+    color: #000000;
+    font-size: 18px;
+}
+.info-row-activity{
+    display: block;
+    text-align: left;
+    padding: 5px 0;
+}
+
+.info-value img{
+    height: 40%;
+    width: 40%;
+    align-items: center;
+}
 @media (max-width: 768px) {
     .voting-title h2 {
         font-size: 2rem; /* Slightly smaller for tablets */
