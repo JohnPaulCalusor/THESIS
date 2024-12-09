@@ -5,6 +5,10 @@
     
 }
 
+#numWinners{
+    color: red;
+}
+
 .candidacy-form{
     font-family: Arial, sans-serif;
     display: flex;

@@ -29,8 +29,8 @@ Candidacy
                         <div class="progress-container">
                             <ul id="progressbar">
                                 <li class="active" id="account"><strong>Requirement</strong></li>
-                                <li id="personal"><strong>Candicacy Form</strong></li>
-                                <li id="payment"><strong>Credentials</strong></li>
+                                <li id="personal"><strong>Credentials</strong></li>
+                                <li id="payment"><strong>Confimation</strong></li>
                             </ul>
                         </div>
                         <div class="progress">
@@ -85,13 +85,41 @@ Candidacy
                             {% endif %}
                         </fieldset>
                         <fieldset>
+                            <form method="post">
+                                {% csrf_token %}
+                                <div class="form-card">
+                                    <div class="row">
+                                        <div class="col-7">
+                                            <h2 class="fs-title">Credential:</h2>
+                                        </div>
+                                        <div class="col-5">
+                                            <h2 class="steps">Step 2 - 3</h2>
+                                        </div>
+                                    </div>
+                                    <div class="form-container">
+                                        <div class="form-group">
+                                            <label for="credentials">Credentials (Provide two paragraphs about your
+                                                credentials):</label>
+                                            <textarea id="credentials" name="credentials" rows="10" maxlength="2500"
+                                                placeholder="Type your credentials here..." required></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- <input type="submit" name="next" class="next action-button" value="Submit" /> -->
+                            </form>
+                            <input type="button" name="next" class="next action-button" value="Next" /> 
+                            <input
+                            type="button" name="previous" class="previous action-button-previous"
+                            value="Previous" />
+                        </fieldset>
+                        <fieldset>
                             <div class="form-card">
                                 <div class="row">
                                     <div class="col-7">
-                                        <h2 class="fs-title">Candicacy Form: </h2>
+                                        <h2 class="fs-title">Confirmation: </h2>
                                     </div>
                                     <div class="col-5">
-                                        <h2 class="steps">Step 2 - 3</h2>
+                                        <h2 class="steps">Step 3 - 3</h2>
                                     </div>
                                 </div>
                                 <div class="form-container">
@@ -119,37 +147,11 @@ Candidacy
                                     </div>
                                 </div>
 
-                            </div> <input type="button" name="next" class="next action-button" value="Next" /> 
+                            </div>
+                            <input type="button" name="next" class="next action-button" value="Next" /> 
                             <input
                                 type="button" name="previous" class="previous action-button-previous"
                                 value="Previous" />
-                        </fieldset>
-                        <fieldset>
-                            <form method="post" action="{% url 'declare_candidacy' ongoingElection.id %}">
-                                {% csrf_token %}
-                                <div class="form-card">
-                                    <div class="row">
-                                        <div class="col-7">
-                                            <h2 class="fs-title">Credential:</h2>
-                                        </div>
-                                        <div class="col-5">
-                                            <h2 class="steps">Step 3 - 3</h2>
-                                        </div>
-                                    </div>
-                                    <div class="form-container">
-                                        <div class="form-group">
-                                            <label for="credentials">Credentials (Provide two paragraphs about your
-                                                credentials):</label>
-                                            <textarea id="credentials" name="credentials" rows="10" maxlength="2500"
-                                                placeholder="Type your credentials here..." required></textarea>
-                                        </div>
-                                    </div>
-                                </div>
-                                <input type="submit" name="next" class="next action-button" value="Submit" />
-                            </form>
-                            <input
-                            type="button" name="previous" class="previous action-button-previous"
-                            value="Previous" />
                         </fieldset>
                     </div>
                     {% else %}
@@ -161,7 +163,7 @@ Candidacy
                         </div> <br><br>
                         <div class="finish">
                             <p>Thank you for applying for candidacy. We appreciate your commitment to serve the
-                                PAPSAS INC. Please note that the voting period will officially begin on {{ voting_period }}.
+                                PAPSAS INC. Please note that the voting period will officially begin on {{ voting_period }} to {{ ongoingElection.endDate }}.
                                 We wish you the best of luck in your campaign and look forward to seeing the
                                 positive impact you aim to make.</p>
                             <div class="best">
@@ -192,7 +194,7 @@ Candidacy
         </ul>
         {% endif %}
         {% if votes is None %}
-        <p>Please select up to {{ ongoingElection.numWinners }} candidate/s to cast your vote.</p>
+        <p>Please select up to <span id="numWinners"> {{ ongoingElection.numWinners }} </span> candidate(s) to cast your vote.</p>
         <form action="{% url 'vote' %}" method="post">
             {% csrf_token %}
             <div class="profile-container">
@@ -203,7 +205,7 @@ Candidacy
                             <div class="profile-content">
                                 <img src="{{ candidate.candidate.profilePic.url }}" alt="Candidate Profile">
                                 <span> {{ candidate.candidate.first_name }} {{ candidate.candidate.last_name }} </span>
-                                <a href="{% url 'credential' candidate.id %}" class="view-profile">View Candidacy</a>
+                                <a href="{% url 'credential' candidate.id %}" class="view-profile">View Credentials</a>
                             </div>
                         </label>
                     {% endfor %}

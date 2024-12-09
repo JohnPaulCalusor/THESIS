@@ -11,7 +11,14 @@
 
 #navProfile {
    display: flexbox;
-   margin-left: 6rem
+   margin-left: 1.5rem
+}
+
+.profileLink {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-left: 1.5rem;
 }
 
 :disabled {
