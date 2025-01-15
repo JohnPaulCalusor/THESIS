@@ -59,7 +59,7 @@
                                 <li class="nav__item"><a href="{% url 'logout' %}"class="nav__link">Logout</a></li>
 
                                 <li class="nav__item profileLink">
-                                    <span>Hi, {{ user.first_name }} </span>
+                                    <span>{{ user.first_name }} </span>
                                     <a href="{% url 'profile' user.id %}">
                                         <img src="{{ user.profilePic.url }}" alt="profilePic" id="navProfile" class="profile">
                                     </a>
@@ -86,7 +86,7 @@
                                 </li>
                                 <li class="nav__item"><a href="{% url 'logout' %}"class="nav__link">Logout</a></li>
                                 <li class="nav__item profileLink">
-                                    <span>Hi, {{ user.first_name }} </span>
+                                    <span>{{ user.first_name }} </span>
                                     <a href="{% url 'profile' user.id %}">
                                         <img src="{{ user.profilePic.url }}" alt="profilePic" id="navProfile" class="profile">
                                     </a>
@@ -134,7 +134,7 @@
                                     <li class="nav__item"><a href="{% url 'logout' %}" class="nav__link">Logout</a></li>
                                 {% if user.profilePic %}
                                     <li class="nav__item profileLink">
-                                        <span>Hi, {{ user.first_name }} </span>
+                                        <span>{{ user.first_name }} </span>
                                         <a href="{% url 'profile' user.id %}"> 
                                             <img src="{{ user.profilePic.url }}" alt="profilePic" id="navProfile" class="profile">
                                         </a>

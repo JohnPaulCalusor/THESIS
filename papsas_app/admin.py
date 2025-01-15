@@ -8,6 +8,7 @@ from .models import User, MembershipTypes, Vote, Candidacy, Officer, Election, E
 
 class UserAdmin(admin.ModelAdmin):
     list_display = ('id' ,'first_name', 'last_name', 'username','email_verified')
+    search_fields = ['id__icontains', 'email']
     # disables admin to change anything
     # readonly_fields = ('password',)
     def save_model(self, request, obj, form, change):
@@ -20,9 +21,6 @@ class EventRegistrationAdmin(admin.ModelAdmin):
 
 class UserMembershipAdmin(admin.ModelAdmin):
     search_fields = ['id__icontains', 'user__email']
-
-class UserAdmin(admin.ModelAdmin):
-    search_fields = ['id__icontains', 'email']
 
 # register user
 

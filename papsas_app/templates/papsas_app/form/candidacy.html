@@ -152,7 +152,9 @@ Candidacy
                                     <div class="title-activities"> 
                                         <h1>Transcript of Records</h1>
                                     </div>
-                                    <img src="{{ user.tor.url }}" alt="Transcript of Record" >
+                                    {% if user.tor %}
+                                        <img src="{{ user.tor.url }}" alt="Transcript of Record" >
+                                    {% endif %}
                                 </div>
                                 <div class="personal-info">
                                     <div class="title-activities"> 
@@ -173,7 +175,7 @@ Candidacy
 
                             </div>
                             <!-- <input type="button" name="next" class="next action-button" value="Submit" />  -->
-                            <button type="submit" class="action-button" >Submit?</button>
+                            <button type="submit" class="action-button" >Submit</button>
                             </form>
                             <input
                             type="button" name="previous" class="previous action-button-previous" id="step3-prev"
