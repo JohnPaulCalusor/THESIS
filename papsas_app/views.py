@@ -2483,3 +2483,6 @@ def credentials(request, candidate_id):
     return render(request, 'papsas_app/view/credential.html', {
         'candidate' : candidate
     })
+
+def nat_con_view(request):
+    return render(request, 'papsas_app/view/national_conference.html')

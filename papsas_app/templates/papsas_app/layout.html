@@ -56,6 +56,9 @@
                            
                                     </ul>
                                 </li>
+                                <li class="nav__item">
+                                    <a href="{% url 'nat_con' %}" class="nav__link">National Conference</a>
+                                </li>
                                 <li class="nav__item"><a href="{% url 'logout' %}"class="nav__link">Logout</a></li>
 
                                 <li class="nav__item profileLink">
@@ -83,6 +86,9 @@
                                         <li><a href="{% url 'compose_achievement' %}">Achievement</a></li>
                                   
                                     </ul>
+                                </li>
+                                <li class="nav__item">
+                                    <a href="{% url 'nat_con' %}" class="nav__link">National Conference</a>
                                 </li>
                                 <li class="nav__item"><a href="{% url 'logout' %}"class="nav__link">Logout</a></li>
                                 <li class="nav__item profileLink">
@@ -130,6 +136,9 @@
                                     <li class="nav__item"><a href="{% url 'achievement' %}" class="nav__link">Achievements</a></li>
                                     <li class="nav__item">
                                         <a href="{% url 'contact' %}" class="nav__link">Contact</a>
+                                    </li>
+                                    <li class="nav__item">
+                                        <a href="{% url 'nat_con' %}" class="nav__link">National Conference</a>
                                     </li>
                                     <li class="nav__item"><a href="{% url 'logout' %}" class="nav__link">Logout</a></li>
                                 {% if user.profilePic %}
