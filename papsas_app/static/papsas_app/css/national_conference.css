@@ -265,3 +265,134 @@ ol {
 .election-details p {
     margin: 5px 0;
 }
+@media (max-width: 768px) { /* For mobile and smaller tablets */
+    .image-container {
+        margin-top: 20px;
+    }
+
+    .image-container img {
+        max-width: 90%; /* Reduce width for smaller screens */
+        margin: 0 auto;
+    }
+
+    .image-title {
+        font-size: 18px; /* Adjust font size */
+    }
+
+    .navbar {
+        padding: 15px;
+        margin-bottom: 15px;
+    }
+
+    .event-title {
+        font-size: 28px; /* Reduce size for smaller screens */
+    }
+
+    .nav-buttons {
+        flex-direction: column; /* Stack buttons vertically */
+        gap: 10px; /* Reduce spacing */
+    }
+
+    .nav-btn {
+        font-size: 14px; /* Reduce font size */
+        padding: 15px 20px; /* Adjust padding */
+    }
+
+    .container-box {
+        flex-direction: column; /* Stack boxes vertically */
+        align-items: center; /* Center boxes */
+    }
+
+    .box {
+        width: 90%; /* Make boxes take up more width */
+        padding: 20px;
+    }
+
+    .registration-title, 
+    .information-title, 
+    .program-title {
+        font-size: 24px; /* Reduce font size */
+        margin-top: 40px;
+    }
+
+    .register-btn {
+        width: 90%; /* Reduce width of the button */
+        font-size: 18px; /* Adjust font size */
+        padding: 15px; /* Adjust padding */
+    }
+
+    table {
+        width: 90%; /* Reduce table width */
+    }
+
+    .guidelines,
+    .food-container,
+    .announcement {
+        max-width: 90%; /* Adjust container width */
+        padding: 15px;
+    }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) { /* For tablets (landscape or portrait) */
+    .image-container {
+        margin-top: 25px;
+    }
+
+    .image-container img {
+        max-width: 95%; /* Adjust image size */
+        margin: 0 auto;
+    }
+
+    .image-title {
+        font-size: 18px;
+    }
+
+    .navbar {
+        padding: 18px;
+        margin-bottom: 18px;
+    }
+
+    .event-title {
+        font-size: 30px; /* Slightly smaller for tablets */
+    }
+
+    .nav-buttons {
+        gap: 12px;
+    }
+
+    .nav-btn {
+        font-size: 15px;
+        padding: 18px 25px;
+    }
+
+    .container-box {
+        flex-wrap: wrap; /* Allow wrapping of boxes */
+        justify-content: center;
+    }
+
+    .box {
+        width: 45%; /* Adjust width for multiple columns */
+        padding: 25px;
+    }
+
+    .registration-title,
+    .information-title,
+    .program-title {
+        font-size: 28px; /* Adjust font size */
+    }
+
+    .register-btn {
+        width: 50rem; /* Adjust button width */
+        font-size: 18px; /* Adjust font size */
+    }
+
+    table {
+        width: 80%; /* Adjust table width */
+    }
+
+    .guidelines,
+    .food-container,
+    .announcement {
+        max-width: 80%; /* Adjust container width */
+    }
+}
