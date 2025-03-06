@@ -24,14 +24,17 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-ijgsu4l1b@+ieub+1xgy5*iwu4ajtb1v7r!fw3f$$)d+q*$@ag'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['www.papsasinc.com', 'papsasinc.com', '88.222.213.225']
+
+LOGIN_URL = ['/login']
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # Application definition
 
+SITE_DOMAIN = 'www.papsasinc.com'
 
 INSTALLED_APPS = [
     'papsas_app',
@@ -41,6 +44,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_tables2',
+    'qrcode',
+    'django_crontab',
+]
+
+CRONJOBS = [
+    ('0 16 * * *', 'django.core.management.call_command', ['close_election']),
+    ('0 16 * * *', 'django.core.management.call_command', ['check_expiring_memberships'])
 ]
 
 MIDDLEWARE = [
@@ -53,6 +64,11 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+]
+
+
 ROOT_URLCONF = 'papsas.urls'
 
 TEMPLATES = [
@@ -63,6 +79,7 @@ TEMPLATES = [
         'OPTIONS': {
             'context_processors': [
                 'papsas_app.context_processors.is_officer',
+                'papsas_app.context_processors.is_member',
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
@@ -85,11 +102,8 @@ DATABASES = {
         "USER": "postgres",
         "PASSWORD": "password",
         "HOST": "localhost",
-        "PORT": "5433",
+        "PORT": "5432",
     }
-
-    # add new postgresql database
-    
 }
 
 
@@ -119,7 +133,7 @@ AUTH_USER_MODEL = 'papsas_app.User'
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Manila'
 
 USE_I18N = True
 
@@ -129,7 +143,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+STATIC_ROOT = '/var/www/papsas/staticfiles/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
@@ -141,5 +156,14 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'bienjoshua23@gmail.com'
-EMAIL_HOST_PASSWORD = 'zlxz hqgx vuth brhv'
+EMAIL_HOST_USER = 'noreply.papsasinc@gmail.com'
+EMAIL_HOST_PASSWORD = 'ukvj gmxf gyzt kzlx'
+
+DJANGO_TABLES2_TABLE_ATTRS = {
+    'class': 'table',
+    'th': {
+        'class': 'header-bold',
+    },
+}
+
+DATA_UPLOAD_MAX_MEMORY_SIZE = 5242880
