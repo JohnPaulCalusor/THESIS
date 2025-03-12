@@ -119,6 +119,7 @@ body{
 .registration-title{
     font-size: 30px;
     font-weight: bold;
+    margin-top: 30px;
     margin-bottom: 20px;
     color: #333;
 }

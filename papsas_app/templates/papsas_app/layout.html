@@ -41,7 +41,7 @@
                                             <li><a href="{% url 'membership_table' %}">Membership</a></li>
                                             <li><a href="{% url 'event_table' %}">Event</a></li>
                                             <li><a href="{% url 'venue_table' %}">Venue</a></li>
-                                            <li><a href="{% url 'achievement_table' %}">Achievement</a></li>
+                                            <li><a href="{% url 'achievement_table' %}">SAS Research</a></li>
                                 
                                         </ul>
                                 </li>
@@ -52,7 +52,7 @@
                                     <ul class="dropdown-content">
                                         <li><a href="{% url 'event' %}">Event</a></li>
                                         <li><a href="{% url 'compose_venue'%}">Venue</a></li>
-                                        <li><a href="{% url 'compose_achievement' %}">Achievement</a></li>
+                                        <li><a href="{% url 'compose_achievement' %}">SAS Research</a></li>
                            
                                     </ul>
                                 </li>
@@ -74,7 +74,7 @@
                                     <a href="{% url 'venue_record' %}" class="nav__link">Records<i class="fa-solid fa-caret-down"></i></a>
                                     <ul class="dropdown-content">
                                         <li><a href="{% url 'venue_table' %}">Venue</a></li>
-                                        <li><a href="{% url 'achievement_table' %}">Achievement</a></li>
+                                        <li><a href="{% url 'achievement_table' %}">SAS Research</a></li>
                                  
                                     </ul>
                                 </li>
@@ -83,7 +83,7 @@
                                 <li class="nav__item dropdown"><a href=""class="nav__link">Compose<i class="fa-solid fa-caret-down"></i></a>
                                     <ul class="dropdown-content">
                                         <li><a href="{% url 'compose_venue'%}">Venue</a></li>
-                                        <li><a href="{% url 'compose_achievement' %}">Achievement</a></li>
+                                        <li><a href="{% url 'compose_achievement' %}">SAS Research</a></li>
                                   
                                     </ul>
                                 </li>
@@ -109,7 +109,7 @@
                                     <ul class="dropdown-content">
                                         <li><a href="{% url 'about' %}#section-1">Officers</a></li>
                                         <li><a href="{% url 'about' %}#section-2">Resources</a></li>
-                                        <li><a href="{% url 'about' %}#section-3">Partners</a></li>
+                                        <li><a href="{% url 'about' %}#section-3">Regional Chapters</a></li>
                                     </ul>
                                 </li>
                                 {% if is_member.status == 'Approved' %}
@@ -133,7 +133,7 @@
                                 {% endif %}
                                     <li class="nav__item dropdown"><a href="{% url 'event_list' %}" class="nav__link">Event</a>
                                     </li>
-                                    <li class="nav__item"><a href="{% url 'achievement' %}" class="nav__link">Achievements</a></li>
+                                    <li class="nav__item"><a href="{% url 'achievement' %}" class="nav__link">SAS Research</a></li>
                                     <li class="nav__item">
                                         <a href="{% url 'contact' %}" class="nav__link">Contact</a>
                                     </li>
@@ -175,14 +175,14 @@
                                     <ul class="dropdown-content">
                                         <li><a href="{% url 'about' %}#section-1">Officers</a></li>
                                         <li><a href="{% url 'about' %}#section-2">Resources</a></li>
-                                        <li><a href="{% url 'about' %}#section-3">Partners</a></li>
+                                        <li><a href="{% url 'about' %}#section-3">Regional Chapters</a></li>
                                     </ul>
                                 </li>
                                 <li class="nav__item">
                                     <a href="{% url 'become_member' %}" class="nav__link">Become a Member</a>
                                 </li>
                                 <li class="nav__item">
-                                    <a href="{% url 'achievement' %}" class="nav__link">Achievements</a>
+                                    <a href="{% url 'achievement' %}" class="nav__link">SAS Research</a>
                                 </li>
                                 <li class="nav__item">
                                     <a href="{% url 'nat_con' %}" class="nav__link">National Conference</a>

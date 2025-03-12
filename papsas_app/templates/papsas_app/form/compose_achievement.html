@@ -19,10 +19,10 @@
     </ul>
     {% endif %}
     <div class="form-container">
-        <h3>Achievement Form</h3>
+        <h3>SAS Research Form</h3>
         <form method="post" enctype="multipart/form-data"
             hx-post="{% url 'compose_achievement' %}" 
-            hx-confirm="Are you sure you want to post this achievement?"
+            hx-confirm="Are you sure you want to post this research?"
         >
             {% csrf_token %}
             <div class="login_box">

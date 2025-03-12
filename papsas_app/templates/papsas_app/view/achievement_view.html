@@ -6,9 +6,9 @@
 {% endblock %}
 
 {% block body %}
-<h1 class="title-container">Achievements</h1>
+<h1 class="title-container">SAS Research</h1>
     <div id="event_container">
-        {% for achievement in achievements %}
+        {% for achievement in achievements reversed %}
             <div class="event-card">
                 <div class="event-header">
                 <img src="{{ achievement.pubmat.url }}" alt="{{ achievement.name }}" class="event-image">
