@@ -1,341 +1,455 @@
 {% extends 'papsas_app/layout.html' %}
 {% load static %}
 {% block head %}
-    <link rel="stylesheet" href="{% static 'papsas_app/css/national_conference.css' %}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"> 
+<link rel="stylesheet" href="{% static 'papsas_app/css/national_conference.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 {% endblock %}
 
 {% block body %}
+
 <body>
-<div class="container">
-    <div class="image-container">
-        <img src="/media/papsas_app/images/papsas_cover.jpg" alt="Conference Banner">
-    </div>
+    <div class="container">
+        <div class="image-container">
+            <img src="/media/papsas_app/images/papsas_cover.jpg" alt="Conference Banner">
+        </div>
         <div class="navbar">
-            <h1 class="event-title">29th PAPSAS NATIONAL CONFERENCE</h1>
+            <h1 class="event-title">4th NATIONAL RESEARCH CONFERENCE</h1>
             <div class="nav-buttons">
                 <button class="nav-btn" onclick="navigateTo('registration')">Registration</button>
                 <button class="nav-btn" onclick="navigateTo('information')">Information</button>
                 <button class="nav-btn" onclick="navigateTo('venue')">Venue</button>
-                <button class="nav-btn" onclick="navigateTo('election')">Election</button>
+                <button class="nav-btn" onclick="navigateTo('election')">Mechanics and Guidelines for Paper Presentation</button>
                 <button class="nav-btn" onclick="navigateTo('food')">Other Guidelines and Reminders</button>
-                
-            </div>
-        
-        <div id="content-area">
-            <div id="registration" class="nav-content">
-                <h1 class="registration-title">Registration, and Issuance of Certificates and Official Receipts</h1>
-                <p>Registration Fee:</p>
-
-                <div class="container-box">
-                    <div class="box">
-                        <h2>Live-in Participants</h2>
-                        <ul>
-                            <li><span class="price">Php 9,500.00</span></li>
-                            <li>Registration and Conference Venue: Php 4,000.00</li>
-                            <li>Food and Hotel Room Accommodation: Php 5,500.00</li>
-                        </ul>
-                    </div>
-                    <div class="box">
-                        <h2>Live-out Participants</h2>
-                        <ul>
-                            <li><span class="price">Php 8,000.00</span></li>
-                            <li>Registration and Conference Venue: Php 4,000.00</li>
-                            <li>Food: Php 4,000.00</li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="table-name">
-                    <p>Payment Details:</p>
-                </div>
-                
-                <table>
-                    <tbody>
-                        <tr>
-                            <td>Bank Name:</td>
-                            <td>Bank of Philippine Islands (BPI Current Account) Morayta Branch</td>
-                        </tr>
-                        <tr>
-                            <td>Account Name:</td>
-                            <td>Philippine Association of Practitioners of Student Affairs and Services, Inc.,</td>
-                        </tr>
-                        <tr>
-                            <td>Account Number:</td>
-                            <td>1581-0025-44</td>
-                        </tr>
-                    </tbody>
-                </table>
-                <div class="note-name">
-                    <p>** For payments using Gcash or Paymaya, you may use PAPSAS Inc as Account Name</p>
-                </div>
-                <div class="note2-name">
-                    <p>Only registered participants shall be accommodated in the National Conference. Non-registered participants whether paid and/or have booked their plane or bus tickets will not be accommodated.</p>
-                </div>
-                
-                <div class="register-button">
-                    <a href="https://bit.ly/29thPAPSASNatCon" target="_blank">
-                        <button class="register-btn">Click here to REGISTER</button>
-                    </a>
-                </div>
-                <div class="guidelines">
-                    <h1>Registration Details</h1>
-                    <ol>
-                        <li>Please encode all information accurately in order to prevent typographical errors in the directory. No email or text/FB message registration will be entertained.</li>
-                        <li>The registration and payment deadline is on March 10, 2025, or until we have reached the maximum capacity on a "first come, first served" basis. Please note that registration will stay open until all available participant slots are filled. We strongly advise individuals intending to travel by plane or bus to complete their registration before booking their transportation to avoid any potential issues.</li>
-                        <li>Scanned copy or screenshot of the machine-validated deposit slip or online fund transfer transactions must be uploaded upon online registration to complete the registration process.</li>
-                        <li>The online/bank payment of registered participants should be made on or before March 10, 2025. The proof of online payments should be either uploaded in the online registration form. If this is not possible (e.g. delayed school processing), the school concerned representative shall inform the organizers via e-mail (<a href="mailto:papsasinc.national@gmail.com">papsasinc.national@gmail.com</a>) or the PAPSAS Facebook Page’s Messenger (<a href="https://www.facebook.com/papsasinc" target="_blank">https://www.facebook.com/papsasinc</a>).</li>
-                        <li>Participants, especially the late registrants, shall be requested to show a digital or hard copy of the proof of payment, upon the onsite registration.</li>
-                        <li>The Service Invoice shall be issued to the official representative or head of the school delegation during the registration period on Day 2 – April 11, 2025.</li>
-                        <li>Each delegation shall assign a head delegate who shall be in charge of the registration on Day 1. This is to avoid congestion of participants at the registration table.</li>
-                        <li>Walk-in participants and additional school delegates are not allowed.</li>
-                        <li>The participants who are able to completely attend all the conference activities shall receive the full Certificate of Attendance, Certificate of Appearance, Certificate of Membership, and Certificate of Appreciation for the School. Daily attendance of the registered participants shall be checked by the organizers. Those who fail to completely attend the conference will receive a certificate only for the date(s) that they were confirmed to be present at the event.</li>
-                        <li>Registered and paid participants who, for whatever reasons, failed to show up during the entire or a part of the National Conference shall not be entitled to a refund/reimbursement.</li>
-                    </ol>
-                </div>
-                <div class="register-button">
-                    <a href="https://bit.ly/29thPAPSASNatCon" target="_blank">
-                        <button class="register-btn">Click here to REGISTER</button>
-                    </a>
-                </div>
-        </div>
-        <div id="information" class="nav-content">
-            <h1 class="information-title">Welcome to 29th PAPSAS NATIONAL CONFERENCE</h1>
-            <div class="announcement">
-                <p>As a CHED-recognized professional organization of student affairs administrators and practitioners, PAPSAS, Inc. is committed to the formation of Filipino educators by providing effective and relevant programs and services addressing student issues and student affairs development. We are also proud to be an official member of the CHED Technical Working Group for Student Affairs and Services.</p>
-                <div class="details">
-                    <p><strong>Mark Your Calendars:</strong></p>
-                    <p><strong>When:</strong> April 10-12, 2025</p>
-                    <p><strong>Where:</strong> Costa Palawan Resort, F. Ponce de Leon Rd, Puerto Princesa City, Palawan</p>
-                    <p><strong>Theme:</strong> “Weaving an Integrated SAS Approach toward a Healthy Learning Environment”</p>
-                </div>
-                <p>As the national organization of student affairs practitioners, we strive to empower ourselves with the competencies needed to create healthy learning environments that promote student wellness and holistic well-being. This conference aims to provide an excellent platform for fostering collaboration, enhancing knowledge, and equipping participants with innovative strategies to address these objectives effectively.</p>
-            </div>
-            <div class="register-button">
-                <a href="https://bit.ly/29thPAPSASNatCon" target="_blank">
-                    <button class="register-btn">Click here to REGISTER</button>
-                </a>
-            </div>
-            <h1 class="program-title">PROGRAM OF ACTIVITIES</h1>
-            <div class="image-container">
-                
-                <h1 class="information-title">DAY 1: APRIL 10, 2025 (THURSDAY)</h1>
-                <img src="/media/papsas_app/images/day1.png" alt="Conference Banner">
 
             </div>
-            
-            <div class="image-container">
-                <h1 class="information-title">DAY 2: APRIL 11, 2025 (FRIDAY)</h1>
-                <img src="/media/papsas_app/images/day2.png" alt="Conference Banner">
-            </div>
-            <div class="image-container">
-                <h1 class="information-title">DAY 3: APRIL 12, 2025 (SATURDAY)</h1>
-                <img src="/media/papsas_app/images/day3.png" alt="Conference Banner">
-            </div>
 
+            <div id="content-area">
+                <div id="registration" class="nav-content">
+                    <h1 class="registration-title">Registration, and Issuance of Certificates and Official Receipts</h1>
+                    <p>Registration Fee:</p>
 
-
-        </div>
-            <div id="venue" class="nav-content">
-                <h1 class="registration-title">Schedule, Venue and Hotel Room Accommodation</h1>
-                <div class="table-name">
-                    <p><span style="margin-right: 8px;">📍</span>Costa Palawan Resort, F. Ponce de Leon Rd, Puerto Princesa City, Palawan</p>
-                </div>
-                <div class="map-container">
-                    <iframe 
-                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3932.063228986759!2d118.76936961139754!3d9.760711890292498!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x33b56477a61e09d9%3A0x84b353cade0a5b9e!2sCosta%20Palawan%20Resort!5e0!3m2!1sen!2sph!4v1737616018109!5m2!1sen!2sph"
-                        width="70%" 
-                        height="600" 
-                        style="border:0; border-radius: 20px; box-shadow: 0 0 20px 1px rgba(0, 0, 0, 0.1);" 
-                        allowfullscreen="" 
-                        loading="lazy" 
-                        referrerpolicy="no-referrer-when-downgrade">
-                    </iframe>
-                </div>
-                
-                <div class="guidelines">
-                    <h1>Venue Details</h1>
-                    <ol>
-                        <li>The National Conference shall be held from April 10, 2025 at 9:00AM (Registration), until April 12, 2025 at 12:00NN. (Closing Program and Distribution of Certificates).</li>
-                        <li>Only those who registered and paid as Live-In Participants shall have room accommodation at the said hotel.</li>
-                        <li>The organizers shall be in charge of the live-in participants’ room assignment.</li>
-                        <li>Requests for room transfer shall not be entertained by the organizers.</li>
-                        <li>The check-in time is at 2:00PM on April 10, 2025, while the check-out time is at 12:00NN on April 12, 2025. However, since the opening program on April 10 will start by 1pm, live-in participants will be allowed to check-in to their assigned rooms by 6:00pm as stated in the program or as soon as rooms are available. Participants are responsible for hotel reservations before/after this schedule.</li>
-                        <li>Participants are advised to bring their valid ID, which the hotel staff may request to be presented as part of the check-in procedures.</li>
-                        <li>Live-Out participants shall arrange their own lodging in Puerto Princesa City, Palawan.</li>
-                        <li>All participants should observe punctuality.</li>
-                        <li>Participants should use the hotel/venue facilities with care. A participant who causes damage or loss to the facility or property, including the room key, is responsible to replace the damaged or lost facility or property per policy of the hotel.</li>
-                        <li>Participants are discouraged to explore areas that are not included/reserved for the activity. They should abide by the rules and regulations of PAPSAS and the hotel (if applicable).</li>
-                        <li>Participants should observe the Clean as you go (CLAYGO) practice and proper waste disposal.</li>
-                        <li>No participant is allowed to leave the hotel without the permission of the organizers and until the activity ends.</li>
-                    </ol>
-                </div>
-                
-            </div>
-            <div id="food" class="nav-content">
-                <h1 class="registration-title">Get your OFFICIAL 29th PAPSAS National Conference and Training Workshop Shirt!</h1>
-                <div class="image-container">
-                    <img src="/media/papsas_app/images/papsas_shirt.jpg" alt="PAPSAS Shirt">
-                </div>
-                <div class="food-container">    
-                        <p>Be part of the PAPSAS 29th National Conference and Training Workshops with our Official Event Shirt! Designed to commemorate this special occasion, our shirts are not just a symbol of unity but also a testament to our commitment to excellence in student affairs and services leadership and development.</p>
-                </div>
-                <div class="register-button">
-                    <a href="https://bit.ly/NatConShirt" target="_blank">
-                        <button class="register-btn">Avail your PAPSAS Shirt here</button>
-                    </a>
-                </div>
-                <h1 class="registration-title">Food Preferences and Arrangements</h1>
-                <div class="food-container">
-                    <ol>
-                        <li>Food preferences and additional food outside the official menu shall be personally arranged by the concerned/requesting participant.</li>
-                        <li>Participants should be mindful of their special diet and food allergies. To ensure everyone’s comfort during the National Conference and Training Workshop, we kindly request participants with specific dietary needs or restrictions to inform the organizers in advance.</li>
-                        <li>The organizers shall serve the participants’ food during the conference schedule, depending on their type of registration:</li>
-                    </ol>
                     <div class="container-box">
                         <div class="box">
                             <h2>Live-in Participants</h2>
                             <ul>
-                                <li><strong>Day 1:</strong> Lunch, PM Snack, and Dinner</li>
-                                <li><strong>Day 2:</strong> Breakfast, AM Snack, Lunch, PM Snack, and Dinner</li>
-                                <li><strong>Day 3:</strong> Breakfast and AM Snack</li>
+                                <li><span class="price">Php 9,000.00</span></li>
+                                <li>Registration and Conference Venue: Php 3,000.00</li>
+                                <li>Food and Hotel Room Accommodation: Php 6,000.00</li>
                             </ul>
                         </div>
                         <div class="box">
                             <h2>Live-out Participants</h2>
                             <ul>
-                                <li><strong>Day 1:</strong> Lunch, PM Snack, and Dinner</li>
-                                <li><strong>Day 2:</strong> AM Snack, Lunch, PM Snack, and Dinner</li>
-                                <li><strong>Day 3:</strong> AM Snack <br>*Snack shall be simple.</li>
+                                <li><span class="price">Php 7,500.00</span></li>
+                                <li>Registration and Conference Venue: Php 3,000.00</li>
+                                <li>Food: Php 4,500.00</li>
                             </ul>
                         </div>
                     </div>
-                </div>
-                <h1 class="registration-title">Activity Attire</h1>
-                <div class="food-container">
-                    <ol>
-                        <li>The Official NatCon ID must be worn at all times.</li>
-                        <li>All participants are enjoined to observe the following suggested attires:</li>
-                    </ol>
-                    <div class="announcement">
-                        <p><strong>Day 1: Show Your School Pride!</strong><br>
-                            Wear your school or organization apparel, such as shirts, polos, or jackets, and let your institution shine!
-                        </p>
-                        <p><strong>Day 2: Radiate Confidence in Red!</strong><br>
-                            Dress in red to showcase passion, strength, and enthusiasm.
-                            </p>
-                            <p><strong>Day 3: Bold and Brilliant in Black!</strong><br>
-                                Rock your black attire with style and sophistication.
-                            </p>
-                        <p><strong>*Celebrate Culture on Socials Night!</strong><br>
-                            For Socials Night on Day 2, showcase your regional or cultural attire to highlight tradition and diversity.
-                        </p>
+                    <div class="table-name">
+                        <p>Payment Details:</p>
+                    </div>
+
+                    <table>
+                        <tbody>
+                            <tr>
+                                <td>Bank Name:</td>
+                                <td>Bank of Philippine Islands (BPI Current Account) Morayta Branch</td>
+                            </tr>
+                            <tr>
+                                <td>Account Name:</td>
+                                <td>Philippine Association of Practitioners of Student Affairs and Services, Inc.,</td>
+                            </tr>
+                            <tr>
+                                <td>Account Number:</td>
+                                <td>1581-0025-44</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="note-name">
+                        <p>** For payments using Gcash or Paymaya, you may use PAPSAS Inc as Account Name</p>
+                    </div>
+                    <div class="note2-name">
+                        <p>Only registered participants shall be accommodated in the 4th National Research Conference.
+                            Non-registered participants whether paid and/or have booked their plane or bus tickets will
+                            not be accommodated.</p>
+                    </div>
+
+                    <div class="register-button">
+                        <a href="https://bit.ly/4thResearchConference" target="_blank">
+                            <button class="register-btn">Click here to REGISTER</button>
+                        </a>
+                    </div>
+                    <div class="guidelines">
+                        <h1>Registration Details</h1>
+                        <ol>
+                            <li>The online/bank payment of registered participants should be made on or before May 30,
+                                2025. The proof of online payments should be
+                                either uploaded in the online registration form. If this is not possible
+                                (e.g. delayed school processing), the school concerned school
+                                representative shall inform the organizers via e-mail (<a
+                                    href="mailto:papsasinc.national@gmail.com">papsasinc.national@gmail.com</a>) or the
+                                PAPSAS Facebook Page’s Messenger (<a href="https://www.facebook.com/papsasinc"
+                                    target="_blank">https://www.facebook.com/papsasinc</a>).</li>
+                            <li>Participants, especially the late registrants, shall be requested to
+                                show a digital or hardcopy of the proof of payment, upon the onsite
+                                registration.</li>
+                            <li>The Service Invoice shall be issued on June 19, 2025 (Day 2).</li>
+                            <li>Walk-In Participants and Additional School Delegates are not
+                                allowed.</li>
+                            <li>The participants who are able to completely attend all the research
+                                activities shall receive the full Certificate of Attendance and
+                                Certificate of Appearance. Daily attendance of the registered
+                                participants shall be checked by the organizers. Those who fail to
+                                completely attend the forum will receive a certificate only for the
+                                date/s that they were confirmed to be present in the event.</li>
+                            <li>Registered and paid participants who, for whatever reasons, failed
+                                to show up during the entire or a part of the National Research
+                                Conference shall not be entitled to a refund/reimbursed.</li>
+                        </ol>
+                    </div>
+                    <div class="register-button">
+                        <a href="https://bit.ly/4thResearchConference" target="_blank">
+                            <button class="register-btn">Click here to REGISTER</button>
+                        </a>
                     </div>
                 </div>
-                <h1 class="registration-title">Safety</h1>
-                <div class="guidelines">
-                    <h1>Safety Details</h1>
-                    <ol>
-                        <li>All participants shall observe the minimum health standards of the government and venue/hotel.</li>
-                        <li>Those who are sick or with visibly observed flu-like symptoms like cough and colds are advised to stay in their hotel room and inform the organizers for proper disposition.</li>
-                        <li>The organizers shall not arrange for the participants’ transportation. Hence, the participants, especially the practitioners/advisers should make sure that participants go home safely after the activity (i.e. hiring a vehicle with valid licenses).</li>
-                        <li>Organizers and participants should be aware of the hotel’s procedures in case of emergencies during the activity (e.g. fire and earthquake, etc.).</li>
-                        <li>If the participant has any health concerns that may affect his/her participation in the activity, he/she must inform the organizers, bring personal medicines and indicate contact persons for emergencies.</li>
-                        <li>For health and security emergencies, the participants should immediately coordinate with the organizers and hotel authorities.</li>
-                        <li>Participants are highly discouraged to leave the venue while the Natcon activities are ongoing, except for emergencies. Hence, they should free their schedule solely for the activity, and avoid arranging for a tour during the NatCon schedule.</li>
-                        <li>The organizers shall not be responsible for the participants’ safety in their personal time and activities outside the official NatCon Program. Exercise of due diligence, especially for the attending practitioners/advisers, is strongly advised.</li>
-                        <li>Participants are responsible for all their belongings/valuables. The organizers shall not be liable for any loss or damage to the participants’ belongings/valuables.</li>
-                        <li>The PAPSAS, Inc shall not be held liable for any injury resulting from accidents caused by human error or equipment failure or by force majeure during the activity. Likewise, it shall not be held liable for the health and safety of the participants should he/she decide to leave the venue, especially if without the permission of the authorized school representative/s. It shall not be held liable for any untoward incident as a result of the participants’ non-compliance with any rules and regulations of the school or event.
-                        </li>
-                        
-                    </ol>
-                </div>
-                <h1 class="registration-title">Activity Decorum</h1>
-                <div class="guidelines">
-                    <h1>Activity Decorum Details</h1>
-                    <ol>
-                        <li>Organizers and participants should conduct themselves in a manner befitting of school representatives.</li>
-                        <li>Attendance, full attention and cooperation are expected from all participants in all activities of the program.</li>
-                        <li>Participants should observe phone and technology ethics.</li>
-                        <li>Drinking of alcoholic or intoxicating beverages, and smoking (including electronic cigarette) are not allowed.</li>
-                        <li>Any form of public immorality (e.g. public display of affection, etc.) is prohibited.</li>
-                        <li>Any acts of discrimination shall not be tolerated.</li>
-                        <li>The organizers shall report any untoward incidents to the school authorities of the concerned participants.</li>
-                        
-                    </ol>
-                </div>
-            </div>
-
-            <div id="election" class="nav-content">
-                <h1 class="registration-title">2025 PAPSAS Election </h1>
-                <div class="guidelines">
-                    <h1>Election Details</h1>
-                    <ol>
-                        <li>Nominations is open to all eligible members as per the election guidelines.</li>
-                        <li>The nomination form and all required documents must be submitted online on April 11, 2025 from 8:15am to 8:30am.</li>
-                        <li>A member shall be eligible for election to the PAPSAS National Board if he/she possess the following qualifications:</li>
-                    </ol>
+                <div id="information" class="nav-content">
+                    <h1 class="information-title">Welcome to 4th NATIONAL RESEARCH CONFERENCE</h1>
                     <div class="announcement">
-                        <div class="election-details">
-                            <p>• Must be a regular member of the PAPSAS, Inc. for at least one year at the time of her/his nomination (Sec 2, PAPSAS CBL)</p>
-                            <p>• Must have at least 3 years of experience as such head/coordinator, etc. of her/his Office</p>
-                            <p>• Must have a Master’s degree or its equivalent</p>
-                            <p>• Must possess a high degree of integrity</p>
-                            <p>• Must be a member in good standing</p>
-                            <p>• Must be physically present in the assembly at the time of her/his nomination</p>
-                            <p>• Must not have been convicted by final judgment in an administrative, civil or criminal case, or a violation of the Constitution (Sec. 5, PAPSAS CBL)</p>
-                            <p>• For school representation, only one regular PAPSAS, Inc. member of a University, College/ School shall serve in the Board. (Sec.3, PAPSAS CBL)</p>
+                        <p>The Philippine Association of Practitioners of Student Affairs and
+                            Services (PAPSAS, Inc.), in partnership with PAPSAS Region V and
+                            Bicol University, is excited to announce its upcoming 4th National
+                            Research Conference.</p>
+
+                        <div class="details">
+                            <p><strong>Mark Your Calendars:</strong></p>
+                            <p><strong>When:</strong> June 18-20, 2025</p>
+                            <p><strong>Where:</strong> Proxy by
+                                The Oriental Albay, Purok 1 Brgy. 33 Penaranda St, Legazpi Port
+                                District, Legazpi City, Albay</p>
+                            <p><strong>Theme:</strong> “Champions for Change: Leveraging Research
+                                for SAS Practitioners”</p>
+                        </div>
+                        <p>Thus, we invite you and your SAS practitioners to present their paper on
+                            any of the following sub-themes:</p>
+                        <ol>
+                            <li> SAS Practitioners: Creating Pathways Toward Inclusion,
+                                Diversity, and Equality <br>
+                                This sub-theme includes presentations on marginalized students,
+                                gender equality, scholarships, international students, and cultural
+                                diversity on campus.</li>
+                            <li>Technology in Quality Student Campus Life: Promises and
+                                Challenges <br>
+                                This sub-theme includes presentations on using digital platforms and
+                                innovations in SAS practice, including artificial intelligence (AI).</li>
+                            <li>Campus Engagement and Practices in Nurturing a Healthy
+                                Campus Environment <br>
+                                This sub-theme includes papers on student wellbeing, SAS wellbeing,
+                                the mental health of the academic community, safe space, student–
+                                caring, and student-friendly campus.</li>
+                            <li>All Roads Lead to Sustainable Development Goals <br>
+                                This sub-theme includes student-initiated and OSA-initiated activities,
+                                voluntarism, and community engagement toward sustainable
+                                development goals.</li>
+                            <li>The Era of the Cyber Space and Student Values Development <br>
+                                This sub-theme includes papers on the responsible use of social
+                                media platforms, discipline and formation practices, and student
+                                violations in cyberspace.</li>
+                        </ol>
+                        <p>For those who are interested in presenting a paper, the deadline for
+                            the submission of a 300–350-word abstract with not more than 5
+                            keywords is May 15, 2025. Please include the abstract's title,
+                            rationale, objectives, significance, scope, research design, and
+                            findings. Submission of the whole paper is June 10, 2025.</p>
+                    </div>
+                    <div class="register-button">
+                        <a href="https://bit.ly/4thResearchConference" target="_blank">
+                            <button class="register-btn">Click here to REGISTER</button>
+                        </a>
+                    </div>
+                    <h1 class="program-title">PROGRAM OF ACTIVITIES</h1>
+                    <div class="image-container">
+
+                        <h1 class="information-title">DAY 1: JUNE 18, 2025 (WEDNESDAY)</h1>
+                        <img src="/media/papsas_app/images/day1_papsas.png" alt="Conference Banner">
+
+                    </div>
+
+                    <div class="image-container">
+                        <h1 class="information-title">DAY 2: JUNE 19, 2025 (THURSDAY)</h1>
+                        <img src="/media/papsas_app/images/day2_papsas.png" alt="Conference Banner">
+                    </div>
+                    <div class="image-container">
+                        <h1 class="information-title">DAY 3: JUNE 20, 2025 (FRIDAY)</h1>
+                        <img src="/media/papsas_app/images/day3_papsas.png" alt="Conference Banner">
+                    </div>
+
+
+
+                </div>
+                <div id="venue" class="nav-content">
+                    <h1 class="registration-title">Schedule, Venue and Hotel Room Accommodation</h1>
+                    <div class="table-name">
+                        <p><span style="margin-right: 8px;">📍</span>Proxy by
+                            The Oriental Albay, Purok 1 Brgy. 33 Penaranda St, Legazpi Port
+                            District, Legazpi City, Albay</p>
+                    </div>
+                    <div class="map-container">
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3885.1302725116343!2d123.74925257484463!3d13.154181687178232!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x33a10182aa64dfbb%3A0xeb31e228eda7445e!2sPROXY%20by%3A%20The%20Oriental%20-%20Albay!5e0!3m2!1sen!2sph!4v1746292373863!5m2!1sen!2sph" 
+                        width="600" height="450" 
+                        style="border:0; border-radius: 20px; box-shadow: 0 0 20px 1px rgba(0, 0, 0, 0.1);" 
+                        allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                        
+                    </div>
+
+                    <div class="guidelines">
+                        <h1>Venue Details</h1>
+                        <ol>
+                            <li>The Research Conference shall be held from June 18, 2025 at
+                                9:00AM (Registration), until June 20, 2025, 12:15PM. (Closing
+                                Program and Distribution of Certificates).
+                            </li>
+                            <li>The venue of the research conference is at Proxy by The Oriental
+                                Albay, Purok 1 Brgy. 33 Penaranda St, Legazpi Port District,
+                                Legazpi City, Albay.</li>
+                            <li>Participants who will be traveling from other regions shall be the one
+                                to arrange their service or vehicle transfer from the airport to the
+                                hotel.</li>
+                            <li>Only those who registered and paid as Live-In Participants shall
+                                have room accommodation at the said hotel.</li>
+                            <li>The organizers shall be in-charge of the live-in participants’ room
+                                assignment.</li>
+                            <li>Requests for room transfer shall not be entertained by the
+                                organizers.</li>
+                            <li>The check-in Time at the hotel is at 2:00PM on June 18, 2025, while
+                                the Check-Out Time is at 12:00NN on June 20, 2025. However, 
+                                since the opening program on June 18 will start by 1pm, live-in
+                                participants may be allowed to checked-in to their assigned rooms
+                                after the series of activities on Day 1. Participants are responsible
+                                for hotel reservations before/after this schedule.
+                            </li>
+                            <li>Participants are advised to bring their valid ID, which the hotel staff
+                                may request to be presented as part of the check-in procedures.</li>
+                            <li>Live-Out participants shall arrange their own lodging in Legazpi City,
+                                Albay.</li>
+                            <li>All participants should observe punctuality.</li>
+                            <li>Participants should use the hotel/venue facilities with care. A
+                                participant who causes damage or loss to the facility or property,
+                                including the room key, is responsible for replacing the damaged or
+                                lost facility or property per policy of the hotel.</li>
+                            <li>Participants are discouraged from exploring areas that are not
+                                included/reserved for the activity. They should abide by the rules
+                                and regulations of PAPSAS and the hotel (if applicable).</li>
+                            <li>Participants should observe the Clean as you go (CLAYGO)
+                                practice and proper waste disposal.</li>
+                            <li>No participant is allowed to leave the vicinity of the area without the
+                                permission of the authorized school and until the activity ends.</li>
+                        </ol>
+                    </div>
+
+                </div>
+                <div id="food" class="nav-content">
+                    <h1 class="registration-title">Food Preferences and Arrangements</h1>
+                    <div class="food-container">
+                        <ol>
+                            <li>Food preferences and additional food outside the official menu shall
+                                be personally arranged by the concerned/requesting participant.</li>
+                            <li>Participants should be mindful of their special diet and food allergies.</li>
+                            <li>The organizers shall serve the participants’ food during the forum
+                                schedule, depending on their type of registration:</li>
+                        </ol>
+                        <div class="container-box">
+                            <div class="box">
+                                <h2>Live-in Participants</h2>
+                                <ul>
+                                    <li><strong>Day 1:</strong> Lunch, PM Snack, and Dinner</li>
+                                    <li><strong>Day 2:</strong> Breakfast, AM Snack, Lunch, PM Snack, and Dinner</li>
+                                    <li><strong>Day 3:</strong> Breakfast and AM Snack</li>
+                                </ul>
+                            </div>
+                            <div class="box">
+                                <h2>Live-out Participants</h2>
+                                <ul>
+                                    <li><strong>Day 1:</strong> Lunch, PM Snack, and Dinner</li>
+                                    <li><strong>Day 2:</strong> AM Snack, Lunch, PM Snack, and Dinner</li>
+                                    <li><strong>Day 3:</strong> AM Snack <br>*Snack shall be simple.</li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
+                    <h1 class="registration-title">Activity Attire</h1>
+                    <div class="food-container">
+                        <ol>
+                            <li>All participants are enjoined to observe the following suggested
+                                attires: Day 1 to Day 3: Smart Business Attire</li>
+                            <li>The School ID/Official Activity ID must be worn at all times.</li>
+                        </ol>
+                    </div>
+                    <h1 class="registration-title">Safety</h1>
+                    <div class="guidelines">
+                        <h1>Safety Details</h1>
+                        <ol>
+                            <li>All participants shall observe the minimum health standards of the
+                                government and venue/hotel.</li>
+                            <li>Those who are sick or with visibly observed flu-like symptoms like
+                                cough and colds are advised to stay in their hotel room and inform
+                                their attending moderators/adviser and the organizer for proper
+                                disposition.
+                            </li>
+                            <li>The organizers shall not arrange for the participants’ transportation.</li>
+                            <li>Organizers and participants should be aware of the hotel’s 
+                                procedures in case of emergencies during the activity (e.g., fire,
+                                earthquake, etc.).</li>
+                            <li>If the participants have any health concerns that may affect his/her
+                                participation in the activity, he/she must inform the attending
+                                PAPSAS Officers.</li>
+                            <li>For health and security emergencies, the participants should
+                                immediately coordinate with the organizers and hotel authorities.</li>
+                            <li>Participants are highly discouraged from leaving the venue while the
+                                official activities are ongoing, except for emergencies. Hence, they
+                                should free their schedule solely for the activity, and avoid arranging
+                                for a tour during the research conference schedule.</li>
+                            <li>The organizers shall not be responsible for the participant’s safety
+                                in their personal time and activities outside the official research
+                                conference program. Exercise of due diligence, especially for the
+                                attending practitioners/ advisers, is strongly advised.</li>
+                            <li>Participants are responsible for all their belongings/valuables. The
+                                organizers shall not be liable for any loss or damage to the
+                                participants’ belongings/valuables.</li>
+                            <li>The PAPSAS, Inc shall not be held liable for any injury resulting from
+                                accidents caused by human error or equipment failure or by force
+                                majeure during the activity. Likewise, it shall not be held liable for
+                                the health and safety of the participants should he/she decide to
+                                leave the venue, especially if without the permission from the
+                                organizing committee. It shall not be held liable for any untoward
+                                incident as a result of the participants’ non-compliance with any
+                                rules and regulations of the organizing committee.
+                            </li>
+
+                        </ol>
+                    </div>
+                    <h1 class="registration-title">Activity Decorum</h1>
+                    <div class="guidelines">
+                        <h1>Activity Decorum Details</h1>
+                        <ol>
+                            <li>Organizers and participants should conduct themselves in a manner
+                                befitting of school representatives.</li>
+                            <li>Attendance, full attention and cooperation are expected from all
+                                participants in all activities of the program.</li>
+                            <li>Participants should observe phone and technology ethics.</li>
+                            <li>Drinking alcoholic or intoxicating beverages, and smoking (including
+                                electronic cigarettes) are not allowed during the conduct of the
+                                conference.</li>
+                            <li>Any form of public immorality (e.g., public display of affection, etc.)
+                                is prohibited.
+                            </li>
+                            <li>Acts of discrimination shall not be tolerated.</li>
+
+                        </ol>
+                    </div>
                 </div>
 
+                <div id="election" class="nav-content">
+                    <h1 class="registration-title">Mechanics and Guidelines for Paper Presentation</h1>
+                    <div class="guidelines">
+                        <h1>Qualifications</h1>
+                        <ol>
+                            <li>All interested SAS practitioners, scholars, students and researchers are qualified to submit paper for presentation.</li>
+                            <li>The research must be related to any of the following sub-themes: <br>
+                                • SAS Practitioners: Creating Pathways Toward Inclusion, Diversity, and Equality <br>
+                                • Technology in Quality Student Campus Life: Promises and Challenges <br>
+                                • Campus Engagement and Practices in Nurturing a Healthy Campus Environment <br>
+                                • All Roads Lead to Sustainable Development Goals <br>
+                                • The Era of the Cyber Space and Student Values Development
+                                </li>
+                        </ol>
+                        <h1>Submission and Selection</h1>
+                        <ol>
+                            <li>Interested presenters should submit the abstract of their paper using this link: <a
+                                href="https://bit.ly/4thResearchConference">https://bit.ly/4thResearchConference</a></li>
+                            <li>The abstract should have a maximum of three hundred fifty (350) words, and it must be written
+                                 in English in MS Word Times New Roman 12 format, typed single-spaced 
+                                in A4 size with one inch margin on all sides, and must not exceed one page. (See attached sample).</li>
+                            <li>The PAPSAS In. Research Committee will hold a screening of the applications based on the submitted abstract.</li>
+                            <li>Authors of selected papers for presentation shall submit the full paper until June 10, 2025.</li>
+                        </ol>
+                        <h1>Full Paper</h1>
+                        <ol>
+                            <li>The full paper should follow the IMRAD format which is subdivided into the following sections: <br>
+                                • title <br>
+                                • authors and institutional affiliations <br>
+                                • abstract <br>
+                                • introduction <br>
+                                • methodology <br>
+                                • results and discussion <br>
+                                • conclusion and recommendations <br>
+                                • reference list/literature cited <br>
+                                • appendices (optional)
+                                </li>
+                            <li>The full paper should be written in MS Word Times New Roman 12 format, typed single-spaced (zero spacing before and after paragraph) in A4 size with one inch margin on all sides, and must not exceed should not be more than 15 pages excluding appendices and no more than 5000 words.</li>
+                            <li>Main section headings should be in bold face, UPPERCASE, and aligned on the left.</li>
+                            <li>Subheadings should be sentence-cased, bold case, italicized, and aligned on the left.</li>
+                            <li>Page number should be on the upper right corner of the page.</li>
+                            <li>Do not separate pages from the main sections.</li>
+                            <li>The title should be at the top of the first page, 14 points, centered, single spaced, and in UPPERCASE.</li>
+                            <li>The authors should be in sentence case, 12 points, single spaced, centered, and with superscript number for institutional affiliations placed after the authors’ names.</li>
+                            <li>The institutional affiliations and address of authors should be in sentence case, 11 points, single spaced, centered, and superscript number placed before the institutional affiliations and address.</li>
+                            <li>The abstract should have a maximum of three hundred fifty (350) words in 11 points font size. Below the abstract after the blank line, are the three to five (3 to 5) keywords with indention. The “Keywords:” label should be italicized while the actual keywords are not italicized and written in lowercase letters each is separated by commas.</li>
+                            <li>Figures and tables should follow the APA 7 style.</li>
+                            <li>Only the citations used in the paper should be included in the reference list. References should be alphabetically arranged. (See attached sample).</li>
+                        </ol>
+                    </div>
+
+                </div>
             </div>
         </div>
+        <button onclick="scrollToTop()" id="scrollUpButton" title="Go to top">↑</button>
     </div>
-    <button onclick="scrollToTop()" id="scrollUpButton" title="Go to top">↑</button>
-</div>
-<footer class="footer">
-    <div class="footer__container container">
-        <div class="footer__content">
-            <h3 class="footer__title">Philippine Association of Practitioners of Student Affairs and Services, Inc.</h3>
-            <p class="footer__description">
-                Dedicated to the pursuit of excellence in student affairs and services work.
-            </p>
-            <ul class="footer__links">
-                <li><a href="#" class="footer__link">(043) 778 0656</a></li>
-                <li><a href="#" class="footer__link">/papsasinc</a></li>
-                <li><a href="#" class="footer__link">papsasinc.national@gmail.com</a></li>
-                <li><a href="bit.ly/papsasinc" class="footer__link">bit.ly/papsasinc</a></li>
-            </ul>
+    <footer class="footer">
+        <div class="footer__container container">
+            <div class="footer__content">
+                <h3 class="footer__title">Philippine Association of Practitioners of Student Affairs and Services, Inc.
+                </h3>
+                <p class="footer__description">
+                    Dedicated to the pursuit of excellence in student affairs and services work.
+                </p>
+                <ul class="footer__links">
+                    <li><a href="#" class="footer__link">(043) 778 0656</a></li>
+                    <li><a href="#" class="footer__link">/papsasinc</a></li>
+                    <li><a href="#" class="footer__link">papsasinc.national@gmail.com</a></li>
+                    <li><a href="bit.ly/papsasinc" class="footer__link">bit.ly/papsasinc</a></li>
+                </ul>
+            </div>
+            <div class="footer__socials">
+                <a href="#" class="footer__social"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" class="footer__social"><i class="fab fa-twitter"></i></a>
+                <a href="#" class="footer__social"><i class="fab fa-instagram"></i></a>
+            </div>
         </div>
-        <div class="footer__socials">
-            <a href="#" class="footer__social"><i class="fab fa-facebook-f"></i></a>
-            <a href="#" class="footer__social"><i class="fab fa-twitter"></i></a>
-            <a href="#" class="footer__social"><i class="fab fa-instagram"></i></a>
+        <div class="footer__bottom">
+            <p>&copy; 2024 PAPSAS, Inc. All Rights Reserved.</p>
         </div>
-    </div>
-    <div class="footer__bottom">
-        <p>&copy; 2024 PAPSAS, Inc. All Rights Reserved.</p>
-    </div>
-</footer>
-<script>
-    // Show the button when the user scrolls down 20px from the top
-    window.onscroll = function() {
-        let button = document.getElementById("scrollUpButton");
-        if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
-            button.style.display = "block";
-        } else {
-            button.style.display = "none";
-        }
-    };
+    </footer>
+    <script>
+        // Show the button when the user scrolls down 20px from the top
+        window.onscroll = function () {
+            let button = document.getElementById("scrollUpButton");
+            if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+                button.style.display = "block";
+            } else {
+                button.style.display = "none";
+            }
+        };
 
-    // Function to scroll to the top with smooth behavior
-    function scrollToTop() {
-        window.scrollTo({
-            top: 0,
-            behavior: 'smooth' // Smooth scroll effect
-        });
-    }
-</script>
+        // Function to scroll to the top with smooth behavior
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth' // Smooth scroll effect
+            });
+        }
+    </script>
     <script>
         function navigateTo(section) {
             // Hide all sections
