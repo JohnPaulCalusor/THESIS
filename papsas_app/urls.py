@@ -20,6 +20,7 @@ urlpatterns = [
     path('verify_email/<int:user_id>/', views.verify_email, name='verify_email'),
     path('vote', views.vote, name="vote"),
     path('about_us', views.about, name="about"),
+    path('about_dev', views.about_dev, name="about_dev"),
     path('become_member', views.become_member, name="become_member"),
     path('national_conference/', views.nat_con_view, name="nat_con"),
     # path('news_offers', views.news_offers, name="news_offers"),

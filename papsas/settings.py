@@ -24,9 +24,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-ijgsu4l1b@+ieub+1xgy5*iwu4ajtb1v7r!fw3f$$)d+q*$@ag'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['www.papsasinc.com', 'papsasinc.com', '88.222.213.225']
+ALLOWED_HOSTS = ['www.papsasinc.com', 'papsasinc.com', '88.222.213.225', '*']
 
 LOGIN_URL = ['/login']
 

@@ -788,6 +788,9 @@ def event_registration_view(request, event_id):
 def about(request):
     return render(request, 'papsas_app/view/about_us.html')
 
+def about_dev(request):
+    return render(request, 'papsas_app/view/about_dev.html')
+
 def become_member(request):
     try:
         user = request.user
