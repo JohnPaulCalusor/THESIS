@@ -1,5 +1,5 @@
 from datetime import date
-from .models import User, Officer, Candidacy, Election
+from .models import User, Officer, Candidacy, Election, VisitorStats
 
 def is_officer(request):
     today = date.today()
@@ -32,3 +32,7 @@ def is_member(request):
         'days_until_expiration' : days_until_expiration,
         # 'latest_pending_membership' : latest_pending_membership
     }
+
+def visitors_count(request):
+    stats = VisitorStats.objects.first()
+    return {'total_visitors': stats.total_visitors if stats else 0}
