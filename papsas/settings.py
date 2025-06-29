@@ -62,6 +62,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'papsas_app.middleware.VisitorCounterMiddleware'
 ]
 
 AUTHENTICATION_BACKENDS = [
@@ -80,6 +81,7 @@ TEMPLATES = [
             'context_processors': [
                 'papsas_app.context_processors.is_officer',
                 'papsas_app.context_processors.is_member',
+                'papsas_app.context_processors.visitors_count',
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
