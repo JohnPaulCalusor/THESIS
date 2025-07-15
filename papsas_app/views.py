@@ -1058,23 +1058,13 @@ def password_reset_request(request):
         'email_not_found': email_not_found  
     })
 
-
-
-
 def password_reset_verify(request, user_id):
     user = User.objects.get(id=user_id)
 
     try:
         if request.method == 'POST':
-            code = (
-                request.POST['code-1'] +
-                request.POST['code-2'] +
-                request.POST['code-3'] +
-                request.POST['code-4'] +
-                request.POST['code-5'] +
-                request.POST['code-6']
-            )
             if 'resend_code' in request.POST:
+                # Handle resend code request
                 user.verification_code = random.randint(100000, 999999)
                 user.verification_code_expiration = timezone.now() + timezone.timedelta(minutes=2)
                 user.save()
@@ -1083,69 +1073,99 @@ def password_reset_verify(request, user_id):
                 message = f'Dear {user.first_name},\n\nYour verification code is: {user.verification_code}\n\nPlease enter this code to reset your password.\n\nBest regards,\nPhilippine Association of Practitioners of Student Affairs and Services'
                 send_mail(subject, message, 'your_email@example.com', [user.email])
 
+                return render(request, 'papsas_app/password_reset_verify.html', {
+                    'user': user,
+                    'resend_code': False,
+                    'expiration_timestamp': int(user.verification_code_expiration.timestamp()),
+                    'message': 'A new verification code has been sent to your email.'
+                })
+            else:
+                # Handle code verification
+                code = (
+                    request.POST['code-1'] +
+                    request.POST['code-2'] +
+                    request.POST['code-3'] +
+                    request.POST['code-4'] +
+                    request.POST['code-5'] +
+                    request.POST['code-6']
+                )
+                
+                # Check if code is expired
+                if user.verification_code_expiration is None or timezone.now() > user.verification_code_expiration:
+                    return render(request, 'papsas_app/password_reset_verify.html', {
+                        'message': 'Verification code has expired. Please request a new one.',
+                        'resend_code': True,
+                        'user': user,
+                        'expiration_timestamp': 0
+                    })
+                
+                # Check if code is valid
+                if user.verification_code == int(code):
+                    request.session[f'password_reset_verified_{user_id}'] = True
+                    return redirect('password_reset_confirm', user_id=user.id)
+                else:
+                    return render(request, 'papsas_app/password_reset_verify.html', {
+                        'message': 'Invalid Verification Code',
+                        'user': user,
+                        'resend_code': False,
+                        'expiration_timestamp': int(user.verification_code_expiration.timestamp())
+                    })
+        
+        # Handle GET request (initial page load)
+        # Check if code is expired and show resend option
+        if user.verification_code_expiration is None or timezone.now() > user.verification_code_expiration:
+            return render(request, 'papsas_app/password_reset_verify.html', {
+                'message': 'Verification code has expired. Please request a new one.',
+                'resend_code': True,
+                'user': user,
+                'expiration_timestamp': 0
+            })
+        else:
             return render(request, 'papsas_app/password_reset_verify.html', {
                 'user': user,
                 'resend_code': False,
                 'expiration_timestamp': int(user.verification_code_expiration.timestamp()),
                 'message': ''
             })
-
-            if user.verification_code == int(code):
-                return redirect('password_reset_confirm', user_id=user.id)
-
-            if user.verification_code_expiration is None or timezone.now() > user.verification_code_expiration:
-                return render(request, 'papsas_app/password_reset_verify.html', {
-                    'message': 'Verification code has expired. Please request a new one.',
-                    'resend_code': True,
-                    'user': user,
-                    'expiration_timestamp': 0
-                })
-
-            return render(request, 'papsas_app/password_reset_verify.html', {
-                'message': 'Invalid Verification Code',
-                'user': user,
-                'resend_code': False,
-                'expiration_timestamp': int(user.verification_code_expiration.timestamp())
-            })
-
-        if user.verification_code_expiration is None or timezone.now() > user.verification_code_expiration:
-            user.verification_code = random.randint(100000, 999999)
-            user.verification_code_expiration = timezone.now() + timezone.timedelta(minutes=2)
-            user.save()
-
-            subject = 'Password Reset Verification Code'
-            message = f'Dear {user.first_name},\n\nYour verification code is: {user.verification_code}\n\nPlease enter this code to reset your password.\n\nBest regards,\nPhilippine Association of Practitioners of Student Affairs and Services'
-            send_mail(subject, message, 'your_email@example.com', [user.email])
-
-        return render(request, 'papsas_app/password_reset_verify.html', {
-            'user': user,
-            'resend_code': False,
-            'expiration_timestamp': int(user.verification_code_expiration.timestamp()),
-            'message': ''
-        })
+            
     except Exception as e:
         return HttpResponse(f'Error - {e}')
 
 def password_reset_confirm(request, user_id):
     user = User.objects.get(id=user_id)
+    
+    # Check if user has verified their email in this session
+    session_key = f'password_reset_verified_{user_id}'
+    if not request.session.get(session_key, False):
+        return redirect('password_reset_verify', user_id=user_id)
+    
     if request.method == 'POST':
         password1 = request.POST['password1']
         password2 = request.POST['password2']
         
         if password1 == password2:
             try:
-                # Validate the new password
                 validate_password(password1)
                 user.set_password(password1)
+                # Clear session and verification data
+                del request.session[session_key]
+                user.verification_code = None
+                user.verification_code_expiration = None
                 user.save()
                 return redirect('login')
             except ValidationError as e:
-                # Handle validation errors
-                return render(request, 'papsas_app/password_reset_confirm.html', {'message': e.messages})
+                return render(request, 'papsas_app/password_reset_confirm.html', {
+                    'message': e.messages,
+                    'user_id': user_id
+                })
         else:
-            return render(request, 'papsas_app/password_reset_confirm.html', {'message': 'Passwords do not match'})
+            return render(request, 'papsas_app/password_reset_confirm.html', {
+                'message': 'Passwords do not match',
+                'user_id': user_id
+            })
     
     return render(request, 'papsas_app/password_reset_confirm.html', {'user_id': user_id})
+
 
 def count_vote(id):
     candidate = Candidacy.objects.get(id= id)  # replace with the actual candidate id
