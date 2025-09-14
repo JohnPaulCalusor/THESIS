@@ -1,0 +1,34 @@
+{% extends 'papsas_app/layout.html' %}
+{% load static %}
+
+{% block head %}
+    <link rel="stylesheet" href="{% static 'papsas_app/css/event_list.css' %}">
+{% endblock %}
+
+{% block body %}
+<h1 class="title-container">Event List</h1>
+<div id="event_container"
+hx-get="{% url 'get_event' 'list' %}"
+hx-trigger="every 5s"
+hx-swap="innerHTML"
+>
+    
+    {% for event in events %}
+    <div class="event-card" id="event-{{event.id}}">
+        <div class="event-header">
+            <img src="{{ event.pubmat.url }}" alt="" class="event-image">
+        </div>
+        <div class="event-content">
+            <h3>{{ event.eventName }} {{ event.startDate.year }}</h3>
+            <p class="event-description">{{ event.eventDescription }}</p>
+            <p class="event-date">{{ event.startDate }} - {{ event.endDate }}</p>
+        </div>
+        <div class="input-submit"> 
+            <button class="submit-btn">Apply Now!</button>
+        </div>
+    </div>
+    <hr>
+    {% endfor %}
+</div>
+
+{% endblock %}

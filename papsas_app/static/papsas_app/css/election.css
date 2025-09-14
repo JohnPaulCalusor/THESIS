@@ -1,0 +1,79 @@
+*{
+    font-family: 'Poppins', sans-serif;
+}
+.message-container {
+    margin-top: 100px
+}
+.election-dashboard {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+}
+
+.past-elections, .new-election {
+    width: 49%;
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.past-elections h3, .new-election h3 {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.new-election div {
+    display:flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.election-list {
+    display: flex;
+    flex-direction: column;
+    max-height: 700px; /* Set the maximum height for the scroll */
+    overflow-y: auto;  /* Enable vertical scroll */
+}
+
+.election-item {
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+    margin-bottom: 10px;
+}
+p{
+    font-weight: 300;
+}
+.start-election-form {
+    display: flex;
+    flex-direction: column;
+}
+
+.start-election-form input, .start-election-form button {
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    font-size: 16px;
+}
+
+@media (max-width: 768px){
+    .election-dashboard{
+        display: flex;
+        flex-direction: column;
+        gap: 15x;
+        margin: 0px;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .container{
+        margin: 0;
+    }
+
+    .past-elections, .new-election{
+        width: 90vw;
+    }
+
+
+}

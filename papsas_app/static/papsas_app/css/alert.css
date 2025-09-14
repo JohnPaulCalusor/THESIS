@@ -1,0 +1,49 @@
+*{
+    font-family: 'Poppins', sans-serif;
+}
+.alert {
+    position: relative;
+    padding: 1rem 1.25rem;
+    margin: 1rem;
+    border: 1px solid transparent;
+    border-radius: 8px;
+}
+
+.alert.hide {
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+
+.alert.fade-out {
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+
+.alert-warning {
+    color: #664d03;
+    background-color: #fff3cd;
+    border-color: #ffecb5;
+}
+
+.alert-dismissible {
+    padding-right: 3.5rem;
+}
+
+.alert-dismissible .btn-close {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 1.25rem 1rem;
+    color: inherit;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+}
+
+.fade {
+    transition: opacity 0.15s linear;
+}
+
+.show {
+    opacity: 1;
+}

@@ -1,0 +1,475 @@
+{% extends 'papsas_app/layout.html' %}
+{% load static %}
+
+{% block head %}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.0"></script>
+    <script src="{% static 'papsas_app/js/box_chart.js' %}"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <link rel="stylesheet" href="{% static 'papsas_app/css/dashboard.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+{% endblock %}
+{% block body %}
+    <div class="container">
+    <!-- <h1>Dashboard</h1> -->
+    <!-- Tiles Container -->
+        <div class="tiles-container">
+            <div class="tile">
+                <div class="icon">
+                    <i class="fas fa-users"></i> <!-- Icon for Members -->
+                </div>
+                <div class="tile-content">
+                    <div class="title-data">Total Members</div>
+                    <div class="tile-data" id="membersCount">0</div>
+
+                </div>
+            </div>
+            <div class="tile">
+                <div class="icon">
+                    <i class="fas fa-calendar-alt"></i> <!-- Icon for Events -->
+                </div>
+                <div class="tile-content">
+                    <div class="title-data">Number of Events</div>
+                    <div class="tile-data" id="eventsCount">0</div>
+
+                </div>
+            </div>
+            <div class="tile">
+                <div class="icon">
+                    <i class="fas fa-dollar-sign"></i> <!-- Icon for Revenue -->
+                </div>
+                <div class="tile-content">
+                    <div class="title-data">Total Revenue on Events</div>
+                    <div class="tile-data" id="totalRevenue">0</div>
+
+                </div>
+            </div>
+            <div class="tile">
+                <div class="icon">
+                    <i class="fas fa-star"></i> <!-- Icon for Rating -->
+                </div>
+                <div class="tile-content">
+                    <div class="title-data">Overall Event Rating</div>
+                    <div class="tile-data" id="eventRating">{{ event_rating }}</div>
+                </div>
+            </div>
+           
+
+        </div>
+        <div class="region">
+            <div class="chart-container">
+                <h3>User Distribution by Region</h3>
+                <canvas id="RegionChart"></canvas>
+                <select id="filterDropdown" onchange="updateRegionChart()">
+                    <option value="all" selected>All</option>
+                    <option value="top5">Top 5 Regions</option>
+                    <option value="least5">Least 5 Regions</option>
+                </select>
+            </div>
+
+
+        </div>
+        <div class="region">
+            <div class="chart">
+                <h3>Membership Growth Over Time</h3>
+                <canvas id="membershipGrowthChart"></canvas>
+            </div>
+            <div id="boxplot-container" class="chart">
+                <h3>Distribution of Event Ratings</h3>
+                <div id="boxchart-container">
+                    <label for="event-select">Select Event:</label>
+                    <select id="event-select" onchange="loadBoxPlot()">
+                    </select>
+                </div>
+            </div>
+            <div class="chart">
+                <h3>Membership Distribution</h3>
+                <canvas id="membershipChart"></canvas>
+            </div>
+        </div>
+
+        <div class="region">
+            <div class="chart-container">
+                <h3>Attendance Over Time</h3>
+                <canvas id="attendanceOverTimeChart"></canvas>
+            </div>
+
+            <div class="chart-container">
+                <h3>Event Price per Attendance</h3>
+                <canvas id="eventPriceVsAttendanceChart"></canvas>
+            </div>
+
+        </div>
+
+        <div class="region">
+        <div class="chart-container">
+            <h3>Recommended Venue for next <span id="event-name"></h3>
+            <canvas id="nextLocationChart"></canvas>                
+            <label for="event-filter">Filter by Event:</label>
+            <select id="event-filter">
+                <option value="Interactive Youth Forum">Interactive Youth Forum {{ IYF.startDate.year }} </option>
+                <option value="National Convention">National Convention {{ NC.startDate.year }} </option>
+                <option value="National Research Conference">National Research Conference {{ NRC.startDate.year }} </option>
+                <option value="Volunteerism Forum">Volunteerism Forum {{ VF.startDate.year }}  </option>
+            </select>
+        </div>
+        <div class="chart-container">
+            <h3>Capacity Utilization</h3>
+            <canvas id="capacityUtilizationChart"></canvas>
+        </div>
+
+        </div>
+{% endblock %}
+
+{% block script %}
+    <script>
+const borderPalette = [
+    '#FF0000',   // pure red
+    '#E53935',   // deep red
+    '#D32F2F',   // crimson red
+    '#C62828',   // dark red
+    '#B71C1C',   // maroon
+    '#FF5252',   // coral red
+    '#FF1744',   // bright red
+    '#D50000',   // vivid red
+    '#F44336',   // soft red
+    '#E57373'    // light red
+];
+
+const bgPalette = [
+    'hsla(0, 100%, 50%, 0.6)',    // pure red
+    'hsla(0, 78%, 45%, 0.6)',     // deep red
+    'hsla(0, 67%, 40%, 0.6)',     // crimson red
+    'hsla(0, 62%, 36%, 0.6)',     // dark red
+    'hsla(0, 74%, 29%, 0.6)',     // maroon
+    'hsla(0, 100%, 64%, 0.6)',    // coral red
+    'hsla(0, 92%, 57%, 0.6)',     // bright red
+    'hsla(0, 100%, 41%, 0.6)',    // vivid red
+    'hsla(0, 86%, 60%, 0.6)',     // soft red
+    'hsla(0, 100%, 70%, 0.6)'     // light red
+];
+
+let membershipChart, attendanceVsCapacityChart, attendanceOverTimeChart, membershipGrowthChart;
+
+        const fetchData = async (url, ctx, chartType, chartInstance) => {
+            try {
+                const response = await fetch(`${url}?_=${new Date().getTime()}`);
+                if (!response.ok) throw new Error('Network response was not ok');
+                const data = await response.json();
+
+                if (chartInstance) {
+                    chartInstance.destroy();
+                }
+
+                const datasets = [{
+                    label: 'Dataset',
+                    data: data.values,
+                    backgroundColor: bgPalette, 
+                    borderColor: borderPalette,
+                    borderWidth: 3,
+                }];
+
+                return new Chart(ctx, {
+                    type: chartType,
+                    data: {
+                        labels: data.labels,
+                        datasets: datasets,
+                        backgroundColor: bgPalette, 
+                        borderColor: borderPalette,
+                        borderWidth: 3,
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                min: 0,
+                                ticks: {
+                                    callback: function(value) {
+                                        return Number.isInteger(value) ? value : '';
+                                    }
+                                }
+                            },
+                            x: {
+                                ticks: {
+                                    autoSkip: true,
+                                    maxTicksLimit: 20
+                                }
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                display: true,  // Ensure the legend is hidden here
+                            },
+                        },
+                    }
+                });
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+
+        const fetchAttendanceOverTimeData = async (url, ctx) => {
+            try {
+                const response = await fetch(`${url}?_=${new Date().getTime()}`);
+                if (!response.ok) throw new Error('Network response was not ok');
+                const data = await response.json();
+
+                if (attendanceOverTimeChart) {
+                    attendanceOverTimeChart.destroy();
+                }
+
+                return new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: data.labels,
+                        datasets: [{
+                            label: 'Attendance Over Time',
+                            data: data.values,
+                            borderColor: borderPalette[0],
+                            fill: false,
+                            tension: 0.1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    callback: function(value) {
+                                        return Number.isInteger(value) ? value : ''; 
+                                    }
+                                }
+                            },
+                            x: {
+                                ticks: {
+                                    autoSkip: true,
+                                    maxTicksLimit: 10
+                                }
+                            }
+                        }
+                    }
+                });
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+
+
+const fetchMembershipGrowthData = async (url, ctx) => {
+    try {
+        const response = await fetch(`${url}?_=${new Date().getTime()}`);
+        if (!response.ok) throw new Error('Network response was not ok');
+        const data = await response.json();
+
+        if (membershipGrowthChart) {
+            membershipGrowthChart.destroy();
+        }
+
+        console.log('Membership growth data:', data);
+
+        return new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: data.labels,
+                datasets: [{
+                    label: 'Membership Growth',
+                    data: data.values,
+                    borderColor: borderPalette[0],
+                    fill: false,
+                    tension: 0.6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return Number.isInteger(value) ? value : '';
+                            }
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Year'
+                        },
+                        ticks: {
+                            autoSkip: true,
+                            maxTicksLimit: 10
+                        }
+                    }
+                }
+            }
+        });
+    } catch (error) {
+        console.error('Error fetching membership growth data:', error);
+    }
+};
+
+let regionChart = null;
+
+const fetchUserDistributionByRegionData = async (filterValue, ctx) => {
+    try {
+        const response = await fetch(`{% url "get_user_distribution_by_region" %}?filter=${filterValue}`);
+        if (!response.ok) throw new Error('Network response was not ok');
+        const data = await response.json();
+
+        if (regionChart) {
+            regionChart.destroy();
+        }
+
+        const datasets = [{
+            label: 'User Distribution by Region',
+            data: data.values,
+            borderColor: borderPalette,
+            backgroundColor: bgPalette,
+            borderWidth: 3,
+        }];
+
+        regionChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: data.labels,
+                datasets: datasets,
+                backgroundColor: bgPalette, 
+                borderColor: borderPalette,
+                borderWidth: 3,
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false,
+                        position: 'bottom',
+                    },
+                },
+            }
+        });
+    } catch (error) {
+        console.error('Error fetching user distribution by region data:', error);
+    }
+};
+
+let eventPriceVsAttendanceChart = null;
+// scatter
+const fetchEventPriceVsAttendanceData = async (url, ctx) => {
+    try {
+        const response = await fetch(`${url}?_=${new Date().getTime()}`);
+        if (!response.ok) throw new Error('Network response was not ok');
+        const data = await response.json();
+
+        if (eventPriceVsAttendanceChart) {
+            eventPriceVsAttendanceChart.destroy();
+        }
+
+        const scatterData = data.values.map(event => ({
+    x: event.event__price,
+    y: event.attendance_count,
+    z: event.event__startDate,
+    eventName: event.event__eventName // Ensure this matches the updated field name
+}));
+
+        eventPriceVsAttendanceChart = new Chart(ctx, {
+            type: 'scatter',
+            data: {
+                datasets: [{
+                    label: 'Event Price vs Attendance',
+                    data: scatterData,
+                    backgroundColor: bgPalette,
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Event Price'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Attendance Count'
+                        }
+                    }
+                },
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function(tooltipItem) {
+                                const eventData = tooltipItem.raw;
+                                return `${eventData.eventName} ${eventData.z}: Price Php${eventData.x}, Attendance ${eventData.y}`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    } catch (error) {
+        console.error('Error fetching event price vs attendance data:', error);
+    }
+};
+
+
+        const updateRegionChart = async () => {
+            const filterValue = document.getElementById('filterDropdown').value;
+            const regionCtx = document.getElementById('RegionChart').getContext('2d');
+            await fetchUserDistributionByRegionData(filterValue, regionCtx);
+        };
+
+const updateTiles = async () => {
+    try {
+        const membersResponse = await fetch('{% url "get_total_members_count" %}');
+        if (!membersResponse.ok) throw new Error('Network response was not ok');
+        const membersData = await membersResponse.json();
+        document.getElementById('membersCount').innerText = membersData.count;
+
+        const eventsResponse = await fetch('{% url "get_total_events_count" %}');
+        if (!eventsResponse.ok) throw new Error('Network response was not ok');
+        const eventsData = await eventsResponse.json();
+        document.getElementById('eventsCount').innerText = eventsData.count;
+
+        const revenueResponse = await fetch('{% url "get_total_revenue" %}');
+        const revenueData = await revenueResponse.json();
+        const formattedRevenue = new Intl.NumberFormat().format(revenueData.total_revenue);
+        document.getElementById('totalRevenue').innerText = '₱ ' + formattedRevenue;
+
+        const ratingResponse = await fetch('{% url "get_event_rating" %}');
+        const ratingData = await ratingResponse.json();
+        document.getElementById('eventRating').innerText = ratingData.average_rating ? ratingData.average_rating.toFixed(2) : 'No ratings yet';
+    } catch (error) {
+        console.error('Error fetching data:', error);
+    }
+};
+        const initCharts = async () => {
+            const membershipCtx = document.getElementById('membershipChart').getContext('2d');
+            const attendanceOverTimeCtx = document.getElementById('attendanceOverTimeChart').getContext('2d');
+            const membershipGrowthCtx = document.getElementById('membershipGrowthChart').getContext('2d');
+            const regionCtx = document.getElementById('RegionChart').getContext('2d');
+            const eventPriceVsAttendanceCtx = document.getElementById('eventPriceVsAttendanceChart').getContext('2d');
+
+            membershipChart = await fetchData('{% url "get_membership_data" %}', membershipCtx, 'doughnut', membershipChart);
+            attendanceOverTimeChart = await fetchAttendanceOverTimeData('{% url "get_attendance_over_time_data" %}', attendanceOverTimeCtx);
+            membershipGrowthChart = await fetchMembershipGrowthData('{% url "get_membership_growth" %}', membershipGrowthCtx);
+            regionChart = await fetchData('{% url "get_user_distribution_by_region" %}', regionCtx, 'bar', regionChart);
+            eventPriceVsAttendanceChart = await fetchEventPriceVsAttendanceData('{% url "get_event_price_vs_attendance_data" %}', eventPriceVsAttendanceCtx);
+        };
+
+        window.onload = () => {
+            initCharts();
+            updateTiles();
+            updateRegionChart();
+        };
+    </script>
+
+    <script src="{% static 'papsas_app/js/dashboard.js' %}"></script>
+{% endblock %}

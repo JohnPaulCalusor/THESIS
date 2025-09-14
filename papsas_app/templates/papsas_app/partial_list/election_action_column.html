@@ -1,0 +1,13 @@
+<div class="action-buttons">
+    <a class="action-icon edit-btn " title="Edit" data-id="{{ record.id }}" onclick="showUpdate({{record.id}})">
+        <i class="fas fa-edit"></i>
+    </a>
+
+    <button class="action-icon" title="Delete" type="submit" 
+            hx-post="{% url 'delete_election' record.id %}"
+            hx-confirm="Are you sure you want to delete {{ record.title }} election?"
+            hx-target="body"
+            hx-swap="outerHTML">
+        <i class="fas fa-trash-alt"></i>
+    </button>
+</div>

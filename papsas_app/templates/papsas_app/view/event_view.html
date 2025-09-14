@@ -1,0 +1,69 @@
+{% extends 'papsas_app/layout.html' %}
+{% load static %}
+
+{% block head %}
+    <link rel="stylesheet" href="{% static 'papsas_app/css/event_list.css' %}">
+{% endblock %}
+
+{% block body %}
+<div id="event_container">
+    {% for event in events %}
+    <div class="event-card">
+        <div class="event-header">
+            <img src="{{ event.pubmat.url }}" alt="" class="event-image">
+        </div>
+        <div class="event-content">
+            <h3>{{ event.eventName }} {{ event.startDate.year }}</h3>
+            <p class="event-description">{{ event.eventDescription|linebreaks }}</p>
+            <p class="event-date">{{ event.startDate }} - {{ event.endDate }}</p>
+        </div>
+        <div class="input-submit"> 
+            <a href="{% url 'event_registration_view' event.id %}"><button class="submit-btn">Register Now!</button></a>
+        
+        </div>
+    </div>
+    
+    <hr>
+    {% endfor %}
+    <div class="pagination">
+        <span class="step-links">
+            {% if events.has_previous %}
+                <a href="?page=1">&laquo; first</a>
+                <a href="?page={{ events.previous_page_number }}">previous</a>
+            {% endif %}
+    
+            <span class="current">
+                Page {{ events.number }} of {{ events.paginator.num_pages }}.
+            </span>
+    
+            {% if events.has_next %}
+                <a href="?page={{ events.next_page_number }}">next</a>
+                <a href="?page={{ events.paginator.num_pages }}">last &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
+    <!-- hx-get="{% url 'get_event' 'list'%}"
+    hx-trigger="every 5s"
+    hx-swap="innerHTML" -->
+</div>
+<button onclick="scrollToTop()" id="scrollUpButton" title="Go to top">↑</button>
+<script>
+    // Show the button when the user scrolls down 20px from the top
+    window.onscroll = function() {
+        let button = document.getElementById("scrollUpButton");
+        if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+            button.style.display = "block";
+        } else {
+            button.style.display = "none";
+        }
+    };
+
+    // Function to scroll to the top with smooth behavior
+    function scrollToTop() {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth' // Smooth scroll effect
+        });
+    }
+</script>
+{% endblock %}

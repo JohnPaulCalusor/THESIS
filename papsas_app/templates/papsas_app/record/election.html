@@ -1,0 +1,130 @@
+{% extends 'papsas_app/layout.html' %}
+{% load django_tables2 %}
+{% load static %}
+{% block head %}
+<link rel="stylesheet" href="{% static 'papsas_app/css/election.css' %}">
+<link rel="stylesheet" href="{% static 'papsas_app/css/login.css' %}">
+<link rel="stylesheet" href="{% static 'papsas_app/css/datatable.css' %}">
+<link rel="stylesheet" href="{% static 'papsas_app/css/update.css' %}">
+{% endblock %}
+{% block title %}
+Election
+{% endblock %}
+
+{% block body %}
+<div class="container">
+    <div class="message-container">
+        {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+            <div class="alert alert-warning alert-dismissible fade show custom-alert" role="alert">
+                <strong>{{ message }}</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">X</button>
+            </div>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        <div class="election-dashboard">
+            <div class="past-elections">
+                <h3>Election List</h3>
+                <form method="get" class="mb-4" id="filter-form">
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <label for="Id" class="text-input">Id:</label>
+                            {{ filter.form.id }}
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="Id" class="text-input">Title:</label>
+                            {{ filter.form.title }}
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="Id" class="text-input">Opening Date:</label>
+                            {{ filter.form.startDate }}
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="Id" class="text-input">Closing Date:</label>
+                            {{ filter.form.endDate }}
+                        </div>
+
+                        <div class="col-md-3 mb-3 d-flex align-items-end">
+                            <button type="submit" class="search-submit">Search</button>
+                            <a href="{% url 'election' %}" class="search-submit">Reset</a>
+                        </div>
+                    </div>
+                </form>
+                <div class="election-list">
+                    {% render_table table %}
+                </div>
+            </div>
+
+            <div class="new-election">
+                {% if not ongoingElection %}
+                <h3>Start New Election</h3>
+                <form method="post" hx-post="{% url 'election' %}"
+                    hx-confirm="Are you sure you want to start an election?" hx-target="body" hx-swap="outerHTML">
+                    {% csrf_token %}
+                    
+                        <div class="input-box">
+                        <input type="text" name="title" placeholder="Election Name" required>
+                        </div>
+
+                        <div class="input-box">
+                            <input type="number" name="num_candidates" required placeholder="Number of Candidates">
+                        </div>
+                        <div class="input-box">
+                            
+                        <label for="endDate"> End Date: </label>
+                        <input type="date" name="endDate" placeholder="End Date" required min="{{ day }}">
+                    </div>
+
+                    <button type="submit" class="submit-btn">Start Election</button>
+                </form>
+                {% else %}
+                <h3>Ongoing Election</h3>
+                <div>
+                    {% for election in electionList %}
+                    {% if election.electionStatus == True %}
+                    <form method="post" hx-post="{% url 'manage_election' election.id %}"
+                        hx-confirm="Are you sure you want to close {{ election.title }} election?" hx-target="body"
+                        hx-swap="outerHTML">
+                        {% csrf_token %}
+                        <button type="submit" class="submit-btn">Stop Election</button>
+                    </form>
+                    <div>
+                        <a href="{% url 'election_table' election.id %}" >
+                            <button class="submit-btn">
+                                View Election Progress
+                            </button>
+                        </a>
+                    </div>
+
+                    {% endif %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="details-container">
+    <div class="update-content">
+        <span class="upd-close-modal" onclick="closePopup()"><i class="fas fa-times"></i></span>
+        <h3>Update Election Record</h3>
+        <form class="popup-form"
+        hx-post=""
+        hx-confirm="Are you sure you want to update this account?"
+        >
+            {% csrf_token %}
+            {{ form }}
+            <button type="submit" class="btn update-btn">Update</button>
+            <div id="error-container" class="mt-3" style="color: red;"></div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block script %}
+    <script src="{% static 'papsas_app/js/election.js' %}"></script>
+{% endblock %}

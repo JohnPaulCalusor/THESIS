@@ -1,0 +1,750 @@
+*{
+    margin: 0;
+    padding: 0;
+    font-family: 'Poppins', sans-serif;
+    
+}
+
+#numWinners{
+    color: red;
+}
+
+.candidacy-form{
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 90vh;
+    margin: 0;
+
+}
+p{
+    color: grey;
+    font-weight: 300;
+
+}
+
+#heading{
+    text-transform: uppercase;
+    color: #ff0000;
+    font-weight: 600;
+}
+
+#msform{
+    text-align: center;
+    position: relative;
+    margin-top: 20px;
+}
+
+#msform fieldset{
+    background: white;
+    border: 0 none;
+    border-radius: 0.5rem;
+    box-sizing: border-box;
+    width: 100%;
+    margin: 0;
+    padding-bottom: 20px;
+    position: relative;
+}
+
+.form-card{
+    text-align: center;
+}
+.form-card-finish {
+    text-align: center;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add a subtle shadow */
+    background-color: #fff; /* Optional: ensure a white background for contrast */
+}
+
+
+#msform fieldset:not(:first-of-type){
+    display: none;
+}
+
+#msform input, #msform textarea{
+    padding: 8px 15px 8px 15px;
+    border: 1px solid #ccc;
+    border-radius: 0px;
+    margin-top: 2px;
+    width: 100%;
+    box-sizing: border-box;
+    color: #2C3E50;
+    background-color: #ffffff;
+    font-size: 16px;
+    letter-spacing: 1px;
+}
+
+#msform input:focus, #msform textarea:focus{
+    -moz-box-shadow: none !important;
+    -webkit-box-shadow: none !important;
+    box-shadow: none !important;
+    border: px solid #ff0000;
+    outline-width: 0;
+}
+
+#msform .action-button{
+    width: 100px;
+    background: #ff0000;
+    font-weight: bold;
+    color: white;
+    border: 0 none;
+    border-radius: 0px;
+    cursor: pointer;
+    padding: 10px 5px;
+    margin: 10px 0px 10px 5px;
+    font-family: Arial, sans-serif;
+    float: right;
+}
+#msform .action-button:hover,
+#msform .action-button:focus {
+    background-color: #ff0000
+}
+
+#msform .action-button-previous {
+    width: 100px;
+    background: #616161;
+    font-weight: bold;
+    color: white;
+    border: 0 none;
+    border-radius: 0px;
+    cursor: pointer;
+    padding: 10px 5px;
+    margin: 10px 5px 10px 0px;
+    float: right
+}
+
+#msform .action-button-previous:hover,
+#msform .action-button-previous:focus {
+    background-color: #000000
+}
+
+.card {
+    z-index: 0;
+    border: none;
+    position: relative
+}
+
+.fs-title {
+    font-size: 25px;
+    color: #ff0000;
+    margin-bottom: 15px;
+    font-weight: normal;
+    text-align: left
+}
+
+.purple-text {
+    color: #ff0000;
+    font-weight: normal
+}
+
+.steps {
+    font-size: 25px;
+    color: gray;
+    margin-bottom: 10px;
+    font-weight: normal;
+    text-align: right
+}
+
+.fieldlabels {
+    color: gray;
+    text-align: left
+}
+
+#progressbar {
+    margin-bottom: 50px!important;
+    overflow: hidden;
+    color: lightgrey;
+    display: flex;
+    justify-content: center;
+    margin-left: -2rem;
+}
+
+#progressbar .active {
+    color: #ff0000
+}
+
+#progressbar li {
+    list-style-type: none;
+    font-size: 15px;
+    width: 25%;
+    float: left;
+    position: relative;
+    font-weight: 400
+}
+
+#progressbar #account:before {
+    font-family: FontAwesome;
+    content: "\f0ea";
+}
+
+#progressbar #personal:before {
+    font-family: FontAwesome;
+    content: "\f15c"
+}
+
+#progressbar #payment:before {
+    font-family: FontAwesome; /* Make sure to use the correct Font Awesome version */
+    content: "\f02d";
+    
+}
+
+#progressbar #confirm:before {
+    font-family: FontAwesome;
+    content: "\f00c"
+}
+
+#progressbar li:before {
+    width: 50px;
+    height: 50px;
+    line-height: 45px;
+    display: block;
+    font-size: 20px;
+    color: #ffffff;
+    background: lightgray;
+    border-radius: 50%;
+    margin: 0 auto 10px auto;
+    padding: 2px
+}
+
+#progressbar li:after {
+    content: '';
+    width: 100%;
+    height: 2px;
+    background: lightgray;
+    position: absolute;
+    left: 0;
+    top: 25px;
+    z-index: -1
+}
+
+#progressbar li.active:before,
+#progressbar li.active:after {
+    background: #ff0000
+}
+
+.progress {
+    height: 20px
+}
+
+.progress-bar {
+    background-color: #ff0000
+}
+
+.fit-image {
+    width: 100%;
+    object-fit: cover
+}
+.form-group p{
+    text-align: left;
+    border: 1px solid #ccc; /* Add a border similar to an input box */ 
+    padding: 8px 12px; /* Add padding to make it look like an input box */ /* Optional: subtle shadow for depth */
+    margin: 8px 0; /* Space between paragraphs */
+    display: inline-block; /* Inline block for better control of width */
+    width: 100%; /* Optional: set to match input width */
+    font-family: Arial, sans-serif; /* Match font style with input */
+}
+.form-group label{
+    font-weight: bold;
+
+}
+.container {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #ffffff;
+    font-family: Arial, sans-serif;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Heading styling */
+.heading {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #ff0000;
+    text-align: left;
+}
+.best {
+    display: flex;
+    text-align: right;
+    justify-content: right;
+    font-weight: 600;
+    margin-bottom: -20px
+}
+/* Table styling */
+.requirements-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 15px 0;
+}
+
+.requirements-table th,
+.requirements-table td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: left;
+    font-size: 16px;
+}
+
+.requirements-table th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+    color: #333;
+}
+
+.requirements-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.requirements-table tr:hover {
+    background-color: #f1f1f1;
+}
+
+/* Link styling */
+.guidelines-link {
+    display: inline-block;
+    margin-top: 10px;
+    font-size: 16px;
+    color: #ff0000;
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s ease;
+}
+
+.guidelines-link:hover {
+    color: #000000;
+    text-decoration: none;
+}
+  
+.form-container {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #ffffff;
+    font-family: Arial, sans-serif;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .form-row {
+    display: flex;
+    gap: 20px;
+  }
+  
+  .form-group {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  label {
+    margin-bottom: 5px;
+    font-weight: 400;
+    text-align: left;
+  }
+  
+  input[type="text"], input[type="file"] {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  input[type="file"] {
+    padding: 3px;
+  }
+  textarea {
+    width: 100%;
+    height: 300px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    resize: vertical; /* Allows the user to resize vertically */
+    overflow-y: auto; /* Adds a scroll for overflowing content */
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    box-sizing: border-box;
+  }
+  .finish {
+    width: 100%;
+    
+    
+  }
+  .finish p{
+    text-align: justify !important;
+    color: #000000;
+    margin-top: -30px;
+    padding: 30px;
+  }
+  .voting-title h2{
+    text-transform: uppercase;
+    color: #ff0000;
+    font-weight: 600;
+    text-align: center;
+
+  }
+  .message-title h3{
+    padding-left: 20px;
+    text-transform: uppercase;
+    color: #ff0000;
+    font-weight: 600;
+  }
+  .voting-title p{
+    color: grey;
+    text-align: center;
+
+  }
+ .voting-process{
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    background-color: #f5f5f5;
+ } 
+ 
+ .profile-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px; /* Increased gap for larger cards */
+    justify-content: center;
+}
+
+.profile-card {
+    width: 300px; /* Extra-large width */
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    padding: 20px; /* Larger padding */
+    position: relative;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.profile-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.profile-card img {
+    width: 100%;
+    height: 250px; /* Extra-large image height */
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+.profile-card input[type="checkbox"] {
+    display: none;
+}
+
+.profile-card input[type="checkbox"]:checked + .profile-content {
+    border: 3px solid #ff0000; /* Thicker border for larger cards */
+}
+
+.profile-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    border-radius: 12px;
+    padding: 15px;
+}
+
+.profile-name {
+    font-size: 20px; /* Larger font size for profile name */
+    font-weight: bold;
+}
+
+.view-profile {
+    display: inline-block;
+    padding: 10px 20px; /* Larger button */
+    background-color: #ff0000;
+    color: #fff;
+    text-decoration: none;
+    font-size: 16px; /* Larger text */
+    border-radius: 6px;
+    transition: background-color 0.3s ease;
+}
+.guidelines-link{
+    border: none;
+    background-color: #ffff;
+}
+.guidelines-link:hover{
+    border: none;
+    background-color: #ffff;
+}
+.view-profile:hover {
+    background-color: #000000;
+    color: #ffffff;
+    text-decoration: none;
+}
+.submit-vote-button {
+    background-color: #ff0000;
+    width: 20rem;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-bottom: 20px;
+}
+
+.submit-vote-button:hover {
+    background-color: #000000;
+}   
+
+/* Modal background */
+.modal{
+    display: none; /* Hidden by default */
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    height: 100%;
+    overflow: auto; /* Enable scrolling */
+    background-color: rgba(0, 0, 0, 0.5); /* Black with opacity */
+}
+
+/* Modal content */
+.modal_content {
+    background-color: #fff;
+    margin: 10% auto; /* Center vertically and horizontally */
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    width: 50%; /* Adjust modal width */
+    max-height: 70%; /* Restrict height */
+    overflow-y: auto; /* Make it scrollable if content overflows */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+.modal_content ol{
+    padding-left: 40px;
+    font-weight: 300;
+}
+.modal_content ul{
+    padding-left: 40px;
+    font-weight: 300;
+}
+.modal_content h3{
+    padding-left: 10px;
+    
+}
+.modal_content p{
+    padding-left: 20px;
+    padding-top: 10px;
+    color: #000;
+    
+}
+.modal_content h2{
+    color: red;
+    
+}
+/* Close button */
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover,
+.close:focus {
+    color: #000;
+    text-decoration: none;
+}
+
+/* Headings */
+.modal-content h2,
+.modal-content h3 {
+    font-family: Arial, sans-serif;
+    color: #333;
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+
+/* Paragraphs and lists */
+.modal-content p {
+    font-family: Arial, sans-serif;
+    color: #555;
+    line-height: 1.6;
+}
+
+.modal-content ul,
+.modal-content ol {
+    margin-left: 20px;
+    color: #555;
+}
+
+/* Scrollbar styling (optional, for modern browsers) */
+.modal-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.modal-content::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.modal-content::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+}
+
+.modal-content::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+.check-icon {
+    color: green; /* Makes the check icon green */
+}
+
+.x-icon {
+    color: red; /* Makes the X icon red */
+}
+
+.icon i {
+    font-size: 1.2em; /* Adjust the icon size if needed */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.personal-info {
+    margin-top: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    border: 1px solid #ddd;
+    margin-bottom: 20px;
+
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 0;
+}
+
+.info-label {
+    font-weight: bold;
+    color: #000000;
+    font-weight: 400;
+}
+
+.info-value {
+    color: #000000;
+    font-weight: 300;
+}
+.info-value-activity{
+    color: #000000;
+    font-weight: 300;
+    
+}
+.title{
+    font-weight: bold;
+    margin-bottom: 20px;
+    margin-top: -10px;
+    display: flex;
+
+}
+.title-activities{
+    font-weight: bold;
+    margin-bottom: 20px;
+    margin-top: -10px;
+    display: flex;
+    border-bottom: 1px solid #f1f1f1;
+    color: red;
+}
+.title-activities h1{
+    font-size: 20px;
+}
+
+.info-label-activity{
+    font-weight: 500;
+    color: #000000;
+    font-size: 18px;
+}
+.info-row-activity{
+    display: block;
+    text-align: left;
+    padding: 5px 0;
+}
+
+.info-value img{
+    height: 40%;
+    width: 40%;
+    align-items: center;
+}
+@media (max-width: 768px) {
+    .voting-title h2 {
+        font-size: 2rem; /* Slightly smaller for tablets */
+        margin-top: 50px;
+    }
+
+    .voting-title p {
+        font-size: 1rem; /* Adjust font size for paragraphs */
+    }
+}
+
+@media (max-width: 480px) {
+    .voting-title h2 {
+        font-size: 1.5rem; /* Smaller for mobile screens */
+    }
+
+    .voting-title p {
+        font-size: 0.9rem; /* Smaller for mobile paragraphs */
+    }
+}
+  @media (max-width: 768px) {
+    .form-row {
+      flex-direction: column;
+    }
+  }
+  @media (max-width: 1024px) {
+    .modal_content {
+        width: 70%; /* Adjust width for tablets */
+    }
+}
+
+@media (max-width: 768px) {
+    .modal_content {
+        width: 90%; /* Adjust width for small tablets and large phones */
+        margin: 15% auto; /* Adjust vertical margin */
+        padding: 15px; /* Adjust padding */
+    }
+}
+
+@media (max-width: 480px) {
+    .modal_content {
+        width: 95%; /* Almost full width for mobile screens */
+        margin: 20% auto; /* Adjust vertical margin for small devices */
+        padding: 10px; /* Reduce padding */
+    }
+
+    .modal_content h3, 
+    .modal_content h2 {
+        font-size: 1.2rem; /* Scale down headings for small screens */
+    }
+    .modal_content h1{
+        font-size: 1.5rem; 
+        border-bottom: 1px solid #ddd;/* Scale down headings for small screens */
+    }
+
+    .modal_content p {
+        font-size: 0.9rem; /* Scale down paragraph font size */
+    }
+
+    .modal_content ul,
+    .modal_content ol {
+        padding-left: 20px; /* Adjust padding for lists */
+    }
+}

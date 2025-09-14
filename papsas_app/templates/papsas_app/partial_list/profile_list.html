@@ -1,0 +1,24 @@
+{% if candidacies %}
+<h2> Candidacies </h2>
+    {% for candidacy in candidacies %}
+    <div class="recent-container">
+        <p>{{ candidacy }}</p>
+    </div>
+    {% endfor %}
+{% endif %}
+{% if elected_officers %}
+<h2> Election </h2>
+    {% for officer in elected_officers %}
+    <div class="recent-container">
+        <p>{{ officer }}</p>
+    </div>
+    {% endfor %}
+{% endif %}
+{% if attended_events %}
+<h2> Events </h2>
+    {% for event in attended_events %}
+    <div class="recent-container">
+        <p>{{ event }}</p>
+    </div>
+    {% endfor %}
+{% endif %}

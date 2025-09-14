@@ -1,0 +1,64 @@
+{% extends "papsas_app/layout.html" %}
+{% load static %}
+{% block head %}
+    <link rel="stylesheet" href="{% static 'papsas_app/css/login.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"> <!-- Include Font Awesome -->
+{% endblock %}
+{% block title %}
+    Login
+{% endblock %}
+{% block body %}
+    <form action="{% url 'login' %}" method="post" class="login-body">
+        {% csrf_token %}
+        <div class="login-box">      
+            <div class="login-header">
+                <img src="/media/papsas_app/images/papsas.png" class="login-icon">
+            </div>
+            {% if message %}
+                <div class="invalid-text">
+                    {{ message }}
+                </div>
+            {% endif %}
+            <div class="input-box">
+                {{ form.email }}
+            </div>
+            
+            <div class="input-box password-container">
+                <div class="password-wrapper">
+                    {{ form.password }}
+                    <i class="fa fa-eye" id="togglePassword"></i>
+                </div>
+            </div>
+            {% if resend_code %}
+                <button type="submit" name="resend_code">Resend Verification Code</button>
+            {% endif %}
+
+            <div class="forgot-password">
+                <a href="{% url 'password_reset' %}">Forgot Password?</a>
+            </div>
+            <div class="input-submit">
+                <button type="submit" class="submit-btn">Login</button>
+            </div>
+            <div class="sign-up-link">
+                Not a member yet? <a href="{% url 'register' %}"> Register here.</a>
+            </div>
+
+            <input type="hidden" name="next" value="{{ request.GET.next }}">
+        </div>
+    </form>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const togglePassword = document.querySelector('#togglePassword');
+            const passwordField = document.querySelector('input[name="password"]');
+
+            togglePassword.addEventListener('click', function() {
+                // Toggle the type attribute
+                const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordField.setAttribute('type', type);
+
+                // Toggle the icon
+                this.classList.toggle('fa-eye-slash');
+            });
+        });
+    </script>
+{% endblock %}

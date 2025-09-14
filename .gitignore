@@ -1,0 +1,16 @@
+# put this directory to gitignore papsas_app/__pycache__/
+
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+media/papsas_app/profilePic/
+media/papsas_app/tor/
+media/papsas_app/reciept/
+media/papsas_app/pubmat/
+media/papsas_app/verificationID/
+papsas/papsas/settings.py
+papsas/settings.py
+myvenv
+media
+staticfiles

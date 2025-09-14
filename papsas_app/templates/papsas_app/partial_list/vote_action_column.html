@@ -1,0 +1,9 @@
+<div class="action-buttons">
+    <button class="action-icon" title="Delete" type="submit" 
+            hx-post="{% url 'delete_candidacy' record.id %}"
+            hx-confirm="Are you sure you want to delete {{ record.id }}'s candidacy?"
+            hx-target="body"
+            hx-swap="outerHTML">
+        <i class="fas fa-trash-alt"></i>
+    </button>
+</div>

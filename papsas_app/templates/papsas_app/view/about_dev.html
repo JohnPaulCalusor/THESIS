@@ -1,0 +1,64 @@
+{% extends 'papsas_app/layout.html' %}
+{% load static %}
+{% block head %}
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'papsas_app/css/about_us.css' %}">
+{% endblock %}
+
+{% block body %}
+<body class="bg-gray-100 text-black">
+    <section class="py-16">
+        <div class="container mx-auto px-4 text-center">
+            <div class="officer">
+                <h1>PROJECT TEAM</h1>
+                <p>Batangas State University<br>The National Engineering University</p>
+            </div>
+
+            <!-- Top Centered Lead Member -->
+            <div class="mb-16">
+                <img src="/media/papsas_app/images/team0.png" alt="Jefferi Kamarudin" class="mb-6 mx-auto">
+                <h3 class="text-xl font-semibold">Mr. Jefferson I. Cañada</h3>
+                <p class="text-gray-600">Adviser</p>
+            </div>
+
+            <!-- Remaining Team Members Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 justify-items-center">
+                <div>
+                    <img src="/media/papsas_app/images/team1.png" alt="Member 2" class="mb-6 mx-auto">
+                    <h3 class="text-xl font-semibold">Clarence Joseph B. Castro</h3>
+                    <p class="text-gray-600">Lead Developer & UX Developer</p>
+                    <div class="mt-2 text-sm text-gray-700">castroclarenceb@gmail.com</div>
+                    <div class="flex justify-center gap-4 mt-3">
+                        <a href="https://www.facebook.com/clarencejoseph.b.castro" target="_blank" class="text-blue-600 hover:text-blue-800"><i class="fab fa-facebook"></i></a>
+                        <a href="https://www.linkedin.com/in/clarence-joseph-castro?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app" target="_blank" class="text-blue-700 hover:text-blue-900"><i class="fab fa-linkedin"></i></a>
+                    </div>
+                </div>
+                <div>
+                    <img src="/media/papsas_app/images/team2.png" alt="Member 3" class="mb-6 mx-auto">
+                    <h3 class="text-xl font-semibold">Kris Nathaniel M. Dimaapi</h3>
+                    <p class="text-gray-600">UI/UX Designer & Front-End Developer</p>
+                    <div class="mt-2 text-sm text-gray-700">kn.dimaapi25@gmail.com</div>
+                    <div class="flex justify-center gap-4 mt-3">
+                        <a href="https://www.facebook.com/kris.nathanielii" target="_blank" class="text-blue-600 hover:text-blue-800"><i class="fab fa-facebook"></i></a>
+                        <a href="https://www.linkedin.com/in/kris-nathaniel-dimaapi-305385357/" target="_blank" class="text-blue-700 hover:text-blue-900"><i class="fab fa-linkedin"></i></a>
+                    </div>
+                </div>
+                <div>
+                    <img src="/media/papsas_app/images/team3.png" alt="Member 4" class="mb-6 mx-auto">
+                    <h3 class="text-xl font-semibold">Bien Joshua B. Macuha</h3>
+                    <p class="text-gray-600">Co-Lead Developer & Quality Assurance</p>
+                    <div class="mt-2 text-sm text-gray-700">mbienjoshua@gmail.com</div>
+                    <div class="flex justify-center gap-4 mt-3">
+                        <a href="https://www.facebook.com/bienjoshua.macuha" target="_blank" class="text-blue-600 hover:text-blue-800"><i class="fab fa-facebook"></i></a>
+                        <a href="https://www.linkedin.com/in/bien-joshua-macuha-331150353?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app" target="_blank" class="text-blue-700 hover:text-blue-900"><i class="fab fa-linkedin"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+
+
+
+{% endblock %}

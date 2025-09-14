@@ -1,0 +1,83 @@
+{% extends 'papsas_app/layout.html' %}
+{% load static %}
+
+{% block head %}
+    <link rel="stylesheet" href="{% static 'papsas_app/css/event_list.css' %}">
+{% endblock %}
+
+{% block body %}
+    <h1 class="title-container">Contact Us</h1>
+        <div id="event_container">
+            {% for news_offer in news_offers %}
+            <div class="event-card">
+                <div class="event-header">
+                <img src="{{ news_offer.pubmat.url }}" alt="{{news_offer.name}}" class="event-image">
+                </div>
+                <div class="event-content">
+                <h3 class="event-description">{{ news_offer.name }}</h3>
+                <p class="event-description">{{ news_offer.description|linebreaks }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    <div class="pagination">
+        <span class="step-links">
+            {% if news_offers.has_previous %}
+                <a href="?page=1">&laquo; first</a>
+                <a href="?page={{ news_offers.previous_page_number }}">previous</a>
+            {% endif %}
+    
+            <span class="current">
+                Page {{ news_offers.number }} of {{ news_offers.paginator.num_pages }}.
+            </span>
+    
+            {% if news_offers.has_next %}
+                <a href="?page={{ news_offers.next_page_number }}">next</a>
+                <a href="?page={{ news_offers.paginator.num_pages }}">last &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
+    <button onclick="scrollToTop()" id="scrollUpButton" title="Go to top">↑</button>
+    <footer class="footer">
+        <div class="footer__container container">
+            <div class="footer__content">
+                <h3 class="footer__title">Philippine Association of Practitioners of Student Affairs and Services, Inc.</h3>
+                <p class="footer__description">
+                    Dedicated to the pursuit of excellence in student affairs and services work.
+                </p>
+                <ul class="footer__links">
+                    <li><a href="#" class="footer__link">(043) 778 0656</a></li>
+                    <li><a href="#" class="footer__link">/papsasinc</a></li>
+                    <li><a href="#" class="footer__link">papsasinc.national@gmail.com</a></li>
+                    <li><a href="bit.ly/papsasinc" class="footer__link">bit.ly/papsasinc</a></li>
+                </ul>
+            </div>
+            <div class="footer__socials">
+                <a href="#" class="footer__social"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" class="footer__social"><i class="fab fa-twitter"></i></a>
+                <a href="#" class="footer__social"><i class="fab fa-instagram"></i></a>
+            </div>
+        </div>
+        <div class="footer__bottom">
+            <p>&copy; 2024 PAPSAS, Inc. All Rights Reserved.</p>
+        </div>
+<script>
+    // Show the button when the user scrolls down 20px from the top
+    window.onscroll = function() {
+        let button = document.getElementById("scrollUpButton");
+        if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+            button.style.display = "block";
+        } else {
+            button.style.display = "none";
+        }
+    };
+
+    // Function to scroll to the top with smooth behavior
+    function scrollToTop() {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth' // Smooth scroll effect
+        });
+    }
+</script>
+{% endblock %}

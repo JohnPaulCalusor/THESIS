@@ -1,0 +1,45 @@
+{% load static %}
+
+<div class="actions-container">
+    <div class="action-buttons">
+        <form method="post"
+            hx-post="{% url 'approve_membership' record.id %}"
+            hx-confirm="Are you sure you want to approve {{ record.user.first_name }} {{ record.user.last_name }}'s membership?"
+            hx-indicator="#loading-indicator-{{ record.user.id }}"
+            hx-target="body"
+            hx-swap="outerHTML"
+            >
+            {% csrf_token %}
+            {% if record.status == 'Approved' %}
+                <button type="submit" class="action-icon" id="approve-button" title="Approve" disabled>
+                    <i class="fas fa-check"></i>
+                </button>
+            {% else %}
+                <button type="submit" class="action-icon" id="approve-button" title="Approve">
+                    <i class="fas fa-check"></i>
+                </button>   
+            {% endif %}
+        </form>
+        <form method="post"
+            hx-post="{% url 'decline_membership' record.id %}"
+            hx-confirm="Are you sure you want to decline {{ record.user.first_name }} {{ record.user.last_name }}'s membership?"
+            hx-indicator="#loading-indicator-{{ record.user.id }}"
+            hx-target="body"
+            hx-swap="outerHTML"
+            >
+            {% csrf_token %}
+            {% if record.status == 'Declined' %}
+                <button type="submit" class="action-icon" id="decline-button" title="Decline" disabled>
+                    <i class="fas fa-times"></i>
+                </button>
+            {% else %}
+                <button type="submit" class="action-icon" id="decline-button" title="Decline">
+                    <i class="fas fa-times"></i>
+                </button>
+            {% endif %}
+        </form>
+    </div>
+    <div id="loading-indicator-{{ record.user.id }}" class="my-indicator">
+        <i class="fas fa-spinner fa-spin"></i>
+    </div>
+</div>    

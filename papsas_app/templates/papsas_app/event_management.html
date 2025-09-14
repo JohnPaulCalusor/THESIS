@@ -1,0 +1,91 @@
+{% extends 'papsas_app/layout.html' %}
+
+{% load static %}
+{% block head %}
+
+<link rel="stylesheet" href="{% static 'papsas_app/css/event_management.css' %}">
+<script>
+    function disableButton() {
+        const submitButton = document.getElementById('submitBtn');
+        submitButton.disabled = true;
+        submitButton.innerText = 'Submitting...';
+    }
+</script>
+{% endblock %}
+
+
+{% block body %}
+<div class="container">
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+            <div class="alert alert-warning alert-dismissible fade show custom-alert" role="alert">
+                <strong>{{ message }}</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">X</button>
+            </div>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    <div class="form-container ">
+        <h3>Event Management Form</h3>
+        <form method="post" id="eventForm" enctype="multipart/form-data"
+            hx-post="{% url 'event' %}" onsubmit="disableButton()"
+            hx-confirm="Are you sure you want to post this event?">
+            {% csrf_token %}
+            
+                <div class="login_box">
+                    <div class="two-forms">
+                        <div class="input-box">
+                            <p>Event Name: </p> 
+                            {{ form.eventName }}
+                        </div>
+                    </div>
+                    <div class="two-forms">
+                        <div class="input-box">
+                            <p>Start Date: </p> 
+                            {{ form.startDate }}
+                        </div>
+                        <div class="input-box">
+                            <p>End Date: </p>  {{ form.endDate }}
+                        </div>
+                    </div>
+                    <div class="two-forms">
+                        <div class="input-box">
+                            <p>Venue: </p>  {{ form.venue }}
+                        </div>
+                    </div>  
+                    <div class="two-forms">
+                        <div class="input-box">
+                            <p>Event Description: </p>  {{ form.eventDescription }}
+                        </div>
+                    </div>
+                    <div class="two-forms">
+                        <div class="input-box">
+                            <p>Public Material: </p>  {{ form.pubmat }}
+                        </div>
+                    </div>
+                    <div class="two-forms">
+                        <div class="input-box">
+                            <p>Price: </p>  {{ form.price }}
+                        </div>
+                    </div>
+                    <div class="two-forms">
+                        <div class="input-box">
+                            <p>Start Time: </p>  {{ form.startTime }}
+                        </div>
+                        <div class="input-box">
+                            <p>End Time: </p>  {{ form.endTime }}
+                        </div>
+
+                    </div>
+                    <div class="two-forms">
+                        <div class="input-box">
+                            <p>Exclusive: </p>  {{ form.exclusive }}
+                        </div>
+                    </div>
+            </div>
+            <button type="submit" class="btn" id="submitBtn">Submit</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

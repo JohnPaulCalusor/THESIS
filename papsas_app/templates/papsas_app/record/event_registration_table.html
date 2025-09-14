@@ -1,0 +1,66 @@
+{% extends "papsas_app/layout.html" %}
+{% load render_table from django_tables2 %}
+{% load static %}
+{% load i18n %}
+
+{% block head %}
+<link rel="stylesheet" href="{% static 'papsas_app/css/datatable.css' %}">
+{% endblock %}
+
+{% block body %}
+
+<div class="container">
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+            <div class="alert alert-warning alert-dismissible fade show custom-alert" role="alert">
+                <strong>{{ message }}</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">X</button>
+            </div>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    <div class="title">
+        
+        <h3>       
+        <div class="back-button" onclick="window.history.back();">
+            <i class="fas fa-arrow-left"></i>
+        </div>
+            {{ name }} Registration Record
+            
+        </h3>
+        
+    </div>
+    <div class="container">
+    <form method="get" class="mb-4" id="filter-form">
+        <div class="row">
+            <div class="col-md-3 mb-3">
+                <label for="Id">Id:</label>
+                {{ filter.form.id }}
+            </div>
+            <div class="col-md-3 mb-3">
+                <label for="startDate">User:</label>
+                {{ filter.form.user }}
+            </div>
+            <div class="col-md-3 mb-3">
+                <label for="endDate">Status:</label>
+                {{ filter.form.status }}
+            </div>
+            <div class="col-md-3 mb-3 d-flex align-items-end">
+                <button type="submit" class="search-submit">Search</button>
+                <a href="{% url 'event_registration_table' event_id %}" class="search-submit">Reset</a>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="table-wrapper">
+<div id="total_record">
+    <p>Total Records: {{ table.rows|length }}
+    {% render_table table %}
+    </p>
+
+
+</div>
+</div>
+
+{% endblock %}

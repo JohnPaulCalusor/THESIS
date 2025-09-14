@@ -1,0 +1,103 @@
+{% extends 'papsas_app/layout.html' %}
+
+{% load static %}
+{% block head %}
+<link rel="stylesheet" href="{% static 'papsas_app/css/event_registration.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+{% endblock %}
+
+{% block body %}
+
+<div class="container">
+    <div class="form-container">
+        <!-- Back Button -->
+        <div class="back-button" onclick="window.history.back();">
+            <i class="fas fa-arrow-left"></i>
+        </div>
+        <h3>{{ event.eventName }}</h3>
+        {% if has_registered  %}
+            {% if has_registered.status == 'Pending' %}
+                <h1> Your event registration is on process.</h1>
+                <p> Please wait for an email of the approval of your registration. Thank you!</p>
+            {% elif  has_registered.status == 'Approved' %}
+                <h1> You are already registered in {{ has_registered.event.eventName }}.</h1>
+                <p> Details </p>
+                <p> Opening Date : {{ has_registered.event.startDate }} </p>
+                <p> Closing Date : {{ has_registered.event.endDate }} </p>
+                <p> Venue : {{ has_registered.event.venue }} </p>
+                <p> Address : {{ has_registered.event.venue.address }} </p>
+            {% else %}
+                <h1> Your registration has been declined. </h1>
+                <p> Please contact us for more information. You may try to register again. </p>
+                <!-- Declined form -->
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="two-forms">
+                        <div class="input-box">
+                            <p>Amount:</p> 
+                            {{ form.amount }}
+                        </div>
+                    </div>
+                    <div class="two-forms">
+                        <div class="input-box">
+                            <p>Upload Receipt:</p> {{ form.receipt }}
+                        </div>
+                    </div>
+                    <div class="two-forms">
+                        <div class="input-box">
+                            <p>Reference Number:</p> {{ form.reference_number }}
+                        </div>
+                    </div>
+                    <button type="submit" class="btn">Register</button>
+                </form>
+            {% endif %}
+        {% else %}
+            {% if event.endDate <= today %}
+                <h1> The event has already ended.</h1>
+                <p> Thank you for your interest in this event. Unfortunately, it has already concluded. Please check our upcoming events for more opportunities, or feel free to contact us if you have any further questions! </p>
+            {% else %}
+            <!-- Normal -->
+                {% if capacity > total_reg %}
+                    {% if today < event.startDate %}
+                        <form method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div class="two-forms">
+                                <div class="input-box">
+                                    <p>Amount:</p> 
+                                    {{ form.amount }}
+                                </div>
+                            </div>
+                            <div class="two-forms">
+                                <div class="input-box">
+                                    <p>Upload Receipt:</p> {{ form.receipt }}
+                                </div>
+                            </div>
+                            <div class="two-forms">
+                                <div class="input-box">
+                                    <p>Reference Number:</p> {{ form.reference_number }}
+                                </div>
+                            </div>
+                            {% if event.exclusive %}
+                                {% if user.occupation == 'Practitioner' %}
+                                    <button type="submit" class="btn">Register</button>
+                                {% else %}
+                                    <button type="submit" class="btn" disabled>Not eligible</button>
+                                {% endif %}
+                            {% else %}
+                                <button type="submit" class="btn">Register</button>
+                            {% endif %}
+                        </form>
+                    {% else %}
+                        <h1>
+                            The event registration has closed.
+                        </h1>
+                        <p> You can not register during or after the event. </p>
+                    {% endif %}
+                {% else %}
+                    <p> The event registration has filled its maximum capacity. Please contact us for more inquiry. </p>
+                {% endif %}
+            {% endif %}
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

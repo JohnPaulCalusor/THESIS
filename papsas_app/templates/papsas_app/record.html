@@ -1,0 +1,95 @@
+{% extends 'papsas_app/layout.html' %}
+
+{% load static %}
+{% block head %}
+    <link rel="stylesheet" href="{% static 'papsas_app/css/datatable.css' %}">
+    <link rel="stylesheet" href="{% static 'papsas_app/css/update-user.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"> 
+{% endblock %}
+{% block body %}
+    <div class="data-table-container">
+        <div class="table-header">
+            <h1>User Record</h1>
+        </div>
+        <div class="filter-container">
+            <input type="text" id="searchInput" placeholder="Search for members..." />
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Email</th>
+                    <th>Mobile Number</th>
+                    <th>Region</th>
+                    <th>Address</th>
+                    <th>Occupation</th>
+                    <th>Age</th>
+                    <th>Birth Date</th>
+                    <th>Email Verified</th>
+                    <th> Active </th>
+                    <th>Profile Picture</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody 
+            hx-get="{% url 'get_account' %}"
+            hx-trigger="every 5s"
+            hx-swap="innerHTML"
+            >
+                {% for user in   userRecord  %}
+                    <tr>
+                        <td>{{user.first_name}}</td>
+                        <td>{{user.last_name}}</td>
+                        <td>{{user.email}}</td>
+                        <td>{{user.mobileNum}}</td>
+                        <td>{{user.region}}</td>
+                        <td>{{user.address}}</td>
+                        <td>{{user.occupation}}</td>
+                        <td>{{user.age}}</td>
+                        <td>{{user.birthdate}}</td>
+                        <td>{{user.email_verified}}</td>
+                        <td> {{ user.is_active }} </td>
+                        <td><a href="{% url 'profile' user.id %}"><i class="fas fa-eye"></a></td>
+                            <td>   
+                                <div class="action-buttons">
+                                    <a class="action-icon" title="Edit" onclick="fetchUserInfo('{{ user.id }}')">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <form action="{% url 'delete_account' user.id %}" method="post">
+                                        {% csrf_token %}
+                                        <button class="action-icon" title="Delete" type="submit">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                            
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div id="popup_container">
+        <div class="popup">
+        <span class="close-btn" onclick="closePopup()"><i class="fas fa-times"></i></span>
+        <h3>Update User Record</h3>
+        <form method="post" class="popup-form">
+            {% csrf_token %}
+            {% for field in form %}
+                {% if field.name != 'password' %}
+                {{ field }}
+                {% endif %}
+            {% endfor %}
+            <button type="submit" class="submit-btn">Update</button>
+        </form>
+    </div>
+</div>
+
+
+    
+{% endblock %}
+
+{% block script %}
+<script src="{% static 'papsas_app/js/user_record.js' %}"></script>
+{% endblock %}

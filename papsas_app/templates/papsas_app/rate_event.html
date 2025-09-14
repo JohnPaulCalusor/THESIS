@@ -1,0 +1,36 @@
+{% extends "papsas_app/layout.html" %}
+{% load static %}
+{% block head %}
+<link rel="stylesheet" href="{% static 'papsas_app/css/rate_event.css' %}">
+<link rel="stylesheet" href="{% static 'papsas_app/css/datatable.css' %}">
+{% endblock %}
+
+{% block body %}
+<div class="container">
+    <div class="form-container">
+        <div class="back-button" onclick="window.history.back();">
+            <i class="fas fa-arrow-left"></i>
+        </div>
+        <h3>{{ event.eventName }}</h3>
+        <form method="post"
+        hx-post=""
+        hx-confirm="Are you sure you want to submit this feedback?"
+        >
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+            <div class="form-group" >
+                <label for="{{ form.rating.id_for_label }}">How satisfied are you with your experience in the event? <br> </label>
+                    <p>1 - least satisfied and  5 - most satisfied</p>
+                {{ form.rating }}
+                {{ form.rating.errors }}
+            </div>
+            <div class="form-group-comment">
+                <label for="{{ form.comment.id_for_label }}">Comment:</label>
+                {{ form.comment }}
+                {{ form.comment.errors }}
+            </div>
+            <button type="submit" class="btn btn-primary">Submit Rating</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

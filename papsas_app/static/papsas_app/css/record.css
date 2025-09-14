@@ -1,0 +1,6 @@
+#receipt-container, #id-container {
+    display: none;
+}
+*{
+    font-family: 'Poppins', sans-serif;
+}

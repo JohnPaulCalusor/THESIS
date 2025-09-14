@@ -1,0 +1,53 @@
+{% extends 'papsas_app/layout.html' %}
+{% load static %}
+{% block head %}
+<link rel="stylesheet" href="{% static 'papsas_app/css/compose_venue.css' %}">
+{% endblock %}
+
+{% block body %}
+
+<div class="container">
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+            <div class="alert alert-warning alert-dismissible fade show custom-alert" role="alert">
+                <strong>{{ message }}</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">X</button>
+            </div>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    <div class="form-container">
+        <h3> Venue Form</h3>
+        <form method="post"
+            hx-post="{% url 'compose_venue' %}"
+            hx-confirm="Are you sure you want to post this venue?"
+        >
+            {% csrf_token %}
+            <div class="login_box">
+            <div class="two-forms">
+                <div class="input-box">
+                    <p>Venue Name: </p> 
+                    {{form.name}}
+                </div>
+            </div>
+            <div class="two-forms">
+                <div class="input-box">
+                    <p>Address: </p> 
+                    {{form.address}}
+                </div>
+            </div>
+            <div class="two-forms">
+                <div class="input-box">
+                    <p>Capacity: </p> 
+                    {{form.capacity}}
+                </div>
+            </div>
+        </div>
+
+            <button type="submit" class="btn">Submit</button>
+        </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,16 @@
+{% for event in events %}
+<div class="event-card" id="event-{{event.id}}">
+    <div class="event-header">
+        <img src="{{ event.pubmat.url }}" alt="" class="event-image">
+    </div>
+    <div class="event-content">
+        <h3>{{ event.eventName }}</h3>
+        <p class="event-description">{{ event.eventDescription }}</p>
+        <p class="event-date">{{ event.startDate }} - {{ event.endDate }}</p>
+    </div>
+    <div class="input-submit"> 
+        <button class="submit-btn">Register Now!</button>
+    </div>
+</div>
+<hr>
+{% endfor %}

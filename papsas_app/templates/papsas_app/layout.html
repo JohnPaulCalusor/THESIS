@@ -1,0 +1,250 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'papsas_app/css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'papsas_app/css/alert.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="icon" type="image/jpg" href="/media/papsas_app/images/papsas_logo.png">
+    
+    <!-- import htmx -->
+    <script src="https://unpkg.com/htmx.org@1.9.2"></script>
+    <script src="{% static 'papsas_app/js/alert.js' %}"></script>
+    {% block script%}
+    {% endblock %}
+    {% block head %}
+    {% endblock %}
+    <title>{% block title %} PAPSAS {% endblock %}</title>
+</head>
+<body>
+    <div class="hero">
+        <nav>
+            <header class="header">
+                <div class="nav-bar">
+                    <a href="{% url 'index' %}"><img src="/media/papsas_app/images/papsas.png" class="papsas-logo" alt='papsas_logo'></a> 
+                    {% if user.is_authenticated %}
+                    <div class="nav__menu" id="nav-menu">
+                        <ul class="nav__list">
+                        <!-- check if user is an officer -->
+                        {% if officer is not None %}
+                            {% if officer.termEnd > today %}
+                                {% if officer.position == 'Secretary' %}
+                                <li class="nav__item"><a href="{% url 'admin_dashboard' %}"class="nav__link">Dashboard</a></li>
+                                <li class="nav__item dropdown">
+                                        <a href="{% url 'user_table' %}" class="nav__link">Records<i class="fa-solid fa-caret-down"></i></a>
+                                        <ul class="dropdown-content">
+                                            <li><a href="{% url 'user_table' %}">Account</a></li>
+                                            <li><a href="{% url 'membership_table' %}">Membership</a></li>
+                                            <li><a href="{% url 'event_table' %}">Event</a></li>
+                                            <li><a href="{% url 'venue_table' %}">Venue</a></li>
+                                            <li><a href="{% url 'achievement_table' %}">SAS Research</a></li>
+                                
+                                        </ul>
+                                </li>
+                                <li class="nav__item"> <a href="{% url 'election' %}"class="nav__link">Election</a></li>
+                                <li class="nav__item dropdown"><a href="{% url 'event_list' %}" class="nav__link">Event</a>
+                                </li>
+                                <li class="nav__item dropdown"><a href="{% url 'event' %}" class="nav__link">Compose<i class="fa-solid fa-caret-down"></i></a>
+                                    <ul class="dropdown-content">
+                                        <li><a href="{% url 'event' %}">Event</a></li>
+                                        <li><a href="{% url 'compose_venue'%}">Venue</a></li>
+                                        <li><a href="{% url 'compose_achievement' %}">SAS Research</a></li>
+                           
+                                    </ul>
+                                </li>
+                                <li class="nav__item">
+                                    <a href="{% url 'nat_con' %}" class="nav__link">4th National Research Conference</a>
+                                </li>
+                                <li class="nav__item"><a href="{% url 'logout' %}"class="nav__link">Logout</a></li>
+
+                                <li class="nav__item profileLink">
+                                    <span>{{ user.first_name }} </span>
+                                    <a href="{% url 'profile' user.id %}">
+                                        <img src="{{ user.profilePic.url }}" alt="profilePic" id="navProfile" class="profile">
+                                    </a>
+                                </li>
+
+                                {% else %}
+                                <!-- If user is an officer but not secretary -->
+                                <li class="nav__item dropdown">
+                                    <a href="{% url 'venue_record' %}" class="nav__link">Records<i class="fa-solid fa-caret-down"></i></a>
+                                    <ul class="dropdown-content">
+                                        <li><a href="{% url 'venue_table' %}">Venue</a></li>
+                                        <li><a href="{% url 'achievement_table' %}">SAS Research</a></li>
+                                 
+                                    </ul>
+                                </li>
+                                <li class="nav__item dropdown"><a href="{% url 'event_list' %}"class="nav__link">Event</a>
+                                </li>
+                                <li class="nav__item dropdown"><a href=""class="nav__link">Compose<i class="fa-solid fa-caret-down"></i></a>
+                                    <ul class="dropdown-content">
+                                        <li><a href="{% url 'compose_venue'%}">Venue</a></li>
+                                        <li><a href="{% url 'compose_achievement' %}">SAS Research</a></li>
+                                  
+                                    </ul>
+                                </li>
+                                <li class="nav__item">
+                                    <a href="{% url 'nat_con' %}" class="nav__link">4th National Research Conference</a>
+                                </li>
+                                <li class="nav__item"><a href="{% url 'logout' %}"class="nav__link">Logout</a></li>
+                                <li class="nav__item profileLink">
+                                    <span>{{ user.first_name }} </span>
+                                    <a href="{% url 'profile' user.id %}">
+                                        <img src="{{ user.profilePic.url }}" alt="profilePic" id="navProfile" class="profile">
+                                    </a>
+                                </li>
+                                {% endif %}
+                            {% endif %}
+                        </ul>
+                        {% else %}
+                        <!-- if user is not an officer -->
+                            <ul class="nav__list">
+                                <li class="nav__item"><a href="{% url 'index' %}" class="nav__link">Home</a></li>
+                                <li class="nav__item dropdown">
+                                    <a href="{% url 'about' %}" class="nav__link">About Us<i class="fa-solid fa-caret-down"></i></a>
+                                    <ul class="dropdown-content">
+                                        <li><a href="{% url 'about' %}#section-1">Officers</a></li>
+                                        <li><a href="{% url 'about' %}#section-2">Resources</a></li>
+                                        <li><a href="{% url 'about' %}#section-3">Regional Chapters</a></li>
+                                        <li><a href="{% url 'about_dev' %}">Project Team</a></li>
+                                    </ul>
+                                </li>
+                                {% if is_member.status == 'Approved' %}
+                                    <li class="nav__item dropdown">
+                                        <a href="{% url 'user_membership_table' %}" class="nav__link">Records<i class="fa-solid fa-caret-down"></i></a>
+                                        <ul class="dropdown-content">
+                                            <li><a href="{% url 'user_membership_table' %}">Membership</a></li>
+                                            <li><a href="{% url 'user_event_registration_table' %}">Event Registration</a></li>
+                                            <li><a href="{% url 'user_event_attendance_table' %}">Event Attendance</a></li>
+                                        </ul>
+                                    </li>
+                                    {% for election in openElection %}
+                                        {% if election is not None%}
+                                            <li class="nav__item"><a href="{% url 'vote' %}" class="nav__link">Election</a></li>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% else %}
+                                    {% if user.occupation == 'Practitioner' %}
+                                        <li class="nav__item"><a href="{% url 'become_member' %}" class="nav__link">Become a Member</a></li>
+                                    {% endif %}
+                                {% endif %}
+                                    <li class="nav__item dropdown"><a href="{% url 'event_list' %}" class="nav__link">Event</a>
+                                    </li>
+                                    <li class="nav__item"><a href="{% url 'achievement' %}" class="nav__link">SAS Research</a></li>
+                                    <li class="nav__item">
+                                        <a href="{% url 'contact' %}" class="nav__link">Contact</a>
+                                    </li>
+                                    <li class="nav__item">
+                                        <a href="{% url 'nat_con' %}" class="nav__link">4th National Research Conference</a>
+                                    </li>
+                                    <li class="nav__item"><a href="{% url 'logout' %}" class="nav__link">Logout</a></li>
+                                {% if user.profilePic %}
+                                    <li class="nav__item profileLink">
+                                        <span>{{ user.first_name }} </span>
+                                        <a href="{% url 'profile' user.id %}"> 
+                                            <img src="{{ user.profilePic.url }}" alt="profilePic" id="navProfile" class="profile">
+                                        </a>
+                                    </li>
+                                {% else %}
+                                    <div class="login-container"> <a href="{% url 'profile' user.id %}">Profile</a></div>
+                                {% endif %}
+                            </ul>
+
+                        {% endif %}
+                        <div class="nav__close" id="nav-close">
+                            <i class="fas fa-times close-btn"></i>
+                        </div>
+                    </div>
+
+                    <div class="nav__toggle" id="nav-toggle">
+                        <i class="fas fa-bars"></i>
+                    </div>
+
+                    {% else %}
+                        <!-- if user is not logged in -->
+                        <div class="nav__menu" id="nav-menu">
+                            <ul class="nav__list">
+                                <li class="nav__item">
+                                    <a href="{% url 'index' %}" class="nav__link">Home</a>
+                                </li>
+                                <li class="nav__item dropdown">
+                                    <a href="{% url 'about' %}" class="nav__link">About Us<i class="fa-solid fa-caret-down"></i></a>
+                                    <ul class="dropdown-content">
+                                        <li><a href="{% url 'about' %}#section-1">Officers</a></li>
+                                        <li><a href="{% url 'about' %}#section-2">Resources</a></li>
+                                        <li><a href="{% url 'about' %}#section-3">Regional Chapters</a></li>
+                                        <li><a href="{% url 'about_dev' %}">Project Team</a></li>
+                                    </ul>
+                                </li>
+                                <li class="nav__item">
+                                    <a href="{% url 'become_member' %}" class="nav__link">Become a Member</a>
+                                </li>
+                                <li class="nav__item">
+                                    <a href="{% url 'achievement' %}" class="nav__link">SAS Research</a>
+                                </li>
+                                <li class="nav__item">
+                                    <a href="{% url 'nat_con' %}" class="nav__link">4th National Research Conference</a>
+                                </li>
+                                <div class="login-container">
+                                    <a href="{% url 'login' %}" class="login-submit">Login</a>
+                                </div>
+                            </ul>
+
+                            <div class="nav__close" id="nav-close">
+                                <i class="fas fa-times close-btn"></i>
+                            </div>
+                        </div>
+
+                        <!-- Toggle button -->
+                        <div class="nav__toggle" id="nav-toggle">
+                            <i class="fas fa-bars"></i>
+                        </div>
+                    {% endif %}
+                </div>
+            </header>
+        </nav>
+        <div id="body-container">
+            {% block body %}
+            {% endblock %}
+        </div>
+    </div>
+
+<script src="{% static 'papsas_app/js/scrollreveal.min.js' %}"></script>
+<script src="{% static 'papsas_app/js/main.js' %}"></script>
+<script>
+    // Select all navigation links
+    const navLinks = document.querySelectorAll('.nav__link');
+
+    // Get the current path
+    const currentPath = window.location.pathname;
+
+    // Loop through each link and add 'active' class if href matches the current path
+    navLinks.forEach(link => {
+        // Extract the pathname from the link's href attribute
+        const linkPath = new URL(link.href).pathname;
+
+        if (linkPath === currentPath) {
+            link.classList.add('active');
+        }
+    });
+</script>
+<script>
+    function toggleDescription(counter) {
+        const description = document.getElementById(`event-description-${counter}`);
+        const viewMoreBtn = document.querySelector(`#event-description-${counter} + .view-more-btn`);
+        
+        if (viewMoreBtn.innerText === "View More") {
+            description.classList.add('show-full');
+            viewMoreBtn.innerText = "View Less";
+        } else {
+            description.classList.remove('show-full');
+            viewMoreBtn.innerText = "View More";
+        }
+    }
+    </script>
+</body>
+</html>

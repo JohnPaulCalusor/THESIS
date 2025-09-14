@@ -1,0 +1,375 @@
+.officer {
+    text-align: center;
+    padding: 20px;
+  }
+  .officer_title{
+    text-align: center;
+    padding: 20px;
+    margin-top: 30px;
+  }
+  .officer_title h1 {
+    font-size: 2rem;
+    color: #ff0000;
+    font-weight: bold;
+  }
+  .officer h1 {
+    font-size: 2.5rem;
+    color: #ff0000;
+    font-weight: bold;
+  }
+  
+  .officer p {
+    font-size: 1rem;
+    color: #ff0000;
+    margin-top: 1px;
+    font-weight: 300;
+  }
+  
+  /* Mobile responsiveness */
+  @media (max-width: 768px) {
+    .officer h1 {
+        font-size: 1.5rem;
+    }
+  
+    .officer p {
+        font-size: 0.875rem;
+    }
+  }
+  
+  /* Container for the officer images */
+  .officer__container {
+    display: grid;
+    gap: 1rem;
+    height: auto;
+    grid-template-columns: repeat(4, 1fr); /* Default to 5 columns */
+    align-items: center; /* Align content vertically */
+    justify-items: center; /* Center content horizontally */
+  }
+  
+  /* Responsive styling for medium screens (tablets) */
+  @media (max-width: 1024px) {
+    .officer__container {
+      grid-template-columns: repeat(3, 1fr); /* 3 columns for medium screens */
+    }
+  }
+  
+  /* Responsive styling for small screens (phones) */
+  @media (max-width: 768px) {
+    .officer__container {
+      grid-template-columns: repeat(2, 1fr); /* 2 columns for small screens */
+    }
+  }
+  
+  /* Styling for very small screens */
+  @media (max-width: 480px) {
+    .officer__container {
+      grid-template-columns: 1fr; /* Stacks images vertically for very small screens */
+    }
+  }
+  
+  /* Officer box styling */
+  .officer__box {
+    background-color: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+    text-align: center;
+  }
+  
+  /* Officer image styling */
+  .officer__img {
+    width: 100%;
+    max-width: 400px; /* Restrict max width for uniformity */
+    height: auto;
+    display: block;
+    margin: 0 auto;
+  }
+  /* General Reset */
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+  }
+  
+  /* Container for resources section */
+  .resources {
+    padding: 2rem 1rem;
+    margin-top: 100px;
+    background-color: #f3f1f1;
+    
+    text-align: center; /* Center content within the resources section */
+  
+  }
+  
+  /* Title styling */
+  .resources_title {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  
+  .resources_title h1 {
+    font-size: 2rem;
+    color: #ff0000;
+  }
+  .resources_title p{
+    font-size: 1rem;
+    color: #000000;
+    font-weight: 300;
+  }
+  
+  
+  /* Resources container grid */
+  .resources__container {
+    display: grid;
+    grid-template-rows: 1fr; /* Single column by default */
+    gap: 3rem;
+    justify-content: center; /* Center the grid items horizontally */
+  
+  }
+  
+  /* Individual resource box */
+  .resources__box {
+    background-color: #ffffff;
+    border-radius: 10px;
+    height: 26rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: 20rem; /* Set a maximum width for each resource box */
+    margin: 0 auto; /* Center the resource box within its grid cell */
+    
+    
+  }
+  
+  /* Image styling */
+  .resources__img {
+    width: 100%;
+    height: 20rem;
+    border-top-right-radius: 10px;
+    border-top-left-radius: 10px;
+    margin-bottom: 1rem;
+  }
+  
+  /* Resource title styling */
+  .resources__title {
+    font-size: 1.5rem;
+    color: #ff0000;
+    margin-bottom: 0.75rem;
+  }
+  
+  /* Resource description styling */
+  .resources__description {
+    font-size: 1rem;
+    color: #666;
+    margin-bottom: 1.5rem;
+  }
+  
+  /* Button styling */
+  .resources__button {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 30px;
+    background-color: #ff0a0a;
+    color: #fff;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    width: 200px;
+  }
+  
+  /* Button hover effect */
+  .resources__button:hover {
+    background-color: #000000;
+  }
+  
+  /* Responsive layout for tablets and above */
+  @media (min-width: 768px) {
+    .resources__container {
+        grid-template-columns: repeat(2, 1fr); /* Two columns for tablets */
+        gap: 2rem;
+        justify-content: center; /* Center the grid items */
+    }
+    
+  }
+  
+  /* Responsive layout for desktops and above */
+  @media (min-width: 1024px) {
+    .resources__container {
+        grid-template-columns: repeat(2, 300px); /* Two centered columns with fixed width */
+        justify-content: center; /* Center the grid items */
+        
+    }
+  
+    .resources__title {
+        font-size: 1.75rem;
+    }
+  }
+  
+  /* Responsive layout for very small screens */
+  @media (max-width: 480px) {
+    .resources__title {
+        font-size: 1.25rem;
+    }
+  
+    .resources__description {
+        font-size: 0.875rem;
+    }
+  
+    .resources__button {
+        padding: 0.5rem 1rem;
+        font-size: 0.875rem;
+    }
+
+
+  }
+  
+  
+  .memo {
+    padding: 2rem 1rem;
+    margin-top: 10px;
+    background-color: #ffffff;
+    text-align: center; /* Center content within the resources section */
+  }
+  
+  .memo_title {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  
+  .memo_title h1 {
+    font-size: 2rem;
+    color: #ff0000;
+  }
+  
+  .memo_grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr); /* 4 equal columns */
+    gap: 0.5rem;
+    justify-items: center;
+  }
+  
+  .memo_item {
+    text-align: center;
+  }
+  
+  .memo_item img {
+    width: 100%;
+    height: auto;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 10px;
+  }
+  
+  .memo_item p {
+    margin-top: 10px;
+    font-size: 0.875rem;
+    color: rgb(0, 0, 0)
+  }
+  
+  /* Responsive Adjustments */
+  @media (max-width: 768px) {
+    .memo_title h1 {
+      font-size: 1.5rem;
+    }
+    .memo_grid {
+      grid-template-columns: repeat(2, 1fr); /* 2 columns for medium screens */
+    }
+
+  }
+  
+  @media (max-width: 480px) {
+  
+  
+    .memo_title h1 {
+      font-size: 1.25rem;
+    }
+  
+    .memo_grid {
+      grid-template-columns: 1fr; /* 1 column for small screens */
+    }
+  }
+  
+/* General styling */
+.partners {
+  padding: 2rem 1rem;
+  background-color: #f4f7fc;
+  text-align: center;
+}
+
+/* Partners container */
+.partners__container {
+  display: grid;
+  gap: 0.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  justify-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Partner box styling */
+.partner__box {
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.partner__box:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Partner image */
+.partner__img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+/* Partner title */
+.partner__title {
+  font-size: 1rem;
+  font-weight: bold;
+  color: #000000;
+  margin: 1rem 0;
+}
+
+/* Partner button */
+.partner__button {
+  background-color: #ff0000;
+  color: #fff;
+  border: none;
+  border-radius: 30px;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+  width: 10rem;
+  transition: background-color 0.3s ease;
+  margin-bottom: 1rem;
+}
+
+.partner__button:hover {
+  background-color: #000;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+
+  .partner__title {
+    font-size: 1rem;
+  }
+
+  .partner__button {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .memo_title h1 {
+    font-size: 1.25rem;
+  }
+}

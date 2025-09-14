@@ -1,0 +1,167 @@
+{% extends 'papsas_app/layout.html' %}
+
+{% load static %}
+{% block head %}
+    <link rel="stylesheet" href="{% static 'papsas_app/css/register.css' %}">
+    <link rel="stylesheet" href="{% static 'papsas_app/css/style.css' %}">
+{% endblock %}
+
+{% block title %}
+    Registration
+{% endblock %}
+
+{% block body %}
+    <form action="{% url 'register' %}" method="post" class="login-body" onsubmit="disableSubmitButton(this)">
+        {% csrf_token %}
+        <div class="register-border">
+            <div class="login_box">
+                <div class="login-header">
+                    <h3>Sign Up</h3>
+                </div>
+                <div class="two-forms">
+                    <div class="input-box">
+                        {{ form.first_name }}
+                    </div>
+                    <div class="input-box">
+                        {{ form.last_name }}
+                    </div>
+                </div>
+                <div class="two-forms">
+                <div class="input-box">
+                    {{ form.email }}
+                </div>
+            </div>
+            <div class="two-forms">
+                <div class="input-box password-container">
+                    <div class="password-wrapper">
+                        {{ form.password }}
+                        <i class="fa fa-eye togglePassword" data-target="id_password"></i>
+                    </div>
+                </div>
+            </div>
+
+                <div class="two-forms">
+                    <div class="input-box">
+                        <input type="number" name="mobileNum" id="id_mobileNum" class="input-field" placeholder="Mobile Number" required oninput="validateMobileNumber()">
+                        <span id="mobile-error" style="color: red; display: none;">Please enter only numbers.</span>
+                    </div>
+                    <div class="input-box">
+                        {{ form.region }}
+                    </div>
+                </div>
+
+                <div class="two-forms">
+                    <div class="input-box">
+                        {{ form.address }}
+                    </div>
+                    <div class="input-box">
+                        {{ form.age }}
+                    </div>
+                </div>
+
+                <div class="birth_tag">
+                    {{ form.birthdate.label_tag }}
+                </div>
+                <div class="two-forms">
+                    <div class="input-box">
+                        {{ form.birthdate }}
+                    </div>
+                    <div class="input-box">
+                        {{ form.occupation }}
+                    </div>
+                </div>
+                <div class="two-forms">
+                <div class="input-box">
+                    {{ form.institution }}
+                </div>
+            </div>
+
+                <div class="terms-checkbox">
+                    <input type="checkbox" id="terms" name="terms" required>
+                    <label for="terms">
+                      I have read and agree to the 
+                      <a href="#" onclick="showModal('terms'); return false;">Terms and Conditions</a> 
+                      and <a href="#" onclick="showModal('privacy'); return false;">Privacy Policy</a> of PAPSAS, Inc.
+                    </label>
+                </div>
+
+                <div class="input-submit">
+                    <button type="submit" class="submit-btn">Register</button>
+                </div>
+                {% if form.errors %}
+                <div class="error-messages">
+                    {% for field in form %}
+                        {% for error in field.errors %}
+                            <p class="error">{{ field.label }}: {{ error }}</p>
+                        {% endfor %}
+                    {% endfor %}
+                    {% for error in form.non_field_errors %}
+                        <p class="error">{{ error }}</p>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </form>
+    
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Terms and Conditions</h2>
+                <span class="modal-close">&times;</span>
+            </div>
+            <div class="modal-body" id="modal-text">
+            </div>
+            <div class="modal-footer">
+                <button onclick="closeModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="{% static 'papsas_app/js/register.js' %}"></script>
+
+    <script>
+        function disableSubmitButton(form) {
+            const button = form.querySelector('.submit-btn');
+            button.disabled = true;
+            button.innerHTML = 'Processing...';
+        }
+
+        // Password toggle functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const toggleIcons = document.querySelectorAll('.togglePassword');
+
+            toggleIcons.forEach(icon => {
+                icon.addEventListener('click', function() {
+                    const targetId = this.getAttribute('#id_password');
+                    const passwordField = document.getElementById(targetId);
+
+                    // Toggle the type attribute
+                    const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+                    passwordField.setAttribute('type', type);
+
+                    // Toggle the icon class
+                    this.classList.toggle('fa-eye-slash');
+                });
+            });
+        });
+
+function validateMobileNumber() {
+    var mobileInput = document.getElementById("id_mobileNum");
+    var errorMessage = document.getElementById("mobile-error");
+
+    mobileInput.value = mobileInput.value.replace(/[^0-9]/g, '');
+
+    if (mobileInput.value.length > 11) {
+        mobileInput.value = mobileInput.value.substring(0, 11);
+    }
+
+    if (mobileInput.value.length > 0 && mobileInput.value.length < 11) {
+        errorMessage.style.display = "inline";
+        errorMessage.textContent = "Please enter a valid 11-digit mobile number.";
+    } else {
+        errorMessage.style.display = "none";
+    }
+}
+    </script>
+{% endblock %}

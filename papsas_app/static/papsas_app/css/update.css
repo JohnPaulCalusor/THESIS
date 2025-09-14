@@ -1,0 +1,163 @@
+/* Modal Overlay */
+*{
+    font-family: 'Poppins', sans-serif;
+}
+#update-container {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1000; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    background-color: rgba(0, 0, 0, 0.8); /* Black background with transparency */
+}
+#img {
+    width: 100%; /* Responsive width */
+    height: auto; /* Maintain aspect ratio */
+    border-radius: 8px; /* Rounded corners */
+    margin-top: 10px; /* Space above the image */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+    margin-bottom: 50px;
+}
+/* Center the container */
+.update-content {
+    position: absolute; /* Position relative to the overlay */
+    left: 50%; /* Center horizontally */
+    top: 50%; /* Center vertically */
+    transform: translate(-50%, -50%); /* Offset by half of its width and height */
+    background-color: #fff; /* White background for the modal */
+    border-radius: 8px; /* Rounded corners */
+    padding: 20px; /* Some padding */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Shadow for depth */
+    width: 50rem; /* Set a fixed width */
+    max-width: 90%; /* Responsive width */
+    max-height: 80%; /* Set maximum height */
+    overflow-y: auto; /* Enable vertical scrolling */
+}
+#details-container{
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1000; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    background-color: rgba(0, 0, 0, 0.8); 
+}
+#details-body{
+    margin-bottom: 15px;
+    display: flex;
+    flex-direction: column; /* Align label and input vertically */
+}
+/* Close button style */
+.upd-close-modal , .det-close-modal {
+    cursor: pointer; /* Show pointer on hover */
+    float: right; /* Align close icon to the right */
+    font-size: 24px; /* Adjust size */
+}
+.upd-close-modal:hover , .det-close-modal:hover{
+    color: red;
+}
+/* Optional: Style the update button */
+
+.btn {
+    background-color: #ff0000;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 20px;
+    
+}
+
+.two-forms {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+  }
+  
+  .input-box {
+    flex: 1;
+    margin-right: 10px;
+  }
+  
+  .input-box:last-child {
+    margin-right: 0;
+  }
+  
+  .input-box input,
+  .input-box select,
+  .input-box textarea {
+    width: 100%;
+    padding: 10px;
+    font-weight: 300;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+  }
+  
+  .input-box input[type="checkbox"] {
+    width: auto;
+    margin-right: 10px;
+  }
+
+.btn:hover {
+    background-color: #000000;
+}
+h3{
+    color: red;
+    font-size: 25px;
+    margin-bottom: 20px;
+    font-weight: 400;
+}
+h4{
+    font-weight: 300;
+    text-align: center;
+}
+
+@media (max-width: 768px) {
+    .update-content {
+        width: 90%; /* Take almost full width */
+        max-width: 100%;
+        padding: 15px; /* Reduce padding */
+    }
+
+    .two-forms {
+        flex-direction: column; /* Stack form fields vertically */
+        gap: 10px; /* Reduce gap between fields */
+    }
+
+    .input-two, .input-box {
+        width: 100%; /* Make each input box take full width */
+    }
+
+    h3 {
+        font-size: 24px; /* Adjust font size */
+    }
+
+    .btn {
+        padding: 8px 12px; /* Reduce button padding */
+        font-size: 16px; /* Adjust font size */
+    }
+}
+
+/* Small screens, such as mobile phones */
+@media (max-width: 480px) {
+    .update-content {
+        width: 95%;
+        padding: 10px;
+    }
+
+    h3 {
+        font-size: 30px;
+        text-align: left;
+    }
+
+    .btn {
+        font-size: 14px;
+        padding: 8px 10px;
+    }
+}

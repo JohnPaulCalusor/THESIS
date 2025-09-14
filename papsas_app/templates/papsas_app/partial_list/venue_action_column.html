@@ -1,0 +1,13 @@
+<button class="action-icon update-button" title="Update" data-venue-id="{{ record.id }}">
+    <i class="fas fa-edit"></i>
+</button>
+
+<form style="display: inline;"
+    hx-post="{% url 'delete_venue' record.id %}"
+    hx-confirm="Are you sure you want to permanently delete '{{ record.name }}'?"
+    hx-target="body"
+    hx-swap="outerHTML"
+>
+    {% csrf_token %}
+    <button class="action-icon" title="Delete?" type="submit"><i class="fas fa-trash-alt"></i></button></td>
+</form> 
