@@ -1,0 +1,156 @@
+/* regional_chapter.css */
+
+/* Style for the top-centered page title */
+.page-title {
+    width: 100%;
+    text-align: center;
+    padding: 1rem 0;
+    background-color: var(--first-color);
+    margin-top: 70px;
+}
+
+.page-title__text {
+    font-size: 2.5rem;
+    color: #ff0a0a;
+    margin: 0;
+    font-weight: 700;
+}
+
+/* Override .home margin-bottom to prevent gaps */
+.home {
+    margin-bottom: 0;
+}
+
+/* Adjust .home__container row-gap for tighter spacing */
+.home__container {
+    row-gap: 2rem;
+}
+
+/* Ensure .feature-img fits mobile screens */
+.feature-img {
+    max-height: auto;
+    object-fit: cover;
+}
+
+/* Fix mobile gap by overriding .video-papsas and .video-feed-container */
+@media screen and (max-width: 767px) {
+    .home {
+        padding: 2rem 0 1rem;
+    }
+    .home__container {
+        row-gap: 1rem;
+    }
+    .video-papsas {
+        margin-top: 0.5rem;
+        padding: 1rem 0;
+    }
+    .video-feed-container {
+        margin-top: 0;
+        padding: 0 10px;
+    }
+    .feature-img {
+        max-height: auto;
+    }
+    .video-title-container {
+        margin-top: 20px;
+    }
+    .page-title {
+        margin-top: 50px;
+        padding: 0.5rem 0;
+    }
+    .page-title__text {
+        font-size: 2rem;
+    }
+}
+
+/* Divider to indicate different content, aligned with content edges */
+.content-divider {
+    width: 100%;
+    height: 2px;
+    background-color: #ff0a0a;
+    margin: 2rem 0;
+    border: none;
+}
+
+@media screen and (max-width: 767px) {
+    .content-divider {
+        margin: 1rem 0;
+        height: 1px;
+    }
+}
+
+/* Optional: Add a unique class for the second section if preferred over reusing .home */
+.region-content {
+    background-color: var(--first-color);
+    padding: 5rem 0 2rem;
+    margin-bottom: 0;
+    margin-top: 2rem;
+}
+
+.region-content__container {
+    display: grid;
+    align-content: center;
+    row-gap: 2rem;
+    padding-inline: 15px;
+    max-width: 1500px;
+    margin-left: 1.5rem;
+    margin-right: 1.5rem;
+}
+
+/* Add scrollbar to dropdown content globally */
+.dropdown-content {
+    max-height: 300px; /* Set a max height for the dropdown */
+    overflow-y: auto; /* Enable vertical scrollbar when content overflows */
+}
+
+/* Ensure mobile dropdown has a scrollbar */
+@media screen and (max-width: 768px) {
+    .dropdown-content {
+        max-height: 200px; /* Reduced height for mobile */
+    }
+}
+
+.region-content__title {
+    font-size: 1.5rem;
+    margin: 0.75rem 0;
+    color: #ff0a0a;
+    text-align: center;
+}
+
+.region-content__description {
+    text-align: justify;
+    font-size: 1rem;
+    font-weight: 300;
+}
+
+.region-content__img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 10px;
+    max-height: 300px;
+    object-fit: cover;
+}
+
+@media screen and (max-width: 767px) {
+    .region-content {
+        padding: 2rem 0 1rem;
+        margin-top: 0.5rem;
+    }
+    .region-content__container {
+        row-gap: 1rem;
+    }
+    .region-content__img {
+        max-height: 200px;
+    }
+}
+
+@media screen and (min-width: 1024px) {
+    .region-content__container {
+        grid-template-columns: repeat(2, 1fr);
+        align-items: center;
+        column-gap: 2rem;
+    }
+    .region-content__data {
+        text-align: initial;
+    }
+}

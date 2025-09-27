@@ -2509,3 +2509,39 @@ def credentials(request, candidate_id):
 
 def nat_con_view(request):
     return render(request, 'papsas_app/view/national_conference.html')
+
+# papsas_app/views.py/ newly added for regional chapters
+from django.shortcuts import render
+from django.http import Http404
+
+ALLOWED_REGIONS = {
+    # Luzon
+    "region-i": "Region I - Ilocos",
+    "region-ii": "Region II - Cagayan Valley",
+    "region-iii": "Region III - Central Luzon",
+    "region-iv": "Region IV-A - CALABARZON",
+    "mimaropa": "MIMAROPA - Southwestern Tagalog",
+    "region-v": "Region V - Bicol",
+    "ncr": "National Capital Region",
+    "car": "Cordillera Administrative Region",
+    # Visayas
+    "region-vi": "Region VI - Western Visayas",
+    "region-vii": "Region VII - Central Visayas",
+    "region-viii": "Region VIII - Eastern Visayas",
+    "nir": "Negros Island Region",
+    # Mindanao
+    "region-ix": "Region IX - Zamboanga Peninsula",
+    "region-x": "Region X - Northern Mindanao",
+    "region-xi": "Region XI - Davao Region",
+    "region-xii": "Region XII - SOCCSKSARGEN",
+    "region-xiii": "Region XIII - Caraga",
+    "barmm": "BARMM - Bangsamoro",
+}
+
+def regional_chapter(request, slug: str):
+    if slug not in ALLOWED_REGIONS:
+        raise Http404("Region not found")
+    # looks for templates/papsas_app/regions/<slug>.html
+    template = f"papsas_app/regions/{slug}.html"
+    context = {"region_name": ALLOWED_REGIONS[slug], "region_slug": slug}
+    return render(request, template, context)

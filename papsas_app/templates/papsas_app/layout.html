@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="{% static 'papsas_app/css/alert.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'papsas_app/css/regional_chapter.css' %}"> <!-- Add this line -->
     <link rel="icon" type="image/jpg" href="/media/papsas_app/images/papsas_logo.png">
     
     <!-- import htmx -->
@@ -56,9 +57,6 @@
                            
                                     </ul>
                                 </li>
-                                <li class="nav__item">
-                                    <a href="{% url 'nat_con' %}" class="nav__link">4th National Research Conference</a>
-                                </li>
                                 <li class="nav__item"><a href="{% url 'logout' %}"class="nav__link">Logout</a></li>
 
                                 <li class="nav__item profileLink">
@@ -87,9 +85,6 @@
                                   
                                     </ul>
                                 </li>
-                                <li class="nav__item">
-                                    <a href="{% url 'nat_con' %}" class="nav__link">4th National Research Conference</a>
-                                </li>
                                 <li class="nav__item"><a href="{% url 'logout' %}"class="nav__link">Logout</a></li>
                                 <li class="nav__item profileLink">
                                     <span>{{ user.first_name }} </span>
@@ -109,7 +104,6 @@
                                     <ul class="dropdown-content">
                                         <li><a href="{% url 'about' %}#section-1">Officers</a></li>
                                         <li><a href="{% url 'about' %}#section-2">Resources</a></li>
-                                        <li><a href="{% url 'about' %}#section-3">Regional Chapters</a></li>
                                         <li><a href="{% url 'about_dev' %}">Project Team</a></li>
                                     </ul>
                                 </li>
@@ -138,9 +132,37 @@
                                     <li class="nav__item">
                                         <a href="{% url 'contact' %}" class="nav__link">Contact</a>
                                     </li>
-                                    <li class="nav__item">
-                                        <a href="{% url 'nat_con' %}" class="nav__link">4th National Research Conference</a>
-                                    </li>
+                                    <li class="nav__item dropdown">
+                                        <a class="nav__link" id="regionsDropdownLabel">
+                                            Regional Chapters <i class="fa-solid fa-caret-down"></i>
+                                        </a>
+                                        <ul class="dropdown-content">
+                                            <!-- Luzon -->
+                                            <li><a href="{% url 'regional_chapter' 'region-i' %}">Region I - Ilocos</a></li>
+                                            <li><a href="{% url 'regional_chapter' 'region-ii' %}">Region II - Cagayan Valley</a></li>
+                                            <li><a href="{% url 'regional_chapter' 'region-iii' %}">Region III - Central Luzon</a></li>
+                                            <li><a href="{% url 'regional_chapter' 'region-iv' %}">Region IV-A - CALABARZON</a></li>
+                                            <li><a href="{% url 'regional_chapter' 'mimaropa' %}">MIMAROPA - Southwestern Tagalog</a></li>
+                                            <li><a href="{% url 'regional_chapter' 'region-v' %}">Region V - Bicol</a></li>
+                                            <li><a href="{% url 'regional_chapter' 'ncr' %}">NCR - National Capital Region</a></li>
+                                            <li><a href="{% url 'regional_chapter' 'car' %}">CAR - Cordillera Admin. Region</a></li>
+
+                                            <!-- Visayas -->
+                                            <li><a href="{% url 'regional_chapter' 'region-vi' %}">Region VI - Western Visayas</a></li>
+                                            <li><a href="{% url 'regional_chapter' 'region-vii' %}">Region VII - Central Visayas</a></li>
+                                            <li><a href="{% url 'regional_chapter' 'region-viii' %}">Region VIII - Eastern Visayas</a></li>
+                                            <li><a href="{% url 'regional_chapter' 'nir' %}">NIR - Negros Island Region</a></li>
+
+                                            <!-- Mindanao -->
+                                            <li><a href="{% url 'regional_chapter' 'region-ix' %}">Region IX - Zamboanga Peninsula</a></li>
+                                            <li><a href="{% url 'regional_chapter' 'region-x' %}">Region X - Northern Mindanao</a></li>
+                                            <li><a href="{% url 'regional_chapter' 'region-xi' %}">Region XI - Davao Region</a></li>
+                                            <li><a href="{% url 'regional_chapter' 'region-xii' %}">Region XII - SOCCSKSARGEN</a></li>
+                                            <li><a href="{% url 'regional_chapter' 'region-xiii' %}">Region XIII - Caraga</a></li>
+                                            <li><a href="{% url 'regional_chapter' 'barmm' %}">BARMM - Bangsamoro</a></li>
+                                        </ul>
+                                        </li>
+
                                     <li class="nav__item"><a href="{% url 'logout' %}" class="nav__link">Logout</a></li>
                                 {% if user.profilePic %}
                                     <li class="nav__item profileLink">
@@ -176,7 +198,6 @@
                                     <ul class="dropdown-content">
                                         <li><a href="{% url 'about' %}#section-1">Officers</a></li>
                                         <li><a href="{% url 'about' %}#section-2">Resources</a></li>
-                                        <li><a href="{% url 'about' %}#section-3">Regional Chapters</a></li>
                                         <li><a href="{% url 'about_dev' %}">Project Team</a></li>
                                     </ul>
                                 </li>
@@ -186,9 +207,37 @@
                                 <li class="nav__item">
                                     <a href="{% url 'achievement' %}" class="nav__link">SAS Research</a>
                                 </li>
-                                <li class="nav__item">
-                                    <a href="{% url 'nat_con' %}" class="nav__link">4th National Research Conference</a>
-                                </li>
+                                <li class="nav__item dropdown">
+                                    <a class="nav__link" id="regionsDropdownLabel">
+                                        Regional Chapters <i class="fa-solid fa-caret-down"></i>
+                                    </a>
+                                    <ul class="dropdown-content">
+                                        <!-- Luzon -->
+                                        <li><a href="{% url 'regional_chapter' 'region-i' %}">Region I - Ilocos</a></li>
+                                        <li><a href="{% url 'regional_chapter' 'region-ii' %}">Region II - Cagayan Valley</a></li>
+                                        <li><a href="{% url 'regional_chapter' 'region-iii' %}">Region III - Central Luzon</a></li>
+                                        <li><a href="{% url 'regional_chapter' 'region-iv' %}">Region IV-A - CALABARZON</a></li>
+                                        <li><a href="{% url 'regional_chapter' 'mimaropa' %}">MIMAROPA - Southwestern Tagalog</a></li>
+                                        <li><a href="{% url 'regional_chapter' 'region-v' %}">Region V - Bicol</a></li>
+                                        <li><a href="{% url 'regional_chapter' 'ncr' %}">NCR - National Capital Region</a></li>
+                                        <li><a href="{% url 'regional_chapter' 'car' %}">CAR - Cordillera Admin. Region</a></li>
+
+                                        <!-- Visayas -->
+                                        <li><a href="{% url 'regional_chapter' 'region-vi' %}">Region VI - Western Visayas</a></li>
+                                        <li><a href="{% url 'regional_chapter' 'region-vii' %}">Region VII - Central Visayas</a></li>
+                                        <li><a href="{% url 'regional_chapter' 'region-viii' %}">Region VIII - Eastern Visayas</a></li>
+                                        <li><a href="{% url 'regional_chapter' 'nir' %}">NIR - Negros Island Region</a></li>
+
+                                        <!-- Mindanao -->
+                                        <li><a href="{% url 'regional_chapter' 'region-ix' %}">Region IX - Zamboanga Peninsula</a></li>
+                                        <li><a href="{% url 'regional_chapter' 'region-x' %}">Region X - Northern Mindanao</a></li>
+                                        <li><a href="{% url 'regional_chapter' 'region-xi' %}">Region XI - Davao Region</a></li>
+                                        <li><a href="{% url 'regional_chapter' 'region-xii' %}">Region XII - SOCCSKSARGEN</a></li>
+                                        <li><a href="{% url 'regional_chapter' 'region-xiii' %}">Region XIII - Caraga</a></li>
+                                        <li><a href="{% url 'regional_chapter' 'barmm' %}">BARMM - Bangsamoro</a></li>
+                                    </ul>
+                                    </li>
+
                                 <div class="login-container">
                                     <a href="{% url 'login' %}" class="login-submit">Login</a>
                                 </div>
@@ -215,36 +264,78 @@
 
 <script src="{% static 'papsas_app/js/scrollreveal.min.js' %}"></script>
 <script src="{% static 'papsas_app/js/main.js' %}"></script>
+<!--updated script for active link highlighting-->
 <script>
-    // Select all navigation links
-    const navLinks = document.querySelectorAll('.nav__link');
+    // Select all navigation links (top-level and dropdowns)
+    const navLinks = document.querySelectorAll('.nav__link, .dropdown-content a');
 
-    // Get the current path
+    // Current URL path
     const currentPath = window.location.pathname;
 
-    // Loop through each link and add 'active' class if href matches the current path
     navLinks.forEach(link => {
-        // Extract the pathname from the link's href attribute
+        const href = link.getAttribute('href');
         const linkPath = new URL(link.href).pathname;
 
-        if (linkPath === currentPath) {
+        // Skip dummy links (# or javascript:void)
+        if (href === "#" || href.startsWith("javascript")) {
+            return;
+        }
+
+        // Case 1: On any regional chapter page
+        if (currentPath.startsWith("/regional-chapters/")) {
+            // Highlight the exact region link
+            if (linkPath === currentPath) {
+                link.classList.add('active');
+            }
+            // Highlight the parent "Regional Chapters"
+            const parentLabel = document.getElementById("regionsDropdownLabel");
+            if (parentLabel) {
+                parentLabel.classList.add("active");
+            }
+        } 
+        // Case 2: All other links (Home, About, Contact, etc.)
+        else if (linkPath === currentPath) {
             link.classList.add('active');
         }
     });
 </script>
-<script>
-    function toggleDescription(counter) {
-        const description = document.getElementById(`event-description-${counter}`);
-        const viewMoreBtn = document.querySelector(`#event-description-${counter} + .view-more-btn`);
-        
-        if (viewMoreBtn.innerText === "View More") {
-            description.classList.add('show-full');
-            viewMoreBtn.innerText = "View Less";
-        } else {
-            description.classList.remove('show-full');
-            viewMoreBtn.innerText = "View More";
+
+    <script>
+        function toggleDescription(counter) {
+            const description = document.getElementById(`event-description-${counter}`);
+            const viewMoreBtn = document.querySelector(`#event-description-${counter} + .view-more-btn`);
+            
+            if (viewMoreBtn.innerText === "View More") {
+                description.classList.add('show-full');
+                viewMoreBtn.innerText = "View Less";
+            } else {
+                description.classList.remove('show-full');
+                viewMoreBtn.innerText = "View More";
+            }
         }
-    }
+        
+
+        // js for dynamic dropdown label on regional chapters
+
+        const regionsDropdownLabel = document.getElementById("regionsDropdownLabel");
+        const regionLinks = document.querySelectorAll("ul.dropdown-content li a[href*='regional-chapters']");
+
+        // Default label
+        const defaultLabel = 'Regional Chapters <i class="fa-solid fa-caret-down"></i>';
+
+        // If on a Regional Chapter page, show that region name
+        if (currentPath.startsWith("/regional-chapters/")) {
+            // Find which region link matches the current URL
+            regionLinks.forEach(link => {
+                const linkPath = new URL(link.href).pathname;
+                if (linkPath === currentPath) {
+                    regionsDropdownLabel.innerHTML = link.textContent + ' <i class="fa-solid fa-caret-down"></i>';
+                }
+            });
+        } else {
+            // If not in regional chapters, reset to default
+            regionsDropdownLabel.innerHTML = defaultLabel;
+        }
     </script>
 </body>
 </html>

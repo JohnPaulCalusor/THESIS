@@ -1,0 +1,133 @@
+{% extends 'papsas_app/layout.html' %}
+{% load static %}
+
+{% block head %}
+<link rel="stylesheet" href="{% static 'papsas_app/css/regional_chapter.css' %}">
+{% endblock %}
+
+{% block body %}
+<main class="main">
+    <!-- Page Title at Top Center -->
+    <header class="page-title">
+        <h1 class="page-title__text">PAPSAS REGION 3</h1>
+    </header>
+
+    <!-- Region Intro Section (side-by-side layout) -->
+    <section class="home">
+        <div class="home__container container">
+            <img src="/media/papsas_app/images/oathgrid.jpg" alt="Region 3 Oath-Taking" class="feature-img">
+            <div class="home__data">
+                <p class="home__description">
+                    Clark-Pampanga – On June 26, 2025, the Philippine Association of Practitioners of Student Affairs and Services (PAPSAS) in Region 3 conducted its official oath-taking ceremony for the newly elected officers and members of the Board of Directors at Hotel Seoul, Clark-Pampanga. The occasion marked a remarkable milestone in the history of the regional chapter, as it reaffirmed its unwavering commitment to advance student welfare and promote quality services within the academic community. The ceremony stood not only as a formal recognition of new leadership but also as a symbol of renewed dedication to the organization’s long-standing mission and vision.<br><br>
+                    During the program, the incoming officers and directors solemnly pledged to uphold their duties with integrity and professionalism, ensuring that their actions remain aligned with the values of PAPSAS. Their commitment reflected the broader goals of the association: to continuously support student affairs practitioners, provide platforms for growth, and foster collaboration across institutions. The event also underscored the steadfast participation of the membership body, whose collective effort and dedication are essential in sustaining the chapter’s initiatives. By honoring its leaders and highlighting the spirit of service among its members, PAPSAS Region 3 reinforced its role as a vital force in strengthening student affairs and services across the region.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Divider to indicate different content, aligned with content edges -->
+    <div class="container">
+        <div class="content-divider"></div>
+    </div>
+
+    <!-- Adding New Content -->
+    <section class="home">
+        <div class="home__container container">
+            <img src="/media/papsas_app/images/forumgrid.jpg" alt="Region 3 Oath-Taking" class="feature-img">
+            <div class="home__data">
+                <p class="home__description">
+                    Clark-Pampanga – On June 26, 2025, the Philippine Association of Practitioners of Student Affairs and Services (PAPSAS) in Region 3 conducted its official oath-taking ceremony for the newly elected officers and members of the Board of Directors at Hotel Seoul, Clark-Pampanga. The occasion marked a remarkable milestone in the history of the regional chapter, as it reaffirmed its unwavering commitment to advance student welfare and promote quality services within the academic community. The ceremony stood not only as a formal recognition of new leadership but also as a symbol of renewed dedication to the organization’s long-standing mission and vision.<br><br>
+                    During the program, the incoming officers and directors solemnly pledged to uphold their duties with integrity and professionalism, ensuring that their actions remain aligned with the values of PAPSAS. Their commitment reflected the broader goals of the association: to continuously support student affairs practitioners, provide platforms for growth, and foster collaboration across institutions. The event also underscored the steadfast participation of the membership body, whose collective effort and dedication are essential in sustaining the chapter’s initiatives. By honoring its leaders and highlighting the spirit of service among its members, PAPSAS Region 3 reinforced its role as a vital force in strengthening student affairs and services across the region.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Region 3 Video Section -->
+    <section class="video-papsas">
+        <div class="video-feed-container">
+            <h2 class="video-title-container">VIDEO SECTION</h2>
+            <!-- First Video -->
+            <div class="video-post">
+                <div class="video-wrapper">
+                    <video controls>
+                        <source src="/media/papsas_app/videos/r3oath1.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
+                <div class="video-content">
+                    <h3 class="video-title">Region 3 Oath-Taking Ceremony</h3>
+                    <p class="video-caption">We sincerely extend our gratitude to Dr. Lora Yusi and the CHED Regional Office III for graciously accommodating us despite their busy schedules. Your presence added great significance to the Oath-Taking Ceremony of the Philippine Association of Practitioners of Student Affairs and Services in Region 3, making the event truly memorable.</p>
+                </div>
+            </div>
+            <!-- Second Video -->
+            <div class="video-post">
+                <div class="video-wrapper">
+                    <video controls>
+                        <source src="/media/papsas_app/videos/r3oath2.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
+                <div class="video-content">
+                    <h3 class="video-title">SASamahan SASabayan: CHEDRO-III & PAPSAS</h3>
+                    <p class="video-caption">Thank you CHED R3 for a fruitful dialogue with PAPSAS R3. Looking forward to more collaborative activities with CHED R3.</p>
+                </div>
+            </div>
+            <!-- Third Video -->
+            <div class="video-post">
+                <div class="video-wrapper">
+                    <video controls>
+                        <source src="/media/papsas_app/videos/bicolvideo1.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
+                <div class="video-content">
+                    <h3 class="video-title">SASamahan SASabayan: CHEDRO-III & PAPSAS</h3>
+                    <p class="video-caption">Thank you CHED R3 for a fruitful dialogue with PAPSAS R3. Looking forward to more collaborative activities with CHED R3.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <button onclick="scrollToTop()" id="scrollUpButton" title="Go to top">↑</button>
+    <footer class="footer">
+        <div class="footer__container container">
+            <div class="footer__content">
+                <h3 class="footer__title">Philippine Association of Practitioners of Student Affairs and Services, Inc.</h3>
+                <p class="footer__description">Dedicated to the pursuit of excellence in student affairs and services work.</p>
+                <ul class="footer__links">
+                    <li><a href="#" class="footer__link">(043) 778 0656</a></li>
+                    <li><a href="#" class="footer__link">/papsasinc</a></li>
+                    <li><a href="#" class="footer__link">papsasinc.national@gmail.com</a></li>
+                    <li><a href="bit.ly/papsasinc" class="footer__link">bit.ly/papsasinc</a></li>
+                    <li><a href="#" class="footer__link">Visitor: {{ total_visitors }}</a></li>
+                </ul>
+            </div>
+            <div class="footer__socials">
+                <a href="#" class="footer__social"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" class="footer__social"><i class="fab fa-twitter"></i></a>
+                <a href="#" class="footer__social"><i class="fab fa-instagram"></i></a>
+            </div>
+        </div>
+        <div class="footer__bottom">
+            <p>&copy; 2024 PAPSAS, Inc. All Rights Reserved.</p>
+        </div>
+    </footer>
+</main>
+
+<script>
+    window.onscroll = function() {
+        let button = document.getElementById("scrollUpButton");
+        if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+            button.style.display = "block";
+        } else {
+            button.style.display = "none";
+        }
+    };
+
+    function scrollToTop() {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+</script>
+{% endblock %}
