@@ -235,7 +235,6 @@ img {
   background-color: var(--first-color);
   padding: 5rem 0 2rem;
   display: flex;
-  margin-bottom: -45rem;
 }
 
 .home__container {
@@ -767,8 +766,9 @@ img {
   }
 
 }
+
 .video-papsas{
-  margin-top: 50rem;
+  margin-top: 5rem;
 }
 
 .video_title{
@@ -1097,3 +1097,4 @@ img {
 @media (min-width: 820px) and (max-width: 1180px) {
 
 }
+
