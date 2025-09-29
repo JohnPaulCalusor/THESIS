@@ -1,3 +1,23 @@
 ﻿__pycache__/
 *.py[cod]
 venv/
+# local db & bundles
+db.sqlite3
+papsas-backend.tar.gz
+*.tar.gz
+*.zip
+
+# temp/output from earlier steps
+patches/
+new_files/
+repo_info.txt
+structure.txt
+versions.txtdb.sqlite3
+papsas-backend.tar.gz
+*.tar.gz
+*.zip
+patches/
+new_files/
+repo_info.txt
+structure.txt
+versions.txt
