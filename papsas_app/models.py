@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import UniqueConstraint, Q
 from django.contrib import admin
 from django.contrib.auth.models import AbstractUser
 from django import forms
@@ -9,6 +10,7 @@ from django.db.models import Avg
 from datetime import timedelta
 from django.core.validators import RegexValidator, MinValueValidator, MaxValueValidator
 from django.utils.translation import gettext_lazy as _
+
 # Create your models here.
 
 Regions = [
@@ -194,6 +196,14 @@ class Vote(models.Model):
     voteDate = models.DateField(auto_now_add=True)
     election = models.ForeignKey(Election, on_delete=models.CASCADE, null=True, related_name="poll")
 
+    class Meta:
+        constraints = [
+            UniqueConstraint(
+                fields=["voterID", "election"],
+                name="unique_vote_per_user_election",
+                condition=Q(election__isnull=False),
+            ),
+        ]
     def __str__(self):
         return f'{self.candidateID.all()}'
 
@@ -207,7 +217,12 @@ class Officer(models.Model):
     ], null=True)
     termStart = models.DateField(null=True)
     termEnd = models.DateField(null=True)
-    
+
+    class Meta:
+        constraints = [
+            UniqueConstraint(fields=['candidateID'], name='unique_officer_per_candidacy'),
+        ]
+
     def __str__(self):
         return f"{self.candidateID.candidate.first_name} was elected ({self.termStart} - {self.termEnd})"
 

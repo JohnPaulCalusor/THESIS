@@ -14,6 +14,7 @@ from django_tables2.paginators import LazyPaginator
 from django.utils.html import strip_tags
 import random, json, logging, qrcode
 from django.contrib import messages
+from django.contrib.auth.decorators import user_passes_test
 from django.db import IntegrityError
 from django.utils import timezone
 from django.db.models.functions import TruncDay, TruncMonth, TruncYear
@@ -41,6 +42,55 @@ from django_filters.views import FilterView
 from django.contrib.auth.password_validation import validate_password
 from django.core.mail import EmailMessage
 
+# papsas_app/views.py (snippets)
+from django.conf import settings
+from django.contrib import messages
+from django.contrib.auth.decorators import user_passes_test
+from .utils.otp_throttle import (
+    can_send_otp, too_many_verify_attempts, register_verify_failure, reset_verify_window
+)
+
+@login_required
+def request_email_otp(request):
+    ok, remaining = can_send_otp(request.user.id,
+                                 settings.OTP_SEND_MAX_PER_WINDOW,
+                                 settings.OTP_SEND_WINDOW_MINUTES)
+    if not ok:
+        messages.error(request,
+            f"You’ve reached the OTP send limit. Try again in {settings.OTP_SEND_WINDOW_MINUTES} minutes.")
+        return redirect("verify_email_otp")
+
+    # issue & email OTP (existing code)
+    # EmailOTP.issue(user=request.user, minutes=10, purpose="verify_email")
+    messages.success(request, f"OTP sent. You can request {remaining} more within the next hour.")
+    return redirect("verify_email_otp")
+
+@login_required
+def verify_email_otp(request):
+    if request.method == "POST":
+        if too_many_verify_attempts(request.user.id, settings.OTP_LOCK_MINUTES):
+            messages.error(request, "Too many incorrect attempts. Try again later.")
+            return redirect("verify_email_otp")
+
+        code = request.POST.get("code", "").strip()
+        # validate code (existing logic)
+        valid = EmailOTP.validate(user=request.user, code=code, purpose="verify_email")
+        if valid:
+            request.user.email_verified = True
+            request.user.save(update_fields=["email_verified"])
+            reset_verify_window(request.user.id)
+            messages.success(request, "Email verified—thank you!")
+            return redirect("voting_portal_home")
+        else:
+            locked = register_verify_failure(
+                request.user.id,
+                settings.OTP_VERIFY_MAX_ATTEMPTS,
+                settings.OTP_LOCK_MINUTES
+            )
+            messages.error(request, "Invalid code." + (" You are temporarily locked." if locked else ""))
+            return redirect("verify_email_otp")
+
+    return render(request, "papsas_app/voting/verify.html")
 
 
 
@@ -2545,3 +2595,46 @@ def regional_chapter(request, slug: str):
     template = f"papsas_app/regions/{slug}.html"
     context = {"region_name": ALLOWED_REGIONS[slug], "region_slug": slug}
     return render(request, template, context)
+
+# --- Auto-added voting helpers ---
+
+@login_required
+def election_summary_json(request):
+    # Last 5 elections with total votes per election
+    from .models import Election, Vote
+    qs = (Election.objects.order_by('-startDate')[:5]
+          .values('id', 'title'))
+    data = []
+    for e in qs:
+        count = Vote.objects.filter(election_id=e['id']).count()
+        data.append({'election_id': e['id'], 'title': e['title'], 'votes': count})
+    return JsonResponse({'items': data})
+
+
+@login_required
+@user_passes_test(lambda u: u.is_staff)
+def export_results_csv(request, election_id):
+    from .models import Candidacy
+    from django.db import models
+    import csv
+
+    resp = HttpResponse(content_type="text/csv")
+    resp['Content-Disposition'] = f'attachment; filename="results_{election_id}.csv"'
+    writer = csv.writer(resp)
+
+    # No Position in your schema → just candidate + vote count
+    writer.writerow(["Candidate", "Votes"])
+
+    qs = (
+        Candidacy.objects
+        .filter(election_id=election_id, candidacyStatus=True)
+        .values("candidate__email")
+        .annotate(votes=models.Count("nominee"))  # M2M reverse from Vote.candidateID (related_name="nominee")
+        .order_by("-votes", "candidate__email")
+    )
+
+    for row in qs:
+        writer.writerow([row["candidate__email"], row["votes"]])
+
+    return resp
+
