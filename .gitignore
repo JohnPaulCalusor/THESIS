@@ -26,3 +26,8 @@ versions.txt
 .env
 *.env
 .env.*
+
+# server-only
+.venv/
+staticfiles/
+papsas/settings.py*.bak
