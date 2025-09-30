@@ -25,3 +25,4 @@ versions.txt
 # env files
 .env
 *.env
+.env.*
