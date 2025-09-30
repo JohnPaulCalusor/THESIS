@@ -27,8 +27,17 @@ INSTALLED_APPS = [
     "django_crontab",
 ]
 
+INSTALLED_APPS += [
+    "rest_framework",
+    "rest_framework_simplejwt",
+    "corsheaders",
+    "papsas_api",   # you already added this earlier
+]
+
+
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "corsheaders.middleware.CorsMiddleware",   # ← add this
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -37,6 +46,15 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "papsas_app.middleware.VisitorCounterMiddleware",
 ]
+
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    ),
+    "DEFAULT_PERMISSION_CLASSES": (
+        "rest_framework.permissions.AllowAny",
+    ),
+}
 
 ROOT_URLCONF = "papsas.urls"
 WSGI_APPLICATION = "papsas.wsgi.application"
@@ -114,6 +132,32 @@ CRONJOBS = [
     ("0 16 * * *", "django.core.management.call_command", ["close_election"]),
     ("0 16 * * *", "django.core.management.call_command", ["check_expiring_memberships"]),
 ]
+
+import os
+
+SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "CHANGEME_DEV")
+DEBUG = os.getenv("DJANGO_DEBUG", "0") == "1"
+
+ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
+
+# CORS – during dev you can allow all; tighten later in prod
+CORS_ALLOWED_ORIGINS = [
+    # add your domain later, e.g. "https://api.yourdomain.com",
+]
+CORS_ALLOW_ALL_ORIGINS = True if os.getenv("CORS_ALLOW_ALL", "1") == "1" else False
+
+CSRF_TRUSTED_ORIGINS = [u for u in os.getenv("DJANGO_CSRF_TRUSTED_ORIGINS", "").split(",") if u]
+
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": os.getenv("PG_DB", "papsas_db"),
+        "USER": os.getenv("PG_USER", "papsas_user"),
+        "PASSWORD": os.getenv("PG_PASS", "CHANGE_ME_STRONG"),
+        "HOST": os.getenv("PG_HOST", "127.0.0.1"),
+        "PORT": os.getenv("PG_PORT", "5432"),
+    }
+}
 
 # --- OTP throttling defaults ---
 OTP_SEND_WINDOW_MINUTES = int(os.getenv('OTP_SEND_WINDOW_MINUTES', '60'))
