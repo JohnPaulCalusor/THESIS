@@ -20,7 +20,10 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 
+from django.urls import include
+
 urlpatterns = [
+    path("api/", include("papsas_api.urls")),
     path('', include('papsas_app.urls')),
     path('admin/', admin.site.urls),
 ]
