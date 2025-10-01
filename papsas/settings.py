@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     "django_crontab",
     # Optional but handy for mobile/web dev
     "corsheaders",
+    "rest_framework",
 ]
 
 # --- Middleware ---
