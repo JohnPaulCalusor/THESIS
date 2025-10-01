@@ -18,12 +18,17 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from rest_framework.routers import DefaultRouter
+from papsas_app.api import ElectionViewSet
 
-
-from django.urls import include
+router = DefaultRouter()
+router.register(r"elections", ElectionViewSet, basename="elections")
 
 urlpatterns = [
     path("api/", include("papsas_api.urls")),
     path('', include('papsas_app.urls')),
     path('admin/', admin.site.urls),
 ]
+if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    urlpatterns += static(settings.MEDIA_URL,  document_root=settings.MEDIA_ROOT)
