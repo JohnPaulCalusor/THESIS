@@ -20,3 +20,4 @@ pytest-cov==5.0.0
 qrcode==8.0
 sqlparse==0.5.1
 django-cors-headers==X.Y.Z
+djangorestframework==3.15.2
