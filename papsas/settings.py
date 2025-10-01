@@ -16,6 +16,15 @@ SITE_DOMAIN = os.getenv("SITE_DOMAIN", "www.papsasinc.com")
 LOGIN_URL = os.getenv("DJANGO_LOGIN_URL", "/login")
 AUTH_USER_MODEL = "papsas_app.User"
 
+# --- Core / security driven by env ---
+SECURE_PROXY_SSL_HEADER = tuple(os.getenv("SECURE_PROXY_SSL_HEADER", "").split(",")) if os.getenv("SECURE_PROXY_SSL_HEADER") else None
+SESSION_COOKIE_SECURE = os.getenv("SESSION_COOKIE_SECURE", "0") in {"1", "True", "true", "yes"}
+CSRF_COOKIE_SECURE = os.getenv("CSRF_COOKIE_SECURE", "0") in {"1", "True", "true", "yes"}
+
+# trust X-Forwarded-Proto when behind Nginx/OLS (only if header is set)
+if SECURE_PROXY_SSL_HEADER:
+    SECURE_PROXY_SSL_HEADER = (SECURE_PROXY_SSL_HEADER[0], SECURE_PROXY_SSL_HEADER[1])
+
 # --- Apps ---
 INSTALLED_APPS = [
     "papsas_app",
@@ -100,7 +109,8 @@ AUTH_PASSWORD_VALIDATORS = [
 LANGUAGE_CODE = "en-us"
 TIME_ZONE = os.getenv("TIME_ZONE", "Asia/Manila")
 USE_I18N = True
-USE_TZ = True
+# USE_TZ from env (defaults to enabled)
+USE_TZ = os.getenv("USE_TZ", "1") in {"1", "True", "true", "yes"}
 
 # --- Static / Media ---
 STATIC_URL = "/static/"
