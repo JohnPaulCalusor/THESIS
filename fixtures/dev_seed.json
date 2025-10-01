@@ -1,0 +1,123 @@
+[
+{
+  "model": "papsas_app.user",
+  "pk": 1,
+  "fields": {
+    "password": "pbkdf2_sha256$870000$PePYqEDuDghHE1aWSFS0TO$eErzqZx70ZrHxvTT0TI7LMbG/qVTElwQHMd+FpqprP8=",
+    "last_login": "2025-10-01T08:40:54.655Z",
+    "is_superuser": true,
+    "username": "admin",
+    "first_name": "",
+    "last_name": "",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2025-09-29T15:07:29.267Z",
+    "email": "22-04181@g.batstate-u.edu.ph",
+    "mobileNum": "",
+    "region": "Region",
+    "address": "",
+    "occupation": "Occupation",
+    "age": null,
+    "birthdate": null,
+    "verification_code": null,
+    "verification_code_expiration": null,
+    "email_verified": false,
+    "profilePic": "papsas_app/images/default_dp.jpeg",
+    "institution": null,
+    "tor": "",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "papsas_app.user",
+  "pk": 2,
+  "fields": {
+    "password": "pbkdf2_sha256$870000$qlyvC5T1stz0juupD1Sprv$6wuH6H3c8RbHE6mD/bkalpepmX2VuqHDuQWM5rmbyUg=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "alice",
+    "first_name": "",
+    "last_name": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-10-01T09:16:12.474Z",
+    "email": "alice@example.com",
+    "mobileNum": "",
+    "region": "Region",
+    "address": "",
+    "occupation": "Occupation",
+    "age": null,
+    "birthdate": null,
+    "verification_code": null,
+    "verification_code_expiration": null,
+    "email_verified": false,
+    "profilePic": "papsas_app/images/default_dp.jpeg",
+    "institution": null,
+    "tor": "",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "papsas_app.user",
+  "pk": 3,
+  "fields": {
+    "password": "pbkdf2_sha256$870000$Bf9kuhDxjxP5XfMgPF7HNm$vFDoVxVulc1beOt8KJJtNSJ6PO/kDtRSJhSwhdhePTU=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "bob",
+    "first_name": "",
+    "last_name": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-10-01T09:16:13.581Z",
+    "email": "bob@example.com",
+    "mobileNum": "",
+    "region": "Region",
+    "address": "",
+    "occupation": "Occupation",
+    "age": null,
+    "birthdate": null,
+    "verification_code": null,
+    "verification_code_expiration": null,
+    "email_verified": false,
+    "profilePic": "papsas_app/images/default_dp.jpeg",
+    "institution": null,
+    "tor": "",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "papsas_app.election",
+  "pk": 1,
+  "fields": {
+    "title": "Dev Election",
+    "startDate": "2025-10-01",
+    "endDate": "2025-10-08",
+    "electionStatus": true,
+    "numWinners": 1
+  }
+},
+{
+  "model": "papsas_app.candidacy",
+  "pk": 1,
+  "fields": {
+    "candidate": 2,
+    "candidacyStatus": true,
+    "election": 1,
+    "credentials": "Alice platform"
+  }
+},
+{
+  "model": "papsas_app.candidacy",
+  "pk": 2,
+  "fields": {
+    "candidate": 3,
+    "candidacyStatus": true,
+    "election": 1,
+    "credentials": "Bob platform"
+  }
+}
+]
