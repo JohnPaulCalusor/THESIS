@@ -31,3 +31,10 @@ versions.txt
 .venv/
 staticfiles/
 papsas/settings.py*.bak
+# Dev artifacts
+login.json
+*.bak.*
+*.bracefix.*
+*.dupefix.*
+*.finalfix.*
+*.fix.*
