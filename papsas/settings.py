@@ -141,3 +141,26 @@ CORS_ALLOWED_ORIGINS = [
     "http://10.0.2.2:8000",     # Android emulator -> host
 ]
 CORS_ALLOW_CREDENTIALS = True
+# ==== ENV PATCH (safe to keep) ===============================================
+import os
+
+def _env_bool(name, default=False):
+    v = os.getenv(name)
+    if v is None:
+        return default
+    return str(v).strip().lower() in ("1","true","yes","on")
+
+def _env_list(name_primary, name_fallback=None, default=""):
+    raw = os.getenv(name_primary)
+    if not raw and name_fallback:
+        raw = os.getenv(name_fallback)
+    if raw is None:
+        raw = default
+    parts = raw.replace(",", " ").split()  # accept comma OR space separated
+    return [p.strip() for p in parts if p.strip()]
+
+# Prefer DJANGO_* names, fall back to generic; works with comma or space lists
+DEBUG = _env_bool("DJANGO_DEBUG", _env_bool("DEBUG", False))
+ALLOWED_HOSTS = _env_list("DJANGO_ALLOWED_HOSTS", "ALLOWED_HOSTS", default="localhost 127.0.0.1")
+CSRF_TRUSTED_ORIGINS = _env_list("DJANGO_CSRF_TRUSTED_ORIGINS", "CSRF_TRUSTED_ORIGINS", default="")
+# ============================================================================ 
