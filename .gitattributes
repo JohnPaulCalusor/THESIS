@@ -1,5 +1,8 @@
 # normalize text files to LF in repo; convert appropriately per client
-* text=auto eol=lf
+* text=auto
+*.sh text eol=lf
+*.py text eol=lf
+*.md text eol=lf
 
 # keep images/binaries untouched
 *.png binary
