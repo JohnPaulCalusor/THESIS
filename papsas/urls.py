@@ -10,10 +10,13 @@ def health(_request):
     return JsonResponse({"ok": True})
 
 urlpatterns = [
-    path("admin/", admin.site.urls),
-    path("api/health", health),
-    path("api/", include("papsas_app.api.urls")),  # <-- include the app API urls
+    # Auth & user endpoints (you already had these here)
+    path("api/", include("papsas_api.urls")),
+    # Your app API (elections + health)
+    path("api/", include("papsas_app.api.urls")),
+    # HTML pages, if any
     path("", include("papsas_app.urls")),
+    path("admin/", admin.site.urls),
 ]
 
 if settings.DEBUG:
