@@ -1,0 +1,17 @@
+# /etc/systemd/system/papsas.service
+[Unit]
+Description=PAPSAS Django (Gunicorn)
+After=network.target
+
+[Service]
+User=papsas
+Group=www-data
+WorkingDirectory=/srv/papsas/app
+EnvironmentFile=/etc/papsas.env
+ExecStart=/srv/papsas/app/venv/bin/gunicorn --workers 5 --timeout 120 --graceful-timeout 120 --bind 127.0.0.1:8000 papsas.wsgi:application
+Restart=always
+RestartSec=5
+TimeoutStopSec=30
+
+[Install]
+WantedBy=multi-user.target
