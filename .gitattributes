@@ -1,17 +1,44 @@
-# normalize text files to LF in repo; convert appropriately per client
+# --- Text normalization ---
+# Detect text automatically
 * text=auto
-*.sh text eol=lf
-*.py text eol=lf
-*.md text eol=lf
 
-# keep images/binaries untouched
-*.png binary
-*.jpg binary
+# Force LF for source/docs (prevents CRLF sneaking into scripts)
+*.sh   text eol=lf
+*.py   text eol=lf
+*.md   text eol=lf
+*.txt  text eol=lf
+*.json text eol=lf
+*.yaml text eol=lf
+*.yml  text eol=lf
+*.toml text eol=lf
+*.ini  text eol=lf
+*.conf text eol=lf
+*.service.txt text eol=lf
+Dockerfile text eol=lf
+Makefile  text eol=lf
+*.css  text eol=lf
+*.html text eol=lf
+*.js   text eol=lf
+*.ts   text eol=lf
+*.tsx  text eol=lf
+*.env.example text eol=lf
+
+# Windows batch can keep CRLF
+*.bat eol=crlf
+
+# --- Binary files (no line-ending conversion) ---
+*.png  binary
+*.jpg  binary
 *.jpeg binary
-*.gif binary
-*.pdf binary
+*.gif  binary
+*.pdf  binary
+*.ico  binary
 *.woff binary
 *.woff2 binary
-
-# Windows batch files can keep CRLF
-*.bat eol=crlf
+*.zip  binary
+*.tar  binary
+*.gz   binary
+*.xz   binary
+*.7z   binary
+*.db   binary
+*.sqlite3 binary
