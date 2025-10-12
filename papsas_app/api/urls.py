@@ -34,3 +34,7 @@ urlpatterns += [
     path('elections/<int:election_id>/vote', CastVoteView2.as_view(), name='api-election-vote2'),
     path('elections/<int:election_id>/results2', ElectionResults2.as_view(), name='api-election-results2'),
 ]
+
+urlpatterns += [
+    path('elections/<int:election_id>/results', ElectionResults2.as_view(), name='api-election-results'),
+]
