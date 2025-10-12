@@ -1,3 +1,4 @@
+from .ballot_fix import MyBallotView2, CastVoteView2, ElectionResults2
 from .ballot_fix import MyBallotView2
 from django.urls import path
 from .views import (
@@ -27,4 +28,9 @@ urlpatterns = [
 
 urlpatterns += [
     path('elections/<int:election_id>/ballot2', MyBallotView2.as_view(), name='ballot2'),
+]
+
+urlpatterns += [
+    path('elections/<int:election_id>/vote', CastVoteView2.as_view(), name='api-election-vote2'),
+    path('elections/<int:election_id>/results2', ElectionResults2.as_view(), name='api-election-results2'),
 ]
