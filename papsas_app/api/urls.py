@@ -22,3 +22,9 @@ urlpatterns = [
     path("elections/<int:election_id>/vote/",  VoteView.as_view(),     name="api-election-vote"),
     path("elections/<int:election_id>/results", ResultsView.as_view(), name="api-election-results"),
 ]
+
+from .ballot_fix import MyBallotView2
+
+urlpatterns += [
+    path('elections/<int:election_id>/ballot2', MyBallotView2.as_view(), name='ballot2'),
+]
