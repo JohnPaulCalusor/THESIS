@@ -1,6 +1,6 @@
+from .ballot_fix import MyBallotView2
 from django.urls import path
 from .views import (
-from .ballot_fix import MyBallotView2
     health, LoginView, RefreshView, MeView,
     ElectionListView, ElectionDetailView,
     MyBallotView, VoteView, ResultsView
