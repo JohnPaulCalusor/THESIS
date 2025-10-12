@@ -22,7 +22,7 @@ urlpatterns = [
     path("elections/<int:pk>/",          ElectionDetailView.as_view(), name="api-election-detail"),
     path("elections/<int:election_id>/ballot", MyBallotView2.as_view(), name="api-election-ballot"),
     path("elections/<int:election_id>/vote/",  VoteView.as_view(),     name="api-election-vote"),
-    path("elections/<int:election_id>/results", ResultsView.as_view(), name="api-election-results"),
+    path("elections/<int:election_id>/results", ElectionResults2.as_view(), name="api-election-results"),
 ]
 
 

@@ -345,3 +345,11 @@ class VisitorStats(models.Model):
 
     def __str__(self):
         return f"Total Visitors: {self.total_visitors}"
+
+class VoteSelection(models.Model):
+    vote = models.OneToOneField('papsas_app.Vote', on_delete=models.CASCADE, related_name='selection')
+    candidate = models.ForeignKey('papsas_app.User', on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"VoteSelection(vote_id={self.vote_id}, candidate_id={self.candidate_id})"
+
