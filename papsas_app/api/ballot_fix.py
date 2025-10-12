@@ -85,8 +85,10 @@ class CastVoteView2(APIView):
                     candidate_fk = f.name
                     break
         if not candidate_fk:
-            return Response({"detail": "Vote model has no candidate FK."},
-                            status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            VoteSelection = apps.get_model("papsas_app", "VoteSelection")
+            vote = Vote.objects.create(voterID=request.user, election=e)
+            VoteSelection.objects.create(vote=vote, candidate=candidate_user)
+            return Response({"ok": True, "voteId": vote.id}, status=status.HTTP_201_CREATED)
 
         vote = Vote.objects.create(voterID=request.user, election=e, **{candidate_fk: candidate_user})
         return Response({"ok": True, "voteId": vote.id}, status=status.HTTP_201_CREATED)
@@ -120,10 +122,13 @@ class ElectionResults2(APIView):
         for c in Candidacy.objects.filter(election=e, candidacyStatus=True).select_related():
             name = getattr(c.candidate, "get_full_name", lambda: None)() or \
                    getattr(c.candidate, "username", None) or str(c.candidate)
-            filters = {"election": e}
             if candidate_fk:
-                filters[candidate_fk] = c.candidate
+            filters = {"election": e}
+            filters[candidate_fk] = c.candidate
             vote_count = Vote.objects.filter(**filters).count()
+        else:
+            VoteSelection = apps.get_model('papsas_app','VoteSelection')
+            vote_count = VoteSelection.objects.filter(vote__election=e, candidate=c.candidate).count()
             results.append({"candidacyId": c.id, "name": name, "votes": vote_count})
 
         results.sort(key=lambda r: r["votes"], reverse=True)
