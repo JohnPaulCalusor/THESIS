@@ -267,3 +267,10 @@ SIMPLE_JWT = {
     "AUTH_HEADER_TYPES": ("Bearer",),
     # If your login returns "access" + "refresh", these defaults are perfect.
 }
+
+
+# --- DRF / JWT add-ons ---
+try:
+    from .settings_rest import *
+except Exception:
+    pass

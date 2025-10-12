@@ -1,8 +1,799 @@
-from rest_framework import permissions, viewsets
-from papsas_app.models import Election
-from .serializers import ElectionSerializer
+from django.db import transaction
+from django.db.models import Count
+from django.utils import timezone
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from django.contrib.auth import get_user_model
+User = get_user_model()
 
-class ElectionViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Election.objects.all().order_by("id")
-    serializer_class = ElectionSerializer
-    permission_classes = [permissions.IsAuthenticated]
+from .permissions import IsOfficer
+from .serializers import (
+    UserLiteSerializer, ElectionListSerializer, ElectionDetailSerializer,
+    BallotInSerializer, BallotOutSerializer, ElectionResultsSerializer,
+    Election, Candidate, VoteModel,
+    cand_elec_fk_name, position_label_field,
+)
+
+def fk_field(model, to_model):
+    for f in model._meta.get_fields():
+        if getattr(f, "many_to_one", False) and getattr(getattr(f, "remote_field", None), "model", None) == to_model:
+            return f
+    return None
+
+# --- Discover how Vote links to User ---
+vote_user_fk_field = fk_field(VoteModel, User)  # direct FK (preferred)
+vote_member_fk_field = None
+membership_user_fk_name = None
+
+if vote_user_fk_field is None:
+    # try indirect: Vote -> (some model) -> User
+    for f in VoteModel._meta.get_fields():
+        if not getattr(f, "many_to_one", False):
+            continue
+        remote = getattr(f, "remote_field", None).model
+        if not remote:
+            continue
+        # does that remote model link to User?
+        for rf in remote._meta.get_fields():
+            if getattr(rf, "many_to_one", False) and getattr(getattr(rf, "remote_field", None), "model", None) == User:
+                vote_member_fk_field = f
+                membership_user_fk_name = rf.name
+                break
+        if vote_member_fk_field:
+            break
+
+# Candidate FK (Vote -> Candidacy/Candidate)
+vote_cand_fk_field = fk_field(VoteModel, Candidate)
+
+# Optional direct election FK on Vote
+vote_elec_fk_field = fk_field(VoteModel, Election)
+
+# Normalize names (may be None)
+vote_user_fk = vote_user_fk_field.name if vote_user_fk_field else None
+vote_member_fk = vote_member_fk_field.name if vote_member_fk_field else None
+vote_cand_fk = vote_cand_fk_field.name if vote_cand_fk_field else None
+vote_elec_fk = vote_elec_fk_field.name if vote_elec_fk_field else None
+
+def _schema_error(detail):
+    return Response({"error": "SCHEMA_MISMATCH", "detail": detail}, status=500)
+
+def _votes_qs_for_election(election):
+    """Return Vote queryset limited to the election, whether Vote has an election FK or not."""
+    if vote_elec_fk:
+        return VoteModel.objects.filter(**{vote_elec_fk: election})
+    # fallback via candidate -> election
+    if not vote_cand_fk:
+        # cannot scope without candidate link
+        return VoteModel.objects.none()
+    return VoteModel.objects.filter(**{f"{vote_cand_fk}__{cand_elec_fk_name}": election})
+
+def _filter_votes_by_user(qs, user):
+    """Filter a Vote queryset by current user, using direct or indirect membership path."""
+    if vote_user_fk:
+        return qs.filter(**{vote_user_fk: user})
+    if vote_member_fk and membership_user_fk_name:
+        return qs.filter(**{f"{vote_member_fk}__{membership_user_fk_name}": user})
+    return None  # no way to link votes to a user
+
+def _base_create_kwargs(user, election):
+    """Build kwargs to create Vote rows tied to this user (and election if field exists)."""
+    base = {}
+    if vote_user_fk:
+        base[vote_user_fk] = user
+    elif vote_member_fk and membership_user_fk_name:
+        MemberModel = vote_member_fk_field.remote_field.model
+        member = MemberModel.objects.filter(**{membership_user_fk_name: user}).first()
+        if not member:
+            return None, "No membership record found for this user."
+        base[f"{vote_member_fk}_id"] = member.id
+    else:
+        return None, "Vote model has no direct or indirect link to User."
+    if vote_elec_fk:
+        base[vote_elec_fk] = election
+    return base, None
+
+@api_view(["GET"])
+@permission_classes([AllowAny])
+def health(request):
+    return Response({"ok": True})
+
+class LoginSerializer(TokenObtainPairSerializer):
+    def validate(self, attrs):
+        data = super().validate(attrs)
+        data["user"] = UserLiteSerializer(self.user).data
+        return data
+
+class LoginView(TokenObtainPairView):
+    serializer_class = LoginSerializer
+
+class RefreshView(TokenRefreshView):
+    pass
+
+class MeView(APIView):
+    permission_classes = [IsAuthenticated]
+    def get(self, request):
+        return Response(UserLiteSerializer(request.user).data)
+
+class ElectionListView(APIView):
+    permission_classes = [AllowAny]
+    def get(self, request):
+        qs = Election.objects.all().order_by("-opens_at", "id")
+        return Response(ElectionListSerializer(qs, many=True).data)
+
+class ElectionDetailView(APIView):
+    permission_classes = [AllowAny]
+    def get(self, request, pk:int):
+        try:
+            e = Election.objects.get(pk=pk)
+        except Election.DoesNotExist:
+            return Response({"detail": "Not found."}, status=404)
+        return Response(ElectionDetailSerializer(e).data)
+
+class MyBallotView(APIView):
+    permission_classes = [IsAuthenticated]
+    def get(self, request, election_id:int):
+        try:
+            e = Election.objects.get(pk=election_id)
+        except Election.DoesNotExist:
+            return Response({"detail":"Not found."}, status=404)
+
+        qs = _votes_qs_for_election(e)
+        if not vote_cand_fk:
+            return _schema_error("Vote model must reference the Candidacy/Candidate model.")
+
+        qs_user = _filter_votes_by_user(qs, request.user)
+        if qs_user is None:
+            return _schema_error("Vote model is not linked to User directly or via a membership model.")
+
+        cand_ids = list(qs_user.values_list(f"{vote_cand_fk}_id", flat=True))
+        if not cand_ids:
+            return Response({"choices": []})
+
+        rows = Candidate.objects.filter(id__in=cand_ids).values("id", position_label_field)
+        choices = [{"candidate_id": r["id"], "position": r.get(position_label_field) or "Unspecified"} for r in rows]
+        return Response(BallotOutSerializer({"choices": choices}).data)
+
+class VoteView(APIView):
+    permission_classes = [IsAuthenticated]
+    def post(self, request, election_id:int):
+        try:
+            e = Election.objects.get(pk=election_id)
+        except Election.DoesNotExist:
+            return Response({"detail":"Not found."}, status=404)
+
+        now = timezone.now()
+        if e.opens_at and now < e.opens_at:
+            return Response({"detail":"Voting not open."}, status=403)
+        if e.closes_at and now > e.closes_at:
+            return Response({"detail":"Voting closed."}, status=403)
+
+        if not vote_cand_fk:
+            return _schema_error("Vote model must reference the Candidacy/Candidate model.")
+
+        qs = _votes_qs_for_election(e)
+        qs_user = _filter_votes_by_user(qs, request.user)
+        if qs_user is None:
+            return _schema_error("Vote model is not linked to User directly or via a membership model.")
+
+        if qs_user.exists():
+            return Response({"code":"ALREADY_VOTED","detail":"You have already voted in this election."}, status=409)
+
+        ser = BallotInSerializer(data=request.data)
+        ser.is_valid(raise_exception=True)
+        choices = ser.validated_data["choices"]
+
+        # Resolve candidates and ensure they belong to this election
+        cand_map = {}
+        labels_seen = set()
+        for c in choices:
+            cid = c["candidate_id"]
+            try:
+                cand = Candidate.objects.get(pk=cid)
+            except Candidate.DoesNotExist:
+                return Response({"detail": f"candidate_id {cid} not found"}, status=400)
+
+            # candidacy must belong to this election
+            if getattr(cand, f"{cand_elec_fk_name}_id", None) != e.id and getattr(cand, cand_elec_fk_name, None) != e:
+                return Response({"detail": f"candidate_id {cid} not in this election"}, status=400)
+
+            label = getattr(cand, position_label_field, "") or "Unspecified"
+            if label in labels_seen:
+                return Response({"detail": f"duplicate choice for position '{label}'"}, status=400)
+            labels_seen.add(label)
+            cand_map[cid] = cand
+
+        base, err = _base_create_kwargs(request.user, e)
+        if err:
+            return _schema_error(err)
+
+        objs = [VoteModel(**{**base, f"{vote_cand_fk}_id": cid}) for cid in cand_map.keys()]
+        with transaction.atomic():
+            VoteModel.objects.bulk_create(objs)
+
+        return Response({"ok": True, "votes_created": len(objs)})
+
+class ResultsView(APIView):
+    permission_classes = [IsOfficer]
+    def get(self, request, election_id:int):
+        try:
+            e = Election.objects.get(pk=election_id)
+        except Election.DoesNotExist:
+            return Response({"detail":"Not found."}, status=404)
+
+        if not vote_cand_fk:
+            return _schema_error("Vote model must reference the Candidacy/Candidate model to compute results.")
+
+        # count votes per candidacy within the election
+        vote_qs = _votes_qs_for_election(e).values(f"{vote_cand_fk}_id").annotate(count=Count("id"))
+        counts = {r[f"{vote_cand_fk}_id"]: r["count"] for r in vote_qs}
+
+        # bucket by position label
+        cand_rows = Candidate.objects.filter(**{cand_elec_fk_name: e}).values("id", position_label_field)
+        buckets = {}
+        for r in cand_rows:
+            label = r.get(position_label_field) or "Unspecified"
+            buckets.setdefault(label, []).append(r["id"])
+
+        out = []
+        for label, cids in buckets.items():
+            totals = [{"candidate_id": cid, "count": counts.get(cid, 0)} for cid in cids]
+            out.append({"id": label, "title": label, "totals": totals})
+
+        return Response(ElectionResultsSerializer({"positions": out}).data)
+# === PATCH START (schema-flexible overrides) ===================================
+# These class definitions are appended to the end of the module so they override
+# any earlier definitions with the same names. This removes the SCHEMA_MISMATCH
+# behavior and adapts to either Ballot/BallotChoice or Vote/Candidate/Candidacy.
+
+from django.apps import apps
+from django.db.models import Q
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated, BasePermission
+
+try:
+    # Prefer your project's officer permission if present
+    from .permissions import IsOfficer  # type: ignore
+except Exception:
+    class IsOfficer(BasePermission):
+        def has_permission(self, request, view):
+            u = request.user
+            return bool(
+                u and u.is_authenticated and (
+                    getattr(u, "is_officer", False) or
+                    getattr(u, "is_staff", False) or
+                    getattr(u, "is_superuser", False)
+                )
+            )
+
+# Import Election explicitly; others we resolve dynamically
+from papsas_app.models import Election  # type: ignore
+
+
+def _get_model(name):
+    try:
+        return apps.get_model('papsas_app', name)
+    except Exception:
+        return None
+
+def _has_field(model, field_name: str) -> bool:
+    if not model:
+        return False
+    try:
+        model._meta.get_field(field_name)
+        return True
+    except Exception:
+        return False
+
+Candidate    = _get_model('Candidate')
+Candidacy    = _get_model('Candidacy')
+Vote         = _get_model('Vote')
+Ballot       = _get_model('Ballot')
+BallotChoice = _get_model('BallotChoice')
+Position     = _get_model('Position')
+
+def _vote_mode():
+    # Prefer explicit Ballot schema if present
+    if Ballot and BallotChoice:
+        return 'ballot'
+    # Fallbacks for Vote-based schemas
+    if Vote:
+        if _has_field(Vote, 'candidate'):
+            return 'vote_candidate'
+        if _has_field(Vote, 'candidacy'):
+            return 'vote_candidacy'
+    return 'unknown'
+
+def _positions_for_election(election):
+    # Try common related names
+    for name in ('positions', 'elections', 'position_set'):
+        mgr = getattr(election, name, None)
+        if mgr is not None:
+            try:
+                return mgr.all()
+            except Exception:
+                pass
+    # Fallback by filter
+    if Position and _has_field(Position, 'election'):
+        return Position.objects.filter(election=election)
+    return Position.objects.none() if Position else []
+
+def _candidates_for_position(position):
+    # Treat Candidate as primary; else use Candidacy carrier
+    if Candidate and _has_field(Candidate, 'position'):
+        return Candidate.objects.filter(position=position)
+    if Candidacy and _has_field(Candidacy, 'position'):
+        return Candidacy.objects.filter(position=position)
+    return []
+
+def _election_time_fields(e):
+    opens = getattr(e, 'opens_at', None) or getattr(e, 'startDate', None)
+    closes = getattr(e, 'closes_at', None) or getattr(e, 'endDate', None)
+    return opens, closes
+
+
+class MyBallotView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, election_id: int):
+        from django.utils import timezone
+        mode = _vote_mode()
+
+        # Resolve election
+        try:
+            e = Election.objects.get(pk=election_id)
+        except Election.DoesNotExist:
+            return Response({"detail": "Not found."}, status=404)
+
+        if mode == 'ballot':
+            b = Ballot.objects.filter(voterID=request.user, election=e).first()
+            if not b:
+                return Response({"choices": []})
+            rows = BallotChoice.objects.filter(ballot=b).values("position_id", "candidate_id")
+            return Response({"choices": list(rows)})
+
+        if mode in ('vote_candidate', 'vote_candidacy'):
+            qs = Vote.objects.filter(voterID=request.user)
+
+            # Limit to this election
+            cond = Q()
+            if _has_field(Vote, 'position'):
+                cond |= Q(position__election=e)
+            if _has_field(Vote, 'candidate'):
+                cond |= Q(candidate__position__election=e)
+            if _has_field(Vote, 'candidacy'):
+                cond |= Q(candidacy__position__election=e) | Q(candidacy__candidate__position__election=e)
+            if cond:
+                qs = qs.filter(cond)
+
+            choices = []
+            for v in qs:
+                # position resolution
+                if _has_field(Vote, 'position') and getattr(v, 'position', None):
+                    pos = v.position
+                elif _has_field(Vote, 'candidate') and getattr(v, 'candidate', None):
+                    pos = getattr(v.candidate, 'position', None)
+                elif _has_field(Vote, 'candidacy') and getattr(v, 'candidacy', None):
+                    pos = getattr(v.candidacy, 'position', None) or getattr(getattr(v.candidacy, 'candidate', None), 'position', None)
+                else:
+                    pos = None
+
+                # normalize to candidate_id for API
+                if _has_field(Vote, 'candidate') and getattr(v, 'candidate', None):
+                    cid = v.candidate.id
+                elif _has_field(Vote, 'candidacy') and getattr(v, 'candidacy', None):
+                    cand = getattr(v.candidacy, 'candidate', None)
+                    cid = cand.id if cand else None
+                else:
+                    cid = None
+
+                if pos and cid:
+                    choices.append({"position_id": pos.id, "candidate_id": cid})
+
+            return Response({"choices": choices})
+
+        # Unknown schema → empty ballot
+        return Response({"choices": []})
+
+
+class VoteView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, election_id: int):
+        from django.utils import timezone
+
+        try:
+            e = Election.objects.get(pk=election_id)
+        except Election.DoesNotExist:
+            return Response({"detail": "Not found."}, status=404)
+
+        now = timezone.now()
+        opens, closes = _election_time_fields(e)
+        if opens and now < opens:
+            return Response({"detail": "Voting not open."}, status=403)
+        if closes and now > closes:
+            return Response({"detail": "Voting closed."}, status=403)
+
+        data = request.data or {}
+        choices = data.get("choices", [])
+        if not isinstance(choices, list) or not choices:
+            return Response({"detail": "choices[] required"}, status=400)
+
+        pos_qs = _positions_for_election(e)
+        pos_map = {p.id: p for p in pos_qs}
+
+        # Allowed candidate ids per position (normalize Candidate vs Candidacy)
+        allowed = {}
+        for p in pos_qs:
+            cand_qs = _candidates_for_position(p)
+            ids = set()
+            for obj in cand_qs:
+                if Candidate and isinstance(obj, Candidate):
+                    ids.add(obj.id)
+                else:
+                    cand = getattr(obj, 'candidate', None)
+                    if cand:
+                        ids.add(cand.id)
+            allowed[p.id] = ids
+
+        seen = set()
+        for c in choices:
+            pid = c.get("position_id")
+            cid = c.get("candidate_id")
+            if pid not in pos_map:
+                return Response({"detail": f"position_id {pid} not in this election"}, status=400)
+            if pid in seen:
+                return Response({"detail": f"duplicate choice for position_id {pid}"}, status=400)
+            if cid not in allowed.get(pid, set()):
+                return Response({"detail": f"candidate_id {cid} not valid for position_id {pid}"}, status=400)
+            seen.add(pid)
+
+        mode = _vote_mode()
+
+        # prevent double vote per election
+        if mode == 'ballot':
+            if Ballot.objects.filter(voterID=request.user, election=e).exists():
+                return Response({"code": "ALREADY_VOTED"}, status=409)
+        elif mode in ('vote_candidate', 'vote_candidacy'):
+            cond = Q(voterID=request.user)
+            if mode == 'vote_candidate':
+                cond &= Q(candidate__position__election=e) | Q(position__election=e)
+            else:
+                cond &= Q(candidacy__position__election=e) | Q(candidacy__candidate__position__election=e)
+            if Vote.objects.filter(cond).exists():
+                return Response({"code": "ALREADY_VOTED"}, status=409)
+
+        from django.db import transaction
+        with transaction.atomic():
+            if mode == 'ballot':
+                b = Ballot.objects.create(voterID=request.user, election=e)
+                objs = [BallotChoice(ballot=b, position_id=c["position_id"], candidate_id=c["candidate_id"]) for c in choices]
+                BallotChoice.objects.bulk_create(objs)
+                return Response({"ok": True, "ballot_id": b.id})
+
+            elif mode == 'vote_candidate':
+                created = []
+                for c in choices:
+                    pid, cid = c["position_id"], c["candidate_id"]
+                    kwargs = {"user": request.user, "candidate_id": cid}
+                    if _has_field(Vote, 'position'):
+                        kwargs["position_id"] = pid
+                    v = Vote.objects.create(**kwargs)
+                    created.append(v.id)
+                return Response({"ok": True, "count": len(created)})
+
+            elif mode == 'vote_candidacy':
+                created = []
+                for c in choices:
+                    pid, cid = c["position_id"], c["candidate_id"]
+                    q = Q(position_id=pid)
+                    if _has_field(Candidacy, 'candidate'):
+                        q &= Q(candidate_id=cid)
+                    candcy = Candidacy.objects.filter(q).first()
+                    if not candcy:
+                        return Response({"detail": f"no candidacy for position_id={pid}, candidate_id={cid}"}, status=400)
+                    v = Vote.objects.create(voterID=request.user, candidacy_id=candcy.id)
+                    created.append(v.id)
+                return Response({"ok": True, "count": len(created)})
+
+            else:
+                return Response({"detail": "Unsupported vote schema (no Ballot/Vote models found)."}, status=500)
+
+
+class ResultsView(APIView):
+    permission_classes = [IsOfficer]
+
+    def get(self, request, election_id: int):
+        try:
+            e = Election.objects.get(pk=election_id)
+        except Election.DoesNotExist:
+            return Response({"detail":"Not found."}, status=404)
+
+        pos_qs = _positions_for_election(e)
+        out = []
+
+        for p in pos_qs:
+            totals = {}
+            mode = _vote_mode()
+
+            if mode == 'ballot':
+                from django.db.models import Count
+                rows = (BallotChoice.objects
+                        .filter(position=p)
+                        .values("candidate_id")
+                        .annotate(count=Count("id"))
+                        .order_by("-count","candidate_id"))
+                for r in rows:
+                    totals[r["candidate_id"]] = r["count"]
+
+            elif mode == 'vote_candidate':
+                from django.db.models import Count
+                rows = (Vote.objects
+                        .filter(Q(position=p) | Q(candidate__position=p))
+                        .values("candidate_id")
+                        .annotate(count=Count("id"))
+                        .order_by("-count","candidate_id"))
+                for r in rows:
+                    totals[r["candidate_id"]] = r["count"]
+
+            elif mode == 'vote_candidacy':
+                from django.db.models import Count
+                rows = (Vote.objects
+                        .filter(Q(candidacy__position=p) | Q(candidacy__candidate__position=p))
+                        .values("candidacy__candidate_id")
+                        .annotate(count=Count("id"))
+                        .order_by("-count","candidacy__candidate_id"))
+                for r in rows:
+                    cid = r["candidacy__candidate_id"]
+                    totals[cid] = r["count"]
+
+            out.append({
+                "id": p.id,
+                "title": getattr(p, "title", getattr(p, "name", f"Position {p.id}")),
+                "totals": [{"candidate_id": k, "count": v} for k, v in sorted(totals.items(), key=lambda kv: (-kv[1], kv[0]))],
+            })
+
+        return Response({"positions": out})
+# === PATCH END ================================================================
+
+# === AT-LARGE SUPPORT (no Position) ===========================================
+# If an election has no Position rows but has Candidacy(election, candidate),
+# allow POST payloads like {"choices":[{"candidate_id":2}, ...]}.
+from django.db.models import Q, Count
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+from papsas_app.models import Election  # already imported above in your file
+from django.apps import apps
+
+Candidacy = apps.get_model('papsas_app', 'Candidacy')
+Vote      = apps.get_model('papsas_app', 'Vote')
+try:
+    Position = apps.get_model('papsas_app','Position')
+except Exception:
+    Position = None
+
+def _has_positions(election):
+    try:
+        if Position is None:
+            return False
+        # related_name may vary; safest is filter()
+        return Position.objects.filter(election=election).exists()
+    except Exception:
+        return False
+
+class MyBallotView(APIView):  # override
+    permission_classes = [IsAuthenticated]
+    def get(self, request, election_id:int):
+        try:
+            e = Election.objects.get(pk=election_id)
+        except Election.DoesNotExist:
+            return Response({"detail":"Not found."}, status=404)
+
+        # AT-LARGE: no positions; show candidate-only choices
+        if not _has_positions(e):
+            qs = Vote.objects.filter(voterID=request.user, election=e)
+            choices = [{"position_id": 0, "candidate_id": v.candidacy_id and getattr(v.candidacy, "candidate_id", None)} for v in qs]
+            # drop nulls
+            choices = [c for c in choices if c["candidate_id"]]
+            return Response({"choices": choices})
+
+        # fall back to existing (positioned) behavior above in the file
+        return super().get(request, election_id)  # noqa
+
+class VoteView(APIView):  # override
+    permission_classes = [IsAuthenticated]
+    def post(self, request, election_id:int):
+        try:
+            e = Election.objects.get(pk=election_id)
+        except Election.DoesNotExist:
+            return Response({"detail":"Not found."}, status=404)
+
+        from django.utils import timezone
+        now = timezone.now()
+        opens = getattr(e, 'opens_at', None) or getattr(e, 'startDate', None)
+        closes= getattr(e, 'closes_at', None) or getattr(e, 'endDate', None)
+        if opens and now < opens:  return Response({"detail":"Voting not open."}, status=403)
+        if closes and now > closes: return Response({"detail":"Voting closed."}, status=403)
+
+        data = request.data or {}
+        raw_choices = data.get("choices", [])
+        if not isinstance(raw_choices, list) or not raw_choices:
+            return Response({"detail":"choices[] required"}, status=400)
+
+        # AT-LARGE flow
+        if not _has_positions(e):
+            # dedupe & validate candidate ids against candidacies for this election
+            cand_ids = []
+            for c in raw_choices:
+                cid = c.get("candidate_id")
+                if not cid:
+                    return Response({"detail":"candidate_id required"}, status=400)
+                if cid not in cand_ids:
+                    cand_ids.append(cid)
+
+            valid = set(Candidacy.objects.filter(election=e, candidate_id__in=cand_ids)
+                        .values_list("candidate_id", flat=True))
+            for cid in cand_ids:
+                if cid not in valid:
+                    return Response({"detail": f"candidate_id {cid} not a candidacy in this election"}, status=400)
+
+            # double-vote check
+            if Vote.objects.filter(voterID=request.user, election=e).exists():
+                return Response({"code":"ALREADY_VOTED"}, status=409)
+
+            # write votes
+            created = 0
+            from django.db import transaction
+            with transaction.atomic():
+                for cid in cand_ids:
+                    candcy = Candidacy.objects.get(election=e, candidate_id=cid)
+                    Vote.objects.create(voterID=request.user, candidacy=candcy)
+                    created += 1
+            return Response({"ok": True, "count": created})
+
+        # fall back to positioned behavior above in the file
+        return super().post(request, election_id)  # noqa
+
+# Officer-only ResultsView already imported earlier; override to add AT-LARGE.
+from rest_framework.permissions import BasePermission
+try:
+    from .permissions import IsOfficer
+except Exception:
+    class IsOfficer(BasePermission):
+        def has_permission(self, request, view):
+            u = request.user
+            return bool(u and u.is_authenticated and (getattr(u,"is_officer",False) or u.is_staff or u.is_superuser))
+
+class ResultsView(APIView):  # override
+    permission_classes = [IsOfficer]
+    def get(self, request, election_id:int):
+        try:
+            e = Election.objects.get(pk=election_id)
+        except Election.DoesNotExist:
+            return Response({"detail":"Not found."}, status=404)
+
+        # AT-LARGE: single bucket
+        if not _has_positions(e):
+            rows = (Vote.objects
+                    .filter(election=e)
+                    .values("candidacy__candidate_id")
+                    .annotate(count=Count("id"))
+                    .order_by("-count","candidacy__candidate_id"))
+            totals = [{"candidate_id": r["candidacy__candidate_id"], "count": r["count"]} for r in rows]
+            return Response({"positions":[{"id": 0, "title": "At-Large", "totals": totals}]})
+
+        # fall back to positioned behavior above in the file
+        return super().get(request, election_id)  # noqa
+# === END AT-LARGE SUPPORT =====================================================
+# === AT-LARGE SUPPORT v2 (no Position model required) =========================
+from django.apps import apps
+from django.db import transaction
+from django.db.models import Count
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated, BasePermission
+
+Election  = apps.get_model('papsas_app', 'Election')
+Candidacy = apps.get_model('papsas_app', 'Candidacy')
+Vote      = apps.get_model('papsas_app', 'Vote')
+try:
+    Position = apps.get_model('papsas_app', 'Position')
+except Exception:
+    Position = None
+
+def _has_positions(election):
+    if Position is None:
+        return False
+    try:
+        return Position.objects.filter(election=election).exists()
+    except Exception:
+        return False
+
+# -- Ballot (returns your current choices) ------------------------------------
+class BallotView(APIView):  # overrides earlier definition in this file
+    permission_classes = [IsAuthenticated]
+    def get(self, request, election_id:int):
+        try:
+            e = Election.objects.get(pk=election_id)
+        except Election.DoesNotExist:
+            return Response({"detail":"Not found."}, status=404)
+
+        if _has_positions(e):
+            return Response({"detail":"Position-based ballots not implemented in at-large override."}, status=501)
+
+        qs = Vote.objects.filter(voterID=request.user, election=e)
+        choices = [{"position_id": 0, "candidate_id": v.candidacy.candidate_id} for v in qs]
+        return Response({"choices": choices})
+
+# -- Vote (accepts {"choices":[{"candidate_id":2}, ...]}) ---------------------
+class VoteView(APIView):  # overrides earlier definition
+    permission_classes = [IsAuthenticated]
+    def post(self, request, election_id:int):
+        try:
+            e = Election.objects.get(pk=election_id)
+        except Election.DoesNotExist:
+            return Response({"detail":"Not found."}, status=404)
+
+        if _has_positions(e):
+            return Response({"detail":"Position-based voting not implemented in at-large override."}, status=501)
+
+        data = request.data or {}
+        raw = data.get("choices")
+        if not isinstance(raw, list) or not raw:
+            return Response({"detail":"choices[] required"}, status=400)
+
+        cand_ids = []
+        for item in raw:
+            cid = item.get("candidate_id")
+            if not cid:
+                return Response({"detail":"candidate_id required"}, status=400)
+            if cid not in cand_ids:
+                cand_ids.append(cid)
+
+        valid = set(Candidacy.objects.filter(election=e, candidate_id__in=cand_ids)
+                    .values_list("candidate_id", flat=True))
+        for cid in cand_ids:
+            if cid not in valid:
+                return Response({"detail": f"candidate_id {cid} not a candidacy in this election"}, status=400)
+
+        if Vote.objects.filter(voterID=request.user, election=e).exists():
+            return Response({"code":"ALREADY_VOTED"}, status=409)
+
+        created = 0
+        with transaction.atomic():
+            for cid in cand_ids:
+                candcy = Candidacy.objects.get(election=e, candidate_id=cid)
+                Vote.objects.create(voterID=request.user, candidacy=candcy)
+                created += 1
+        return Response({"ok": True, "count": created})
+
+# -- Results (officer/admin only) ---------------------------------------------
+class IsOfficer(BasePermission):
+    def has_permission(self, request, view):
+        u = request.user
+        return bool(u and u.is_authenticated and (getattr(u,"is_officer",False) or getattr(u,"is_staff",False) or getattr(u,"is_superuser",False)))
+
+class ResultsView(APIView):  # overrides earlier definition
+    permission_classes = [IsOfficer]
+    def get(self, request, election_id:int):
+        try:
+            e = Election.objects.get(pk=election_id)
+        except Election.DoesNotExist:
+            return Response({"detail":"Not found."}, status=404)
+
+        if _has_positions(e):
+            return Response({"detail":"Position-based results not implemented in at-large override."}, status=501)
+
+        rows = (Vote.objects
+                .filter(election=e)
+                .values("candidacy__candidate_id")
+                .annotate(count=Count("id"))
+                .order_by("-count","candidacy__candidate_id"))
+        totals = [{"candidate_id": r["candidacy__candidate_id"], "count": r["count"]} for r in rows]
+        return Response({"positions":[{"id": 0, "title": "At-Large", "totals": totals}]})
+# === END AT-LARGE SUPPORT v2 ==================================================
