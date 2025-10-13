@@ -1,0 +1,89 @@
+# --- jwt-helpers.sh ---------------------------------------------------------
+# Use:  source jwt-helpers.sh
+# Then: jwt_login admin Papsas1234
+#       jwt_refresh
+#       jwt_get http://127.0.0.1:8000/api/elections/1/ballot
+# Optional: jwt_save / jwt_load to persist tokens across terminals
+
+# --- config --------------------------------------------------------------
+API_BASE=${API_BASE:-http://127.0.0.1:8000}   # set to prod with: export API_BASE=https://api.papsasinc.com
+
+# Optional (only for this shell; NOT saved):
+# export JWT_USER=admin
+# export JWT_PASS=Papsas1234
+
+# --- core helpers --------------------------------------------------------
+jwt_login() {
+  local user="$1" pass="$2" profile="$3"
+  if [[ -z "$user" || -z "$pass" ]]; then
+    echo "Usage: jwt_login <user-or-email> <password> [profile]"; return 1
+  fi
+  local body resp
+  if [[ "$user" == *"@"* ]]; then
+    body="{\"email\":\"$user\",\"password\":\"$pass\"}"
+  else
+    body="{\"username\":\"$user\",\"password\":\"$pass\"}"
+  fi
+  resp=$(curl -sS -X POST "$API_BASE/api/auth/login/" -H "Content-Type: application/json" -d "$body") || return 1
+  ACCESS=$(echo "$resp"   | python -c "import sys,json; print(json.load(sys.stdin)['access'])"   2>/dev/null) || { echo "Login parse failed"; echo "$resp"; return 1; }
+  REFRESH=$(echo "$resp"  | python -c "import sys,json; print(json.load(sys.stdin)['refresh'])"  2>/dev/null) || { echo "Login parse failed"; echo "$resp"; return 1; }
+  export ACCESS REFRESH
+  export JWT_USER="$user" JWT_PASS="$pass"   # keep in *this* shell so auto-login can work
+  [[ -n "$profile" ]] && jwt_save "$profile"
+  echo "Logged in. ACCESS and REFRESH exported."
+}
+
+jwt_refresh() {
+  [[ -z "$REFRESH" ]] && { echo "No REFRESH token set."; return 1; }
+  local resp acc
+  resp=$(curl -sS -X POST "$API_BASE/api/auth/refresh/" -H "Content-Type: application/json" -d "{\"refresh\":\"$REFRESH\"}") || true
+  acc=$(echo "$resp" | python -c "import sys,json; print(json.load(sys.stdin).get('access',''))" 2>/dev/null || true)
+  if [[ -n "$acc" ]]; then export ACCESS="$acc"; return 0; fi
+  return 1
+}
+
+# Ensures $ACCESS is valid now. Strategy: try refresh; if that fails and we have creds in env, re-login.
+jwt_login_if_needed() {
+  # Always attempt refresh first (cheap, safe).
+  if [[ -n "$REFRESH" ]]; then
+    if jwt_refresh; then return 0; fi
+  fi
+  # If refresh failed/empty and we have creds, re-login.
+  if [[ -n "$JWT_USER" && -n "$JWT_PASS" ]]; then
+    jwt_login "$JWT_USER" "$JWT_PASS" || return 1
+    return 0
+  fi
+  echo "No valid ACCESS/REFRESH. Run: jwt_login <user> <password>"
+  return 1
+}
+
+# --- convenience ---------------------------------------------------------
+jwt_auth_header() { echo "Authorization: Bearer $ACCESS"; }
+
+jwt_call() {
+  # jwt_call <METHOD> <PATH-or-absolute-URL> [JSON_BODY]
+  local method="$1"; local path="$2"; local data="$3"; local url
+  [[ -z "$method" || -z "$path" ]] && { echo "Usage: jwt_call <METHOD> <PATH|URL> [JSON]"; return 1; }
+  jwt_login_if_needed || return 1
+  if [[ "$path" == http*://* ]]; then url="$path"; else url="$API_BASE$path"; fi
+  if [[ -n "$data" ]]; then
+    curl -sS -X "$method" "$url" -H "$(jwt_auth_header)" -H "Content-Type: application/json" -d "$data"
+  else
+    curl -sS -X "$method" "$url" -H "$(jwt_auth_header)"
+  fi
+}
+
+jwt_save() {
+  local f=".jwt.env"; [[ -n "$1" ]] && f=".jwt.$1.env"
+  printf "ACCESS=%s\nREFRESH=%s\n" "$ACCESS" "$REFRESH" > "$f"
+  chmod 600 "$f" 2>/dev/null || true
+  echo "Tokens saved to $f"
+}
+
+jwt_load() {
+  local f=".jwt.env"; [[ -n "$1" ]] && f=".jwt.$1.env"
+  [[ -f "$f" ]] || { echo "No $f"; return 1; }
+  # shellcheck disable=SC1090
+  source "$f"
+  echo "Loaded $f"
+}
