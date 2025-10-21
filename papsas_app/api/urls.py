@@ -18,6 +18,9 @@ urlpatterns = [
     path("me/", MeView.as_view(), name="api-me"),
 
     # Elections
+    path("elections/<int:id>/ballot",  MyBallotView2.as_view(),  name="ballot"),
+    path("elections/<int:id>/vote",    CastVoteView2.as_view(),  name="vote"),
+    path("elections/<int:id>/results", ElectionResults2.as_view(), name="results"),
     path("elections/",                   ElectionListView.as_view(),   name="api-elections"),
     path("elections/<int:pk>/",          ElectionDetailView.as_view(), name="api-election-detail"),
     path("elections/<int:election_id>/ballot", MyBallotView2.as_view(), name="api-election-ballot"),

@@ -1,0 +1,77 @@
+/* src/theme.css  — PAPSAS light theme (white / black / red) */
+:root{
+  --bg: #ffffff;               /* page background */
+  --text: #111111;             /* default text */
+  --muted: #5b6270;            /* secondary text */
+  --ring: #e5e7eb;             /* hairlines / dividers */
+  --surface: #f7f7fb;          /* cards / panels */
+
+  --brand: #c5161d;            /* PAPSAS red */
+  --brand-600:#b31319;
+  --brand-700:#951015;
+
+  --link: var(--brand);
+}
+
+html, body, #root { height: 100%; background: var(--bg); color: var(--text); }
+
+/* ---- layout helpers ---- */
+.page { min-height: 100dvh; background: var(--bg); color: var(--text); }
+.bg-app   { background: var(--bg); }
+.text-app { color: var(--text); }
+.text-muted, .subtle { color: var(--muted); }
+
+/* ---- cards ---- */
+.card{
+  background: var(--surface);
+  border: 1px solid var(--ring);
+  border-radius: 12px;
+  padding: 16px;
+}
+
+/* ---- buttons ---- */
+.btn{
+  appearance:none; border:1px solid transparent;
+  border-radius:10px; height:44px; padding:0 16px;
+  font-weight:600; display:inline-flex; align-items:center; justify-content:center;
+}
+.btn-primary{ background:var(--brand); color:#fff; }
+.btn-primary:hover{ background:var(--brand-600); }
+.btn-outline{ background:#fff; color:var(--text); border-color:var(--ring); }
+.btn-outline:hover{ border-color:#cbd5e1; }
+.btn[disabled]{ opacity:.6; cursor:not-allowed; }
+
+/* ---- inputs ---- */
+.input{
+  width:100%; height:44px; border:1px solid var(--ring); border-radius:10px;
+  background:#fff; color:var(--text); padding:0 12px;
+}
+.input:focus{ outline:2px solid var(--brand); border-color:var(--brand); }
+.field label{ display:block; margin-bottom:6px; font-weight:600; }
+.field + .field{ margin-top:12px; }
+
+/* ---- callouts / alerts ---- */
+.callout{ border-radius:12px; padding:12px 14px; border:1px solid var(--ring); }
+.callout-warn, .alert-warn{ background:#fff7e6; color:#7a5d00; }
+
+/* ---- topbar ---- */
+.topbar{
+  position:sticky; top:0; z-index:10;
+  background:var(--bg); border-bottom:1px solid var(--ring);
+  height:56px; display:flex; align-items:center;
+}
+.topbar .brand{
+  font-weight:800; letter-spacing:.02em; color:var(--text);
+}
+.topbar nav{ margin-left:auto; display:flex; gap:16px; }
+.topbar nav a{
+  color:var(--text); text-decoration:none; padding:6px 0; position:relative;
+}
+.topbar nav a:hover{ color:var(--brand); }
+.topbar nav a.active{
+  color:var(--brand); font-weight:700;
+}
+.topbar nav a.active::after{
+  content:""; position:absolute; left:0; right:0; bottom:-10px;
+  height:2px; background:var(--brand); border-radius:2px;
+}
