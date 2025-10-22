@@ -1,37 +1,48 @@
-﻿__pycache__/
+﻿# === JS/Frontend ===
+node_modules/
+# Keep only the lockfile of the package manager you use; comment out the rest.
+# pnpm-lock.yaml
+# package-lock.json
+# yarn.lock
+
+# Build output
+dist/
+.vite/
+
+# === Python/Backend ===
+__pycache__/
 *.py[cod]
 venv/
-# local db & bundles
+.venv/
+
+# Local DB & bundles
 db.sqlite3
 papsas-backend.tar.gz
 *.tar.gz
 *.zip
 
-# temp/output from earlier steps
-patches/
-new_files/
-repo_info.txt
-structure.txt
-versions.txtdb.sqlite3
-papsas-backend.tar.gz
-*.tar.gz
-*.zip
+# Temp/output from earlier steps
 patches/
 new_files/
 repo_info.txt
 structure.txt
 versions.txt
 
-# env files
+# === Environment files ===
 .env
+.env.local
+.env.*.local
 *.env
-.env.*
+# Do NOT ignore the example env
+!.env.example
 
-# server-only
-.venv/
+# === Server-only / build artifacts ===
 staticfiles/
 papsas/settings.py*.bak
-# Dev artifacts
+
+# === Dev artifacts ===
+.DS_Store
+*.log
 login.json
 *.bak.*
 *.bracefix.*
