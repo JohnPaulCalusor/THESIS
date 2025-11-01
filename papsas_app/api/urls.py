@@ -41,3 +41,7 @@ urlpatterns += [
 urlpatterns += [
     path('elections/<int:election_id>/results', ElectionResults2.as_view(), name='api-election-results'),
 ]
+
+# --- include candidacy routes ---
+from .urls_candidacy import urlpatterns as _cand_urls
+urlpatterns += _cand_urls

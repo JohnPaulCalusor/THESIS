@@ -1,3 +1,4 @@
+// src/modules/auth/AuthProvider.tsx
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import { http, setTokens, clearTokens, hasAccess, initTokensFromStorage } from "../lib/http";
 
@@ -15,16 +16,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [intendedPath, setIntendedPath] = useState<string | null>(null);
 
   useEffect(() => {
-    initTokensFromStorage();          // <-- load tokens from localStorage
-    if (hasAccess()) setIsAuthed(true);
+    initTokensFromStorage();              // load tokens if present
+    if (hasAccess()) setIsAuthed(true);   // mark authed on reload
   }, []);
 
   async function login(username: string, password: string) {
     const { data } = await http.post("/api/auth/login/", { username, password });
-    setTokens(data.access, data.refresh);
+    setTokens(data.access, data.refresh); // persist both tokens
     setIsAuthed(true);
   }
-  function logout() { clearTokens(); setIsAuthed(false); }
+
+  function logout() {
+    clearTokens();
+    setIsAuthed(false);
+  }
 
   return (
     <Ctx.Provider value={{ isAuthed, login, logout, intendedPath, setIntendedPath }}>

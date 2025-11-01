@@ -49,3 +49,9 @@ login.json
 *.dupefix.*
 *.finalfix.*
 *.fix.*
+# local media/uploads (do not commit)
+media/
+# pytest cache
+.pytest_cache/
+# local DB (if any)
+db.sqlite3
