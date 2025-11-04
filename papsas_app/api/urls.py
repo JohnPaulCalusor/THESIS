@@ -1,4 +1,3 @@
-from .views_results import ElectionResultsView
 from django.urls import path
 
 # Core/auth/me views
