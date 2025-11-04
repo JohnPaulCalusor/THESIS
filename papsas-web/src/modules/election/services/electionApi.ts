@@ -59,3 +59,37 @@ export async function updatePosition(id: number, p: Partial<Position>): Promise<
 export async function deletePosition(id: number): Promise<void> {
   await http.delete(`/api/positions/${id}`);
 }
+
+// >>> PAPSAS v1.3 BEGIN
+// Add election-scoped helpers; do not alter existing axios client behavior.
+export async function getCurrent() {
+  const { data } = await http.get(`/api/elections/current`);
+  return data as { id: number; title?: string };
+}
+
+export async function getBallot(eid: number) {
+  const { data } = await http.get(`/api/elections/${eid}/ballot`);
+  return data as any;
+}
+
+export async function postVote(eid: number, body: { candidacyId: number }) {
+  const { data } = await http.post(`/api/elections/${eid}/vote`, body);
+  return data as any;
+}
+
+export async function getResults(eid: number) {
+  const { data } = await http.get(`/api/elections/${eid}/results`);
+  return data as any;
+}
+
+// Soft re-export style to keep call-sites stable if they prefer electionApi.
+export async function getAnalytics(eid: number) {
+  const { data } = await http.get(`/api/elections/${eid}/analytics`);
+  return data as any;
+}
+
+export async function postExplain(eid: number, opts: any = {}) {
+  const { data } = await http.post(`/api/elections/${eid}/explain`, opts);
+  return data as any;
+}
+// <<< PAPSAS v1.3 END

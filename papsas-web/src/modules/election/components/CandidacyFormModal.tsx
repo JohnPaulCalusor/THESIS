@@ -2,6 +2,9 @@ import React, { useEffect, useMemo, useState } from "react";
 import { listPositions } from "../services/electionApi";
 import type { CandidacyCreate, Member } from "../services/candidacyApi";
 import { searchMembers } from "../services/candidacyApi";
+// >>> PAPSAS v1.3 BEGIN
+import { searchUsers } from "../services/userSearchApi";
+// <<< PAPSAS v1.3 END
 
 type Props = {
   electionId: number;
@@ -37,10 +40,20 @@ export const CandidacyFormModal: React.FC<Props> = ({ electionId, open, initial,
     if (!memberQuery.trim()) return setMemberOptions([]);
     const id = window.setTimeout(async () => {
       try {
-        const res = await searchMembers(memberQuery.trim());
-        setMemberOptions(res);
+        // Try tolerant users API first; fallback to existing members search.
+        // Debounce target: ~350ms
+        // >>> PAPSAS v1.3 BEGIN
+        const q = memberQuery.trim();
+        const viaUsers = await searchUsers(q);
+        if (Array.isArray(viaUsers) && viaUsers.length) {
+          setMemberOptions(viaUsers.map(u => ({ id: u.id, name: u.name, email: u.email })) as any);
+        } else {
+          const viaMembers = await searchMembers(q);
+          setMemberOptions(viaMembers);
+        }
+        // <<< PAPSAS v1.3 END
       } catch { setMemberOptions([]); }
-    }, 250);
+    }, 350);
     return () => window.clearTimeout(id);
   }, [memberQuery]);
 

@@ -18,3 +18,16 @@ export async function patchCandidacy(
   return data;
 }
 
+// >>> PAPSAS v1.3 BEGIN
+// Ensure admin can list candidacies for the current election.
+// Kept narrow and tolerant to backend payload variance.
+export async function listCandidacies(electionId: number) {
+  const { data } = await http.get(`/api/elections/${electionId}/candidacies`);
+  // Return the raw list; normalization happens at the consumer layer if needed
+  if (Array.isArray(data)) return data;
+  if (Array.isArray((data as any)?.results)) return (data as any).results;
+  if (Array.isArray((data as any)?.items)) return (data as any).items;
+  return [] as any[];
+}
+// Acceptance: Admin duplicate candidacy -> 409 toast "Already exists" is handled by caller via toast.apiError
+// <<< PAPSAS v1.3 END

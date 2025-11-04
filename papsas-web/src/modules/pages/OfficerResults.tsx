@@ -2,6 +2,11 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useToast } from "../ui/Toast";
 import { http } from "../lib/http";
+// >>> PAPSAS v1.3 BEGIN
+import { toCsv, downloadCsv } from "../lib/csv";
+// <<< PAPSAS v1.3 END
+import { getAnalytics, postExplain } from "../election/services/analyticsApi";
+import type { AnalyticsDTO, ExplainDTO } from "../election/types";
 import { useElection } from "../election/hooks/useElection";
 import {
   ResponsiveContainer, BarChart, XAxis, YAxis, CartesianGrid, Tooltip, Bar
@@ -38,7 +43,7 @@ export default function OfficerResults() {
   const [updatedAt, setUpdatedAt] = useState<Date | null>(null);
   const pollRef = useRef<number | null>(null);
   const toast = useToast();
-  const [panel, setPanel] = useState<{ kind: "analytics" | "explain"; payload: any } | null>(null);
+  const [panel, setPanel] = useState<{ kind: "analytics" | "explain"; payload: AnalyticsDTO | ExplainDTO } | null>(null);
 
   const effectiveId = election?.id?.toString();
 
@@ -85,27 +90,60 @@ export default function OfficerResults() {
     };
   }, [fetchOnce]);
 
+  async function downloadCSV(electionId: number): Promise<boolean> {
+    const base = (import.meta.env.VITE_API_BASE as string) || "";
+    try {
+      const raw = localStorage.getItem("papsas.auth");
+      const token = raw ? (JSON.parse(raw).access as string) : "";
+      const paths = [
+        `/api/elections/${electionId}/results/export.csv`,
+        `/api/results/${electionId}/export.csv`,
+      ];
+      for (const p of paths) {
+        const res = await fetch(base + p, { headers: token ? { Authorization: `Bearer ${token}` } : {} });
+        const ct = res.headers.get("content-type") || "";
+        if (res.ok && ct.includes("text/csv")) {
+          const blob = await res.blob();
+          const a = document.createElement("a");
+          a.href = URL.createObjectURL(blob);
+          a.download = `results-election-${electionId}-${new Date().toISOString().slice(0,16).replace(/[-:T]/g,"")}.csv`;
+          a.click();
+          return true;
+        }
+      }
+    } catch {
+      // ignore; fallback
+    }
+    return false;
+  }
+
   const downloadCsv = useCallback(async () => {
     if (!data) return;
     try {
       if (!effectiveId) return;
-      const resp = await http.get(`/api/elections/${effectiveId}/results.csv`, { responseType: "blob" });
-      const blob = new Blob([resp.data], { type: "text/csv;charset=utf-8" });
-      saveBlob(blob, `results-election-${effectiveId}.csv`);
-      return;
+      const ok = await downloadCSV(Number(effectiveId));
+      if (ok) return;
     } catch {
       // fallback to client CSV
     }
     const csv = makeClientCsv(data);
-    const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
-    saveBlob(blob, `results-election-${effectiveId}.csv`);
+    // >>> PAPSAS v1.3 BEGIN
+    try {
+      const now = new Date();
+      const ts = `${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}-${String(now.getHours()).padStart(2,'0')}${String(now.getMinutes()).padStart(2,'0')}`;
+      downloadCsv(`results-election-${effectiveId}-${ts}.csv`, csv);
+    } catch {
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
+      saveBlob(blob, `results-election-${effectiveId}.csv`);
+    }
+    // <<< PAPSAS v1.3 END
   }, [data, effectiveId]);
 
   const onAnalytics = useCallback(async () => {
     try {
       if (!effectiveId) return;
-      const res = await http.get(`/api/elections/${effectiveId}/analytics`);
-      setPanel({ kind: "analytics", payload: res.data });
+      const res = await getAnalytics(Number(effectiveId));
+      setPanel({ kind: "analytics", payload: res });
     } catch (e: any) {
       toast.error(e?.response?.data?.message || e?.message || "Failed to load analytics");
     }
@@ -114,8 +152,8 @@ export default function OfficerResults() {
   const onExplain = useCallback(async () => {
     try {
       if (!effectiveId) return;
-      const res = await http.post(`/api/elections/${effectiveId}/explain`, { style: "short" });
-      setPanel({ kind: "explain", payload: res.data });
+      const res = await postExplain(Number(effectiveId), { style: "short" });
+      setPanel({ kind: "explain", payload: res });
     } catch (e: any) {
       toast.error(e?.response?.data?.message || e?.message || "Failed to load explanation");
     }
@@ -186,7 +224,7 @@ export default function OfficerResults() {
                     </tr>
                   </thead>
                   <tbody>
-                    {(panel.payload?.positions || []).flatMap((p: any) => (
+                    {(((panel.payload as unknown) as AnalyticsDTO)?.positions || []).flatMap((p: any) => (
                       (p.totals || []).map((t: any, idx: number) => (
                         <tr key={`${p.id}-${idx}`} className="border-t [&>td]:px-3 [&>td]:py-2">
                           <td>{p.title}</td>
@@ -198,12 +236,46 @@ export default function OfficerResults() {
                     ))}
                   </tbody>
                 </table>
-                {panel.payload?.meta?.totalVotes != null && (
-                  <div className="text-xs subtle mt-2">Total votes: {panel.payload.meta.totalVotes}</div>
-                )}
+                {/* >>> PAPSAS v1.3 BEGIN */}
+                {(() => {
+                  const a = (panel.payload as unknown as AnalyticsDTO) || ({} as any);
+                  const totalVotes = a?.meta?.totalVotes;
+                  const positionsCount = Array.isArray(a?.positions) ? a.positions.length : undefined;
+                  let topShare: number | undefined;
+                  if (Array.isArray(a?.positions)) {
+                    const shares = a.positions.flatMap((p: any) => (p.totals||[]).map((t: any) => Number(t.share || 0)));
+                    if (shares.length) topShare = Math.round(Math.max(...shares) * 100);
+                  }
+                  return (
+                    <div className="flex gap-4 text-xs subtle mt-2">
+                      {totalVotes != null && <div>Total votes: {totalVotes}</div>}
+                      {positionsCount != null && <div>Positions: {positionsCount}</div>}
+                      {topShare != null && <div>Top share: {topShare}%</div>}
+                    </div>
+                  );
+                })()}
+                {/* <<< PAPSAS v1.3 END */}
               </div>
             ) : (
-              <pre className="whitespace-pre-wrap text-sm">{panel.payload?.text || "(no data)"}</pre>
+              // >>> PAPSAS v1.3 BEGIN
+              (() => {
+                const p = panel.payload as any;
+                const short = p?.short ?? p?.text ?? "";
+                const long = p?.long ?? p?.text ?? "";
+                return (
+                  <div className="text-sm">
+                    {short && <div className="mb-2 whitespace-pre-wrap">{short}</div>}
+                    {long && long !== short && (
+                      <details>
+                        <summary className="cursor-pointer">Show details</summary>
+                        <pre className="mt-2 whitespace-pre-wrap text-xs">{long}</pre>
+                      </details>
+                    )}
+                    {!short && !long && <div className="subtle">(no data)</div>}
+                  </div>
+                );
+              })()
+              // <<< PAPSAS v1.3 END
             )}
           </div>
         )}
@@ -268,7 +340,36 @@ function PositionChart({ position }: { position: Position }) {
 
   return (
     <div className="card">
-      <h3 className="text-lg font-medium mb-3">{position.title}</h3>
+      <div className="mb-3 flex items-center justify-between">
+        <h3 className="text-lg font-medium">{position.title}</h3>
+        {/* >>> PAPSAS v1.3 BEGIN: per-position CSV exporter */}
+        <button
+          className="text-sm underline"
+          onClick={() => {
+            const csv = [
+              ["Position", "Candidate", "Votes"],
+              ...((position.totals || []).map(t => [position.title, t.name, String(t.count)])),
+            ].map(r => r.map(v => {
+              const s = String(v ?? "").replace(/"/g, '""');
+              return /[",\n]/.test(s) ? `"${s}"` : s;
+            }).join(",")).join("\r\n");
+            try {
+              const now = new Date();
+              const ts = `${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}-${String(now.getHours()).padStart(2,'0')}${String(now.getMinutes()).padStart(2,'0')}`;
+              downloadCsv(`results-position-${position.id}-${ts}.csv`, csv);
+            } catch {
+              const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement("a");
+              a.href = url; a.download = `results-position-${position.id}.csv`; a.click();
+              URL.revokeObjectURL(url);
+            }
+          }}
+        >
+          CSV
+        </button>
+        {/* <<< PAPSAS v1.3 END */}
+      </div>
       <div style={{ width: "100%", minHeight: 280 }}>
         <ResponsiveContainer width="100%" aspect={2}>
           <BarChart data={rows} margin={{ top: 8, right: 16, left: 0, bottom: 8 }}>
@@ -311,9 +412,6 @@ function Loader({ text }: { text: string }) {
     </div>
   );
 }
-
-
-
 
 
 
