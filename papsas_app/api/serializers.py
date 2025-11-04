@@ -176,3 +176,20 @@ class PositionResultsSerializer(serializers.Serializer):
 
 class ElectionResultsSerializer(serializers.Serializer):
     positions = PositionResultsSerializer(many=True)
+
+# --- Admin candidacy write serializers ---
+class CandidacyCreateSerializer(serializers.Serializer):
+    member_id = serializers.IntegerField(required=False)
+    email = serializers.EmailField(required=False)
+    name = serializers.CharField(required=False, allow_blank=True)
+    position_id = serializers.IntegerField(required=False, allow_null=True)
+
+    def validate(self, data):
+        if not data.get("member_id") and not data.get("email"):
+            raise serializers.ValidationError("Provide member_id or email+name.")
+        return data
+
+class CandidacyPatchSerializer(serializers.Serializer):
+    position_id = serializers.IntegerField(required=False, allow_null=True)
+    candidacyStatus = serializers.BooleanField(required=False)
+    credentials = serializers.CharField(required=False, allow_blank=True)

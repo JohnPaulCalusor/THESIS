@@ -3,6 +3,7 @@ from django.apps import apps
 from django.db.models import Count
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
+from .permissions import IsOfficerOrAdmin
 from rest_framework.response import Response
 
 Election  = apps.get_model("papsas_app", "Election")
@@ -116,3 +117,68 @@ class ElectionResultsView(APIView):
             "positions": positions,
             "results": flat_results
         }, status=200)
+
+import csv
+from django.http import HttpResponse
+
+
+class ElectionResultsCsvView(APIView):
+    permission_classes = [IsOfficerOrAdmin]
+
+    def get(self, request, election_id: int):
+        try:
+            Election.objects.get(pk=election_id)
+        except Election.DoesNotExist:
+            return Response({"detail": "Election not found."}, status=404)
+
+        # Recompute similarly to JSON view
+        # 1) user tallies in election
+        if not (VSEL_USER_FK and VSEL_VOTE_FK and VOTE_ELECT_FK and CAND_USER_FK):
+            resp = HttpResponse(content_type="text/csv")
+            resp["Content-Disposition"] = 'attachment; filename="results.csv"'
+            csv.writer(resp).writerow(["position_id", "position_title", "candidate_id", "candidate_name", "count"])
+            return resp
+
+        user_id_key = f"{VSEL_USER_FK}_id"
+        election_filter = {f"{VSEL_VOTE_FK}__{VOTE_ELECT_FK}_id": election_id}
+        user_tallies = {
+            row[user_id_key]: row["count"]
+            for row in (VoteSel.objects
+                        .filter(**election_filter)
+                        .values(user_id_key)
+                        .annotate(count=Count("id")))
+        }
+
+        cand_qs_filter = {f"{CAND_ELECT_FK}_id": election_id} if CAND_ELECT_FK else {"election_id": election_id}
+        sr = [CAND_USER_FK]
+        if CAND_POS_FK:
+            sr.append(CAND_POS_FK)
+        cands = (Candidacy.objects.select_related(*sr).filter(**cand_qs_filter))
+
+        cand_by_user = {}
+        for c in cands:
+            uid = getattr(getattr(c, CAND_USER_FK), "id", None)
+            if uid is not None and uid not in cand_by_user:
+                cand_by_user[uid] = c
+
+        # Build positions map: id -> title
+        pos_titles = {}
+        if CAND_POS_FK:
+            for p in Position.objects.filter(**cand_qs_filter).order_by("sort", "id"):
+                pos_titles[p.id] = p.title
+
+        resp = HttpResponse(content_type="text/csv")
+        resp["Content-Disposition"] = 'attachment; filename="results.csv"'
+        w = csv.writer(resp)
+        w.writerow(["position_id", "position_title", "candidate_id", "candidate_name", "count"])
+
+        for uid, cnt in user_tallies.items():
+            c = cand_by_user.get(uid)
+            if not c:
+                w.writerow(["", "", uid, f"User#{uid}", cnt])
+                continue
+            u = getattr(c, CAND_USER_FK)
+            cand_name = (getattr(u, "get_full_name", lambda: None)() or getattr(u, "username", None) or getattr(u, "email", None) or f"User#{uid}")
+            pos_id = getattr(c, f"{CAND_POS_FK}_id", None) if CAND_POS_FK else None
+            w.writerow([pos_id or "", pos_titles.get(pos_id, "") if pos_id else "", getattr(u, "id", None), cand_name, cnt])
+        return resp

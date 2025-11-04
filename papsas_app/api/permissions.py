@@ -29,3 +29,14 @@ class IsOfficerOrAdminRead(BasePermission):
         if request.method in SAFE_METHODS:
             return bool(_is_admin(u) or _is_officer(u))
         return True
+
+# New explicit permissions
+class IsAdminOnly(BasePermission):
+    def has_permission(self, request, view):
+        u = getattr(request, "user", None)
+        return bool(u and u.is_authenticated and _is_admin(u))
+
+class IsOfficerOrAdmin(BasePermission):
+    def has_permission(self, request, view):
+        u = getattr(request, "user", None)
+        return bool(u and u.is_authenticated and (_is_admin(u) or _is_officer(u)))
