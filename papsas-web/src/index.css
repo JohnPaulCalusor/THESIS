@@ -39,7 +39,7 @@ body {
   height: 56px; display: flex; align-items: center;
 }
 .topbar .brand{ font-weight: 800; letter-spacing: .02em; color: var(--text); }
-.topbar nav{ margin-left: auto; display: flex; gap: 16px; }
+.topbar nav{ margin-left: 0; display: flex; gap: 16px; }
 .topbar nav a{
   color: var(--text); text-decoration: none; padding: 6px 0; position: relative;
 }
@@ -91,3 +91,19 @@ label { display:block; font-size: .9rem; margin-bottom: 6px; color: var(--text);
   background: #fff4f4; border: 1px solid #f0b9bc; color: #7d0d12;
   padding: 10px 12px; border-radius: 10px; margin-bottom: 12px; font-size: 0.9rem;
 }
+/* Topbar cleanup: kill any legacy divider on the nav */
+header.topbar nav,
+header.topbar .topbar__nav,
+header.topbar .topbar__nav::before,
+header.topbar .topbar__nav::after {
+  border-left: 0 !important;
+  padding-left: 0 !important;
+  content: none !important;
+}
+header.topbar .topbar__nav {
+  margin-left: 0 !important;
+}
+header.topbar .topbar__nav{margin-left:2rem !important;border-left:0 !important;padding-left:0 !important}
+header.topbar nav,header.topbar .topbar__nav,header.topbar .topbar__nav::before,header.topbar .topbar__nav::after{border-left:0 !important;padding-left:0 !important;content:none !important}
+header.topbar .topbar__nav{margin-left:2rem !important;border-left:0 !important;padding-left:0 !important}
+header.topbar nav,header.topbar .topbar__nav,header.topbar .topbar__nav::before,header.topbar .topbar__nav::after{border-left:0 !important;padding-left:0 !important;content:none !important}

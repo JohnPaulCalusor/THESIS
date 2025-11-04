@@ -5,6 +5,7 @@ from django.contrib.auth.hashers import make_password
 # Register your models here.
 
 from .models import User, MembershipTypes, Vote, Candidacy, Officer, Election, Event, EventRegistration, UserMembership, Venue, Attendance, NewsandOffers, Achievement, EventRating
+from .models_position import Position
 
 class UserAdmin(admin.ModelAdmin):
     list_display = ('id' ,'first_name', 'last_name', 'username','email_verified')
@@ -38,3 +39,4 @@ admin.site.register(Venue)
 admin.site.register(Attendance)
 admin.site.register(Achievement)
 admin.site.register(NewsandOffers)
+admin.site.register(Position)

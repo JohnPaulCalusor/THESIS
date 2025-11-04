@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import Topbar from "../components/Topbar";
 import { http } from "../lib/http";
 
 type Election = { id: number; title?: string; startDate?: string; endDate?: string; electionStatus?: boolean };
@@ -24,8 +23,7 @@ export default function ElectionsIndex() {
   }, []);
 
   return (
-    <div className="page">
-      <Topbar />
+    <div>
       <div className="max-w-3xl mx-auto px-4 py-8">
         <h1 className="text-2xl font-semibold mb-4">Elections</h1>
         {err && <p className="subtle">{err}</p>}
@@ -41,8 +39,8 @@ export default function ElectionsIndex() {
                     </div>
                   </div>
                   <div className="flex gap-2">
-                    <Link className="btn btn-primary" to={`/elections/${e.id}/ballot`}>Ballot</Link>
-                    <Link className="btn btn-outline" to={`/elections/${e.id}/results`}>Results</Link>
+                    <Link className="btn btn-primary" to={`/ballot`}>Ballot</Link>
+                    <Link className="btn btn-outline" to={`/results`}>Results</Link>
                   </div>
                 </div>
               </li>
