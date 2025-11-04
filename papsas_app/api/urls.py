@@ -9,6 +9,7 @@ from .views import (
 
 # Current election + candidacy quick-create
 from .views_candidacy import CurrentElectionView, CandidacyQuickCreate
+from .views_results import ElectionResultsView
 
 # Positions list/detail
 from .views_position import PositionViewSet

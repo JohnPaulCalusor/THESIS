@@ -184,6 +184,12 @@ class Candidacy(models.Model):
     candidate = models.ForeignKey(User, on_delete=models.CASCADE, related_name="candidate")
     candidacyStatus = models.BooleanField(null=True, default=True)
     election = models.ForeignKey(Election, on_delete=models.CASCADE, related_name="elections")
+    position = models.ForeignKey(
+        'papsas_app.Position',
+        null=True, blank=True,
+        on_delete=models.SET_NULL,
+        related_name='candidacies',
+    )
     credentials = models.TextField(max_length=9999, null=True)
     
     def __str__(self):
