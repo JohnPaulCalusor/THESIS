@@ -11,6 +11,7 @@ from .views import (
 # Current election + candidacy quick-create
 from .views_candidacy import CurrentElectionView, CandidacyQuickCreate
 from .views_results import ElectionResultsView, ElectionResultsCsvView
+from .views_analytics import ElectionAnalyticsView, ElectionExplainView
 from .views_candidacy_admin import CandidacyListCreateView, CandidacyDetailPatchView
 
 # Positions list/detail
@@ -43,6 +44,8 @@ urlpatterns = [
     path("elections/<int:election_id>/vote", VoteView.as_view(), name="election-vote"),
     path("elections/<int:election_id>/results", ElectionResultsView.as_view(), name="election-results"),
     path("elections/<int:election_id>/results/export.csv", ElectionResultsCsvView.as_view(), name="election-results-csv"),
+    path("elections/<int:election_id>/analytics", ElectionAnalyticsView.as_view(), name="election-analytics"),
+    path("elections/<int:election_id>/explain",   ElectionExplainView.as_view(),   name="election-explain"),
 
     # Positions
     path("elections/<int:election_id>/positions", position_list, name="positions-list-create"),

@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import type { Candidacy } from "../services/candidacyApi";
-import { createCandidacy, deleteCandidacy, listCandidacies, updateCandidacy } from "../services/candidacyApi";
+import { deleteCandidacy, listCandidacies, updateCandidacy } from "../services/candidacyApi";
 import { CandidacyFormModal as CandidacyFormModal2 } from "./CandidacyFormModal2";
 import { patchCandidacy } from "../services/candidacyAdminApi";
 import { AddCandidateModal } from "./AddCandidateModal";
@@ -84,7 +84,7 @@ export const CandidacyTable: React.FC<{ electionId: number; readOnly?: boolean }
                   </td>
                   <td>
                     {readOnly ? (
-                      row.positionTitle ?? row.positionId ?? "â€”"
+                      row.positionTitle ?? row.positionId ?? "—"
                     ) : (
                       <select
                         className="border rounded p-1"
@@ -98,7 +98,7 @@ export const CandidacyTable: React.FC<{ electionId: number; readOnly?: boolean }
                             await patchCandidacy(electionId, row.id, { position_id: nextId });
                             toast.success("Position updated");
                           } catch (err: any) {
-                            setRows(rs => rs.map(r => (r.id === row.id ? { ...r, positionId: prevId, positionTitle: positions.find(p=>p.id===prevId ?? -1)?.title ?? undefined } : r)));
+                            setRows(rs => rs.map(r => (r.id === row.id ? { ...r, positionId: prevId, positionTitle: positions.find(p=>p.id===(prevId ?? -1))?.title ?? undefined } : r)));
                             toast.error(err?.message || "Failed to update position");
                           }
                         }}

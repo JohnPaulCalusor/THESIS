@@ -1,5 +1,6 @@
-﻿// src/modules/pages/OfficerResults.tsx
+// src/modules/pages/OfficerResults.tsx
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useToast } from "../ui/Toast";
 import { http } from "../lib/http";
 import { useElection } from "../election/hooks/useElection";
 import {
@@ -36,6 +37,8 @@ export default function OfficerResults() {
   const [err, setErr] = useState<{ code: number; msg: string; body?: string } | null>(null);
   const [updatedAt, setUpdatedAt] = useState<Date | null>(null);
   const pollRef = useRef<number | null>(null);
+  const toast = useToast();
+  const [panel, setPanel] = useState<{ kind: "analytics" | "explain"; payload: any } | null>(null);
 
   const effectiveId = election?.id?.toString();
 
@@ -98,8 +101,28 @@ export default function OfficerResults() {
     saveBlob(blob, `results-election-${effectiveId}.csv`);
   }, [data, effectiveId]);
 
+  const onAnalytics = useCallback(async () => {
+    try {
+      if (!effectiveId) return;
+      const res = await http.get(`/api/elections/${effectiveId}/analytics`);
+      setPanel({ kind: "analytics", payload: res.data });
+    } catch (e: any) {
+      toast.error(e?.response?.data?.message || e?.message || "Failed to load analytics");
+    }
+  }, [effectiveId, toast]);
+
+  const onExplain = useCallback(async () => {
+    try {
+      if (!effectiveId) return;
+      const res = await http.post(`/api/elections/${effectiveId}/explain`, { style: "short" });
+      setPanel({ kind: "explain", payload: res.data });
+    } catch (e: any) {
+      toast.error(e?.response?.data?.message || e?.message || "Failed to load explanation");
+    }
+  }, [effectiveId, toast]);
+
   if (!effectiveId) return <Loader text="No active election." />;
-  if (loading) return <Loader text="Loading results" />;
+  if (loading) return <Loader text="Loading results?" />;
   if (err) {
     return (
       <div>
@@ -140,8 +163,50 @@ export default function OfficerResults() {
           <div className="flex gap-2">
             <button onClick={fetchOnce} className="btn btn-secondary">Refresh</button>
             <button onClick={downloadCsv} className="btn btn-primary">Download CSV</button>
+            <button onClick={onAnalytics} className="btn btn-secondary">Analytics</button>
+            <button onClick={onExplain} className="btn btn-secondary">Explain</button>
           </div>
         </div>
+
+        {panel && (
+          <div className="card mb-6">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-lg font-medium">{panel.kind === "analytics" ? "Analytics" : "Explain"}</h3>
+              <button className="text-sm underline" onClick={() => setPanel(null)}>Close</button>
+            </div>
+            {panel.kind === "analytics" ? (
+              <div className="overflow-auto">
+                <table className="min-w-full text-sm">
+                  <thead className="bg-gray-50">
+                    <tr className="[&>th]:px-3 [&>th]:py-2 text-left">
+                      <th>Position</th>
+                      <th>Candidate</th>
+                      <th>Votes</th>
+                      <th>Share</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {(panel.payload?.positions || []).flatMap((p: any) => (
+                      (p.totals || []).map((t: any, idx: number) => (
+                        <tr key={`${p.id}-${idx}`} className="border-t [&>td]:px-3 [&>td]:py-2">
+                          <td>{p.title}</td>
+                          <td>{t.name || `#${t.candidate_id}`}</td>
+                          <td>{t.count}</td>
+                          <td>{Math.round((t.share || 0) * 100)}%</td>
+                        </tr>
+                      ))
+                    ))}
+                  </tbody>
+                </table>
+                {panel.payload?.meta?.totalVotes != null && (
+                  <div className="text-xs subtle mt-2">Total votes: {panel.payload.meta.totalVotes}</div>
+                )}
+              </div>
+            ) : (
+              <pre className="whitespace-pre-wrap text-sm">{panel.payload?.text || "(no data)"}</pre>
+            )}
+          </div>
+        )}
 
         <div className="space-y-8">
           {data.positions.map((p) => (
@@ -246,6 +311,7 @@ function Loader({ text }: { text: string }) {
     </div>
   );
 }
+
 
 
 

@@ -1,17 +1,21 @@
 import { useEffect, useState } from "react";
 import { http } from "../lib/http";
 import { useElection } from "../election/hooks/useElection";
+import { useToast } from "../ui/Toast";
 
 type Choice = { candidacyId: number; candidateId: number; name: string; credentials?: string };
+type Section = { id: string | number; title: string; options: Choice[] };
 
 export default function BallotPage() {
   const { election } = useElection();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<{ code: number; msg: string } | null>(null);
   const [choices, setChoices] = useState<Choice[]>([]);
+  const [sections, setSections] = useState<Section[]>([]);
   const [selected, setSelected] = useState<number | null>(null);
-  const [submitMsg, setSubmitMsg] = useState("");
+  const [submitting, setSubmitting] = useState(false);
   const [debug, setDebug] = useState<{ tried: Array<{ url: string; status: number }>; winner?: string; payload?: any }>({ tried: [] });
+  const toast = useToast();
 
   const effectiveId = election?.id?.toString();
 
@@ -20,16 +24,25 @@ export default function BallotPage() {
     (async () => {
       setLoading(true);
       setError(null);
-      setSubmitMsg("");
+      setSections([]);
+      setChoices([]);
       setSelected(null);
       if (!effectiveId) { setLoading(false); return; }
       const url = `/api/elections/${effectiveId}/ballot`;
       try {
         const res = await http.get(url);
         if (cancelled) return;
-        const list: Choice[] = Array.isArray(res.data?.choices) ? res.data.choices : [];
-        setChoices(list);
-        if (import.meta.env.DEV) setDebug({ tried: [{ url, status: 200 }], winner: url, payload: res.data });
+        const payload = res.data || {};
+        const pos = Array.isArray(payload.positions) ? payload.positions : [];
+        const secs: Section[] = pos
+          .map((p: any) => ({ id: p.id, title: p.title, options: Array.isArray(p.options) && p.options.length ? p.options : (Array.isArray(p.choices) ? p.choices : []) }))
+          .filter((s: Section) => Array.isArray(s.options) && s.options.length > 0);
+        setSections(secs);
+        if (secs.length === 0) {
+          const list: Choice[] = Array.isArray(payload.choices) ? payload.choices : (Array.isArray(payload.atLarge) ? payload.atLarge : []);
+          setChoices(list);
+        }
+        if (import.meta.env.DEV) setDebug({ tried: [{ url, status: 200 }], winner: url, payload });
       } catch (e: any) {
         const s = e?.response?.status ?? 0;
         const payload = e?.response?.data;
@@ -46,21 +59,34 @@ export default function BallotPage() {
 
   async function submit() {
     if (!selected) return;
-    setSubmitMsg("");
     setError(null);
     try {
       if (!effectiveId) return;
       await http.post(`/api/elections/${effectiveId}/vote`, { candidacyId: selected });
-      setSubmitMsg("Vote submitted!");
+      toast.success("Vote submitted");
       try {
         const res = await http.get(`/api/elections/${effectiveId}/ballot`);
-        setChoices(Array.isArray(res.data?.choices) ? res.data.choices : []);
+        const payload = res.data || {};
+        const pos = Array.isArray(payload.positions) ? payload.positions : [];
+        const secs: Section[] = pos
+          .map((p: any) => ({ id: p.id, title: p.title, options: Array.isArray(p.options) && p.options.length ? p.options : (Array.isArray(p.choices) ? p.choices : []) }))
+          .filter((s: Section) => Array.isArray(s.options) && s.options.length > 0);
+        setSections(secs);
+        if (secs.length === 0) {
+          setChoices(Array.isArray(payload.choices) ? payload.choices : (Array.isArray(payload.atLarge) ? payload.atLarge : []));
+        } else {
+          setChoices([]);
+        }
+        setSelected(null);
       } catch {}
     } catch (e: any) {
       const s = e?.response?.status;
       if (s === 403) setError({ code: 403, msg: messageForStatus(403, "") });
       else if (s === 409) setError({ code: 409, msg: messageForStatus(409, "") });
-      else setSubmitMsg("We couldn’t submit your vote. Please try again.");
+      else toast.error("We couldn't submit your vote. Please try again.");
+      setSubmitting(false);
+    } finally {
+      setSubmitting(false);
     }
   }
 
@@ -71,7 +97,7 @@ export default function BallotPage() {
   if (error?.code === 409) return <Blocked title="You already voted." sub="Your vote has been recorded. You cannot vote again for this election." />;
   if (error && ![403, 409].includes(error.code)) return <DevError code={error.code} msg={error.msg} debug={debug} />;
 
-  const empty = choices.length === 0;
+  const empty = sections.length === 0 && choices.length === 0;
 
   return (
     <div>
@@ -82,38 +108,69 @@ export default function BallotPage() {
         {empty && <div className="callout callout-warn mb-6">No choices returned. If this user already voted, this is expected.</div>}
 
         {!empty && (
-          <fieldset className="card mb-6">
-            <legend className="px-2 text-lg font-medium">Candidates</legend>
-            <div className="mt-2 space-y-2">
-              {choices.map((c) => (
-                <label
-                  key={c.candidacyId}
-                  className="flex items-start gap-3 rounded-lg px-3 py-2 hover:bg-[var(--surface)] border"
-                  style={{ borderColor: "var(--ring)", background: "#fff" }}
-                >
-                  <input
-                    type="radio"
-                    name="choice"
-                    checked={selected === c.candidacyId}
-                    onChange={() => setSelected(c.candidacyId)}
-                    className="size-4 mt-1"
-                    style={{ accentColor: "var(--brand)" }}
-                  />
-                  <div>
-                    <div className="font-medium">{c.name}</div>
-                    {c.credentials && <div className="text-sm subtle">{c.credentials}</div>}
+          <>
+            {sections.length > 0 ? (
+              sections.map((sec) => (
+                <fieldset key={sec.id} className="card mb-6">
+                  <legend className="px-2 text-lg font-medium">{sec.title}</legend>
+                  <div className="mt-2 space-y-2">
+                    {sec.options.map((c) => (
+                      <label
+                        key={c.candidacyId}
+                        className="flex items-start gap-3 rounded-lg px-3 py-2 hover:bg-[var(--surface)] border"
+                        style={{ borderColor: "var(--ring)", background: "#fff" }}
+                      >
+                        <input
+                          type="radio"
+                          name="choice-global"
+                          checked={selected === c.candidacyId}
+                          onChange={() => setSelected(c.candidacyId)}
+                          className="size-4 mt-1"
+                          style={{ accentColor: "var(--brand)" }}
+                        />
+                        <div>
+                          <div className="font-medium">{c.name}</div>
+                          {c.credentials && <div className="text-sm subtle">{c.credentials}</div>}
+                        </div>
+                      </label>
+                    ))}
                   </div>
-                </label>
-              ))}
-            </div>
-          </fieldset>
+                </fieldset>
+              ))
+            ) : (
+              <fieldset className="card mb-6">
+                <legend className="px-2 text-lg font-medium">Candidates</legend>
+                <div className="mt-2 space-y-2">
+                  {choices.map((c) => (
+                    <label
+                      key={c.candidacyId}
+                      className="flex items-start gap-3 rounded-lg px-3 py-2 hover:bg-[var(--surface)] border"
+                      style={{ borderColor: "var(--ring)", background: "#fff" }}
+                    >
+                      <input
+                        type="radio"
+                        name="choice-global"
+                        checked={selected === c.candidacyId}
+                        onChange={() => setSelected(c.candidacyId)}
+                        className="size-4 mt-1"
+                        style={{ accentColor: "var(--brand)" }}
+                      />
+                      <div>
+                        <div className="font-medium">{c.name}</div>
+                        {c.credentials && <div className="text-sm subtle">{c.credentials}</div>}
+                      </div>
+                    </label>
+                  ))}
+                </div>
+              </fieldset>
+            )}
+          </>
         )}
 
-        <button onClick={submit} disabled={empty || !selected} className="btn btn-primary w-full">
+        <button onClick={submit} disabled={empty || !selected || submitting} className="btn btn-primary w-full">
           Submit vote
         </button>
 
-        {submitMsg && <p role="status" className="mt-3 text-sm subtle">{submitMsg}</p>}
 
         {import.meta.env.DEV && (
           <details className="mt-8 card">
@@ -166,3 +223,5 @@ function DevError({ code, msg, debug }: { code: number; msg: string; debug?: any
     </div>
   );
 }
+
+
