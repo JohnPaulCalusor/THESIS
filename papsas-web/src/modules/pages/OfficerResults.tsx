@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useToast } from "../ui/Toast";
 import { http } from "../lib/http";
 // >>> PAPSAS v1.3 BEGIN
-import { toCsv, downloadCsv } from "../lib/csv";
+import { downloadCsv } from "../lib/csv";
 // <<< PAPSAS v1.3 END
 import { getAnalytics, postExplain } from "../election/services/analyticsApi";
 import type { AnalyticsDTO, ExplainDTO } from "../election/types";
@@ -117,7 +117,7 @@ export default function OfficerResults() {
     return false;
   }
 
-  const downloadCsv = useCallback(async () => {
+  const onDownloadCsv = useCallback(async () => {
     if (!data) return;
     try {
       if (!effectiveId) return;
@@ -200,7 +200,7 @@ export default function OfficerResults() {
           </div>
           <div className="flex gap-2">
             <button onClick={fetchOnce} className="btn btn-secondary">Refresh</button>
-            <button onClick={downloadCsv} className="btn btn-primary">Download CSV</button>
+            <button onClick={onDownloadCsv} className="btn btn-primary">Download CSV</button>
             <button onClick={onAnalytics} className="btn btn-secondary">Analytics</button>
             <button onClick={onExplain} className="btn btn-secondary">Explain</button>
           </div>
