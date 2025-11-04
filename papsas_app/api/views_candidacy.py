@@ -9,7 +9,7 @@ from django.apps import apps
 
 from papsas_app.models import Election, Candidacy
 from .serializers_candidacy import CandidacyReadSerializer, CandidacyWriteSerializer, _pos_field, _user_field
-from .permissions import IsAdminWrite, IsOfficerOrAdminRead
+from .permissions import IsAdminOnly, IsAdminWrite, IsOfficerOrAdmin, IsOfficerOrAdminRead
 from .api_errors import error_response
 
 User = get_user_model()
@@ -44,6 +44,11 @@ class CurrentElectionView(APIView):
 class ElectionCandidacyListCreate(APIView):
     permission_classes = [IsOfficerOrAdminRead, IsAdminWrite]
 
+    def get_permissions(self):
+        # Officers/Admin can READ; only Admin can WRITE
+        if self.request.method in ("GET","HEAD","OPTIONS"):
+            return [IsOfficerOrAdmin()]
+        return [IsAdminOnly()]
     def get(self, request, id):
         election = get_object_or_404(Election, id=id)
         qs = Candidacy.objects.filter(election=election).order_by('id')
