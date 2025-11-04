@@ -1,8 +1,7 @@
-// src/modules/pages/OfficerResults.tsx
+﻿// src/modules/pages/OfficerResults.tsx
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useParams } from "react-router-dom";
-import Topbar from "../components/Topbar";
 import { http } from "../lib/http";
+import { useElection } from "../election/hooks/useElection";
 import {
   ResponsiveContainer, BarChart, XAxis, YAxis, CartesianGrid, Tooltip, Bar
 } from "recharts";
@@ -31,18 +30,21 @@ type Results = { election: { id: number; title?: string }; positions: Position[]
 
 /* ---------- page ---------- */
 export default function OfficerResults() {
-  const { id } = useParams();
+  const { election } = useElection();
   const [data, setData] = useState<Results | null>(null);
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState<{ code: number; msg: string; body?: string } | null>(null);
   const [updatedAt, setUpdatedAt] = useState<Date | null>(null);
   const pollRef = useRef<number | null>(null);
 
+  const effectiveId = election?.id?.toString();
+
   const fetchOnce = useCallback(async () => {
     setErr(null);
     try {
-      const res = await http.get(`/api/elections/${id}/results`);
-      const normalized = normalize(res.data, Number(id));
+      if (!effectiveId) throw new Error("No election id");
+      const res = await http.get(`/api/elections/${effectiveId}/results`);
+      const normalized = normalize(res.data, Number(effectiveId));
       setData(normalized);
       setUpdatedAt(new Date());
     } catch (e: any) {
@@ -61,7 +63,7 @@ export default function OfficerResults() {
     } finally {
       setLoading(false);
     }
-  }, [id]);
+  }, [effectiveId]);
 
   useEffect(() => {
     let cancel = false;
@@ -83,24 +85,24 @@ export default function OfficerResults() {
   const downloadCsv = useCallback(async () => {
     if (!data) return;
     try {
-      const resp = await http.get(`/api/elections/${id}/results.csv`, { responseType: "blob" });
+      if (!effectiveId) return;
+      const resp = await http.get(`/api/elections/${effectiveId}/results.csv`, { responseType: "blob" });
       const blob = new Blob([resp.data], { type: "text/csv;charset=utf-8" });
-      saveBlob(blob, `results-election-${id}.csv`);
+      saveBlob(blob, `results-election-${effectiveId}.csv`);
       return;
     } catch {
       // fallback to client CSV
     }
     const csv = makeClientCsv(data);
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
-    saveBlob(blob, `results-election-${id}.csv`);
-  }, [data, id]);
+    saveBlob(blob, `results-election-${effectiveId}.csv`);
+  }, [data, effectiveId]);
 
-  if (loading) return <Loader text="Loading results…" />;
-
+  if (!effectiveId) return <Loader text="No active election." />;
+  if (loading) return <Loader text="Loading results" />;
   if (err) {
     return (
-      <div className="page">
-        <Topbar />
+      <div>
         <div className="max-w-4xl mx-auto px-4 py-8">
           <div className="card" style={{ borderColor: "rgba(248,113,113,.4)", background: "rgba(248,113,113,.1)" }}>
             <h2 className="text-lg font-semibold">Failed to load results (HTTP {err.code || 0})</h2>
@@ -123,12 +125,11 @@ export default function OfficerResults() {
   if (!data) return <Loader text="No data." />;
 
   return (
-    <div className="page">
-      <Topbar />
+    <div>
       <div className="max-w-5xl mx-auto px-4 py-8">
         <div className="mb-4 flex items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-semibold">{data.election?.title ?? `Election #${id}`}</h1>
+            <h1 className="text-2xl font-semibold">{data.election?.title ?? `Election #${effectiveId}`}</h1>
             <p className="subtle text-sm">Live tally</p>
             {updatedAt && (
               <p className="text-xs text-[var(--muted)]">
@@ -245,3 +246,11 @@ function Loader({ text }: { text: string }) {
     </div>
   );
 }
+
+
+
+
+
+
+
+

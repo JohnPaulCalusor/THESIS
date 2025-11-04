@@ -1,13 +1,26 @@
-from .ballot_fix import MyBallotView2, CastVoteView2, ElectionResults2
-from .ballot_fix import MyBallotView2
 from django.urls import path
+
+# Core/auth/me views
 from .views import (
     health, LoginView, RefreshView, MeView,
-    ElectionListView, ElectionDetailView,
-    MyBallotView, VoteView, ResultsView
+    ElectionListView, BallotView, VoteView, ResultsView,
 )
 
+# Current election + candidacy quick-create
+from .views_candidacy import CurrentElectionView, CandidacyQuickCreate
+
+# Positions list/detail
+from .views_position import PositionViewSet
+
+# User search (admin-only)
+from .views_user import UserSearchView
+
+# Map viewset actions for positions
+position_list = PositionViewSet.as_view({"get": "list", "post": "create"})
+position_detail = PositionViewSet.as_view({"patch": "partial_update", "delete": "destroy"})
+
 urlpatterns = [
+    # Health
     path("health", health, name="api-health"),
 
     # Auth
@@ -17,31 +30,20 @@ urlpatterns = [
     # Me
     path("me/", MeView.as_view(), name="api-me"),
 
-    # Elections
-    path("elections/<int:id>/ballot",  MyBallotView2.as_view(),  name="ballot"),
-    path("elections/<int:id>/vote",    CastVoteView2.as_view(),  name="vote"),
-    path("elections/<int:id>/results", ElectionResults2.as_view(), name="results"),
-    path("elections/",                   ElectionListView.as_view(),   name="api-elections"),
-    path("elections/<int:pk>/",          ElectionDetailView.as_view(), name="api-election-detail"),
-    path("elections/<int:election_id>/ballot", MyBallotView2.as_view(), name="api-election-ballot"),
-    path("elections/<int:election_id>/vote/",  VoteView.as_view(),     name="api-election-vote"),
-    path("elections/<int:election_id>/results", ElectionResults2.as_view(), name="api-election-results"),
+    # Canonical election endpoints
+    path("elections/", ElectionListView.as_view(), name="elections-list"),
+    path("elections/current", CurrentElectionView.as_view(), name="elections-current"),
+    path("elections/<int:election_id>/ballot", BallotView.as_view(), name="election-ballot"),
+    path("elections/<int:election_id>/vote", VoteView.as_view(), name="election-vote"),
+    path("elections/<int:election_id>/results", ResultsView.as_view(), name="election-results"),
+
+    # Positions
+    path("elections/<int:election_id>/positions", position_list, name="positions-list-create"),
+    path("positions/<int:pk>", position_detail, name="positions-detail"),
+
+    # Candidacy quick-create
+    path("elections/<int:id>/candidacies/quick", CandidacyQuickCreate.as_view(), name="candidacies-quick"),
+
+    # Users search (admin-only)
+    path("users", UserSearchView.as_view(), name="user-search"),
 ]
-
-
-urlpatterns += [
-    path('elections/<int:election_id>/ballot2', MyBallotView2.as_view(), name='ballot2'),
-]
-
-urlpatterns += [
-    path('elections/<int:election_id>/vote', CastVoteView2.as_view(), name='api-election-vote2'),
-    path('elections/<int:election_id>/results2', ElectionResults2.as_view(), name='api-election-results2'),
-]
-
-urlpatterns += [
-    path('elections/<int:election_id>/results', ElectionResults2.as_view(), name='api-election-results'),
-]
-
-# --- include candidacy routes ---
-from .urls_candidacy import urlpatterns as _cand_urls
-urlpatterns += _cand_urls

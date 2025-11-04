@@ -353,3 +353,5 @@ class VoteSelection(models.Model):
     def __str__(self):
         return f"VoteSelection(vote_id={self.vote_id}, candidate_id={self.candidate_id})"
 
+# Ensure Position model module is imported so Django registers it
+from .models_position import Position  # noqa: E402,F401

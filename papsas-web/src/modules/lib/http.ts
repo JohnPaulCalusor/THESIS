@@ -12,7 +12,7 @@ import axios, {
  * - PROD: use VITE_API_BASE (e.g., "https://api.papsasinc.com").
  *   Your calls like "/api/..." will become "https://api.papsasinc.com/api/..."
  */
-const baseURL = import.meta.env.DEV ? "" : (import.meta.env.VITE_API_BASE as string);
+const baseURL = (import.meta.env.VITE_API_BASE as string) || "";
 
 export const http = axios.create({ baseURL, withCredentials: false });
 

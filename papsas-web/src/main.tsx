@@ -1,36 +1,64 @@
-import React, { useEffect } from "react";
+import React, { Suspense, lazy } from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
-import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
-import { AuthProvider, useAuth } from "./modules/auth/AuthProvider";
-import LoginPage from "./modules/pages/LoginPage";
-import BallotPage from "./modules/pages/BallotPage";
-import OfficerResults from "./modules/pages/OfficerResults";
-import ElectionsIndex from "./modules/pages/ElectionsIndex"; // <-- add
+import { createBrowserRouter, RouterProvider, Outlet, Navigate } from "react-router-dom";
+import Topbar from "./modules/components/Topbar";
+import { AuthProvider } from "./modules/auth/AuthProvider";
+import { ElectionProvider } from "./modules/election/context/ElectionContext";
+import Private from "./modules/components/Private";
+import RequireAdmin from "./modules/components/RequireAdmin";
+import { ToastProvider } from "./modules/ui/Toast";
 
-import type { ReactElement } from "react";
+const LoginPage = lazy(() => import("./modules/pages/LoginPage"));
+const BallotPage = lazy(() => import("./modules/pages/BallotPage"));
+const OfficerResults = lazy(() => import("./modules/pages/OfficerResults"));
+const AdminElectionPage = lazy(() => import("./modules/election/pages/AdminElectionPage"));
 
-function Private({ children }: { children: ReactElement }) {
-  const { isAuthed, setIntendedPath } = useAuth();
-  const loc = useLocation();
-  useEffect(() => {
-    if (!isAuthed) setIntendedPath(loc.pathname + loc.search);
-  }, [isAuthed, loc.pathname, loc.search, setIntendedPath]);
-  if (!isAuthed) return <Navigate to="/login" replace />;
-  return children;
+function Shell() {
+  return (
+    <>
+      <Topbar />
+      <main style={{ maxWidth: 1100, margin: "0 auto", padding: "16px" }}>
+        <Outlet />
+      </main>
+    </>
+  );
 }
+
+const router = createBrowserRouter([
+  {
+    element: <Shell />,
+    children: [
+      { path: "/", element: <Navigate to="/ballot" replace /> },
+      { path: "/login", element: <Suspense fallback={null}><LoginPage /></Suspense> },
+      {
+        element: <Private />,
+        children: [
+          { path: "/ballot", element: <Suspense fallback={null}><BallotPage /></Suspense> },
+          { path: "/results", element: <Suspense fallback={null}><OfficerResults /></Suspense> },
+          {
+            element: <RequireAdmin />,
+            children: [
+              { path: "/admin/election", element: <Suspense fallback={null}><AdminElectionPage /></Suspense> }
+            ]
+          }
+        ]
+      },
+      { path: "/elections/:id/ballot", element: <Navigate to="/ballot" replace /> },
+      { path: "/elections/:id/results", element: <Navigate to="/results" replace /> },
+      { path: "*", element: <div style={{ padding: 16 }}>Not found</div> }
+    ]
+  }
+]);
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <AuthProvider>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Private><ElectionsIndex /></Private>} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/elections/:id/ballot" element={<Private><BallotPage /></Private>} />
-          <Route path="/elections/:id/results" element={<Private><OfficerResults /></Private>} />
-        </Routes>
-      </BrowserRouter>
+      <ElectionProvider>
+        <ToastProvider>
+          <RouterProvider router={router} />
+        </ToastProvider>
+      </ElectionProvider>
     </AuthProvider>
   </React.StrictMode>
 );

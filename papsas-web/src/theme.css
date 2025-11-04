@@ -63,7 +63,7 @@ html, body, #root { height: 100%; background: var(--bg); color: var(--text); }
 .topbar .brand{
   font-weight:800; letter-spacing:.02em; color:var(--text);
 }
-.topbar nav{ margin-left:auto; display:flex; gap:16px; }
+.topbar nav{ margin-left: 0; display:flex; gap:16px; }
 .topbar nav a{
   color:var(--text); text-decoration:none; padding:6px 0; position:relative;
 }
