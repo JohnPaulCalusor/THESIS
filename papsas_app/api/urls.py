@@ -1,3 +1,5 @@
+from .views_candidacy_admin import CandidacyListView
+from .views_ballot import ElectionBallotView
 from django.urls import path
 
 # Core/auth/me views
@@ -22,6 +24,8 @@ position_list = PositionViewSet.as_view({"get": "list", "post": "create"})
 position_detail = PositionViewSet.as_view({"patch": "partial_update", "delete": "destroy"})
 
 urlpatterns = [
+    path("elections/<int:election_id>/candidacies", CandidacyListView.as_view(), name="election-candidacies"),
+    path("elections/<int:election_id>/ballot", ElectionBallotView.as_view(), name="election-ballot"),
     # Health
     path("health", health, name="api-health"),
 

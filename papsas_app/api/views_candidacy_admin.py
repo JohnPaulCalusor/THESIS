@@ -4,40 +4,47 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 
-from .permissions import IsAdminOnly
-from ..models import Candidacy
-from ..models_position import Position
+from .permissions import IsAdminOnly, IsOfficerOrAdmin
+from ..models import Candidacy, Position  # adjust import if your models path differs
 from .serializers import CandidacyCreateSerializer, CandidacyPatchSerializer
 
 User = get_user_model()
 
-
-def _cand_row(c: Candidacy):
-    u = getattr(c, "candidate", None)
-    name = None
-    if u:
-        name = getattr(u, "get_full_name", lambda: None)() or getattr(u, "username", None) or getattr(u, "email", None)
+def _serialize_candidacy(c: Candidacy):
+    u = c.candidate
+    pos = c.position
+    # Keep the shape your admin page already consumes
     return {
         "id": c.id,
-        "name": name or getattr(c, "name", f"Candidacy#{c.id}"),
-        "email": getattr(u, "email", None),
-        "position": ({"id": getattr(c, "position_id", None), "title": getattr(getattr(c, "position", None), "title", None)} if getattr(c, "position_id", None) else None),
-        "positionId": getattr(c, "position_id", None),
-        "positionTitle": getattr(getattr(c, "position", None), "title", None),
-        "credentials": getattr(c, "credentials", ""),
-        "status": bool(getattr(c, "candidacyStatus", True)),
+        "candidacyStatus": getattr(c, "candidacyStatus", True),
+        "credentials": getattr(c, "credentials", None),
+        "candidate": {
+            "id": u.id,
+            "name": (getattr(u, "get_full_name", lambda: None)() or getattr(u, "username", "")),
+            "email": getattr(u, "email", ""),
+            "username": getattr(u, "username", ""),
+        },
+        "position": ({"id": pos.id, "title": pos.title} if pos else None),
     }
 
+# --- Read-only list (keep existing behavior; officers may read if you prefer) ---
+class CandidacyListView(APIView):
+    permission_classes = [IsAdminOnly]  # or [IsOfficerOrAdmin] if officers should read
+    def get(self, request, election_id: int):
+        qs = (Candidacy.objects
+              .filter(election_id=election_id)
+              .select_related("candidate", "position")
+              .order_by("id"))
+        return Response({"results": [_serialize_candidacy(c) for c in qs]})
 
+# --- New: admin-only GET (reuses list) + POST create ---
 class CandidacyListCreateView(APIView):
     permission_classes = [IsAdminOnly]
 
-    def get(self, request, election_id):
-        qs = Candidacy.objects.select_related("candidate", "position").filter(election_id=election_id).order_by("id")
-        items = [_cand_row(c) for c in qs]
-        return Response({"results": items})
+    def get(self, request, election_id: int):
+        return CandidacyListView().get(request, election_id=election_id)
 
-    def post(self, request, election_id):
+    def post(self, request, election_id: int):
         s = CandidacyCreateSerializer(data=request.data)
         s.is_valid(raise_exception=True)
         d = s.validated_data
@@ -48,34 +55,30 @@ class CandidacyListCreateView(APIView):
         else:
             email = d["email"].lower()
             defaults = {"email": email, "is_active": True}
-            name = (d.get("name") or "").strip()
-            if name:
-                # best-effort split
-                first, last = name, ""
-                if "," in name:
-                    last, first = [p.strip() for p in name.split(",", 1)]
-                elif " " in name:
-                    first, last = name.rsplit(" ", 1)
-                defaults["first_name"] = first
-                defaults["last_name"] = last
+            if d.get("name"):
+                defaults["first_name"] = d["name"]
             user, _ = User.objects.get_or_create(username=email, defaults=defaults)
 
+        # Optional position
         pos = None
-        if d.get("position_id"):
+        if "position_id" in d and d["position_id"]:
             pos = get_object_or_404(Position, pk=d["position_id"])
 
-        # Unique guard
+        # Unique (election, candidate, position)
         if Candidacy.objects.filter(election_id=election_id, candidate=user, position=pos).exists():
-            return Response({"code": "ALREADY_EXISTS", "message": "Candidacy already exists for this election/position."}, status=status.HTTP_409_CONFLICT)
+            return Response(
+                {"code": "ALREADY_EXISTS", "message": "Candidacy already exists for this election/position."},
+                status=status.HTTP_409_CONFLICT,
+            )
 
         c = Candidacy.objects.create(election_id=election_id, candidate=user, position=pos)
-        return Response(_cand_row(c), status=status.HTTP_201_CREATED)
+        return Response(_serialize_candidacy(c), status=status.HTTP_201_CREATED)
 
-
+# --- New: admin-only PATCH ---
 class CandidacyDetailPatchView(APIView):
     permission_classes = [IsAdminOnly]
 
-    def patch(self, request, election_id, pk):
+    def patch(self, request, election_id: int, pk: int):
         c = get_object_or_404(Candidacy, pk=pk, election_id=election_id)
         s = CandidacyPatchSerializer(data=request.data, partial=True)
         s.is_valid(raise_exception=True)
@@ -84,14 +87,18 @@ class CandidacyDetailPatchView(APIView):
         if "position_id" in d:
             c.position = get_object_or_404(Position, pk=d["position_id"]) if d["position_id"] is not None else None
         if "candidacyStatus" in d:
-            c.candidacyStatus = bool(d["candidacyStatus"])
+            c.candidacyStatus = d["candidacyStatus"]
         if "credentials" in d:
             c.credentials = d["credentials"]
 
-        # ensure uniqueness
-        if Candidacy.objects.exclude(pk=c.pk).filter(election_id=election_id, candidate=c.candidate, position=c.position).exists():
-            return Response({"code": "ALREADY_EXISTS", "message": "Candidacy already exists for this election/position."}, status=status.HTTP_409_CONFLICT)
+        # Guard duplicates
+        if Candidacy.objects.exclude(pk=c.pk).filter(
+            election_id=election_id, candidate=c.candidate, position=c.position
+        ).exists():
+            return Response(
+                {"code": "ALREADY_EXISTS", "message": "Candidacy already exists for this election/position."},
+                status=status.HTTP_409_CONFLICT,
+            )
 
-        c.save()
+        c.save(update_fields=["position", "candidacyStatus", "credentials"])
         return Response({"ok": True})
-
