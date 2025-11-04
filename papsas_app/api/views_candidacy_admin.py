@@ -4,7 +4,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 
-from .permissions import IsAdminOnly, IsOfficerOrAdmin
+from .permissions import IsAdminOnly, IsAdminWrite, IsOfficerOrAdmin, IsOfficerOrAdminRead
 from ..models import Candidacy, Position  # adjust import if your models path differs
 from .serializers import CandidacyCreateSerializer, CandidacyPatchSerializer
 
@@ -29,6 +29,11 @@ def _serialize_candidacy(c: Candidacy):
 
 # --- Read-only list (keep existing behavior; officers may read if you prefer) ---
 class CandidacyListView(APIView):
+    def get_permissions(self):
+        # Officers/Admin can READ; only Admin can WRITE
+        if self.request.method in ("GET","HEAD","OPTIONS"):
+            return [IsOfficerOrAdmin()]
+        return [IsAdminOnly()]
     permission_classes = [IsAdminOnly]  # or [IsOfficerOrAdmin] if officers should read
     def get(self, request, election_id: int):
         qs = (Candidacy.objects
@@ -41,6 +46,11 @@ class CandidacyListView(APIView):
 class CandidacyListCreateView(APIView):
     permission_classes = [IsAdminOnly]
 
+    def get_permissions(self):
+        # Officers/Admin can READ; only Admin can WRITE
+        if self.request.method in ("GET","HEAD","OPTIONS"):
+            return [IsOfficerOrAdmin()]
+        return [IsAdminOnly()]
     def get(self, request, election_id: int):
         return CandidacyListView().get(request, election_id=election_id)
 
