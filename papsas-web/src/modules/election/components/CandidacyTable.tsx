@@ -84,7 +84,7 @@ export const CandidacyTable: React.FC<{ electionId: number; readOnly?: boolean }
                   </td>
                   <td>
                     {readOnly ? (
-                      row.positionTitle ?? row.positionId ?? "—"
+                      row.positionTitle ?? row.positionId ?? "ï¿½"
                     ) : (
                       <select
                         className="border rounded p-1"
@@ -99,7 +99,9 @@ export const CandidacyTable: React.FC<{ electionId: number; readOnly?: boolean }
                             toast.success("Position updated");
                           } catch (err: any) {
                             setRows(rs => rs.map(r => (r.id === row.id ? { ...r, positionId: prevId, positionTitle: positions.find(p=>p.id===(prevId ?? -1))?.title ?? undefined } : r)));
-                            toast.error(err?.message || "Failed to update position");
+                            // >>> PAPSAS v1.4 BEGIN
+                            toast.apiError?.(err, "Failed to update position");
+                            // <<< PAPSAS v1.4 END
                           }
                         }}
                       >
@@ -123,7 +125,9 @@ export const CandidacyTable: React.FC<{ electionId: number; readOnly?: boolean }
                             try {
                               await updateCandidacy(electionId, row.id, { status: e.target.checked });
                             } catch (err: any) {
-                              alert(err?.message || "Update failed");
+                              // >>> PAPSAS v1.4 BEGIN
+                              toast.apiError?.(err, "Update failed");
+                              // <<< PAPSAS v1.4 END
                               setRows(rs => rs.map(r => (r.id === row.id ? { ...r, status: prev } : r)));
                             }
                           }}
@@ -150,8 +154,11 @@ export const CandidacyTable: React.FC<{ electionId: number; readOnly?: boolean }
                             await refresh();
                             toast.success("Candidate removed");
                           } catch (err: any) {
-                            toast.error(err?.message || "Delete failed");
-                            alert(err?.message || "Delete failed");
+                            
+                            
+                            // >>> PAPSAS v1.4 BEGIN
+                            toast.apiError?.(err, "Delete failed");
+                            // <<< PAPSAS v1.4 END
                             setRows(prev); // rollback
                           }
                         }}
