@@ -1,3 +1,4 @@
+from .views_results import ElectionResultsView
 from django.urls import path
 
 # Core/auth/me views
@@ -35,7 +36,7 @@ urlpatterns = [
     path("elections/current", CurrentElectionView.as_view(), name="elections-current"),
     path("elections/<int:election_id>/ballot", BallotView.as_view(), name="election-ballot"),
     path("elections/<int:election_id>/vote", VoteView.as_view(), name="election-vote"),
-    path("elections/<int:election_id>/results", ResultsView.as_view(), name="election-results"),
+    path("elections/<int:election_id>/results", ElectionResultsView.as_view(), name="election-results"),
 
     # Positions
     path("elections/<int:election_id>/positions", position_list, name="positions-list-create"),
