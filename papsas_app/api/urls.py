@@ -10,7 +10,8 @@ from .views import (
 
 # Current election + candidacy quick-create
 from .views_candidacy import CurrentElectionView, CandidacyQuickCreate
-from .views_results import ElectionResultsView
+from .views_results import ElectionResultsView, ElectionResultsCsvView
+from .views_candidacy_admin import CandidacyListCreateView, CandidacyDetailPatchView
 
 # Positions list/detail
 from .views_position import PositionViewSet
@@ -41,6 +42,7 @@ urlpatterns = [
     path("elections/<int:election_id>/ballot", BallotView.as_view(), name="election-ballot"),
     path("elections/<int:election_id>/vote", VoteView.as_view(), name="election-vote"),
     path("elections/<int:election_id>/results", ElectionResultsView.as_view(), name="election-results"),
+    path("elections/<int:election_id>/results/export.csv", ElectionResultsCsvView.as_view(), name="election-results-csv"),
 
     # Positions
     path("elections/<int:election_id>/positions", position_list, name="positions-list-create"),
@@ -48,6 +50,10 @@ urlpatterns = [
 
     # Candidacy quick-create
     path("elections/<int:id>/candidacies/quick", CandidacyQuickCreate.as_view(), name="candidacies-quick"),
+
+    # Candidacies admin write path + list
+    path("elections/<int:election_id>/candidacies", CandidacyListCreateView.as_view()),
+    path("elections/<int:election_id>/candidacies/<int:pk>", CandidacyDetailPatchView.as_view()),
 
     # Users search (admin-only)
     path("users", UserSearchView.as_view(), name="user-search"),

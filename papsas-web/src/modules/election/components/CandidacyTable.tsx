@@ -2,6 +2,8 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import type { Candidacy } from "../services/candidacyApi";
 import { createCandidacy, deleteCandidacy, listCandidacies, updateCandidacy } from "../services/candidacyApi";
 import { CandidacyFormModal as CandidacyFormModal2 } from "./CandidacyFormModal2";
+import { patchCandidacy } from "../services/candidacyAdminApi";
+import { AddCandidateModal } from "./AddCandidateModal";
 import type { Position } from "../services/electionApi";
 import { listPositions } from "../services/electionApi";
 import { useToast } from "../../ui/Toast";
@@ -80,7 +82,34 @@ export const CandidacyTable: React.FC<{ electionId: number; readOnly?: boolean }
                     <div className="font-medium">{row.name}</div>
                     {row.email && <div className="text-gray-500 text-xs">{row.email}</div>}
                   </td>
-                  <td>{row.positionTitle ?? row.positionId}</td>
+                  <td>
+                    {readOnly ? (
+                      row.positionTitle ?? row.positionId ?? "—"
+                    ) : (
+                      <select
+                        className="border rounded p-1"
+                        value={row.positionId ?? ""}
+                        onChange={async (e) => {
+                          const val = e.target.value;
+                          const nextId = val === "" ? null : Number(val);
+                          const prevId = row.positionId;
+                          setRows(rs => rs.map(r => (r.id === row.id ? { ...r, positionId: nextId, positionTitle: positions.find(p=>p.id===nextId)?.title ?? undefined } : r)));
+                          try {
+                            await patchCandidacy(electionId, row.id, { position_id: nextId });
+                            toast.success("Position updated");
+                          } catch (err: any) {
+                            setRows(rs => rs.map(r => (r.id === row.id ? { ...r, positionId: prevId, positionTitle: positions.find(p=>p.id===prevId ?? -1)?.title ?? undefined } : r)));
+                            toast.error(err?.message || "Failed to update position");
+                          }
+                        }}
+                      >
+                        <option value="">Unassigned</option>
+                        {positions.map(p => (
+                          <option key={p.id} value={p.id}>{p.title}</option>
+                        ))}
+                      </select>
+                    )}
+                  </td>
                   <td className="whitespace-pre-wrap">{row.credentials}</td>
                   <td>
                     {!readOnly ? (
@@ -144,24 +173,12 @@ export const CandidacyTable: React.FC<{ electionId: number; readOnly?: boolean }
 
       {/* Modals */}
       {adding && (
-        <CandidacyFormModal2
+        <AddCandidateModal
           electionId={electionId}
           open={adding}
           positions={positions}
-          initial={null}
           onClose={() => setAdding(false)}
-          onSubmit={async (data) => {
-            await createCandidacy(electionId, {
-              memberId: data.memberId,
-              name: data.name,
-              email: data.email,
-              positionId: data.positionId,
-              credentials: data.credentials,
-            });
-            await refresh();
-            toast.success("Candidate added");
-            setAdding(false);
-          }}
+          onAdded={async () => { await refresh(); toast.success("Candidate added"); setAdding(false); }}
         />
       )}
       {editing && (
