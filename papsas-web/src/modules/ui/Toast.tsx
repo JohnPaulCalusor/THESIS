@@ -7,6 +7,9 @@ type ToastAPI = {
   success: (m: string, title?: string) => void;
   error: (m: string, title?: string) => void;
   info: (m: string, title?: string) => void;
+  // >>> PAPSAS v1.3 BEGIN
+  apiError?: (err: any, fallback?: string) => void;
+  // <<< PAPSAS v1.3 END
 };
 
 const ToastContext = createContext<ToastAPI | null>(null);
@@ -63,6 +66,16 @@ export const ToastProvider: React.FC<React.PropsWithChildren> = ({ children }) =
     success: (m, title) => add("success", m, title),
     error:   (m, title) => add("error", m, title),
     info:    (m, title) => add("info", m, title),
+    // >>> PAPSAS v1.3 BEGIN
+    apiError: (err: any, fallback?: string) => {
+      const status = err?.response?.status;
+      const code = err?.response?.data?.code;
+      const message = err?.response?.data?.message || err?.message || fallback || "Request failed";
+      if (status === 403) return add("error", "Admins only", "403");
+      if (status === 409) return add("error", code === "ALREADY_VOTED" ? "Already voted" : "Already exists", "409");
+      add("error", message);
+    },
+    // <<< PAPSAS v1.3 END
   }), [add]);
 
   return (

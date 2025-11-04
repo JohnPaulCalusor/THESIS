@@ -109,8 +109,10 @@ export const AddCandidateModal: React.FC<{
                 }
                 onAdded();
               } catch (err: any) {
-                const msg = err?.response?.data?.message || err?.message || "Failed to add";
-                toast.error(msg);
+                // >>> PAPSAS v1.3 BEGIN
+                toast.apiError?.(err, "Failed to add");
+                // Acceptance: 409 duplicate -> toast "Already exists"
+                // <<< PAPSAS v1.3 END
               } finally {
                 setBusy(false);
               }
@@ -121,4 +123,3 @@ export const AddCandidateModal: React.FC<{
     </div>
   );
 };
-

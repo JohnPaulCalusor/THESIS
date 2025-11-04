@@ -14,6 +14,9 @@ export default function BallotPage() {
   const [sections, setSections] = useState<Section[]>([]);
   const [selected, setSelected] = useState<number | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  // >>> PAPSAS v1.3 BEGIN
+  const [voted, setVoted] = useState(false);
+  // <<< PAPSAS v1.3 END
   const [debug, setDebug] = useState<{ tried: Array<{ url: string; status: number }>; winner?: string; payload?: any }>({ tried: [] });
   const toast = useToast();
 
@@ -64,6 +67,10 @@ export default function BallotPage() {
       if (!effectiveId) return;
       await http.post(`/api/elections/${effectiveId}/vote`, { candidacyId: selected });
       toast.success("Vote submitted");
+      // >>> PAPSAS v1.3 BEGIN
+      // Freeze controls and show success banner
+      setVoted(true);
+      // <<< PAPSAS v1.3 END
       try {
         const res = await http.get(`/api/elections/${effectiveId}/ballot`);
         const payload = res.data || {};
@@ -104,6 +111,14 @@ export default function BallotPage() {
       <div className="max-w-2xl mx-auto px-4 py-8">
         <h1 className="text-2xl font-semibold mb-4">Ballot</h1>
         <p className="subtle mb-6">Select one candidate.</p>
+        {/* >>> PAPSAS v1.3 BEGIN */}
+        {voted && (
+          <div className="card mb-6" style={{ borderColor: "rgba(16,185,129,.4)", background: "rgba(16,185,129,.1)" }}>
+            <div className="font-medium">Your vote was submitted.</div>
+            <div className="text-sm subtle">You cannot modify your vote for this election.</div>
+          </div>
+        )}
+        {/* <<< PAPSAS v1.3 END */}
 
         {empty && <div className="callout callout-warn mb-6">No choices returned. If this user already voted, this is expected.</div>}
 
@@ -125,6 +140,7 @@ export default function BallotPage() {
                           name="choice-global"
                           checked={selected === c.candidacyId}
                           onChange={() => setSelected(c.candidacyId)}
+                          disabled={voted}
                           className="size-4 mt-1"
                           style={{ accentColor: "var(--brand)" }}
                         />
@@ -152,6 +168,7 @@ export default function BallotPage() {
                         name="choice-global"
                         checked={selected === c.candidacyId}
                         onChange={() => setSelected(c.candidacyId)}
+                        disabled={voted}
                         className="size-4 mt-1"
                         style={{ accentColor: "var(--brand)" }}
                       />
@@ -167,7 +184,7 @@ export default function BallotPage() {
           </>
         )}
 
-        <button onClick={submit} disabled={empty || !selected || submitting} className="btn btn-primary w-full">
+        <button onClick={submit} disabled={empty || !selected || submitting || voted} className="btn btn-primary w-full">
           Submit vote
         </button>
 
@@ -223,5 +240,4 @@ function DevError({ code, msg, debug }: { code: number; msg: string; debug?: any
     </div>
   );
 }
-
 

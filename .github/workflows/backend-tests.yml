@@ -21,6 +21,5 @@ jobs:
           python-version: "3.12"
       - run: python -m pip install --upgrade pip
       - run: pip install -r requirements.txt
-      - name: Run RBAC tests
-        run: python manage.py test papsas_app.tests.test_rbac_candidacies -v 2
-
+      - name: Run backend tests
+        run: python manage.py test papsas_app.tests -v 2
