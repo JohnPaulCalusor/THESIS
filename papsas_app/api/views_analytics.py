@@ -168,6 +168,7 @@ class ElectionExplainView(APIView):
             name = leader.get("name") or f"#{leader.get('candidate_id')}"
             lines.append(f"{p.get('title')}: {name} leads with {share}% ({cnt}/{s}).")
 
-        text = " " .join(lines) if style == "short" else "\n".join(lines)
-        return Response({"text": text}, status=200)
-
+        short_text = " ".join(lines)
+        long_text = "\n".join(lines)
+        # Backward compatibility: include legacy 'text' key mirroring 'short'
+        return Response({"short": short_text, "long": long_text, "text": short_text}, status=200)
