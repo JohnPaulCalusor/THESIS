@@ -8,6 +8,7 @@ from .views import (
 
 # Current election + candidacy quick-create
 from .views_candidacy import CurrentElectionView, CandidacyQuickCreate
+from .views_results import ElectionResultsView
 
 # Positions list/detail
 from .views_position import PositionViewSet
@@ -35,7 +36,7 @@ urlpatterns = [
     path("elections/current", CurrentElectionView.as_view(), name="elections-current"),
     path("elections/<int:election_id>/ballot", BallotView.as_view(), name="election-ballot"),
     path("elections/<int:election_id>/vote", VoteView.as_view(), name="election-vote"),
-    path("elections/<int:election_id>/results", ResultsView.as_view(), name="election-results"),
+    path("elections/<int:election_id>/results", ElectionResultsView.as_view(), name="election-results"),
 
     # Positions
     path("elections/<int:election_id>/positions", position_list, name="positions-list-create"),
