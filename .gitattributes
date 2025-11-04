@@ -42,3 +42,4 @@ Makefile  text eol=lf
 *.7z   binary
 *.db   binary
 *.sqlite3 binary
+*.py text eol=lf
