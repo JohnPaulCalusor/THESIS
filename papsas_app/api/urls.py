@@ -1,3 +1,4 @@
+from papsas_app.views_vote_json import api_vote_json
 # from .views_candidacy_admin import CandidacyListView
 from .views_ballot import ElectionBallotView
 from django.urls import path
@@ -25,6 +26,7 @@ position_list = PositionViewSet.as_view({"get": "list", "post": "create"})
 position_detail = PositionViewSet.as_view({"patch": "partial_update", "delete": "destroy"})
 
 urlpatterns = [
+    path('elections/<int:eid>/vote', api_vote_json),
 # (shadowed)     path("elections/<int:election_id>/candidacies", CandidacyListView.as_view(), name="election-candidacies"),
     path("elections/<int:election_id>/ballot", ElectionBallotView.as_view(), name="election-ballot"),
     # Health
