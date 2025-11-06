@@ -58,3 +58,7 @@ db.sqlite3
 
 *.tsbuildinfo
 *.tsbuildinfo
+
+# local backups
+papsas_app/api/views_results.py.bak*
+papsas_app/services/
