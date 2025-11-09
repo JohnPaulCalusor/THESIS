@@ -68,7 +68,7 @@ const raw = axios.create({ baseURL });
 
 async function doRefresh(): Promise<string> {
   if (!refreshToken) throw new Error("No refresh token");
-  const { data } = await raw.post("auth/refresh", { refresh: refreshToken });
+  const { data } = await raw.post("/api/auth/refresh/", { refresh: refreshToken });
   const next = data?.access as string;
   if (!next) throw new Error("Refresh returned no access token");
   setTokens(next, refreshToken);
