@@ -3,6 +3,7 @@ from django.urls import path
 from . import views
 from django.conf import settings
 from django.conf.urls.static import static
+from papsas_app.api.views_results import ElectionResultsView, ElectionResultsCsvView
 from .views import (
     get_total_members_count,
     get_total_events_count,
@@ -137,3 +138,8 @@ urlpatterns = [
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
+urlpatterns += [
+    path("api/elections/<int:election_id>/results",       ElectionResultsView.as_view(),    name="election-results"),
+    path("api/elections/<int:election_id>/results.csv",   ElectionResultsCsvView.as_view(), name="election-results-csv"),
+    path("api/elections/<int:election_id>/results/export.csv", ElectionResultsCsvView.as_view(), name="election-results-csv-legacy"),
+]
