@@ -87,7 +87,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   async function login(username: string, password: string) {
-    const { data } = await http.post("auth/login", { username, password });
+    const { data } = await http.post("/api/auth/login/", { username, password });
     setTokens(data.access, data.refresh); // persist both tokens
     setIsAuthed(true);
     try {
