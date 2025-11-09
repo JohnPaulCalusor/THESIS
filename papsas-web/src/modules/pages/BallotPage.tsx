@@ -31,7 +31,7 @@ export default function BallotPage() {
       setChoices([]);
       setSelected(null);
       if (!effectiveId) { setLoading(false); return; }
-      const url = `/api/elections/${effectiveId}/ballot`;
+      const url = `elections/${effectiveId}/ballot`;
       try {
         const res = await http.get(url);
         if (cancelled) return;
@@ -65,14 +65,14 @@ export default function BallotPage() {
     setError(null);
     try {
       if (!effectiveId) return;
-      await http.post(`/api/elections/${effectiveId}/vote`, { candidacyId: selected });
+      await http.post(`elections/${effectiveId}/vote`, { candidacyId: selected });
       toast.success("Vote submitted");
       // >>> PAPSAS v1.3 BEGIN
       // Freeze controls and show success banner
       setVoted(true);
       // <<< PAPSAS v1.3 END
       try {
-        const res = await http.get(`/api/elections/${effectiveId}/ballot`);
+        const res = await http.get(`elections/${effectiveId}/ballot`);
         const payload = res.data || {};
         const pos = Array.isArray(payload.positions) ? payload.positions : [];
         const secs: Section[] = pos
@@ -240,4 +240,3 @@ function DevError({ code, msg, debug }: { code: number; msg: string; debug?: any
     </div>
   );
 }
-

@@ -5,7 +5,7 @@ export type CandidacyPostBody =
   | { email: string; name?: string; position_id?: number | null };
 
 export async function createCandidacy(electionId: number, body: CandidacyPostBody) {
-  const { data } = await http.post(`/api/elections/${electionId}/candidacies`, body);
+  const { data } = await http.post(`elections/${electionId}/candidacies`, body);
   return data;
 }
 
@@ -14,7 +14,7 @@ export async function patchCandidacy(
   candidacyId: number,
   body: Partial<{ position_id: number | null; candidacyStatus: boolean; credentials: string }>
 ) {
-  const { data } = await http.patch(`/api/elections/${electionId}/candidacies/${candidacyId}`, body);
+  const { data } = await http.patch(`elections/${electionId}/candidacies/${candidacyId}`, body);
   return data;
 }
 
@@ -22,7 +22,7 @@ export async function patchCandidacy(
 // Ensure admin can list candidacies for the current election.
 // Kept narrow and tolerant to backend payload variance.
 export async function listCandidacies(electionId: number) {
-  const { data } = await http.get(`/api/elections/${electionId}/candidacies`);
+  const { data } = await http.get(`elections/${electionId}/candidacies`);
   // Return the raw list; normalization happens at the consumer layer if needed
   if (Array.isArray(data)) return data;
   if (Array.isArray((data as any)?.results)) return (data as any).results;

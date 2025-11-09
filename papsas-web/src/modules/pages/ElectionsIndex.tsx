@@ -11,7 +11,7 @@ export default function ElectionsIndex() {
   useEffect(() => {
     (async () => {
       try {
-        const res = await http.get("/api/elections/");
+        const res = await http.get("elections/");
         const list: Election[] =
           Array.isArray(res.data?.results) ? res.data.results :
           Array.isArray(res.data) ? res.data : [];

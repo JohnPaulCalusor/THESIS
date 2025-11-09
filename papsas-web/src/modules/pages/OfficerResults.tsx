@@ -1,7 +1,7 @@
 // src/modules/pages/OfficerResults.tsx
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useToast } from "../ui/Toast";
-import { http } from "../lib/http";
+import http from "../lib/http";
 import { downloadCsv } from "../lib/csv";
 import { getAnalytics, postExplain } from "../election/services/analyticsApi";
 import type { AnalyticsDTO, ExplainDTO } from "../election/types";
@@ -41,7 +41,7 @@ export default function OfficerResults() {
   const [updatedAt, setUpdatedAt] = useState<Date | null>(null);
   const pollRef = useRef<number | null>(null);
   const toast = useToast();
-  const [panel, setPanel] = useState<{ kind: "analytics" | "explain"; payload: AnalyticsDTO | ExplainDTO } | null>(null);
+  const [, setPanel] = useState<{ kind: "analytics" | "explain"; payload: AnalyticsDTO | ExplainDTO } | null>(null);
 
   const effectiveId = election?.id?.toString();
 
@@ -89,13 +89,6 @@ export default function OfficerResults() {
 
   async function downloadCSV(electionId: number): Promise<boolean> {
     try {
-      const token = (() => {
-        try {
-          const raw = localStorage.getItem("papsas.auth");
-          return raw ? (JSON.parse(raw).access as string) : "";
-        } catch { return ""; }
-      })();
-
       const paths = [
         `elections/${electionId}/results/export.csv`,
         `results/${electionId}/export.csv`,
@@ -103,10 +96,7 @@ export default function OfficerResults() {
 
       for (const p of paths) {
         const path = p.replace(/^\/+/, "").replace(/^api\//i, "");
-        const { data: blob, headers, status } = await http.get(path, {
-          responseType: "blob" as const,
-          headers: token ? { Authorization: `Bearer ${token}` } : undefined,
-        });
+        const { data: blob, headers, status } = await http.get(path, { responseType: "blob" as const });
         const ct = (headers?.["content-type"] as string) || "";
         if (status >= 200 && status < 300 && ct.includes("text/csv")) {
           const a = document.createElement("a");
