@@ -6,6 +6,19 @@ from django.db.models import Count
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from .permissions import IsOfficerOrAdmin
+# >>> PAPSAS v1.4 BEGIN
+from rest_framework import status
+from .throttles import ExplainPerUserElectionThrottle
+from rest_framework.response import Response as DRFResponse
+from rest_framework.views import exception_handler
+from rest_framework.throttling import UserRateThrottle
+from rest_framework.exceptions import Throttled
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework import status
+from rest_framework.response import Response
+from rest_framework.throttling import SimpleRateThrottle
+# <<< PAPSAS v1.4 END
 
 Election  = apps.get_model("papsas_app", "Election")
 Candidacy = apps.get_model("papsas_app", "Candidacy")
@@ -144,6 +157,14 @@ class ElectionAnalyticsView(APIView):
 
 class ElectionExplainView(APIView):
     permission_classes = [IsOfficerOrAdmin]
+    # >>> PAPSAS v1.4 BEGIN
+    throttle_classes = [ExplainPerUserElectionThrottle]
+    def throttled(self, request, wait):  # type: ignore[override]
+        return Response({
+            "code": "RATE_LIMITED",
+            "message": "Please wait before requesting another explanation.",
+        }, status=429)
+    # <<< PAPSAS v1.4 END
 
     def post(self, request, election_id: int):
         style = (request.data or {}).get("style") or "short"

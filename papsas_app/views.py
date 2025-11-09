@@ -460,7 +460,7 @@ def verify_email(request, user_id):
             subject = 'Verify your email address'
             message = f'Dear {user.first_name},\n\nYour verification code is: {user.verification_code}\n\nPlease enter this code to verify your email address.\n\nBest regards,\nPhilippine Association of Practioners of Student Affairs and Services'
             send_mail(subject, message, 'your_email@example.com', [user.email])
-
+            
         # Pass the expiration timestamp to the template
         return render(request, 'papsas_app/verify_email.html', {
             'user': user,

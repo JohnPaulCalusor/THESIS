@@ -5,6 +5,9 @@ import { searchMembers } from "../services/candidacyApi";
 // >>> PAPSAS v1.3 BEGIN
 import { searchUsers } from "../services/userSearchApi";
 // <<< PAPSAS v1.3 END
+// >>> PAPSAS v1.4 BEGIN
+import { useToast } from "../../ui/Toast";
+// <<< PAPSAS v1.4 END
 
 type Props = {
   electionId: number;
@@ -19,6 +22,9 @@ type Props = {
 };
 
 export const CandidacyFormModal: React.FC<Props> = ({ electionId, open, initial, onClose, onSubmit }) => {
+  // >>> PAPSAS v1.4 BEGIN
+  const toast = useToast();
+  // <<< PAPSAS v1.4 END
   const [memberQuery, setMemberQuery] = useState("");
   const [memberOptions, setMemberOptions] = useState<Member[]>([]);
   const [memberId, setMemberId] = useState<number | undefined>(initial?.memberId);
@@ -150,10 +156,13 @@ export const CandidacyFormModal: React.FC<Props> = ({ electionId, open, initial,
                 });
                 onClose();
               } catch (e: any) {
+                // >>> PAPSAS v1.4 BEGIN
+                toast.apiError?.(e, "Save failed");
                 const resp = e?.response?.data;
                 const msg = resp?.message || e?.message || "Save failed";
                 const code = resp?.code;
                 setErr(code ? `${code}: ${msg}` : msg);
+                // <<< PAPSAS v1.4 END
               } finally {
                 setBusy(false);
               }
