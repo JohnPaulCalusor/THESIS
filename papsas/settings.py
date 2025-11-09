@@ -258,6 +258,11 @@ REST_FRAMEWORK = {
     ],
 }
 
+# >>> PAPSAS v1.4 BEGIN
+# Throttle rate for per-user per-election explain endpoint
+REST_FRAMEWORK.setdefault("DEFAULT_THROTTLE_RATES", {}).update({"explain": "1/min"})
+# <<< PAPSAS v1.4 END
+
 # JWT lifetimes are env-driven and align with your /api/auth/login and /api/auth/refresh
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=int(env_str("JWT_ACCESS_MIN", "30"))),

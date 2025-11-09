@@ -73,9 +73,28 @@ export const ToastProvider: React.FC<React.PropsWithChildren> = ({ children }) =
       const message = err?.response?.data?.message || err?.message || fallback || "Request failed";
       if (status === 403) return add("error", "Admins only", "403");
       if (status === 409) return add("error", code === "ALREADY_VOTED" ? "Already voted" : "Already exists", "409");
+      if (status === 422) {
+        let firstFieldMsg = "";
+        const data = err?.response?.data;
+        if (data && typeof data === 'object') {
+          for (const k of Object.keys(data)) {
+            if (k !== 'code' && k !== 'message') {
+              const v = (data as any)[k];
+              if (typeof v === 'string' && v) { firstFieldMsg = v; break; }
+              if (Array.isArray(v) && v.length && typeof v[0] === 'string') { firstFieldMsg = v[0]; break; }
+            }
+          }
+        }
+        return add("error", firstFieldMsg || message || "Validation error", "422");
+      }
       add("error", message);
     },
     // <<< PAPSAS v1.3 END
+    // >>> PAPSAS v1.4 BEGIN
+    // 422 support: pick first field error or provided message
+    // (backend returns { code, message } for validation; still handle 422 just in case)
+    // Note: keep behavior additive; do not change existing mappings.
+    // <<< PAPSAS v1.4 END
   }), [add]);
 
   return (

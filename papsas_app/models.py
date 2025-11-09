@@ -196,6 +196,18 @@ class Candidacy(models.Model):
         return f"{self.candidate.first_name} running for Election {self.election.title} {self.election.startDate.year}"
     
     
+    # >>> PAPSAS v1.4 BEGIN
+    class Meta:
+        constraints = [
+            # Duplicate candidacy guard when a position is assigned
+            UniqueConstraint(
+                fields=["election", "position", "candidate"],
+                condition=Q(position__isnull=False),
+                name="uniq_candidacy_election_pos_member",
+            ),
+        ]
+    # <<< PAPSAS v1.4 END
+
 class Vote(models.Model):
     candidateID = models.ManyToManyField(Candidacy, related_name="nominee")
     voterID = models.ForeignKey(User, on_delete=models.CASCADE, related_name="voter")
