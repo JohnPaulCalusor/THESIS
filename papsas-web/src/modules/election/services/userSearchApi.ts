@@ -3,13 +3,13 @@ import { http } from "../../lib/http";
 
 export type UserLite = { id: number; name?: string; email?: string; username?: string };
 
-// Tolerant user search. Primary: GET /api/users?query=
+// Tolerant user search. Primary: GET /users?query=
 // If 404/mismatch, return [] so UI can fall back to manual member_id.
 export async function searchUsers(query: string): Promise<UserLite[]> {
   const q = (query || "").trim();
   if (!q) return [];
   try {
-    const { data } = await http.get(`/api/users`, { params: { query: q } });
+    const { data } = await http.get("users", { params: { query: q } });
     const arr = Array.isArray(data) ? data : ((data as any)?.results || (data as any)?.items || []);
     return arr.map((u: any) => ({
       id: Number(u.id),
@@ -25,4 +25,3 @@ export async function searchUsers(query: string): Promise<UserLite[]> {
   }
 }
 // <<< PAPSAS v1.3 END
-

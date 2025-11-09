@@ -1,18 +1,16 @@
 ﻿import { Link, NavLink, useLocation } from "react-router-dom";
 import { useAuth } from "../auth/AuthProvider";
+import { isAdminUser } from "../auth/roles";
 import { useElection } from "../election/hooks/useElection";
 
 export default function Topbar(){
-  const { isAuthed, user, logout } = useAuth();
+  const { user, logout } = useAuth();
   const { election } = useElection();
   const loc = useLocation();
 
-  const isAdmin = Boolean(
-    user?.is_staff ||
-    (Array.isArray(user?.groups) && (user!.groups as any).includes("admin")) ||
-    user?.role === "admin"
-  );
-  const showAuthedActions = isAuthed && loc.pathname !== "/login";
+  const showAdmin = isAdminUser(user);
+  const uname = user?.username || user?.email || "user";
+  const showAuthedActions = Boolean(user) && loc.pathname !== "/login";
 
   return (
     <header className="topbar">
@@ -27,7 +25,7 @@ export default function Topbar(){
           <nav className="topbar__nav ml-8 flex items-center gap-8">
             <NavLink to={`/ballot`} className={({isActive}) => isActive ? "active" : ""}>Ballot</NavLink>
             <NavLink to={`/results`} className={({isActive}) => isActive ? "active" : ""}>Results</NavLink>
-            {showAuthedActions && isAdmin && (
+            {showAdmin && (
               <NavLink to="/admin/election" className={({isActive}) => isActive || loc.pathname.startsWith("/admin") ? "active" : ""}>Admin</NavLink>
             )}
           </nav>
@@ -35,7 +33,7 @@ export default function Topbar(){
         <div className="flex items-center gap-3">
           {showAuthedActions && (
             <>
-              <span className="text-sm text-gray-600">@{user?.username || user?.email}</span>
+              <span className="text-xs text-[var(--muted)]">@{uname}</span>
               <button
                 onClick={logout}
                 className="px-3 py-1 rounded bg-gray-900 text-white hover:opacity-90"

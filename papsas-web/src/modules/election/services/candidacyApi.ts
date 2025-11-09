@@ -45,7 +45,7 @@ function normalize(row: any): Candidacy {
   return { id, name, email, positionId, positionTitle, credentials, status } as Candidacy;
 }
 
-const base = (electionId: number) => `/api/elections/${electionId}/candidacies`;
+const base = (electionId: number) => `elections/${electionId}/candidacies`;
 
 // ---- helpers: retry without 'status' if backend rejects it ----
 function needsStatusRetry(err: any): boolean {
@@ -153,12 +153,12 @@ export async function updateCandidacy(
   if (patch.status !== undefined) body.status = patch.status;
   if (patch.name !== undefined) body.name = patch.name;
   if (patch.email !== undefined) body.email = patch.email;
-  const { data } = await patchWithStatusFallback(`/api/candidacies/${id}`, body);
+  const { data } = await patchWithStatusFallback(`candidacies/${id}`, body);
   return normalize(data);
 }
 
 export async function deleteCandidacy(_electionId: number, id: number): Promise<void> {
-  await http.delete(`/api/candidacies/${id}`);
+  await http.delete(`candidacies/${id}`);
 }
 
 // Optional: member search
@@ -179,13 +179,13 @@ export async function searchMembers(q: string): Promise<Member[]> {
     }
   };
   await Promise.all([
-    tryEndpoint(`/api/users?search=${enc}`),
-    tryEndpoint(`/api/users?query=${enc}`),
-    tryEndpoint(`/api/users/search?q=${enc}`),
-    tryEndpoint(`/api/members?search=${enc}`),
-    tryEndpoint(`/api/members?query=${enc}`),
-    tryEndpoint(`/api/members/search?q=${enc}`),
-    tryEndpoint(`/api/auth/users?search=${enc}`),
+    tryEndpoint(`users?search=${enc}`),
+    tryEndpoint(`users?query=${enc}`),
+    tryEndpoint(`users/search?q=${enc}`),
+    tryEndpoint(`members?search=${enc}`),
+    tryEndpoint(`members?query=${enc}`),
+    tryEndpoint(`members/search?q=${enc}`),
+    tryEndpoint(`auth/users?search=${enc}`),
   ]);
   const seen = new Set<number>();
   return results.filter(m => (typeof m.id === "number" && !seen.has(m.id) && seen.add(m.id)));
