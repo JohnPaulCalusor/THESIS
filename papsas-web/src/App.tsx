@@ -1,18 +1,30 @@
 import { useEffect, useState } from "react";
+import { http } from "./modules/lib/http";
+
+type Election = { id: number; title?: string };
 
 export default function App() {
-  const [msg, setMsg] = useState("Checking API…");
+  const [elections, setElections] = useState<Election[]>([]);
+
   useEffect(() => {
-    const base = (import.meta.env.VITE_API_BASE as string) || "";
-    fetch(`${base}/api/elections/`)
-      .then((r) => setMsg(`API reachable, status ${r.status}`))
-      .catch((e) => setMsg(`Network error: ${e}`));
+    (async () => {
+      try {
+        const { data } = await http.get<Election[]>("elections");
+        setElections(data);
+      } catch (err) {
+        console.error(err);
+      }
+    })();
   }, []);
+
   return (
-    <div style={{ padding: 24 }}>
-      <h1>PAPSAS Web (Vite)</h1>
-      <p>{msg}</p>
+    <div style={{ padding: 16 }}>
+      <h1>PAPSAS</h1>
+      <ul>
+        {elections.map(e => (
+          <li key={e.id}>{e.title ?? `Election #${e.id}`}</li>
+        ))}
+      </ul>
     </div>
   );
 }
-
