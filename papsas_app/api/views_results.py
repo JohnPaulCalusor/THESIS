@@ -134,8 +134,10 @@ class ElectionResultsCsvView(APIView):
         # Recompute similarly to JSON view
         # 1) user tallies in election
         if not (VSEL_USER_FK and VSEL_VOTE_FK and VOTE_ELECT_FK and CAND_USER_FK):
-            resp = HttpResponse(content_type="text/csv")
+            # >>> PAPSAS v1.4 BEGIN
+            resp = HttpResponse(content_type="text/csv; charset=utf-8")
             resp["Content-Disposition"] = f'attachment; filename="results-election-{election_id}.csv"'
+            # <<< PAPSAS v1.4 END
             csv.writer(resp).writerow(["position_id", "position_title", "candidate_id", "candidate_name", "count"])
             return resp
 
@@ -167,8 +169,10 @@ class ElectionResultsCsvView(APIView):
             for p in Position.objects.filter(**cand_qs_filter).order_by("sort", "id"):
                 pos_titles[p.id] = p.title
 
-        resp = HttpResponse(content_type="text/csv")
+        # >>> PAPSAS v1.4 BEGIN
+        resp = HttpResponse(content_type="text/csv; charset=utf-8")
         resp["Content-Disposition"] = f'attachment; filename="results-election-{election_id}.csv"'
+        # <<< PAPSAS v1.4 END
         w = csv.writer(resp)
         w.writerow(["position_id", "position_title", "candidate_id", "candidate_name", "count"])
 

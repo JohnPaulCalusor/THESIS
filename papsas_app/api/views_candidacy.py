@@ -86,7 +86,13 @@ class CandidacyDetail(APIView):
                 if 'non_field_errors' in errs and 'ALREADY_EXISTS' in errs['non_field_errors']:
                     return error_response('ALREADY_EXISTS', 'Candidacy already exists for this context.')
                 return error_response('VALIDATION_ERROR', str(errs))
-            obj = ser.save()
+            # >>> PAPSAS v1.4 BEGIN
+            from django.db import IntegrityError
+            try:
+                obj = ser.save()
+            except IntegrityError:
+                return error_response('ALREADY_EXISTS', 'Candidacy already exists for this context.')
+            # <<< PAPSAS v1.4 END
             return Response(CandidacyReadSerializer(obj).data)
         except Exception as e:
             return error_response('VALIDATION_ERROR', f'{e}')
