@@ -47,6 +47,15 @@ def env_str(name: str, default: str = "") -> str:
     v = os.getenv(name)
     return default if v is None else v
 
+def _env_int(name: str, default: int | None = None) -> int | None:
+    v = os.getenv(name)
+    if v is None:
+        return default
+    try:
+        return int(v)
+    except ValueError:
+        return default
+
 # ----- Environment mode ------------------------------------------------------
 ENV = env_str("DJANGO_ENV", "dev")  # "dev" | "prod"
 
@@ -62,6 +71,17 @@ ALLOWED_HOSTS = env_list("DJANGO_ALLOWED_HOSTS", "ALLOWED_HOSTS", default="local
 CSRF_TRUSTED_ORIGINS = env_list("DJANGO_CSRF_TRUSTED_ORIGINS", "CSRF_TRUSTED_ORIGINS", default="")
 
 SITE_DOMAIN = env_str("SITE_DOMAIN", "www.papsasinc.com")
+# ---- Email (env-driven) ---------------------------------------------
+import os
+
+EMAIL_BACKEND = os.environ.get(
+    "EMAIL_BACKEND",
+    os.environ.get("DJANGO_EMAIL_BACKEND", "django.core.mail.backends.smtp.EmailBackend"),
+)
+# Only used by FileBasedEmailBackend; harmless otherwise
+EMAIL_FILE_PATH = os.environ.get("EMAIL_FILE_PATH", "/srv/papsas/var/test-emails")
+DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL", f"no-reply@{SITE_DOMAIN}")
+
 LOGIN_URL = env_str("DJANGO_LOGIN_URL", "/login")
 AUTH_USER_MODEL = "papsas_app.User"
 
@@ -193,6 +213,8 @@ EMAIL_PORT = int(env_str("EMAIL_PORT", "587"))
 EMAIL_USE_TLS = env_bool("EMAIL_USE_TLS", True)
 EMAIL_HOST_USER = env_str("EMAIL_HOST_USER", "")
 EMAIL_HOST_PASSWORD = env_str("EMAIL_HOST_PASSWORD", "")
+DEFAULT_FROM_EMAIL = env_str("DEFAULT_FROM_EMAIL", f"no-reply@{SITE_DOMAIN}")
+EMAIL_BACKEND = env_str("EMAIL_BACKEND", "django.core.mail.backends.smtp.EmailBackend")
 
 # ----- django-tables2 ---------------------------------------------------------
 DJANGO_TABLES2_TABLE_ATTRS = {"class": "table", "th": {"class": "header-bold"}}
@@ -205,10 +227,24 @@ CRONJOBS = [
 ]
 
 # ----- OTP throttling ---------------------------------------------------------
-OTP_SEND_WINDOW_MINUTES = int(env_str("OTP_SEND_WINDOW_MINUTES", "60"))
-OTP_SEND_MAX_PER_WINDOW = int(env_str("OTP_SEND_MAX_PER_WINDOW", "3"))
-OTP_VERIFY_MAX_ATTEMPTS = int(env_str("OTP_VERIFY_MAX_ATTEMPTS", "5"))
-OTP_LOCK_MINUTES = int(env_str("OTP_LOCK_MINUTES", "15"))
+OTP_SEND_WINDOW_MINUTES = _env_int("OTP_SEND_WINDOW_MINUTES", 60)
+OTP_SEND_MAX_PER_WINDOW = _env_int("OTP_SEND_MAX_PER_WINDOW", 3)
+OTP_VERIFY_MAX_ATTEMPTS = _env_int("OTP_VERIFY_MAX_ATTEMPTS", 5)
+OTP_LOCK_MINUTES = _env_int("OTP_LOCK_MINUTES", 15)
+EMAIL_OTP_TTL_SECONDS = _env_int("EMAIL_OTP_TTL_SECONDS", 600)
+EMAIL_OTP_SEND_THROTTLE_SECONDS = _env_int("EMAIL_OTP_SEND_THROTTLE_SECONDS", 60)
+EMAIL_OTP_MAX_ATTEMPTS = _env_int("EMAIL_OTP_MAX_ATTEMPTS", 5)
+EMAIL_OTP_LOCK_MINUTES = _env_int("EMAIL_OTP_LOCK_MINUTES", 15)
+EMAIL_OTP_SECRET_SALT = env_str("EMAIL_OTP_SECRET_SALT", "")
+
+# Aliases (OTP_* envs take precedence)
+OTP_TTL_MINUTES = _env_int(
+    "OTP_TTL_MINUTES",
+    max(1, int((EMAIL_OTP_TTL_SECONDS or 600) / 60)),
+)
+OTP_MAX_ATTEMPTS = _env_int("OTP_MAX_ATTEMPTS", EMAIL_OTP_MAX_ATTEMPTS)
+OTP_SEND_THROTTLE_SECONDS = _env_int("OTP_SEND_THROTTLE_SECONDS", EMAIL_OTP_SEND_THROTTLE_SECONDS)
+OTP_LOCK_MINUTES = _env_int("OTP_LOCK_MINUTES", EMAIL_OTP_LOCK_MINUTES)
 
 # ----- CORS (env-driven with safe defaults) -----------------------------------
 # If you set CORS_ALLOW_ALL_ORIGINS=1, all origins are accepted (dev convenience).
@@ -256,11 +292,21 @@ REST_FRAMEWORK = {
             else []
         ),
     ],
+    "EXCEPTION_HANDLER": "papsas_app.api.exceptions.api_exception_handler",
 }
+
+REST_FRAMEWORK.setdefault("DEFAULT_THROTTLE_CLASSES", []).extend([
+    "rest_framework.throttling.ScopedRateThrottle",
+])
+REST_FRAMEWORK.setdefault("DEFAULT_THROTTLE_RATES", {})
+REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"].update({
+    "otp_start": "3/min",
+    "otp_verify": "10/min",
+})
 
 # >>> PAPSAS v1.4 BEGIN
 # Throttle rate for per-user per-election explain endpoint
-REST_FRAMEWORK.setdefault("DEFAULT_THROTTLE_RATES", {}).update({"explain": "1/min"})
+REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"].update({"explain": "1/min"})
 # <<< PAPSAS v1.4 END
 
 # JWT lifetimes are env-driven and align with your /api/auth/login and /api/auth/refresh

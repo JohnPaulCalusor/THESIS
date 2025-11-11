@@ -4,6 +4,8 @@ from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from django.db.models import CharField, TextField
 
+from papsas_app.models import UserSecurity
+
 User = get_user_model()
 
 # ---------- helpers ----------
@@ -78,6 +80,72 @@ class UserLiteSerializer(serializers.ModelSerializer):
     def get_role(self, obj): return _role_of(obj)
     def get_is_member(self, obj): return bool(getattr(obj, "is_member", False))
     def get_is_officer(self, obj): return bool(getattr(obj, "is_officer", False) or getattr(obj, "is_staff", False))
+
+
+def _get_security(user):
+    try:
+        return user.security
+    except UserSecurity.DoesNotExist:
+        return None
+
+
+class MeSerializer(serializers.ModelSerializer):
+    role = serializers.SerializerMethodField()
+    is_member = serializers.SerializerMethodField()
+    is_officer = serializers.SerializerMethodField()
+    email_verified_at = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = [
+            "id",
+            "email",
+            "first_name",
+            "last_name",
+            "mobileNum",
+            "role",
+            "is_member",
+            "is_officer",
+            "email_verified",
+            "email_verified_at",
+        ]
+
+    def get_role(self, obj): return _role_of(obj)
+    def get_is_member(self, obj): return bool(getattr(obj, "is_member", False))
+    def get_is_officer(self, obj): return bool(getattr(obj, "is_officer", False) or getattr(obj, "is_staff", False))
+    def get_email_verified_at(self, obj):
+        security = _get_security(obj)
+        if not security:
+            return None
+        timestamp = getattr(security, "email_verified_at", None)
+        return timestamp.isoformat() if timestamp else None
+
+
+class MeUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ["first_name", "last_name", "email"]
+        extra_kwargs = {"email": {"required": False, "allow_blank": False}}
+
+    def validate_email(self, value):
+        request_user = self.context["request"].user
+        if value and User.objects.exclude(pk=request_user.pk).filter(email=value).exists():
+            raise serializers.ValidationError("A user with that email already exists.")
+        return value
+
+
+class EmailVerificationStartSerializer(serializers.Serializer):
+    email = serializers.EmailField(required=False)
+
+    def validate_email(self, value):
+        user = self.context["request"].user
+        if value and value != user.email:
+            raise serializers.ValidationError("Cannot request verification for another address.")
+        return user.email
+
+
+class EmailVerificationVerifySerializer(serializers.Serializer):
+    code = serializers.CharField(min_length=6, max_length=6)
 
 # ---------- display helpers ----------
 def candidate_name(obj):

@@ -7,6 +7,19 @@ from papsas_app.models import Election, Candidacy
 
 User = get_user_model()
 
+
+def _ensure_position_with_optional_election(P, e):
+    field_names = {f.name for f in P._meta.fields}
+    params = {}
+    if "title" in field_names:
+        params["title"] = "President"
+    elif "name" in field_names:
+        params["name"] = "President"
+    if "election" in field_names and e is not None:
+        params["election"] = e
+    p, _ = P.objects.get_or_create(**params)
+    return p
+
 def _has_pos_fk():
     for f in Candidacy._meta.get_fields():
         if getattr(f, "many_to_one", False):
@@ -53,14 +66,19 @@ def test_admin_candidacy_create_list_patch_delete(db):
     client.credentials(HTTP_AUTHORIZATION=f"Bearer {_token(admin)}")
 
     cand,_ = User.objects.get_or_create(username="cand@test.local", defaults={"email":"cand@test.local","first_name":"Juan","last_name":"Dela Cruz"})
-    payload = {"candidateUserId": cand.id, "credentials": "BSCS", "status": True}
+    # API now expects either member_id or email+name; send member_id + optional position_id
+    payload = {"member_id": cand.id, "credentials": "BSCS", "status": True}
     posf = _has_pos_fk()
     if posf:
         P = posf.remote_field.model
-        p,_ = P.objects.get_or_create(**({ "title":"President" } if any(f.name=="title" for f in P._meta.fields) else { "name":"President" }))
+        p = _ensure_position_with_optional_election(P, e)
         payload["positionId"] = p.id
 
-    r = client.post(f"/api/elections/{e.id}/candidacies", data=json.dumps(payload), content_type="application/json")
+        r = client.post(
+            f"/api/elections/{e.id}/candidacies",
+            data=json.dumps(payload),
+            content_type="application/json",
+        )
     assert r.status_code == 201, r.content
     cid = r.json()["id"]
 
