@@ -1,6 +1,6 @@
 from django.contrib.auth import get_user_model
 from rest_framework.views import APIView
-from rest_framework.permissions import IsAdminUser
+from .permissions import IsAdminOnly, IsEmailVerified
 from rest_framework.response import Response
 from django.db.models import Q
 
@@ -9,7 +9,7 @@ User = get_user_model()
 
 
 class UserSearchView(APIView):
-    permission_classes = [IsAdminUser]
+    permission_classes = [IsAdminOnly, IsEmailVerified]
 
     def get(self, request):
         term = (request.query_params.get("search") or "").strip()
