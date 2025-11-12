@@ -1,0 +1,11 @@
+[Unit]
+Description=Every 5 minutes, probe current election
+
+[Timer]
+OnBootSec=2min
+OnUnitActiveSec=5min
+Unit=election-probe.service
+Persistent=true
+
+[Install]
+WantedBy=timers.target
