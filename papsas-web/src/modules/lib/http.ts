@@ -1,4 +1,4 @@
-﻿import axios from "axios";
+﻿import axios, { type AxiosError } from "axios";
 
 const baseURL = ((import.meta.env.VITE_API_BASE as string) || "").replace(/\/$/, "");
 export const http = axios.create({ baseURL, withCredentials: false });
@@ -17,7 +17,10 @@ export function getTokens(): Tokens {
     if (!raw) return {};
     const { access, refresh } = JSON.parse(raw) || {};
     return { access, refresh };
-  } catch {
+  } catch (err: unknown) {
+    const ax = err as AxiosError<unknown>;
+    const status = ax.response?.status;
+    void status;
     return {};
   }
 }
@@ -43,8 +46,7 @@ export function clearTokens() {
 
 /* ---------------- url normalize ---------------- */
 function normalize(u?: string) {
-  if (!u) return u;
-  if (/^https?:\/\//i.test(u)) return u;       // absolute → leave
+  if (!u) return u;  if (/^https?:\/\//i.test(u)) return u;       // absolute  leave
   return u.replace(/^\/+/, "");                 // strip leading slashes only
 }
 
@@ -53,9 +55,9 @@ for (const c of [http, raw]) {
   c.interceptors.request.use((cfg) => {
     if (cfg.url) cfg.url = normalize(cfg.url);
     if (accessToken) {
-      cfg.headers = cfg.headers || {};
-      // axios will coerce this into AxiosHeaders
-      (cfg.headers as any).Authorization = `Bearer ${accessToken}`;
+      const headers = (cfg.headers ?? {}) as Record<string, string>;
+      headers.Authorization = `Bearer ${accessToken}`;
+      cfg.headers = headers;
     }
     return cfg;
   });

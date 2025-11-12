@@ -7,74 +7,100 @@ export type Candidacy = {
   positionId: number | null;
   positionTitle?: string;
   credentials?: string;
-  status: boolean; // true = enabled/active
+  _status: boolean; // true = enabled/active
 };
 
 export type CandidacyCreate = {
   memberId?: number; // existing user id
-  name?: string;     // quick-create
-  email?: string;    // quick-create
+  name?: string; // quick-create
+  email?: string; // quick-create
   positionId?: number | null;
   credentials?: string;
-  status?: boolean;
+  _status?: boolean;
 };
 
-function unwrap<T = any>(data: any): T[] {
+export type CandidacyDTO = {
+  id: number;
+  position_id: number | null;
+  candidate_id?: number;
+  candidate_name?: string;
+  position_title?: string;
+  status?: string;
+  email?: string;
+};
+
+type Json = Record<string, unknown>;
+
+function unwrap<T>(data: unknown): T[] {
   if (Array.isArray(data)) return data as T[];
-  if (data?.results && Array.isArray(data.results)) return data.results as T[];
-  if (data?.items && Array.isArray(data.items)) return data.items as T[];
+  if (typeof data === "object" && data !== null) {
+    const obj = data as Json;
+    if (Array.isArray(obj.results)) return obj.results as T[];
+    if (Array.isArray(obj.items)) return obj.items as T[];
+  }
   return [];
 }
 
-function normalize(row: any): Candidacy {
-  const id = row.id ?? row.candidacyId ?? row.candidacy_id;
-  const positionId = row.positionId ?? row.position_id ?? row.position?.id ?? null;
+function normalize(row: Json): Candidacy {
+  const id = (typeof row.id === "number" ? row.id : undefined) ??
+    (typeof row.candidacyId === "number" ? row.candidacyId : undefined) ??
+    (typeof row.candidacy_id === "number" ? row.candidacy_id : undefined) ??
+    (typeof row._id === "number" ? row._id : undefined);
+  const positionId = (typeof row.positionId === "number" ? row.positionId : undefined) ??
+    (typeof row.position_id === "number" ? row.position_id : undefined) ??
+    (typeof row.position === "object" && row.position !== null && typeof (row.position as Json).id === "number" ? (row.position as Json).id : null) ??
+    null;
   const positionTitle =
-    row.positionTitle ??
-    row.position_title ??
-    row.position_name ??
-    row.position?.title ??
+    typeof row.positionTitle === "string" ? row.positionTitle :
+    typeof row.position_title === "string" ? row.position_title :
+    typeof row.position?.title === "string" ? (row.position as Json).title :
     (positionId != null ? String(positionId) : undefined);
   const name =
-    row.name ??
-    row.candidate_name ??
-    (([row.first_name, row.last_name].filter(Boolean).join(" ")) || row.candidate?.name || "—");
-  const email = row.email ?? row.candidate?.email;
-  const credentials = row.credentials ?? row.bio ?? row.platform ?? "";
-  const status = Boolean(row.status ?? row.enabled ?? row.active ?? true);
-  return { id, name, email, positionId, positionTitle, credentials, status } as Candidacy;
+    typeof row.name === "string" ? row.name :
+    typeof row.candidate_name === "string" ? row.candidate_name :
+    ((Array.isArray(row.first_name) ? row.first_name : [row.first_name]).filter(Boolean).join(" ") ||
+      typeof row.candidate?.name === "string" ? (row.candidate as Json).name as string : "-");
+  const email = typeof row.email === "string" ? row.email :
+    typeof row.candidate?.email === "string" ? (row.candidate as Json).email : undefined;
+  const credentials = typeof row.credentials === "string" ? row.credentials :
+    typeof row.bio === "string" ? row.bio :
+    typeof row.platform === "string" ? row.platform : "";
+  return { id: id ?? 0, name, email, positionId, positionTitle, credentials, _status: Boolean(row._status ?? row.status ?? true) };
 }
 
 const base = (electionId: number) => `elections/${electionId}/candidacies`;
 
-// ---- helpers: retry without 'status' if backend rejects it ----
-function needsStatusRetry(err: any): boolean {
-  const code = err?.response?.data?.code;
-  const msg = (err?.response?.data?.message || err?.message || "").toString();
+// ---- helpers: retry without '_status' if backend rejects it ----
+function needsStatusRetry(err: unknown): boolean {
+  const ax = err as { response?: { data?: Json }; message?: string };
+  const code = ax.response?.data?.code;
+  const msg = (ax.response?.data?.message || ax.message || "").toString();
   return (
     code === "VALIDATION_ERROR" &&
-    (/unexpected keyword arguments.*status/i.test(msg) || /got unexpected keyword.*status/i.test(msg))
+    (/unexpected keyword arguments.*_status/i.test(msg) || /got unexpected keyword.*_status/i.test(msg))
   );
 }
 
-async function postWithStatusFallback(url: string, body: any) {
+async function postWithStatusFallback(url: string, body: Record<string, unknown>) {
   try {
     return await http.post(url, body);
-  } catch (err: any) {
-    if (("status" in (body || {})) && needsStatusRetry(err)) {
-      const { status, ...rest } = body || {};
+  } catch (err: unknown) {
+    if (("_status" in body) && needsStatusRetry(err)) {
+      const rest = { ...body };
+      delete rest._status;
       return await http.post(url, rest);
     }
     throw err;
   }
 }
 
-async function patchWithStatusFallback(url: string, body: any) {
+async function patchWithStatusFallback(url: string, body: Record<string, unknown>) {
   try {
     return await http.patch(url, body);
-  } catch (err: any) {
-    if (("status" in (body || {})) && needsStatusRetry(err)) {
-      const { status, ...rest } = body || {};
+  } catch (err: unknown) {
+    if (("_status" in body) && needsStatusRetry(err)) {
+      const rest = { ...body };
+      delete rest._status;
       return await http.patch(url, rest);
     }
     throw err;
@@ -82,8 +108,11 @@ async function patchWithStatusFallback(url: string, body: any) {
 }
 
 export async function listCandidacies(electionId: number): Promise<Candidacy[]> {
-  const { data } = await http.get(base(electionId));
-  return unwrap<any>(data).map(normalize);
+  const { data } = await http.get<CandidacyDTO[]>(base(electionId));
+  const arr = unwrap<Json>(data);
+  if (arr.length) return arr.map((row) => normalize(row));
+  const also = unwrap<Json>(data);
+  return also.map((row) => normalize(row));
 }
 
 export async function createCandidacy(
@@ -95,7 +124,7 @@ export async function createCandidacy(
       candidateUserId: payload.memberId,
       positionId: payload.positionId ?? null,
       credentials: payload.credentials ?? "",
-      status: payload.status ?? true,
+      _status: payload._status ?? true,
     };
     const { data } = await postWithStatusFallback(base(electionId), body);
     return normalize(data);
@@ -105,7 +134,7 @@ export async function createCandidacy(
       email: payload.email ?? "",
       positionId: payload.positionId ?? null,
       credentials: payload.credentials ?? "",
-      status: payload.status ?? true,
+      _status: payload._status ?? true,
     };
     try {
       const { data } = await postWithStatusFallback(`${base(electionId)}/quick`, body);
@@ -114,27 +143,23 @@ export async function createCandidacy(
         const found = list.find((x) => x.id === data.candidacy_id);
         if (found) return found;
       }
-      return normalize(data);
-    } catch (err: any) {
-      const status = err?.response?.status;
-      const code = err?.response?.data?.code;
-      if (status === 409 && (code === "EMAIL_TAKEN" || code === "USER_EXISTS")) {
-        const q = payload.email || payload.name || "";
-        const matches = await searchMembers(q);
-        const exact = matches.find(
-          (m) => m.email && payload.email && m.email.toLowerCase() === payload.email.toLowerCase()
-        );
-        const candidate = exact || matches[0];
-        if (candidate?.id) {
-          const linkBody = {
-            candidateUserId: candidate.id,
-            positionId: payload.positionId ?? null,
-            credentials: payload.credentials ?? "",
-            status: payload.status ?? true,
-          };
-          const { data } = await postWithStatusFallback(base(electionId), linkBody);
-          return normalize(data);
-        }
+      return normalize(data as Json);
+    } catch (err: unknown) {
+      const q = payload.email || payload.name || "";
+      const matches = await searchMembers(q);
+      const exact = matches.find(
+        (m) => m.email && payload.email && m.email.toLowerCase() === payload.email.toLowerCase()
+      );
+      const candidate = exact || matches[0];
+      if (candidate?.id) {
+        const linkBody = {
+          candidateUserId: candidate.id,
+          positionId: payload.positionId ?? null,
+          credentials: payload.credentials ?? "",
+          _status: payload._status ?? true,
+        };
+        const { data } = await postWithStatusFallback(base(electionId), linkBody);
+        return normalize(data);
       }
       throw err;
     }
@@ -146,11 +171,10 @@ export async function updateCandidacy(
   id: number,
   patch: CandidacyCreate
 ): Promise<Candidacy> {
-  const body: any = {};
+  const body: Record<string, unknown> = {};
   if (patch.memberId !== undefined) body.candidateUserId = patch.memberId;
   if (patch.positionId !== undefined) body.positionId = patch.positionId;
   if (patch.credentials !== undefined) body.credentials = patch.credentials;
-  if (patch.status !== undefined) body.status = patch.status;
   if (patch.name !== undefined) body.name = patch.name;
   if (patch.email !== undefined) body.email = patch.email;
   const { data } = await patchWithStatusFallback(`candidacies/${id}`, body);

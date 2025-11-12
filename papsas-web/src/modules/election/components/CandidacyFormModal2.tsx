@@ -30,15 +30,16 @@ type Props = {
   }) => Promise<void>;
 };
 
-function friendlyErrorFromResponse(err: any): string {
-  const data = err?.response?.data;
-  const code = data?.code || "";
-  const msg = data?.message || data || err?.message || "Request failed";
-  if (code === "EMAIL_TAKEN" || code === "USER_EXISTS") return "That email already belongs to an account. Pick it via “Pick existing member”, or the system will try to link it automatically.";
+function friendlyErrorFromResponse(err: unknown): string {
+  const ax = err as { response?: { data?: Record<string, unknown>; status?: number }; message?: string };
+  const data = ax.response?.data;
+  const code = (data as Record<string, unknown>)?.code || "";
+  const msg = (data as Record<string, unknown>)?.message || data || ax.message || "Request failed";
+  if (code === "EMAIL_TAKEN" || code === "USER_EXISTS") return "That email already belongs to an account. Pick it via \"Pick existing member\", or the system will try to link it automatically.";
   if (code === "ALREADY_EXISTS") return "This member is already a candidate in the current election.";
   if (code === "HAS_VOTES") return "This candidate already has votes and cannot be deleted.";
   if (code === "VALIDATION_ERROR") return String(msg);
-  if (err?.response?.status === 404) return "Endpoint not found (404). Make sure the server route exists.";
+  if (ax.response?.status === 404) return "Endpoint not found (404). Make sure the server route exists.";
   return typeof msg === "string" ? msg : "Something went wrong.";
 }
 
@@ -222,7 +223,7 @@ export const CandidacyFormModal: React.FC<Props> = ({ open, initial, positions, 
                   credentials: credentials || undefined,
                 });
                 onClose();
-              } catch (e: any) {
+              } catch (e: unknown) {
                 const msg = friendlyErrorFromResponse(e);
                 setErrText(msg);
                 toast.error(msg);

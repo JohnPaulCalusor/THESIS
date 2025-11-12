@@ -8,8 +8,33 @@ import type { Position } from "../services/electionApi";
 import { listPositions } from "../services/electionApi";
 import { useToast } from "../../ui/Toast";
 
+export type CandidacyRow = {
+  id: number;
+  candidate: { id: number; name: string; email?: string };
+  position: { id: number | null; title: string };
+  credentials?: string;
+  status?: "pending" | "approved" | "rejected" | string;
+  active: boolean;
+  created_at?: string;
+  updated_at?: string;
+  source: Candidacy;
+};
+
+const toRow = (c: Candidacy): CandidacyRow => ({
+  id: c.id,
+  candidate: { id: c.id, name: c.name, email: c.email },
+  position: {
+    id: c.positionId ?? null,
+    title: c.positionTitle || "Unassigned",
+  },
+  credentials: c.credentials,
+  active: Boolean(c._status),
+  status: c._status ? "approved" : "disabled",
+  source: { ...c },
+});
+
 export const CandidacyTable: React.FC<{ electionId: number; readOnly?: boolean }> = ({ electionId, readOnly }) => {
-  const [rows, setRows] = useState<Candidacy[]>([]);
+  const [rows, setRows] = useState<CandidacyRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setErr] = useState<string | null>(null);
   const [search, setSearch] = useState("");
@@ -23,9 +48,10 @@ export const CandidacyTable: React.FC<{ electionId: number; readOnly?: boolean }
     setLoading(true); setErr(null);
     try {
       const data = await listCandidacies(electionId);
-      setRows(data);
-    } catch (e: any) {
-      setErr(e?.message || "Failed to load candidates");
+      setRows(data.map(toRow));
+    } catch (e: unknown) {
+      const info = e as { message?: string };
+      setErr(info.message || "Failed to load candidates");
     } finally {
       setLoading(false);
     }
@@ -36,12 +62,16 @@ export const CandidacyTable: React.FC<{ electionId: number; readOnly?: boolean }
 
   const filtered = useMemo(() => {
     const q = search.toLowerCase();
-    return rows.filter(r => {
+    return rows.filter((r) => {
       const statusOk =
         statusFilter === "all" ||
-        (statusFilter === "enabled" && r.status) ||
-        (statusFilter === "disabled" && !r.status);
-      const textOk = !q || `${r.name} ${r.positionTitle ?? ""} ${r.credentials ?? ""}`.toLowerCase().includes(q);
+        (statusFilter === "enabled" && r.active) ||
+        (statusFilter === "disabled" && !r.active);
+      const textOk =
+        !q ||
+        `${r.candidate.name} ${r.candidate.email ?? ""} ${r.position.title} ${r.credentials ?? ""}`
+          .toLowerCase()
+          .includes(q);
       return statusOk && textOk;
     });
   }, [rows, search, statusFilter]);
@@ -50,7 +80,11 @@ export const CandidacyTable: React.FC<{ electionId: number; readOnly?: boolean }
     <div className="space-y-3">
       <div className="flex items-center gap-2">
         <input className="border rounded p-2 flex-1" placeholder="Search…" value={search} onChange={e => setSearch(e.target.value)} />
-        <select className="border rounded p-2" value={statusFilter} onChange={e => setStatusFilter(e.target.value as any)}>
+        <select
+          className="border rounded p-2"
+          value={statusFilter}
+          onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setStatusFilter(e.target.value as "all" | "enabled" | "disabled")}
+        >
           <option value="all">All</option>
           <option value="enabled">Enabled</option>
           <option value="disabled">Disabled</option>
@@ -79,28 +113,29 @@ export const CandidacyTable: React.FC<{ electionId: number; readOnly?: boolean }
               {filtered.map(row => (
                 <tr key={row.id} className="border-t [&>td]:px-3 [&>td]:py-2 align-top">
                   <td>
-                    <div className="font-medium">{row.name}</div>
-                    {row.email && <div className="text-gray-500 text-xs">{row.email}</div>}
+                    <div className="font-medium">{row.candidate.name}</div>
+                    {row.candidate.email && <div className="text-gray-500 text-xs">{row.candidate.email}</div>}
                   </td>
                   <td>
                     {readOnly ? (
-                      row.positionTitle ?? row.positionId ?? "�"
+                      row.position.title ?? row.position.id ?? "�"
                     ) : (
                       <select
                         className="border rounded p-1"
-                        value={row.positionId ?? ""}
-                        onChange={async (e) => {
+                        value={row.position.id ?? ""}
+                        onChange={async (e: React.ChangeEvent<HTMLInputElement>) => {
                           const val = e.target.value;
                           const nextId = val === "" ? null : Number(val);
-                          const prevId = row.positionId;
-                          setRows(rs => rs.map(r => (r.id === row.id ? { ...r, positionId: nextId, positionTitle: positions.find(p=>p.id===nextId)?.title ?? undefined } : r)));
+                          const prevId = row.position.id;
+                          setRows(rs => rs.map(r => (r.id === row.id ? { ...r, position: { id: nextId, title: positions.find(p=>p.id===nextId)?.title ?? "Unassigned" }, source: { ...r.source, positionId: nextId } } : r)));
                           try {
                             await patchCandidacy(electionId, row.id, { position_id: nextId });
                             toast.success("Position updated");
-                          } catch (err: any) {
-                            setRows(rs => rs.map(r => (r.id === row.id ? { ...r, positionId: prevId, positionTitle: positions.find(p=>p.id===(prevId ?? -1))?.title ?? undefined } : r)));
+                          } catch (err: unknown) {
+                            const info = err as AxiosError<unknown>;
+                            setRows(rs => rs.map(r => (r.id === row.id ? { ...r, position: { id: prevId, title: positions.find(p=>p.id===(prevId ?? -1))?.title ?? "Unassigned" }, source: { ...r.source, positionId: prevId } } : r)));
                             // >>> PAPSAS v1.4 BEGIN
-                            toast.apiError?.(err, "Failed to update position");
+                            toast.apiError?.(info, "Failed to update position");
                             // <<< PAPSAS v1.4 END
                           }
                         }}
@@ -121,15 +156,16 @@ export const CandidacyTable: React.FC<{ electionId: number; readOnly?: boolean }
                           checked={row.status}
                           onChange={async (e) => {
                             const prev = row.status;
-                            setRows(rs => rs.map(r => (r.id === row.id ? { ...r, status: e.target.checked } : r)));
+                            setRows(rs => rs.map(r => (r.id === row.id ? { ...r, status: e.target.checked ? "approved" : "disabled", active: e.target.checked, source: { ...r.source, _status: e.target.checked } } : r)));
                             try {
                               await updateCandidacy(electionId, row.id, { status: e.target.checked });
-                            } catch (err: any) {
-                              // >>> PAPSAS v1.4 BEGIN
-                              toast.apiError?.(err, "Update failed");
-                              // <<< PAPSAS v1.4 END
-                              setRows(rs => rs.map(r => (r.id === row.id ? { ...r, status: prev } : r)));
-                            }
+                          } catch (err: unknown) {
+                            const info = err as AxiosError<unknown>;
+                            // >>> PAPSAS v1.4 BEGIN
+                            toast.apiError?.(info, "Update failed");
+                            // <<< PAPSAS v1.4 END
+                            setRows(rs => rs.map(r => (r.id === row.id ? { ...r, status: prev, active: prev === "approved", source: { ...r.source, _status: prev === "approved" } } : r)));
+                          }
                           }}
                         />
                         <span>{row.status ? "Enabled" : "Disabled"}</span>
@@ -153,11 +189,10 @@ export const CandidacyTable: React.FC<{ electionId: number; readOnly?: boolean }
                             await deleteCandidacy(electionId, row.id);
                             await refresh();
                             toast.success("Candidate removed");
-                          } catch (err: any) {
-                            
-                            
+                          } catch (err: unknown) {
                             // >>> PAPSAS v1.4 BEGIN
-                            toast.apiError?.(err, "Delete failed");
+                            const info = err as AxiosError<unknown>;
+                            toast.apiError?.(info, "Delete failed");
                             // <<< PAPSAS v1.4 END
                             setRows(prev); // rollback
                           }

@@ -52,7 +52,7 @@ export const CandidacyFormModal: React.FC<Props> = ({ electionId, open, initial,
         const q = memberQuery.trim();
         const viaUsers = await searchUsers(q);
         if (Array.isArray(viaUsers) && viaUsers.length) {
-          setMemberOptions(viaUsers.map(u => ({ id: u.id, name: u.name, email: u.email })) as any);
+          setMemberOptions(viaUsers.map(u => ({ id: u.id, name: u.name, email: u.email })));
         } else {
           const viaMembers = await searchMembers(q);
           setMemberOptions(viaMembers);
@@ -84,7 +84,7 @@ export const CandidacyFormModal: React.FC<Props> = ({ electionId, open, initial,
             <label className="block text-sm font-medium">Pick existing member</label>
             <input
               value={memberQuery}
-              onChange={e => setMemberQuery(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setMemberQuery(e.target.value)}
               placeholder="Search name or email…"
               className="mt-1 w-full border rounded p-2"
             />
@@ -106,9 +106,9 @@ export const CandidacyFormModal: React.FC<Props> = ({ electionId, open, initial,
 
           <div>
             <label className="block text-sm font-medium">Or quick add</label>
-            <input value={name} onChange={e => setName(e.target.value)} placeholder="Full name"
+            <input value={name} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setName(e.target.value)} placeholder="Full name"
                    className="mt-1 w-full border rounded p-2"/>
-            <input value={email} onChange={e => setEmail(e.target.value)} placeholder="Email (optional)"
+            <input value={email} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)} placeholder="Email (optional)"
                    className="mt-2 w-full border rounded p-2"/>
           </div>
         </div>
@@ -117,7 +117,7 @@ export const CandidacyFormModal: React.FC<Props> = ({ electionId, open, initial,
         <div className="mt-4 grid grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium">Position</label>
-            <select value={positionId ?? ""} onChange={e => setPositionId(Number(e.target.value))}
+            <select value={positionId ?? ""} onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setPositionId(Number(e.target.value))}
                     className="mt-1 w-full border rounded p-2">
               <option value="" disabled>— Select —</option>
               {positions.map(p => <option key={p.id} value={p.id}>{p.title}</option>)}
@@ -125,7 +125,7 @@ export const CandidacyFormModal: React.FC<Props> = ({ electionId, open, initial,
           </div>
           <div className="flex items-end">
             <label className="inline-flex items-center gap-2">
-              <input type="checkbox" checked={status} onChange={e => setStatus(e.target.checked)} />
+              <input type="checkbox" checked={status} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setStatus(e.target.checked)} />
               <span>Status: {status ? "Enabled" : "Disabled"}</span>
             </label>
           </div>
@@ -133,7 +133,7 @@ export const CandidacyFormModal: React.FC<Props> = ({ electionId, open, initial,
 
         <div className="mt-4">
           <label className="block text-sm font-medium">Credentials</label>
-          <textarea value={credentials} onChange={e => setCredentials(e.target.value)}
+          <textarea value={credentials} onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setCredentials(e.target.value)}
                     rows={4} className="mt-1 w-full border rounded p-2" />
         </div>
 
@@ -155,7 +155,7 @@ export const CandidacyFormModal: React.FC<Props> = ({ electionId, open, initial,
                   status,
                 });
                 onClose();
-              } catch (e: any) {
+              } catch (e: unknown) {
                 // >>> PAPSAS v1.4 BEGIN
                 toast.apiError?.(e, "Save failed");
                 const resp = e?.response?.data;

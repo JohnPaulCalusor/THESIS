@@ -1,122 +1,94 @@
-import React, { createContext, useContext, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { createContext, useContext, useEffect, useMemo, useRef, useState } from "react";
 
-type ToastKind = "success" | "error" | "info";
-type ToastItem = { id: string; kind: ToastKind; title?: string; message?: string; ttlMs?: number };
-
-type ToastAPI = {
-  success: (m: string, title?: string) => void;
-  error: (m: string, title?: string) => void;
-  info: (m: string, title?: string) => void;
-  // >>> PAPSAS v1.3 BEGIN
-  apiError?: (err: any, fallback?: string) => void;
-  // <<< PAPSAS v1.3 END
+type ToastKind = "info" | "success" | "error";
+type ToastItem = {
+  id: string;
+  kind: ToastKind;
+  message: string;
+  timeoutMs?: number;
 };
 
-const ToastContext = createContext<ToastAPI | null>(null);
-export const useToast = () => {
-  const ctx = useContext(ToastContext);
-  if (!ctx) throw new Error("useToast must be used within <ToastProvider/>");
-  return ctx;
+type ToastCtx = {
+  show: (message: string, kind?: ToastKind, timeoutMs?: number) => string;
+  success: (message: string, timeoutMs?: number) => string;
+  error: (message: string, timeoutMs?: number) => string;
+  dismiss: (id: string) => void;
 };
 
-const MAX_VISIBLE = 3;
-const DEFAULT_TTL = 3500;
+const Ctx = createContext<ToastCtx | null>(null);
 
-export const ToastProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
-  const [visible, setVisible] = useState<ToastItem[]>([]);
-  const [queue, setQueue] = useState<ToastItem[]>([]);
-  const timers = useRef<Map<string, number>>(new Map());
+export function useToast(): ToastCtx {
+  const v = useContext(Ctx);
+  if (!v) throw new Error("ToastProvider is missing");
+  return v;
+}
 
-  const dequeueIfPossible = useCallback(() => {
-    setVisible((v) => {
-      if (v.length >= MAX_VISIBLE) return v;
-      let next: ToastItem | undefined;
-      setQueue((q) => {
-        if (q.length === 0) return q;
-        next = q[0];
-        return q.slice(1);
-      });
-      return next ? [...v, next] : v;
-    });
+export function ToastProvider({ children }: { children: React.ReactNode }) {
+  const [items, setItems] = useState<ToastItem[]>([]);
+  const timers = useRef<Record<string, number>>({});
+
+  const dismiss = React.useCallback((id: string) => {
+    setItems((xs) => xs.filter((x) => x.id !== id));
+    const t = timers.current[id];
+    if (t) {
+      window.clearTimeout(t);
+      delete timers.current[id];
+    }
   }, []);
 
-  const add = useCallback((kind: ToastKind, message: string, title?: string, ttlMs?: number) => {
-    const id = typeof crypto !== "undefined" && "randomUUID" in crypto ? crypto.randomUUID() : String(Math.random());
-    const t: ToastItem = { id, kind, message, title, ttlMs: ttlMs ?? DEFAULT_TTL };
-    setQueue((q) => [...q, t]);
-  }, []);
+  const show = React.useCallback(
+    (message: string, kind: ToastKind = "info", timeoutMs = 3000) => {
+      const id = Math.random().toString(36).slice(2);
+      const item: ToastItem = { id, kind, message, timeoutMs };
+      setItems((xs) => [...xs, item]);
 
-  useEffect(() => { if (visible.length < MAX_VISIBLE) dequeueIfPossible(); }, [queue, visible.length, dequeueIfPossible]);
+      if (timeoutMs > 0) {
+        const tid = window.setTimeout(() => dismiss(id), timeoutMs);
+        timers.current[id] = tid;
+      }
+      return id;
+    },
+    [dismiss]
+  );
+
+  const success = React.useCallback((message: string, timeoutMs?: number) => show(message, "success", timeoutMs), [show]);
+  const error = React.useCallback((message: string, timeoutMs?: number) => show(message, "error", timeoutMs), [show]);
 
   useEffect(() => {
-    visible.forEach((t) => {
-      if (timers.current.has(t.id)) return;
-      const h = window.setTimeout(() => {
-        setVisible((v) => v.filter((x) => x.id !== t.id));
-        timers.current.delete(t.id);
-      }, t.ttlMs ?? DEFAULT_TTL);
-      timers.current.set(t.id, h as unknown as number);
-    });
-    return () => { timers.current.forEach((h) => window.clearTimeout(h)); };
-  }, [visible]);
+    const initialTimers = timers.current;
+    return () => {
+      Object.values(initialTimers).forEach((tid) => window.clearTimeout(tid));
+    };
+  }, []);
 
-  useEffect(() => { if (visible.length < MAX_VISIBLE) dequeueIfPossible(); }, [visible.length, dequeueIfPossible]);
-
-  const api = useMemo<ToastAPI>(() => ({
-    success: (m, title) => add("success", m, title),
-    error:   (m, title) => add("error", m, title),
-    info:    (m, title) => add("info", m, title),
-    // >>> PAPSAS v1.3 BEGIN
-    apiError: (err: any, fallback?: string) => {
-      const status = err?.response?.status;
-      const code = err?.response?.data?.code;
-      const message = err?.response?.data?.message || err?.message || fallback || "Request failed";
-      if (status === 403) return add("error", "Admins only", "403");
-      if (status === 409) return add("error", code === "ALREADY_VOTED" ? "Already voted" : "Already exists", "409");
-      if (status === 422) {
-        let firstFieldMsg = "";
-        const data = err?.response?.data;
-        if (data && typeof data === 'object') {
-          for (const k of Object.keys(data)) {
-            if (k !== 'code' && k !== 'message') {
-              const v = (data as any)[k];
-              if (typeof v === 'string' && v) { firstFieldMsg = v; break; }
-              if (Array.isArray(v) && v.length && typeof v[0] === 'string') { firstFieldMsg = v[0]; break; }
-            }
-          }
-        }
-        return add("error", firstFieldMsg || message || "Validation error", "422");
-      }
-      add("error", message);
-    },
-    // <<< PAPSAS v1.3 END
-    // >>> PAPSAS v1.4 BEGIN
-    // 422 support: pick first field error or provided message
-    // (backend returns { code, message } for validation; still handle 422 just in case)
-    // Note: keep behavior additive; do not change existing mappings.
-    // <<< PAPSAS v1.4 END
-  }), [add]);
+  const value = useMemo<ToastCtx>(() => ({ show, success, error, dismiss }), [show, success, error, dismiss]);
 
   return (
-    <ToastContext.Provider value={api}>
+    <Ctx.Provider value={value}>
       {children}
-      <div className="fixed bottom-4 right-4 z-[9999] flex flex-col gap-2 w-[min(92vw,360px)]">
-        {visible.map((t) => (
+      {/* very lightweight renderer */}
+      <div className="toast-stack" style={{ position: "fixed", right: 16, bottom: 16, display: "grid", gap: 8, zIndex: 50 }}>
+        {items.map((t) => (
           <div
             key={t.id}
-            className={[
-              "rounded-2xl shadow-lg p-3 border text-sm",
-              t.kind === "success" ? "bg-emerald-600/90 text-white border-emerald-700"
-              : t.kind === "error"   ? "bg-rose-600/90 text-white border-rose-700"
-              :                        "bg-slate-800/90 text-white border-slate-700"
-            ].join(" ")}
-            role="status" aria-live="polite"
+            role="status"
+            className="toast"
+            style={{
+              padding: "10px 12px",
+              borderRadius: 8,
+              background: t.kind === "error" ? "#fee2e2" : t.kind === "success" ? "#dcfce7" : "#eef2ff",
+              color: "#111827",
+              boxShadow: "0 4px 14px rgba(0,0,0,.08)",
+              minWidth: 240,
+            }}
           >
-            {t.title && <div className="font-semibold mb-0.5">{t.title}</div>}
-            <div>{t.message}</div>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
+              <div style={{ fontSize: 14 }}>{t.message}</div>
+              <button onClick={() => dismiss(t.id)} style={{ fontSize: 12, opacity: 0.8 }}>×</button>
+            </div>
           </div>
         ))}
       </div>
-    </ToastContext.Provider>
+    </Ctx.Provider>
   );
-};
+}

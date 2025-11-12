@@ -1,5 +1,6 @@
 // >>> PAPSAS v1.3 BEGIN
 import { http } from "../../lib/http";
+import type { AxiosError } from "axios";
 
 export type UserLite = { id: number; name?: string; email?: string; username?: string };
 
@@ -10,17 +11,27 @@ export async function searchUsers(query: string): Promise<UserLite[]> {
   if (!q) return [];
   try {
     const { data } = await http.get("users", { params: { query: q } });
-    const arr = Array.isArray(data) ? data : ((data as any)?.results || (data as any)?.items || []);
-    return arr.map((u: any) => ({
-      id: Number(u.id),
-      name: u.name || u.full_name || u.display_name || u.username,
-      email: u.email || u.user_email,
-      username: u.username,
+    const arr: unknown[] = Array.isArray(data)
+      ? data
+      : Array.isArray((data as Record<string, unknown>)?.results)
+        ? ((data as Record<string, unknown>).results as unknown[])
+        : Array.isArray((data as Record<string, unknown>)?.items)
+          ? ((data as Record<string, unknown>).items as unknown[])
+          : [];
+    return arr.map((u) => ({
+      id: Number((u as Record<string, unknown>).id),
+      name:
+        (u as Record<string, unknown>).name ||
+        (u as Record<string, unknown>).full_name ||
+        (u as Record<string, unknown>).display_name ||
+        (u as Record<string, unknown>).username,
+      email: (u as Record<string, unknown>).email || (u as Record<string, unknown>).user_email,
+      username: (u as Record<string, unknown>).username,
     }));
-  } catch (e: any) {
-    const status = e?.response?.status;
+  } catch (e: unknown) {
+    const ax = e as AxiosError<unknown>;
+    const status = ax.response?.status;
     if (status === 404) return [];
-    // Be quiet on other errors; caller may show a generic toast
     return [];
   }
 }

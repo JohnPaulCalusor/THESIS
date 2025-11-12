@@ -1,6 +1,8 @@
 // src/modules/pages/OfficerResults.tsx
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useToast } from "../ui/Toast";
+import { useAuth } from "../auth/AuthProvider";
+import { isAdminUser } from "../auth/roles";
 import http from "../lib/http";
 import { downloadCsv } from "../lib/csv";
 import { getAnalytics, postExplain } from "../election/services/analyticsApi";
@@ -28,20 +30,26 @@ type ApiJson = {
   }[];
 };
 
-type Tot = { candidate_id: number; name: string; count: number };
+type Tot = { candidate_id: number; name?: string; count: number; share?: number };
+type Pos = { id: number; title?: string; totals: Tot[] };
 type Position = { id: number; title: string; totals: Tot[] };
 type Results = { election: { id: number; title?: string }; positions: Position[] };
 
 /* ---------- page ---------- */
 export default function OfficerResults() {
   const { election } = useElection();
+  const { user } = useAuth();
   const [data, setData] = useState<Results | null>(null);
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState<{ code: number; msg: string; body?: string } | null>(null);
   const [updatedAt, setUpdatedAt] = useState<Date | null>(null);
   const pollRef = useRef<number | null>(null);
   const toast = useToast();
-  const [, setPanel] = useState<{ kind: "analytics" | "explain"; payload: AnalyticsDTO | ExplainDTO } | null>(null);
+
+  const canViewInsights =
+    Boolean(user) &&
+    (isAdminUser(user) || (user?.groups || []).some((g) => String(g).toLowerCase() === "officer"));
+  const [panel, setPanel] = useState<{ kind: "analytics" | "explain"; payload: AnalyticsDTO | ExplainDTO } | null>(null);
 
   const effectiveId = election?.id?.toString();
 
@@ -53,9 +61,10 @@ export default function OfficerResults() {
       const normalized = normalize(res.data, Number(effectiveId));
       setData(normalized);
       setUpdatedAt(new Date());
-    } catch (e: any) {
-      const code = e?.response?.status ?? 0;
-      const body = typeof e?.response?.data === "string" ? e.response.data : "";
+    } catch (e: unknown) {
+      const ax = e as { response?: { status?: number; data?: unknown } };
+      const code = ax.response?.status ?? 0;
+      const body = typeof ax.response?.data === "string" ? ax.response?.data : "";
       setErr({
         code,
         msg:
@@ -86,6 +95,12 @@ export default function OfficerResults() {
       if (pollRef.current) window.clearInterval(pollRef.current);
     };
   }, [fetchOnce]);
+
+  useEffect(() => {
+    if (!canViewInsights) {
+      setPanel(null);
+    }
+  }, [canViewInsights]);
 
   async function downloadCSV(electionId: number): Promise<boolean> {
     try {
@@ -133,24 +148,26 @@ export default function OfficerResults() {
   }, [data, effectiveId]);
 
   const onAnalytics = useCallback(async () => {
+    if (!canViewInsights) return;
     try {
       if (!effectiveId) return;
       const res = await getAnalytics(Number(effectiveId));
       setPanel({ kind: "analytics", payload: res });
-    } catch (e: any) {
+    } catch (e: unknown) {
       toast.error(e?.response?.data?.message || e?.message || "Failed to load analytics");
     }
-  }, [effectiveId, toast]);
+  }, [effectiveId, toast, canViewInsights]);
 
   const onExplain = useCallback(async () => {
+    if (!canViewInsights) return;
     try {
       if (!effectiveId) return;
       const res = await postExplain(Number(effectiveId), { style: "short" });
       setPanel({ kind: "explain", payload: res });
-    } catch (e: any) {
+    } catch (e: unknown) {
       toast.error(e?.response?.data?.message || e?.message || "Failed to load explanation");
     }
-  }, [effectiveId, toast]);
+  }, [effectiveId, toast, canViewInsights]);
 
   if (!effectiveId) return <Loader text="No active election." />;
   if (loading) return <Loader text="Loading results?" />;
@@ -194,10 +211,87 @@ export default function OfficerResults() {
           <div className="flex gap-2">
             <button onClick={fetchOnce} className="btn btn-secondary">Refresh</button>
             <button onClick={onDownloadCsv} className="btn btn-primary">Download CSV</button>
-            <button onClick={onAnalytics} className="btn btn-secondary">Analytics</button>
-            <button onClick={onExplain} className="btn btn-secondary">Explain</button>
+            {canViewInsights && (
+              <>
+                <button onClick={onAnalytics} className="btn btn-secondary">Analytics</button>
+                <button onClick={onExplain} className="btn btn-secondary">Explain</button>
+              </>
+            )}
           </div>
         </div>
+
+        {panel && canViewInsights && (
+          <div className="card mb-6">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-lg font-medium">{panel.kind === "analytics" ? "Analytics" : "Explain"}</h3>
+              <button className="text-sm underline" onClick={() => setPanel(null)}>Close</button>
+            </div>
+            {panel.kind === "analytics" ? (
+              <div className="overflow-auto">
+                <table className="min-w-full text-sm">
+                  <thead className="bg-gray-50">
+                    <tr className="[&>th]:px-3 [&>th]:py-2 text-left">
+                      <th>Position</th>
+                      <th>Candidate</th>
+                      <th>Votes</th>
+                      <th>Share</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {(() => {
+                      const a = panel.payload as AnalyticsDTO;
+                      const positions: Pos[] = Array.isArray(a?.positions) ? (a.positions as unknown as Pos[]) : [];
+                      return positions.flatMap((pos) => (
+                        (pos.totals || []).map((t, idx) => (
+                          <tr key={`${pos.id}-${idx}`} className="border-t [&>td]:px-3 [&>td]:py-2">
+                            <td>{pos.title}</td>
+                            <td>{t.name || `#${t.candidate_id}`}</td>
+                            <td>{t.count}</td>
+                            <td>{Math.round((t.share ?? 0) * 100)}%</td>
+                          </tr>
+                        ))
+                      ));
+                    })()}
+                  </tbody>
+                </table>
+                {(() => {
+                  const a = panel.payload as AnalyticsDTO;
+                  const positions: Pos[] = Array.isArray(a?.positions) ? (a.positions as unknown as Pos[]) : [];
+                  const totalVotes = a?.meta?.totalVotes;
+                  const positionsCount = positions.length;
+                  const shares: number[] = positions.flatMap((p) => (p.totals || []).map((t) => Number(t.share ?? 0)));
+                  let topShare: number | undefined;
+                  if (shares.length) topShare = Math.round(Math.max(...shares) * 100);
+                  return (
+                    <div className="flex gap-4 text-xs subtle mt-2">
+                      {totalVotes != null && <div>Total votes: {totalVotes}</div>}
+                      {positionsCount != null && <div>Positions: {positionsCount}</div>}
+                      {topShare != null && <div>Top share: {topShare}%</div>}
+                    </div>
+                  );
+                })()}
+              </div>
+            ) : (
+              (() => {
+                const p = panel.payload as ExplainDTO;
+                const short = p?.short ?? p?.text ?? "";
+                const long = p?.long ?? p?.text ?? "";
+                return (
+                  <div className="text-sm">
+                    {short && <div className="mb-2 whitespace-pre-wrap">{short}</div>}
+                    {long && long !== short && (
+                      <details>
+                        <summary className="cursor-pointer">Show details</summary>
+                        <pre className="mt-2 whitespace-pre-wrap text-xs">{long}</pre>
+                      </details>
+                    )}
+                    {!short && !long && <div className="subtle">(no data)</div>}
+                  </div>
+                );
+              })()
+            )}
+          </div>
+        )}
 
         <div className="space-y-8">
           {data.positions.map((p) => (

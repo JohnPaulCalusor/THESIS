@@ -1,4 +1,4 @@
-﻿import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import http, { getTokens, setTokens, clearTokens } from "../lib/http";
 
 export type User = {
@@ -27,11 +27,54 @@ export function useAuth(): AuthCtx {
   return v;
 }
 
-async function tryGet<T=any>(url: string): Promise<T | null> {
+async function tryGet<T = unknown>(url: string): Promise<T | null> {
   try {
     const { data } = await http.get(url);
     return data as T;
-  } catch { return null; }
+  } catch {
+    return null;
+  }
+}
+
+type Loose = Record<string, unknown>;
+function normalizeUser(data: unknown): User {
+  const raw = (data ?? {}) as Loose & { user?: Loose };
+
+  const userObj = (typeof raw.user === "object" && raw.user !== null) ? (raw.user as Loose) : undefined;
+
+  const id =
+    (typeof raw.id === "number" ? raw.id : undefined) ??
+    (typeof raw["user_id"] === "number" ? (raw["user_id"] as number) : undefined) ??
+    (typeof raw["pk"] === "number" ? (raw["pk"] as number) : undefined) ??
+    (typeof userObj?.id === "number" ? (userObj.id as number) : undefined);
+
+  const username =
+    (typeof raw.username === "string" ? raw.username : undefined) ??
+    (typeof userObj?.username === "string" ? (userObj.username as string) : undefined);
+
+  const email =
+    (typeof raw.email === "string" ? raw.email : undefined) ??
+    (typeof userObj?.email === "string" ? (userObj.email as string) : undefined);
+
+  const roleVal =
+    (typeof raw.role === "string" ? raw.role : undefined) ??
+    (typeof userObj?.role === "string" ? (userObj.role as string) : undefined) ??
+    null;
+
+  const groupsVal: string[] =
+    Array.isArray(raw.groups) ? (raw.groups.filter(x => typeof x === "string") as string[]) :
+    Array.isArray(userObj?.groups) ? ((userObj!.groups as unknown[]).filter(x => typeof x === "string") as string[]) :
+    [];
+
+  const is_staff =
+    typeof raw["is_staff"] === "boolean" ? (raw["is_staff"] as boolean) :
+    (typeof userObj?.["is_staff"] === "boolean" ? (userObj!["is_staff"] as boolean) : undefined);
+
+  const is_superuser =
+    typeof raw["is_superuser"] === "boolean" ? (raw["is_superuser"] as boolean) :
+    (typeof userObj?.["is_superuser"] === "boolean" ? (userObj!["is_superuser"] as boolean) : undefined);
+
+  return { id, username, email, role: roleVal, groups: groupsVal, is_staff, is_superuser };
 }
 
 export default function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -40,22 +83,11 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
   const [intendedPath, setIntendedPath] = useState<string | null>(null);
 
   const whoAmI = useCallback(async () => {
-    // Try a few common endpoints, first success wins
     const urls = ["users/me", "auth/me", "me", "auth/user", "auth/profile"];
     for (const u of urls) {
-      const data = await tryGet<any>(u);
+      const data = await tryGet<unknown>(u);
       if (data) {
-        // normalize some common shapes
-        const norm: User = {
-          id: data.id ?? data.user_id ?? data.pk,
-          username: data.username ?? data.user?.username,
-          email: data.email ?? data.user?.email,
-          role: data.role ?? data.user?.role ?? null,
-          groups: data.groups ?? data.user?.groups ?? [],
-          is_staff: data.is_staff ?? data.user?.is_staff,
-          is_superuser: data.is_superuser ?? data.user?.is_superuser,
-        };
-        setUser(norm);
+        setUser(normalizeUser(data));
         return true;
       }
     }
@@ -79,10 +111,10 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
     setLoading(true);
     try {
       const { data } = await http.post("auth/login", { username, password });
-      const access = data?.access ?? data?.token ?? data?.access_token;
-      const refresh = data?.refresh ?? data?.refresh_token;
-      if (!access) throw new Error("Login did not return access token");
-      setTokens({ access, refresh });
+      const access = (data as Loose)?.["access"] ?? (data as Loose)?.["token"] ?? (data as Loose)?.["access_token"];
+      const refresh = (data as Loose)?.["refresh"] ?? (data as Loose)?.["refresh_token"];
+      if (!access || typeof access !== "string") throw new Error("Login did not return access token");
+      setTokens({ access: String(access), refresh: typeof refresh === "string" ? refresh : undefined });
       await whoAmI();
     } finally {
       setLoading(false);

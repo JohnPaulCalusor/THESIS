@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { type Position, listPositions, createPosition, updatePosition, deletePosition } from "../services/electionApi";
 
 export const PositionsTab: React.FC<{ electionId: number }> = ({ electionId }) => {
@@ -8,20 +8,20 @@ export const PositionsTab: React.FC<{ electionId: number }> = ({ electionId }) =
   const [title, setTitle] = useState("");
   const [busyId, setBusyId] = useState<number | "new" | null>(null);
 
-  const refresh = async () => {
+  const refresh = useCallback(async () => {
     if (!electionId) return;
     setLoading(true); setErr(null);
     try {
       const data = await listPositions(electionId);
       setRows(data.sort((a,b) => (a.sort ?? 0) - (b.sort ?? 0) || a.id - b.id));
-    } catch (e: any) {
-      setErr(e?.message || "Failed to load positions");
+    } catch (e: unknown) {
+      setErr(e instanceof Error ? e.message : "Failed to load positions");
     } finally {
       setLoading(false);
     }
-  };
+  }, [electionId]);
 
-  useEffect(() => { void refresh(); }, [electionId]);
+  useEffect(() => { void refresh(); }, [refresh]);
 
   const canAdd = title.trim().length > 0 && !busyId;
 
@@ -32,8 +32,8 @@ export const PositionsTab: React.FC<{ electionId: number }> = ({ electionId }) =
       const created = await createPosition(electionId, { title: t.trim(), enabled: true, sort: presetSort ?? (rows.length + 1) });
       setRows((r) => [...r, created]);
       setTitle("");
-    } catch (e: any) {
-      alert(e?.message || "Create failed");
+    } catch (e: unknown) {
+      alert(e instanceof Error ? e.message : "Create failed");
     } finally {
       setBusyId(null);
     }
@@ -44,8 +44,8 @@ export const PositionsTab: React.FC<{ electionId: number }> = ({ electionId }) =
     try {
       const updated = await updatePosition(row.id, { enabled: !row.enabled });
       setRows(r => r.map(x => x.id === row.id ? updated : x));
-    } catch (e: any) {
-      alert(e?.message || "Update failed");
+    } catch (e: unknown) {
+      alert(e instanceof Error ? e.message : "Update failed");
     } finally {
       setBusyId(null);
     }
@@ -56,8 +56,8 @@ export const PositionsTab: React.FC<{ electionId: number }> = ({ electionId }) =
     try {
       const updated = await updatePosition(row.id, { title: newTitle.trim() || row.title });
       setRows(r => r.map(x => x.id === row.id ? updated : x));
-    } catch (e: any) {
-      alert(e?.message || "Rename failed");
+    } catch (e: unknown) {
+      alert(e instanceof Error ? e.message : "Rename failed");
     } finally {
       setBusyId(null);
     }
@@ -70,8 +70,8 @@ export const PositionsTab: React.FC<{ electionId: number }> = ({ electionId }) =
     setRows(r => r.filter(x => x.id !== row.id));
     try {
       await deletePosition(row.id);
-    } catch (e: any) {
-      alert(e?.message || "Delete failed");
+    } catch (e: unknown) {
+      alert(e instanceof Error ? e.message : "Delete failed");
       setRows(snapshot);
     } finally {
       setBusyId(null);

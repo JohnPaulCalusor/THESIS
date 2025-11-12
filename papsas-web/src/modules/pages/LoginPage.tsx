@@ -15,8 +15,11 @@ export default function LoginPage() {
 
   // If we landed here from a protected route, remember it once
   useEffect(() => {
-    if (!intendedPath && loc.state && (loc.state as any)?.from) {
-      setIntendedPath((loc.state as any).from as string);
+    if (!intendedPath && loc.state && typeof loc.state === "object" && loc.state !== null && "from" in loc.state) {
+      const from = (loc.state as { from?: string }).from;
+      if (typeof from === "string") {
+        setIntendedPath(from);
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -30,15 +33,18 @@ export default function LoginPage() {
     }
   }, [user, intendedPath, setIntendedPath, nav]);
 
-  async function onSubmit(e: React.FormEvent) {
+  const onUser = (e: React.ChangeEvent<HTMLInputElement>) => setUsername(e.target.value);
+  const onPass = (e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value);
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError(null);
     setSubmitting(true);
     try {
       await login(username, password);
       // nav will also run from the effect when user is set
-    } catch (err: any) {
-      setError(err?.response?.data?.message || err?.message || "Login failed");
+    } catch (err: unknown) {
+      const info = err as { response?: { data?: { message?: string } }; message?: string };
+      setError(info.response?.data?.message || info.message || "Login failed");
     } finally {
       setSubmitting(false);
     }
@@ -55,7 +61,7 @@ export default function LoginPage() {
             <input
               className="w-full rounded-md border px-3 py-2 bg-[var(--muted-bg)]"
               value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              onChange={onUser}
               autoComplete="username"
             />
           </div>
@@ -65,7 +71,7 @@ export default function LoginPage() {
               type="password"
               className="w-full rounded-md border px-3 py-2 bg-[var(--muted-bg)]"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={onPass}
               autoComplete="current-password"
             />
           </div>

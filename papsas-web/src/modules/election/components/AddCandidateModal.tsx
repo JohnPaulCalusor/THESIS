@@ -61,7 +61,7 @@ export const AddCandidateModal: React.FC<{
               placeholder="Search by name or email"
               className="mt-1 w-full border rounded p-2"
               value={member ? `${member.name ?? "Member"}${member.email ? ` <${member.email}>` : ""}` : memberQuery}
-              onChange={(e) => { setMember(null); setMemberQuery(e.target.value); }}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => { setMember(null); setMemberQuery(e.target.value); }}
             />
             {!member && memberHits.length > 0 && (
               <div className="mt-2 max-h-48 overflow-auto rounded border">
@@ -81,14 +81,14 @@ export const AddCandidateModal: React.FC<{
 
           <div>
             <label className="block text-sm font-medium">Or quick-add by email</label>
-            <input value={email} onChange={(e) => setEmail(e.target.value)} placeholder="email@example.com" className="mt-1 w-full border rounded p-2" />
-            <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Full name (optional)" className="mt-2 w-full border rounded p-2" />
+            <input value={email} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)} placeholder="email@example.com" className="mt-1 w-full border rounded p-2" />
+            <input value={name} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setName(e.target.value)} placeholder="Full name (optional)" className="mt-2 w-full border rounded p-2" />
           </div>
         </div>
 
         <div className="mt-4">
           <label className="block text-sm font-medium">Assign Position (optional)</label>
-          <select className="mt-1 border rounded p-2 w-full" value={positionId ?? ""} onChange={(e) => setPositionId(e.target.value ? Number(e.target.value) : null)}>
+          <select className="mt-1 border rounded p-2 w-full" value={positionId ?? ""} onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setPositionId(e.target.value ? Number(e.target.value) : null)}>
             <option value="">Unassigned</option>
             {positions.map(p => <option key={p.id} value={p.id}>{p.title}</option>)}
           </select>
@@ -108,9 +108,9 @@ export const AddCandidateModal: React.FC<{
                   await createAdminCandidacy(electionId, { email, name, position_id: positionId });
                 }
                 onAdded();
-              } catch (err: any) {
-                // >>> PAPSAS v1.3 BEGIN
-                toast.apiError?.(err, "Failed to add");
+              } catch (err: unknown) {
+                const ax = err as { response?: { data?: { message?: string } }; message?: string };
+                toast.apiError?.(ax, "Failed to add");
                 // Acceptance: 409 duplicate -> toast "Already exists"
                 // <<< PAPSAS v1.3 END
               } finally {
