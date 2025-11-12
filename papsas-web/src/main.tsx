@@ -3,7 +3,7 @@ import ReactDOM from "react-dom/client";
 import "./index.css";
 import { createBrowserRouter, RouterProvider, Outlet, Navigate } from "react-router-dom";
 import Topbar from "./modules/components/Topbar";
-import { AuthProvider } from "./modules/auth/AuthProvider";
+import AuthProvider from "./modules/auth/AuthProvider";
 import { ElectionProvider } from "./modules/election/context/ElectionContext";
 import Private from "./modules/components/Private";
 import RequireAdmin from "./modules/components/RequireAdmin";
@@ -31,21 +31,30 @@ const router = createBrowserRouter([
     children: [
       { path: "/", element: <Navigate to="/ballot" replace /> },
       { path: "/login", element: <Suspense fallback={null}><LoginPage /></Suspense> },
+
+      // protected ballot
+      { path: "/ballot", element: <Private><Suspense fallback={null}><BallotPage /></Suspense></Private> },
+
+      // admin-only
       {
-        element: <Private />,
-        children: [
-          { path: "/ballot", element: <Suspense fallback={null}><BallotPage /></Suspense> },
-          {
-            element: <RequireAdmin />,
-            children: [
-              { path: "/admin/election", element: <Suspense fallback={null}><AdminElectionPage /></Suspense> }
-            ]
-          }
-        ]
+        path: "/admin/election",
+        element: (
+          <Private>
+            <RequireAdmin>
+              <Suspense fallback={null}><AdminElectionPage /></Suspense>
+            </RequireAdmin>
+          </Private>
+        ),
       },
+
+      // public results
       { path: "/results", element: <Suspense fallback={null}><OfficerResults /></Suspense> },
+
+      // legacy redirects
       { path: "/elections/:id/ballot", element: <Navigate to="/ballot" replace /> },
       { path: "/elections/:id/results", element: <Navigate to="/results" replace /> },
+
+      // 404
       { path: "*", element: <div style={{ padding: 16 }}>Not found</div> }
     ]
   }

@@ -1,0 +1,36 @@
+--- a/papsas-web/src/modules/auth/AuthProvider.tsx
++++ b/papsas-web/src/modules/auth/AuthProvider.tsx
+@@
+-import { http, setTokens, clearTokens, hasAccess, initTokensFromStorage } from "../lib/http";
++import { http, setTokens, clearTokens, hasAccess, initTokensFromStorage } from "../lib/http";
++import { LOGIN_PATH } from "./constants";
+@@
+
+async function login(username: string, password: string) {
+const { data } = await http.post("/api/auth/login/", { username, password });
+async function login(username: string, password: string) {
+const { data } = await http.post(LOGIN_PATH, { username, password });
+setTokens(data.access, data.refresh); // persist both tokens
+setIsAuthed(true);
+try {
+const me = await whoAmI();
+setUser(me);
+--- /dev/null
++++ b/papsas-web/src/modules/utils/url.ts
+@@
++export function join(base: string, path: string): string {
+
+return ${base.replace(/\/$/, "")}/${path.replace(/^\//, "")};
++}
++export default { join };
+
+--- /dev/null
++++ b/papsas-web/src/modules/utils/api.ts
+@@
++import { http } from "../lib/http";
++export default http;
+
+--- /dev/null
++++ b/papsas-web/src/modules/auth/constants.ts
+@@
++export const LOGIN_PATH = "auth/login";

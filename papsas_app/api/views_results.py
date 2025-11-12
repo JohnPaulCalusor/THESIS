@@ -34,8 +34,9 @@ class ElectionResultsCsvView(APIView):
 
     def get(self, request, election_id: int):
         data = compute_election_results(election_id)
-        resp = HttpResponse(content_type="text/csv")
-        resp["Content-Disposition"] = f'attachment; filename="election_{election_id}_results.csv"'
+        # Ensure charset and legacy filename expected by tests.
+        resp = HttpResponse(content_type="text/csv; charset=utf-8")
+        resp["Content-Disposition"] = f'attachment; filename="results-election-{election_id}.csv"'
         writer = csv.writer(resp)
         writer.writerow(["position_id", "position_title", "candidacy_id", "candidate_id", "candidate_name", "count"])
         for pos in data.get("positions", []):

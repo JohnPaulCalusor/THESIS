@@ -35,7 +35,7 @@ export default function BallotPage() {
   const [selected, setSelected] = useState<number | null>(null); // at-large only
   const [submitting, setSubmitting] = useState(false);
   const [voted, setVoted] = useState(false); // freeze controls after success
-  const [debug, setDebug] = useState<{ tried: Array<{ url: string; status: number }>; winner?: string; payload?: any }>({ tried: [] });
+  const [debug, setDebug] = useState<{ tried: Array<{ url: string; status: number }>; winner?: string; payload?: unknown }>({ tried: [] });
 
   const effectiveId = election?.id?.toString();
   const positionMode = sections.length > 0; // true when API returns positions[]
@@ -64,7 +64,7 @@ export default function BallotPage() {
         // Build sections from positions (position mode)
         const pos = Array.isArray(payload.positions) ? payload.positions : [];
         const secs: Section[] = pos
-          .map((p: any) => ({
+          .map((p: Position) => ({
             id: Number(p.id),
             title: String(p.title ?? "Untitled"),
             winners: Math.max(1, Number((p as { winners?: number | null }).winners ?? 1) || 1),
@@ -85,9 +85,10 @@ export default function BallotPage() {
         }
 
         if (import.meta.env.DEV) setDebug({ tried: [{ url, status: 200 }], winner: url, payload });
-      } catch (e: any) {
-        const s = e?.response?.status ?? 0;
-        const payload = e?.response?.data;
+      } catch (e: unknown) {
+        const info = e as { response?: { status?: number; data?: unknown } };
+        const s = info.response?.status ?? 0;
+        const payload = info.response?.data;
         if (!cancelled) {
           setError({ code: s, msg: messageForStatus(s, "Failed to load ballot.") });
           if (import.meta.env.DEV) setDebug({ tried: [{ url, status: s }], payload });
@@ -140,7 +141,7 @@ export default function BallotPage() {
         const payload = res.data || {};
         const pos = Array.isArray(payload.positions) ? payload.positions : [];
         const secs: Section[] = pos
-          .map((p: any) => ({
+          .map((p: Position) => ({
             id: Number(p.id),
             title: String(p.title ?? "Untitled"),
             winners: Math.max(1, Number((p as { winners?: number | null }).winners ?? 1) || 1),
@@ -163,9 +164,10 @@ export default function BallotPage() {
       } catch {
         /* ignore */
       }
-    } catch (err: any) {
-      const s = err?.response?.status;
-      const data = err?.response?.data;
+    } catch (err: unknown) {
+      const info = err as { response?: { status?: number; data?: Record<string, unknown> } };
+      const s = info.response?.status;
+      const data = info.response?.data;
 
       if (data?.code === "TOO_MANY_FOR_POSITION" && s === 400) {
         const allowed = typeof data?.allowed === "number" ? data.allowed : "?";
@@ -348,7 +350,7 @@ function Blocked({ title, sub }: { title: string; sub: string }) {
     </div>
   );
 }
-function DevError({ code, msg, debug }: { code: number; msg: string; debug?: any }) {
+function DevError({ code, msg, debug }: { code: number; msg: string; debug?: unknown }) {
   return (
     <div className="page grid place-items-center px-4">
       <div className="card" style={{ borderColor: "rgba(248,113,113,.4)", background: "rgba(248,113,113,.1)" }}>

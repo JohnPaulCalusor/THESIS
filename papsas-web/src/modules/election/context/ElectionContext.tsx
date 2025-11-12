@@ -1,54 +1,44 @@
 import React, { createContext, useCallback, useEffect, useMemo, useState } from "react";
-import { http } from "../../lib/http";
+import http from "../../lib/http";
 
-export type Election = { id: number; title: string };
-type Ctx = {
+export type Election = { id: number; title?: string | null };
+export type ElectionContextShape = {
   election: Election | null;
-  loading: boolean;
-  error: string | null;
   refresh: () => Promise<void>;
+  loading: boolean;
 };
 
-export const ElectionContext = createContext<Ctx | null>(null);
+const Ctx = createContext<ElectionContextShape>({
+  election: null,
+  loading: false,
+  refresh: async () => {},
+});
 
-async function fetchJson<T>(url: string): Promise<T> {
-  try {
-    const { data } = await http.get(url);
-    return data as T;
-  } catch (e: any) {
-    const status = e?.response?.status;
-    const msg = e?.response?.data && typeof e.response.data === "string" ? e.response.data : e?.message;
-    const err = new Error(msg || (status ? `HTTP ${status}` : "Request failed"));
-    // @ts-expect-error attach status for callers
-    err.status = status;
-    throw err;
-  }
-}
+export const ElectionContext = Ctx;
 
 export const ElectionProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [election, setElection] = useState<Election | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setErr] = useState<string | null>(null);
 
   const refresh = useCallback(async () => {
     setLoading(true);
-    setErr(null);
     try {
-      const data = await fetchJson<Election>("/api/elections/current");
+      const { data } = await http.get<Election>("elections/current");
       setElection({ id: data.id, title: data.title });
-    } catch (e: any) {
-      if (e?.status === 404) {
-        setElection(null); // no active election
-      } else {
-        setErr(e?.message || "Failed to load current election");
+    } catch (e: unknown) {
+      const status = (e as { status?: number })?.status;
+      if (status === 404) {
+        setElection(null);
       }
     } finally {
       setLoading(false);
     }
   }, []);
 
-  useEffect(() => { void refresh(); }, [refresh]);
+  useEffect(() => {
+    void refresh();
+  }, [refresh]);
 
-  const value = useMemo(() => ({ election, loading, error: error, refresh }), [election, loading, error, refresh]);
+  const value = useMemo<ElectionContextShape>(() => ({ election, loading, refresh }), [election, loading, refresh]);
   return <ElectionContext.Provider value={value}>{children}</ElectionContext.Provider>;
 };

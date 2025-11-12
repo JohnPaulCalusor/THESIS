@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import models
 from django.db.models import UniqueConstraint, Q
 from django.contrib import admin
@@ -130,6 +131,45 @@ class User(AbstractUser):
     
     class Meta:
         ordering = ['id']
+
+
+class UserSecurity(models.Model):
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="security",
+    )
+    email_verified_at = models.DateTimeField(blank=True, null=True)
+    otp_hash = models.CharField(max_length=128, blank=True)
+    otp_expires_at = models.DateTimeField(blank=True, null=True)
+    otp_attempts = models.PositiveSmallIntegerField(default=0)
+    otp_locked_until = models.DateTimeField(blank=True, null=True)
+    otp_last_sent_at = models.DateTimeField(blank=True, null=True)
+
+    class Meta:
+        verbose_name = "user security guard"
+        verbose_name_plural = "user security guards"
+        ordering = ["user_id"]
+
+    def is_locked(self):
+        return bool(self.otp_locked_until and timezone.now() < self.otp_locked_until)
+
+    def clear_otp_state(self, *, update_fields=None):
+        self.otp_hash = ""
+        self.otp_expires_at = None
+        self.otp_attempts = 0
+        self.otp_locked_until = None
+        self.otp_last_sent_at = None
+        self.save(
+            update_fields=update_fields
+            or [
+                "otp_hash",
+                "otp_expires_at",
+                "otp_attempts",
+                "otp_locked_until",
+                "otp_last_sent_at",
+            ]
+        )
 
 
 class MembershipTypes(models.Model):

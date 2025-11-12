@@ -1,12 +1,18 @@
-import { Navigate, Outlet } from "react-router-dom";
+import React from "react";
+import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "../auth/AuthProvider";
-import { isAdmin } from "../auth/roles";
+import { isAdminUser } from "../auth/roles";
 
-export default function RequireAdmin() {
-  const { isAuthed, me, loading } = useAuth();
-  if (loading) return null;
-  if (!isAuthed) return <Navigate to="/login" replace />;
+export default function RequireAdmin({ children }: { children?: React.ReactNode }) {
+  const { user, loading, setIntendedPath } = useAuth();
+  const loc = useLocation();
 
-  if (!isAdmin(me)) return <div className="p-6 text-red-600">403 — Not authorized.</div>;
-  return <Outlet />;
+  if (loading) return null; // keep splash minimal; parent can show a spinner
+
+  if (!user || !isAdminUser(user)) {
+    setIntendedPath(loc.pathname + loc.search + loc.hash);
+    return <Navigate to="/login" replace />;
+  }
+
+  return <>{children}</>;
 }
