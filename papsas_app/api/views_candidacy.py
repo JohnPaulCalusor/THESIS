@@ -1,9 +1,10 @@
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import get_user_model
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAdminUser, AllowAny
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from papsas_app.api.permissions import IsAdminOnly
 from rest_framework import status
 
 from papsas_app.models import Candidacy, Election
@@ -33,9 +34,9 @@ class CandidacyQuickCreate(APIView):
     POST /api/elections/<election_id>/candidacies
     Body expects at least {"member_id": <int>} and may include
     {"credentials": "...", "status": true, "positionId": <int>}
-    Only admins can write (IsAdminUser).
+    Only admins can write (IsAdminOnly).
     """
-    permission_classes = [IsAdminUser]
+    permission_classes = [IsAdminOnly]
 
     def post(self, request, election_id: int):
         data = request.data or {}
@@ -76,7 +77,7 @@ class CandidacyQuickCreate(APIView):
 
 
 @api_view(["PATCH", "DELETE"])
-@permission_classes([IsAdminUser])
+@permission_classes([IsAdminOnly])
 def candidacy_partial_update(request, pk: int):
     """
     Minimal PATCH/DELETE helper for legacy tests.
