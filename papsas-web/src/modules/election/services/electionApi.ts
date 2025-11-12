@@ -18,12 +18,16 @@ export async function listPositions(electionId: number): Promise<Position[]> {
       enabled: r.enabled ?? true,
       sort: r.sort ?? 0,
     }));
-  } catch {}
+  } catch {
+    /* noop */
+  }
   try {
     const { data } = await http.get(`/api/positions`, { params: { election: electionId } });
     const rows = unwrap<Position>(data);
     return rows.map((r: any) => ({ id: r.id, title: r.title ?? r.name, enabled: r.enabled ?? true, sort: r.sort ?? 0 }));
-  } catch {}
+  } catch {
+    /* noop */
+  }
 
   // Fallback: derive from candidacies
   try {

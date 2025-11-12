@@ -1,6 +1,8 @@
 // src/modules/pages/OfficerResults.tsx
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useToast } from "../ui/Toast";
+import { useAuth } from "../auth/AuthProvider";
+import { isAdmin, isOfficer } from "../auth/roles";
 import { http } from "../lib/http";
 // >>> PAPSAS v1.3 BEGIN
 import { downloadCsv } from "../lib/csv";
@@ -43,6 +45,8 @@ export default function OfficerResults() {
   const [updatedAt, setUpdatedAt] = useState<Date | null>(null);
   const pollRef = useRef<number | null>(null);
   const toast = useToast();
+  const { me } = useAuth();
+  const canViewInsights = isAdmin(me) || isOfficer(me);
   const [panel, setPanel] = useState<{ kind: "analytics" | "explain"; payload: AnalyticsDTO | ExplainDTO } | null>(null);
 
   const effectiveId = election?.id?.toString();
@@ -89,6 +93,12 @@ export default function OfficerResults() {
       if (pollRef.current) window.clearInterval(pollRef.current);
     };
   }, [fetchOnce]);
+
+  useEffect(() => {
+    if (!canViewInsights) {
+      setPanel(null);
+    }
+  }, [canViewInsights]);
 
   async function downloadCSV(electionId: number): Promise<boolean> {
     const base = (import.meta.env.VITE_API_BASE as string) || "";
@@ -140,6 +150,7 @@ export default function OfficerResults() {
   }, [data, effectiveId]);
 
   const onAnalytics = useCallback(async () => {
+    if (!canViewInsights) return;
     try {
       if (!effectiveId) return;
       const res = await getAnalytics(Number(effectiveId));
@@ -147,9 +158,10 @@ export default function OfficerResults() {
     } catch (e: any) {
       toast.error(e?.response?.data?.message || e?.message || "Failed to load analytics");
     }
-  }, [effectiveId, toast]);
+  }, [effectiveId, toast, canViewInsights]);
 
   const onExplain = useCallback(async () => {
+    if (!canViewInsights) return;
     try {
       if (!effectiveId) return;
       const res = await postExplain(Number(effectiveId), { style: "short" });
@@ -157,7 +169,7 @@ export default function OfficerResults() {
     } catch (e: any) {
       toast.error(e?.response?.data?.message || e?.message || "Failed to load explanation");
     }
-  }, [effectiveId, toast]);
+  }, [effectiveId, toast, canViewInsights]);
 
   if (!effectiveId) return <Loader text="No active election." />;
   if (loading) return <Loader text="Loading results?" />;
@@ -201,12 +213,16 @@ export default function OfficerResults() {
           <div className="flex gap-2">
             <button onClick={fetchOnce} className="btn btn-secondary">Refresh</button>
             <button onClick={onDownloadCsv} className="btn btn-primary">Download CSV</button>
-            <button onClick={onAnalytics} className="btn btn-secondary">Analytics</button>
-            <button onClick={onExplain} className="btn btn-secondary">Explain</button>
+            {canViewInsights && (
+              <>
+                <button onClick={onAnalytics} className="btn btn-secondary">Analytics</button>
+                <button onClick={onExplain} className="btn btn-secondary">Explain</button>
+              </>
+            )}
           </div>
         </div>
 
-        {panel && (
+        {panel && canViewInsights && (
           <div className="card mb-6">
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-lg font-medium">{panel.kind === "analytics" ? "Analytics" : "Explain"}</h3>
@@ -412,9 +428,3 @@ function Loader({ text }: { text: string }) {
     </div>
   );
 }
-
-
-
-
-
-

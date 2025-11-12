@@ -35,7 +35,6 @@ const router = createBrowserRouter([
         element: <Private />,
         children: [
           { path: "/ballot", element: <Suspense fallback={null}><BallotPage /></Suspense> },
-          { path: "/results", element: <Suspense fallback={null}><OfficerResults /></Suspense> },
           {
             element: <RequireAdmin />,
             children: [
@@ -44,6 +43,7 @@ const router = createBrowserRouter([
           }
         ]
       },
+      { path: "/results", element: <Suspense fallback={null}><OfficerResults /></Suspense> },
       { path: "/elections/:id/ballot", element: <Navigate to="/ballot" replace /> },
       { path: "/elections/:id/results", element: <Navigate to="/results" replace /> },
       { path: "*", element: <div style={{ padding: 16 }}>Not found</div> }

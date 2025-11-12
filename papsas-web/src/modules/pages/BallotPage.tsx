@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { http } from "../lib/http";
 import { useElection } from "../election/hooks/useElection";
 import { useToast } from "../ui/Toast";
