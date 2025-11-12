@@ -94,11 +94,13 @@ class MeSerializer(serializers.ModelSerializer):
     is_member = serializers.SerializerMethodField()
     is_officer = serializers.SerializerMethodField()
     email_verified_at = serializers.SerializerMethodField()
+    groups = serializers.SerializerMethodField()
 
     class Meta:
         model = User
         fields = [
             "id",
+            "username",
             "email",
             "first_name",
             "last_name",
@@ -108,6 +110,7 @@ class MeSerializer(serializers.ModelSerializer):
             "is_officer",
             "email_verified",
             "email_verified_at",
+            "groups",
         ]
 
     def get_role(self, obj): return _role_of(obj)
@@ -119,6 +122,8 @@ class MeSerializer(serializers.ModelSerializer):
             return None
         timestamp = getattr(security, "email_verified_at", None)
         return timestamp.isoformat() if timestamp else None
+    def get_groups(self, obj):
+        return list(obj.groups.values_list("name", flat=True))
 
 
 class MeUpdateSerializer(serializers.ModelSerializer):
