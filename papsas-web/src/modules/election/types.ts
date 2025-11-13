@@ -3,7 +3,7 @@ export type AnalyticsDTO = {
   positions: {
     id: number;
     title: string;
-    totals: { candidacy_id: number; name: string; count: number; share: number }[];
+    totals: { candidate_id: number; name: string; count: number; share: number }[];
   }[];
   meta: { totalVotes: number };
 };

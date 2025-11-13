@@ -1,5 +1,36 @@
 import { http } from "../../lib/http";
 
+type RawPosition = { id?: number; title?: string };
+type RawCandidate = { name?: string; email?: string };
+type RawCandidacy = {
+  id?: number;
+  candidacyId?: number;
+  candidacy_id?: number;
+  positionId?: number;
+  position_id?: number;
+  position?: RawPosition;
+  positionTitle?: string;
+  position_title?: string;
+  position_name?: string;
+  name?: string;
+  candidate_name?: string;
+  candidate?: RawCandidate;
+  first_name?: string;
+  last_name?: string;
+  email?: string;
+  credentials?: string;
+  bio?: string;
+  platform?: string;
+  status?: boolean;
+  enabled?: boolean;
+  active?: boolean;
+  candidacyStatus?: boolean;
+};
+type ApiErrorLike = {
+  response?: { data?: { code?: string; message?: string }; status?: number };
+  message?: string;
+};
+
 export type Candidacy = {
   id: number;
   name: string;
@@ -8,6 +39,7 @@ export type Candidacy = {
   positionTitle?: string;
   credentials?: string;
   status: boolean; // true = enabled/active
+  candidacyStatus?: boolean;
 };
 
 export type CandidacyCreate = {
@@ -19,14 +51,21 @@ export type CandidacyCreate = {
   status?: boolean;
 };
 
-function unwrap<T = any>(data: any): T[] {
+export type CandidacyPatchPayload = {
+  position_id?: number | null;
+  candidacyStatus?: boolean;
+  credentials?: string;
+};
+
+function unwrap<T = unknown>(data: unknown): T[] {
   if (Array.isArray(data)) return data as T[];
-  if (data?.results && Array.isArray(data.results)) return data.results as T[];
-  if (data?.items && Array.isArray(data.items)) return data.items as T[];
+  const container = data as { results?: unknown; items?: unknown };
+  if (Array.isArray(container.results)) return container.results as T[];
+  if (Array.isArray(container.items)) return container.items as T[];
   return [];
 }
 
-function normalize(row: any): Candidacy {
+function normalize(row: RawCandidacy): Candidacy {
   const id = row.id ?? row.candidacyId ?? row.candidacy_id;
   const positionId = row.positionId ?? row.position_id ?? row.position?.id ?? null;
   const positionTitle =
@@ -42,39 +81,43 @@ function normalize(row: any): Candidacy {
   const email = row.email ?? row.candidate?.email;
   const credentials = row.credentials ?? row.bio ?? row.platform ?? "";
   const status = Boolean(row.status ?? row.enabled ?? row.active ?? true);
-  return { id, name, email, positionId, positionTitle, credentials, status } as Candidacy;
+  const candidacyStatus = typeof row.candidacyStatus === "boolean" ? row.candidacyStatus : status;
+  return { id, name, email, positionId, positionTitle, credentials, status, candidacyStatus } as Candidacy;
 }
 
 const base = (electionId: number) => `elections/${electionId}/candidacies`;
 
 // ---- helpers: retry without 'status' if backend rejects it ----
-function needsStatusRetry(err: any): boolean {
-  const code = err?.response?.data?.code;
-  const msg = (err?.response?.data?.message || err?.message || "").toString();
+function needsStatusRetry(err: unknown): boolean {
+  const error = err as ApiErrorLike | null;
+  const code = error?.response?.data?.code;
+  const msg = (error?.response?.data?.message || error?.message || "").toString();
   return (
     code === "VALIDATION_ERROR" &&
     (/unexpected keyword arguments.*status/i.test(msg) || /got unexpected keyword.*status/i.test(msg))
   );
 }
 
-async function postWithStatusFallback(url: string, body: any) {
+async function postWithStatusFallback(url: string, body: Record<string, unknown>) {
   try {
     return await http.post(url, body);
-  } catch (err: any) {
-    if (("status" in (body || {})) && needsStatusRetry(err)) {
-      const { status, ...rest } = body || {};
+  } catch (err) {
+    if ("status" in body && needsStatusRetry(err)) {
+      const rest = { ...body };
+      delete (rest as Record<string, unknown>).status;
       return await http.post(url, rest);
     }
     throw err;
   }
 }
 
-async function patchWithStatusFallback(url: string, body: any) {
+async function patchWithStatusFallback(url: string, body: Record<string, unknown>) {
   try {
     return await http.patch(url, body);
-  } catch (err: any) {
-    if (("status" in (body || {})) && needsStatusRetry(err)) {
-      const { status, ...rest } = body || {};
+  } catch (err) {
+    if ("status" in body && needsStatusRetry(err)) {
+      const rest = { ...body };
+      delete (rest as Record<string, unknown>).status;
       return await http.patch(url, rest);
     }
     throw err;
@@ -83,7 +126,7 @@ async function patchWithStatusFallback(url: string, body: any) {
 
 export async function listCandidacies(electionId: number): Promise<Candidacy[]> {
   const { data } = await http.get(base(electionId));
-  return unwrap<any>(data).map(normalize);
+  return unwrap<RawCandidacy>(data).map(normalize);
 }
 
 export async function createCandidacy(
@@ -115,9 +158,10 @@ export async function createCandidacy(
         if (found) return found;
       }
       return normalize(data);
-    } catch (err: any) {
-      const status = err?.response?.status;
-      const code = err?.response?.data?.code;
+    } catch (error) {
+      const err = error as ApiErrorLike;
+      const status = err.response?.status;
+      const code = err.response?.data?.code;
       if (status === 409 && (code === "EMAIL_TAKEN" || code === "USER_EXISTS")) {
         const q = payload.email || payload.name || "";
         const matches = await searchMembers(q);
@@ -142,18 +186,17 @@ export async function createCandidacy(
 }
 
 export async function updateCandidacy(
-  _electionId: number,
+  electionId: number,
   id: number,
-  patch: CandidacyCreate
+  patch: CandidacyPatchPayload
 ): Promise<Candidacy> {
-  const body: any = {};
-  if (patch.memberId !== undefined) body.candidateUserId = patch.memberId;
-  if (patch.positionId !== undefined) body.positionId = patch.positionId;
+  const body: Record<string, unknown> = {};
+  if (patch.position_id !== undefined) body.position_id = patch.position_id;
+  if (patch.candidacyStatus !== undefined) body.candidacyStatus = patch.candidacyStatus;
   if (patch.credentials !== undefined) body.credentials = patch.credentials;
-  if (patch.status !== undefined) body.status = patch.status;
-  if (patch.name !== undefined) body.name = patch.name;
-  if (patch.email !== undefined) body.email = patch.email;
-  const { data } = await patchWithStatusFallback(`candidacies/${id}`, body);
+  // Backend exposes only /api/candidacies/<pk>/ for updates; the nested election route returns 404.
+  // Backend admin PATCH lives at /api/elections/<election_id>/candidacies/<pk>; election_id guards the view.
+  const { data } = await patchWithStatusFallback(`elections/${electionId}/candidacies/${id}`, body);
   return normalize(data);
 }
 

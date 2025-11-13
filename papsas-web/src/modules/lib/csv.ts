@@ -10,7 +10,7 @@ export function toCsv(rows: Record<string, unknown>[]): string {
   const lines: string[] = [];
   lines.push(headers.join(","));
   for (const row of rows) {
-    lines.push(headers.map(h => escape((row as any)[h])).join(","));
+    lines.push(headers.map(h => escape(row[h])).join(","));
   }
   // normalize to LF for cross-platform stability
   return lines.join("\n");

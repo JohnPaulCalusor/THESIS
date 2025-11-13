@@ -2,26 +2,30 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../auth/AuthProvider";
+import { Eye, EyeOff, Loader2, LogIn } from "lucide-react";
+import { useToast } from "../ui/Toast";
 
 export default function LoginPage() {
   const { user, login, intendedPath, setIntendedPath } = useAuth();
   const nav = useNavigate();
   const loc = useLocation();
+  const toast = useToast();
 
   const [username, setUsername] = useState("admin");
   const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showPass, setShowPass] = useState(false);
 
-  // If we landed here from a protected route, remember it once
   useEffect(() => {
-    if (!intendedPath && loc.state && (loc.state as any)?.from) {
-      setIntendedPath((loc.state as any).from as string);
+    type LocationState = { from?: string };
+    const state = loc.state as LocationState | null;
+    if (!intendedPath && state?.from) {
+      setIntendedPath(state.from);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // If already logged in, go to intended or /ballot
   useEffect(() => {
     if (user) {
       const next = intendedPath || "/ballot";
@@ -36,46 +40,72 @@ export default function LoginPage() {
     setSubmitting(true);
     try {
       await login(username, password);
-      // nav will also run from the effect when user is set
-    } catch (err: any) {
-      setError(err?.response?.data?.message || err?.message || "Login failed");
+    } catch (err) {
+      const info = err as { response?: { data?: { message?: string } }; message?: string };
+      const message = info?.response?.data?.message || info?.message || "Login failed";
+      toast.error(message);
+      setError(message);
     } finally {
       setSubmitting(false);
     }
   }
 
   return (
-    <div className="max-w-3xl mx-auto px-6 py-10">
-      <div className="rounded-xl border p-6 bg-[var(--card)]">
-        <h1 className="text-3xl font-bold mb-2">Sign in</h1>
-        <p className="text-sm text-[var(--muted)] mb-6">Access your PAPSAS officer tools and ballot.</p>
-        <form onSubmit={onSubmit} className="space-y-3">
-          <div>
-            <label className="text-sm">Username</label>
+    <div className="login-page">
+      <div className="login-card">
+        <div className="login-head">
+          <div className="login-icon-badge" aria-hidden>
+            <LogIn size={18} />
+          </div>
+          <h1 className="login-title">Sign in to Election Portal</h1>
+        </div>
+
+        <form onSubmit={onSubmit} className="login-form" noValidate>
+          {/* Username */}
+          <label className="login-label" htmlFor="username">Username</label>
+          <div className="login-input-group">
             <input
-              className="w-full rounded-md border px-3 py-2 bg-[var(--muted-bg)]"
+              id="username"
+              className="login-input"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               autoComplete="username"
+              placeholder="Enter your username"
             />
           </div>
-          <div>
-            <label className="text-sm">Password</label>
+
+          {/* Password */}
+          <label className="login-label" htmlFor="password">Password</label>
+          <div className="login-input-group">
             <input
-              type="password"
-              className="w-full rounded-md border px-3 py-2 bg-[var(--muted-bg)]"
+              id="password"
+              type={showPass ? "text" : "password"}
+              className="login-input login-input--with-toggle"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               autoComplete="current-password"
+              placeholder="Enter your password"
             />
+            <button
+              type="button"
+              className="login-input-toggle"
+              aria-label={showPass ? "Hide password" : "Show password"}
+              onClick={() => setShowPass((v) => !v)}
+            >
+              {showPass ? <EyeOff size={18} /> : <Eye size={18} />}
+            </button>
           </div>
-          {error && <div className="text-sm text-red-600">{error}</div>}
-          <button
-            type="submit"
-            disabled={submitting}
-            className="btn btn-primary w-full"
-          >
-            {submitting ? "Signing in…" : "Continue"}
+
+          {error && <div role="alert" className="login-error">{error}</div>}
+
+          <button type="submit" disabled={submitting} className="btn btn-primary login-submit">
+            {submitting ? (
+              <>
+                <Loader2 className="animate-spin" size={16} /> Signing in…
+              </>
+            ) : (
+              "Continue"
+            )}
           </button>
         </form>
       </div>

@@ -21,6 +21,11 @@ type Props = {
   onSubmit: (data: CandidacyCreate & { id?: number }) => Promise<void>;
 };
 
+type CandidacyFormError = {
+  response?: { data?: { code?: string; message?: string }; status?: number };
+  message?: string;
+};
+
 export const CandidacyFormModal: React.FC<Props> = ({ electionId, open, initial, onClose, onSubmit }) => {
   // >>> PAPSAS v1.4 BEGIN
   const toast = useToast();
@@ -52,7 +57,7 @@ export const CandidacyFormModal: React.FC<Props> = ({ electionId, open, initial,
         const q = memberQuery.trim();
         const viaUsers = await searchUsers(q);
         if (Array.isArray(viaUsers) && viaUsers.length) {
-          setMemberOptions(viaUsers.map(u => ({ id: u.id, name: u.name, email: u.email })) as any);
+          setMemberOptions(viaUsers.map(u => ({ id: u.id, name: u.name, email: u.email })));
         } else {
           const viaMembers = await searchMembers(q);
           setMemberOptions(viaMembers);
@@ -154,12 +159,14 @@ export const CandidacyFormModal: React.FC<Props> = ({ electionId, open, initial,
                   credentials,
                   status,
                 });
+                toast.success(initial?.id ? "Candidate updated" : "Candidate added");
                 onClose();
-              } catch (e: any) {
+              } catch (error) {
                 // >>> PAPSAS v1.4 BEGIN
-                toast.apiError?.(e, "Save failed");
-                const resp = e?.response?.data;
-                const msg = resp?.message || e?.message || "Save failed";
+                toast.apiError?.(error, "Save failed");
+                const err = error as CandidacyFormError;
+                const resp = err.response?.data;
+                const msg = resp?.message || err.message || "Save failed";
                 const code = resp?.code;
                 setErr(code ? `${code}: ${msg}` : msg);
                 // <<< PAPSAS v1.4 END

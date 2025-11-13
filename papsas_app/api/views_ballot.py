@@ -31,7 +31,7 @@ class ElectionBallotView(APIView):
         cands  = (
             Candidacy.objects
             .select_related("position", "candidate")
-            .filter(election_id=election_id)
+            .filter(election_id=election_id, candidacyStatus=True)
         )
 
         # group choices per position

@@ -3,66 +3,106 @@
 
 {% block head %}
 <link rel="stylesheet" href="{% static 'papsas_app/css/regional_chapter.css' %}">
+<link rel="stylesheet" href="{% static 'papsas_app/css/regional_content.css' %}">
 {% endblock %}
 
 {% block body %}
 <main class="main">
-    <!-- Page Title at Top Center -->
+    <!-- Page Title -->
     <header class="page-title">
-        <h1 class="page-title__text">PAPSAS REGION 12</h1>
+        <h1 class="page-title__text">PAPSAS REGION 11</h1>
     </header>
 
-<p class="home__description" style="
-                    font-size: 1.3rem;
-                    color: #444;
-                    font-style: italic;
-                    margin: 0;
-                    padding: 2rem 1rem;
-                    line-height: 1.6;
-                    text-align: center;
-                ">
-                    Updates and videos for Region 12 coming soon.
+    <!-- ===== CONTENT POSTS ===== -->
+    <div class="container" style="max-width: 1400px; margin: 0 auto; padding: 0 1rem;">
+
+        <!-- Post 1: Election of Board & Officers -->
+        <article class="content-card">
+            <img src="/media/papsas_app/images/1reg11.png" alt="PAPSAS XI Election 2025-2026" class="content-card__img">
+            <div class="content-card__body">
+                <h2 class="content-card__title">PAPSAS XI Elects Board of Trustees and Executive Officers for AY 2025-2026</h2>
+                <p class="content-card__text">
+                    The <strong>Philippine Association of Practitioners of Student Affairs and Services, Inc. Region XI Chapter (PAPSAS XI)</strong> successfully elected its <strong>Board of Trustees and Executive Officers for Academic Year 2025-2026</strong>, reaffirming its continuing dedication to participatory governance, professional integrity, and excellence in student affairs and services across Philippine higher education institutions.
+                </p>
+                <p class="content-card__text">
+                    The election was the last of the Business Meeting agenda during the <strong>5th PAPSAS XI General Assembly and Conference</strong> held on <em>September 26, 2025</em> at <strong>Luxebridge Hotel, Barangay Ma-a, Davao City</strong>. The event theme was <em>“Click. Connect. Care: Student Affairs and Services in the Age of Digital Media.”</em>
+                </p>
+                <p class="content-card__text">
+                    The <strong>Election Committee</strong>, chaired by <strong>Mr. Irvin N. Mirabueno</strong> (Vice President for Student Affairs and Services, South Philippine Adventist College), oversaw the orderly and transparent conduct of elections. Assisting him were <strong>Ms. Janice N. Sipin</strong> (Assumption College of Nabunturan, Inc.) and <strong>Ms. Venus R. Bonsubre</strong> (North Davao Colleges, Inc.).
                 </p>
 
-    <!-- Footer -->
-    <button onclick="scrollToTop()" id="scrollUpButton" title="Go to top">Up Arrow</button>
-    <footer class="footer">
-        <div class="footer__container container">
-            <div class="footer__content">
-                <h3 class="footer__title">Philippine Association of Practitioners of Student Affairs and Services, Inc.</h3>
-                <p class="footer__description">Dedicated to the pursuit of excellence in student affairs and services work.</p>
-                <ul class="footer__links">
-                    <li><a href="#" class="footer__link">(043) 778 0656</a></li>
-                    <li><a href="#" class="footer__link">/papsasinc</a></li>
-                    <li><a href="#" class="footer__link">papsasinc.national@gmail.com</a></li>
-                    <li><a href="bit.ly/papsasinc" class="footer__link">bit.ly/papsasinc</a></li>
-                    <li><a href="#" class="footer__link">Visitor: {{ total_visitors }}</a></li>
-                </ul>
+                <p class="content-card__subtitle">Official Election Results and Term Assignments</p>
+
+                <table class="election-table">
+                    <thead>
+                        <tr>
+                            <th>Name of Elected Trustee</th>
+                            <th>Votes</th>
+                            <th>Percentage</th>
+                            <th>Term</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>1. Theresa S. Eliab</td><td>54</td><td>90%</td><td class="election-table__term">3 years (2025–2028)</td></tr>
+                        <tr><td>2. Amado S. Ancla</td><td>52</td><td>86.7%</td><td class="election-table__term">3 years (2025–2028)</td></tr>
+                        <tr><td>3. Anaflor E. Sacopayo</td><td>52</td><td>86.7%</td><td class="election-table__term">3 years (2025–2028)</td></tr>
+                        <tr><td>4. Janice N. Sipin</td><td>51</td><td>85%</td><td class="election-table__term">3 years (2025–2028)</td></tr>
+                        <tr><td>5. Wijawati H. Rainu-Wong</td><td>48</td><td>80%</td><td class="election-table__term">3 years (2025–2028)</td></tr>
+                        <tr><td>6. Christopher M. Pulmones</td><td>48</td><td>80%</td><td class="election-table__term">2 years (2025–2027)</td></tr>
+                        <tr><td>7. Erwin U. Maban</td><td>40</td><td>66.7%</td><td class="election-table__term">2 years (2025–2027)</td></tr>
+                        <tr><td>8. Erap L. Ordaneza</td><td>36</td><td>60%</td><td class="election-table__term">2 years (2025–2027)</td></tr>
+                        <tr><td>9. Carmela J. Lao</td><td>34</td><td>56.7%</td><td class="election-table__term">1 year (2025–2026)</td></tr>
+                        <tr><td>10. Corazon R. Nerves</td><td>33</td><td>55%</td><td class="election-table__term">1 year (2025–2026)</td></tr>
+                        <tr><td>11. Mirasol M. Da-an</td><td>33</td><td>55%</td><td class="election-table__term">1 year (2025–2026)</td></tr>
+                    </tbody>
+                </table>
+
+                <p class="content-card__text">
+                    Continuing members completing the 15-member Board: <strong>Marlou Jade L. Eliab</strong>, <strong>Irvin N. Mirabueno</strong>, <strong>Venus R. Bonsubre</strong>, and <strong>Leah M. Cabang</strong>.
+                </p>
+                <p class="content-card__text">
+                    PAPSAS XI remains committed to nurturing ethical leadership, promoting professional growth, and sustaining the vision of quality student affairs and services in the region.
+                </p>
+
+                <span class="content-card__highlight">
+                    #PAPSASXI #Leadership2025 #StudentAffairs #RegionXI
+                </span>
             </div>
-            <div class="footer__socials">
-                <a href="#" class="footer__social"><i class="fab fa-facebook-f"></i></a>
-                <a href="#" class="footer__social"><i class="fab fa-twitter"></i></a>
-                <a href="#" class="footer__social"><i class="fab fa-instagram"></i></a>
+        </article>
+
+        <!-- VIDEO SECTION (REGION 3 STYLE – EMPTY BUT READY) -->
+        <section class="video-section">
+            <h2 class="video-section__title">VIDEO SECTION</h2>
+            <div class="video-grid">
+                <!-- Add videos here when available -->
             </div>
-        </div>
-        <div class="footer__bottom">
-            <p>© 2024 PAPSAS, Inc. All Rights Reserved.</p>
-        </div>
-    </footer>
+        </section>
+
+    </div>
 </main>
 
-<script>
-    window.onscroll = function() {
-        let button = document.getElementById("scrollUpButton");
-        if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
-            button.style.display = "block";
-        } else {
-            button.style.display = "none";
-        }
-    };
-
-    function scrollToTop() {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-</script>
+<!-- FOOTER OUTSIDE main -->
+<footer class="footer">
+    <div class="footer__container container">
+        <div class="footer__content"><br><br><br><br><br>
+            <h3 class="footer__title">Philippine Association of Practitioners of Student Affairs and Services, Inc.</h3>
+            <p class="footer__description">Dedicated to the pursuit of excellence in student affairs and services work.</p>
+            <ul class="footer__links">
+                <li><a href="#" class="footer__link">(043) 778 0656</a></li>
+                <li><a href="#" class="footer__link">/papsasinc</a></li>
+                <li><a href="#" class="footer__link">papsasinc.national@gmail.com</a></li>
+                <li><a href="bit.ly/papsasinc" class="footer__link">bit.ly/papsasinc</a></li>
+                <li><a href="#" class="footer__link">Visitor: {{ total_visitors }}</a></li>
+            </ul>
+        </div>
+        <div class="footer__socials">
+            <a href="#" class="footer__social">Facebook</a>
+            <a href="#" class="footer__social">Twitter</a>
+            <a href="#" class="footer__social">Instagram</a>
+        </div>
+    </div>
+    <div class="footer__bottom">
+        <p>© 2024 PAPSAS, Inc. All Rights Reserved.</p>
+    </div>
+</footer>
 {% endblock %}

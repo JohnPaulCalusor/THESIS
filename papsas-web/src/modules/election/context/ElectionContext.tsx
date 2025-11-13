@@ -1,7 +1,13 @@
+/* eslint-disable react-refresh/only-export-components */
 import React, { createContext, useCallback, useEffect, useMemo, useState } from "react";
 import http from "../../lib/http";
 
 export type Election = { id: number; title: string };
+type ElectionError = {
+  response?: { status?: number; data?: { message?: string } };
+  status?: number;
+  message?: string;
+};
 type Ctx = {
   election: Election | null;
   loading: boolean;
@@ -22,11 +28,13 @@ export const ElectionProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     try {
       const { data } = await http.get<Election>("elections/current");
       setElection({ id: data.id, title: data.title });
-    } catch (e: any) {
-      if (e?.status === 404) {
+    } catch (error) {
+      const err = error as ElectionError;
+      const status = err.response?.status ?? err.status;
+      if (status === 404) {
         setElection(null); // no active election
       } else {
-        setErr(e?.message || "Failed to load current election");
+        setErr(err.response?.data?.message || err.message || "Failed to load current election");
       }
     } finally {
       setLoading(false);

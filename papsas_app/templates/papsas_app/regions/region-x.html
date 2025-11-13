@@ -3,66 +3,106 @@
 
 {% block head %}
 <link rel="stylesheet" href="{% static 'papsas_app/css/regional_chapter.css' %}">
+<link rel="stylesheet" href="{% static 'papsas_app/css/regional_content.css' %}">
+
+<style>
+  /* === SPACING FROM TITLE === */
+  .page-title + .container {
+    margin-top: 3.5rem !important;
+  }
+
+  /* === CENTERED TEXT-ONLY CARD === */
+  .content-card--text-only {
+    text-align: center;
+    padding: 3rem 1.5rem;
+    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+  }
+
+  .content-card--text-only .content-card__title {
+    font-size: 2.2rem;
+    margin-bottom: 1.2rem;
+    color: #ff0a0a;
+  }
+
+  .content-card--text-only .content-card__text {
+    font-size: 1.3rem;
+    font-style: italic;
+    color: #444;
+    line-height: 1.7;
+    max-width: 800px;
+    margin: 0 auto 1.5rem;
+  }
+
+  .content-card--text-only .content-card__highlight {
+    font-size: 1.15rem;
+    color: #d00;
+    font-weight: 600;
+  }
+
+  /* === STICKY FOOTER === */
+  html, body { height: 100% !important; margin: 0 !important; }
+  body { 
+    display: flex !important; 
+    flex-direction: column !important; 
+    min-height: 100vh !important; 
+    padding-top: 70px !important; 
+  }
+  .main { flex: 1 !important; }
+  .footer { margin-top: auto !important; }
+
+  @media (max-width: 767px) {
+    .page-title + .container { margin-top: 2.5rem !important; }
+    .content-card--text-only .content-card__title { font-size: 1.9rem; }
+    .content-card--text-only .content-card__text { font-size: 1.15rem; }
+  }
+</style>
 {% endblock %}
 
 {% block body %}
 <main class="main">
-    <!-- Page Title at Top Center -->
+    <!-- Page Title -->
     <header class="page-title">
         <h1 class="page-title__text">PAPSAS REGION 10</h1>
     </header>
 
-<p class="home__description" style="
-                    font-size: 1.3rem;
-                    color: #444;
-                    font-style: italic;
-                    margin: 0;
-                    padding: 2rem 1rem;
-                    line-height: 1.6;
-                    text-align: center;
-                ">
-                    Updates and videos for Region 10 coming soon.
+    <!-- ===== COMING SOON CARD (TEXT ONLY, CENTERED) ===== -->
+    <div class="container" style="max-width: 1400px; margin: 0 auto; padding: 0 1rem;">
+        <article class="content-card content-card--text-only">
+            <div class="content-card__body">
+                <h2 class="content-card__title">Updates and Videos Coming Soon!</h2>
+                <p class="content-card__text">
+                    We are preparing exciting updates, events, and video content for <strong>PAPSAS Region 10</strong>. Stay tuned!
                 </p>
-
-    <!-- Footer -->
-    <button onclick="scrollToTop()" id="scrollUpButton" title="Go to top">Up Arrow</button>
-    <footer class="footer">
-        <div class="footer__container container">
-            <div class="footer__content">
-                <h3 class="footer__title">Philippine Association of Practitioners of Student Affairs and Services, Inc.</h3>
-                <p class="footer__description">Dedicated to the pursuit of excellence in student affairs and services work.</p>
-                <ul class="footer__links">
-                    <li><a href="#" class="footer__link">(043) 778 0656</a></li>
-                    <li><a href="#" class="footer__link">/papsasinc</a></li>
-                    <li><a href="#" class="footer__link">papsasinc.national@gmail.com</a></li>
-                    <li><a href="bit.ly/papsasinc" class="footer__link">bit.ly/papsasinc</a></li>
-                    <li><a href="#" class="footer__link">Visitor: {{ total_visitors }}</a></li>
-                </ul>
+                <span class="content-card__highlight">
+                    PAPSAS Region 10 — Excellence in Student Affairs, Soon to Rise
+                </span>
             </div>
-            <div class="footer__socials">
-                <a href="#" class="footer__social"><i class="fab fa-facebook-f"></i></a>
-                <a href="#" class="footer__social"><i class="fab fa-twitter"></i></a>
-                <a href="#" class="footer__social"><i class="fab fa-instagram"></i></a>
-            </div>
-        </div>
-        <div class="footer__bottom">
-            <p>© 2024 PAPSAS, Inc. All Rights Reserved.</p>
-        </div>
-    </footer>
+        </article>
+    </div>
 </main>
 
-<script>
-    window.onscroll = function() {
-        let button = document.getElementById("scrollUpButton");
-        if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
-            button.style.display = "block";
-        } else {
-            button.style.display = "none";
-        }
-    };
-
-    function scrollToTop() {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-</script>
+<!-- FOOTER OUTSIDE main -->
+<footer class="footer">
+    <div class="footer__container container">
+        <div class="footer__content"><br><br><br><br><br>
+            <h3 class="footer__title">Philippine Association of Practitioners of Student Affairs and Services, Inc.</h3>
+            <p class="footer__description">Dedicated to the pursuit of excellence in student affairs and services work.</p>
+            <ul class="footer__links">
+                <li><a href="#" class="footer__link">(043) 778 0656</a></li>
+                <li><a href="#" class="footer__link">/papsasinc</a></li>
+                <li><a href="#" class="footer__link">papsasinc.national@gmail.com</a></li>
+                <li><a href="bit.ly/papsasinc" class="footer__link">bit.ly/papsasinc</a></li>
+                <li><a href="#" class="footer__link">Visitor: {{ total_visitors }}</a></li>
+            </ul>
+        </div>
+        <div class="footer__socials">
+            <a href="#" class="footer__social">Facebook</a>
+            <a href="#" class="footer__social">Twitter</a>
+            <a href="#" class="footer__social">Instagram</a>
+        </div>
+    </div>
+    <div class="footer__bottom">
+        <p>© 2024 PAPSAS,|All Rights Reserved.</p>
+    </div>
+</footer>
 {% endblock %}

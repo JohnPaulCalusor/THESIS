@@ -1,14 +1,24 @@
+/* eslint-disable react-refresh/only-export-components */
 import React, { createContext, useContext, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 type ToastKind = "success" | "error" | "info";
 type ToastItem = { id: string; kind: ToastKind; title?: string; message?: string; ttlMs?: number };
+
+type ToastErrorData = { code?: string; message?: string };
+type ToastAxiosError = {
+  response?: {
+    status?: number;
+    data?: ToastErrorData | Record<string, unknown> | string;
+  };
+  message?: string;
+};
 
 type ToastAPI = {
   success: (m: string, title?: string) => void;
   error: (m: string, title?: string) => void;
   info: (m: string, title?: string) => void;
   // >>> PAPSAS v1.3 BEGIN
-  apiError?: (err: any, fallback?: string) => void;
+  apiError?: (err: unknown, fallback?: string) => void;
   // <<< PAPSAS v1.3 END
 };
 
@@ -57,7 +67,8 @@ export const ToastProvider: React.FC<React.PropsWithChildren> = ({ children }) =
       }, t.ttlMs ?? DEFAULT_TTL);
       timers.current.set(t.id, h as unknown as number);
     });
-    return () => { timers.current.forEach((h) => window.clearTimeout(h)); };
+    const currentTimers = timers.current;
+    return () => { currentTimers.forEach((h) => window.clearTimeout(h)); };
   }, [visible]);
 
   useEffect(() => { if (visible.length < MAX_VISIBLE) dequeueIfPossible(); }, [visible.length, dequeueIfPossible]);
@@ -67,22 +78,33 @@ export const ToastProvider: React.FC<React.PropsWithChildren> = ({ children }) =
     error:   (m, title) => add("error", m, title),
     info:    (m, title) => add("info", m, title),
     // >>> PAPSAS v1.3 BEGIN
-    apiError: (err: any, fallback?: string) => {
-      const status = err?.response?.status;
-      const code = err?.response?.data?.code;
-      const message = err?.response?.data?.message || err?.message || fallback || "Request failed";
+    apiError: (err, fallback?: string) => {
+      const error = err as ToastAxiosError | null;
+      const status = error?.response?.status;
+      const data = error?.response?.data;
+      const payload = data && typeof data === "object" ? (data as Record<string, unknown>) : undefined;
+      const code = typeof payload?.code === "string" ? payload.code : "";
+      const message =
+        (typeof payload?.message === "string" ? payload.message : undefined) ||
+        (typeof data === "string" ? data : undefined) ||
+        error?.message ||
+        fallback ||
+        "Request failed";
       if (status === 403) return add("error", "Admins only", "403");
       if (status === 409) return add("error", code === "ALREADY_VOTED" ? "Already voted" : "Already exists", "409");
       if (status === 422) {
         let firstFieldMsg = "";
-        const data = err?.response?.data;
-        if (data && typeof data === 'object') {
-          for (const k of Object.keys(data)) {
-            if (k !== 'code' && k !== 'message') {
-              const v = (data as any)[k];
-              if (typeof v === 'string' && v) { firstFieldMsg = v; break; }
-              if (Array.isArray(v) && v.length && typeof v[0] === 'string') { firstFieldMsg = v[0]; break; }
-            }
+        const details = payload ?? {};
+        for (const k of Object.keys(details)) {
+          if (k === "code" || k === "message") continue;
+          const v = details[k];
+          if (typeof v === "string" && v) {
+            firstFieldMsg = v;
+            break;
+          }
+          if (Array.isArray(v) && v.length && typeof v[0] === "string") {
+            firstFieldMsg = v[0];
+            break;
           }
         }
         return add("error", firstFieldMsg || message || "Validation error", "422");

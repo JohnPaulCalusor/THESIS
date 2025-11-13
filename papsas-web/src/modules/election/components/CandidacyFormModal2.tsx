@@ -1,9 +1,12 @@
+// src/modules/election/components/CandidacyFormModal2.tsx
 import React, { useEffect, useMemo, useState, useRef } from "react";
+import { createPortal } from "react-dom";
 import Alert from "../../ui/Alert";
 import type { Position } from "../services/electionApi";
 import { searchMembers, type Member } from "../services/candidacyApi";
 import { useDebounce } from "../../hooks/useDebounce";
 import { useToast } from "../../ui/Toast";
+import { Search, X, Loader2, ChevronDown } from "lucide-react";
 
 type Props = {
   electionId: number;
@@ -19,34 +22,57 @@ type Props = {
   } | null;
   positions: Position[];
   onClose: () => void;
-  onSubmit: (payload: {
-    id?: number;
-    memberId?: number;
-    name?: string;
-    email?: string;
-    positionId: number | null;
-    credentials?: string;
-    status?: boolean | null;
-  }) => Promise<void>;
+  onSubmit: (payload: { id?: number; positionId: number | null; credentials?: string }) => Promise<void>;
 };
 
-function friendlyErrorFromResponse(err: any): string {
-  const data = err?.response?.data;
-  const code = data?.code || "";
-  const msg = data?.message || data || err?.message || "Request failed";
-  if (code === "EMAIL_TAKEN" || code === "USER_EXISTS") return "That email already belongs to an account. Pick it via “Pick existing member”, or the system will try to link it automatically.";
-  if (code === "ALREADY_EXISTS") return "This member is already a candidate in the current election.";
-  if (code === "HAS_VOTES") return "This candidate already has votes and cannot be deleted.";
-  if (code === "VALIDATION_ERROR") return String(msg);
-  if (err?.response?.status === 404) return "Endpoint not found (404). Make sure the server route exists.";
+type ApiErrorData = { code?: string; message?: string };
+type AxiosLikeError = {
+  response?: {
+    data?: ApiErrorData | string;
+    status?: number;
+  };
+  message?: string;
+};
+
+function friendlyErrorFromResponse(err: unknown): string {
+  const error = err as AxiosLikeError | null;
+  const data = error?.response?.data;
+  const obj = typeof data === "object" && data !== null ? (data as ApiErrorData) : undefined;
+  const code = obj?.code || "";
+  const msg =
+    obj?.message ||
+    (typeof data === "string" ? data : undefined) ||
+    error?.message ||
+    "Request failed";
+  if (code === "EMAIL_TAKEN" || code === "USER_EXISTS")
+    return "That email already belongs to an account. Pick it via “Pick existing member”, or the system will try to link it automatically.";
+  if (code === "ALREADY_EXISTS")
+    return "This member is already a candidate in the current election.";
+  if (code === "HAS_VOTES")
+    return "This candidate already has votes and cannot be deleted.";
+  if (code === "VALIDATION_ERROR")
+    return String(msg);
+  if (error?.response?.status === 404)
+    return "Endpoint not found (404). Make sure the server route exists.";
   return typeof msg === "string" ? msg : "Something went wrong.";
 }
 
-export const CandidacyFormModal: React.FC<Props> = ({ open, initial, positions, onClose, onSubmit }) => {
+/* -------------------------------------------------------------
+   EDIT CANDIDATE MODAL – FULL OVERLAY (PORTAL)
+   ------------------------------------------------------------- */
+export const EditCandidateModal: React.FC<Props> = ({
+  open,
+  initial,
+  positions,
+  onClose,
+  onSubmit,
+}) => {
   const isEdit = !!initial?.id;
   const toast = useToast();
   const [member, setMember] = useState<Member | null>(
-    initial?.memberId ? { id: initial.memberId, name: initial.name, email: initial.email } as Member : null
+    initial?.memberId
+      ? { id: initial.memberId, name: initial.name, email: initial.email } as Member
+      : null
   );
   const [memberQuery, setMemberQuery] = useState<string>("");
   const [memberHits, setMemberHits] = useState<Member[]>([]);
@@ -60,40 +86,57 @@ export const CandidacyFormModal: React.FC<Props> = ({ open, initial, positions, 
   const [busy, setBusy] = useState(false);
   const [errText, setErrText] = useState<string | null>(null);
 
+  /* ---- Escape handling ---- */
   useEffect(() => {
     if (!open) return;
-    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [open, onClose]);
 
-  // Debounced member search
+  /* ---- Debounced search ---- */
   const debounced = useDebounce(memberQuery, 250);
   useEffect(() => {
-    if (!debounced || debounced.trim().length < 2 || member) { setMemberHits([]); return; }
+    if (!debounced || debounced.trim().length < 2 || member) {
+      setMemberHits([]);
+      return;
+    }
     (async () => {
       try {
         const hits = await searchMembers(debounced.trim());
         setMemberHits(hits.slice(0, 10));
-      } catch { setMemberHits([]); }
+      } catch {
+        setMemberHits([]);
+      }
     })();
   }, [debounced, member]);
+
+  /* ---- Keyboard navigation in dropdown ---- */
   const onKeyDown: React.KeyboardEventHandler<HTMLInputElement> = (e) => {
-    if (!memberHits || memberHits.length === 0) return;
-    if (e.key === "ArrowDown") { e.preventDefault(); setActiveIdx((i) => Math.min(i + 1, memberHits.length - 1)); }
-    else if (e.key === "ArrowUp") { e.preventDefault(); setActiveIdx((i) => Math.max(i - 1, 0)); }
-    else if (e.key === "Enter" && activeIdx >= 0) {
+    if (!memberHits.length) return;
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setActiveIdx((i) => Math.min(i + 1, memberHits.length - 1));
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setActiveIdx((i) => Math.max(i - 1, 0));
+    } else if (e.key === "Enter" && activeIdx >= 0) {
       e.preventDefault();
       const picked = memberHits[activeIdx];
       setMember(picked);
-      setMemberHits([]); setActiveIdx(-1);
+      setMemberHits([]);
+      setActiveIdx(-1);
     } else if (e.key === "Escape") {
-      setMemberHits([]); setActiveIdx(-1);
+      setMemberHits([]);
+      setActiveIdx(-1);
     }
   };
+
   useEffect(() => {
-    const el = listRef.current?.querySelector<HTMLDivElement>(`[data-idx="${activeIdx}"]`) || document.querySelector<HTMLDivElement>(`[data-idx="${activeIdx}"]`);
-    if (el) el.scrollIntoView({ block: "nearest" });
+    const el = listRef.current?.querySelector<HTMLDivElement>(`[data-idx="${activeIdx}"]`);
+    el?.scrollIntoView({ block: "nearest" });
   }, [activeIdx]);
 
   const canSubmit = useMemo(() => {
@@ -105,124 +148,186 @@ export const CandidacyFormModal: React.FC<Props> = ({ open, initial, positions, 
 
   if (!open) return null;
 
-  return (
+  /* -------------------------------------------------------------
+     PORTAL: Renders directly on <body> → full overlay
+     ------------------------------------------------------------- */
+  return createPortal(
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center"
-      onMouseDown={(e) => { if (e.target === e.currentTarget) onClose(); }}
-      style={{ background: "rgba(0,0,0,0.4)" }}
+      className="modal-root"
+      onClick={(e) => e.target === e.currentTarget && onClose()}
     >
-      <div className="bg-white rounded-lg shadow-lg w-full max-w-2xl p-4">
-        <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold">{isEdit ? "Edit Candidate" : "Add Candidate"}</h2>
-          <button className="text-gray-500 hover:text-black" onClick={onClose}>✕</button>
+      {/* Backdrop */}
+      <div className="modal-overlay" />
+
+      {/* Modal Card */}
+      <div className="modal-card max-w-3xl w-full">
+        {/* Header */}
+        <div className="modal-header">
+          <h2 className="modal-title">{isEdit ? "Edit Candidate" : "Add Candidate"}</h2>
+          <button className="modal-close-btn" onClick={onClose} aria-label="Close">
+            <X size={20} />
+          </button>
         </div>
 
+        {/* Error Alert */}
         {errText && (
-          <div className="mt-3"><Alert title="We couldn’t save this">{errText}</Alert></div>
+          <div className="px-5">
+            <Alert title="We couldn’t save this">{errText}</Alert>
+          </div>
         )}
 
-        <div className="mt-4 grid grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium">Pick existing member</label>
-            <input
-              type="text"
-              placeholder="Search by name or email" onKeyDown={onKeyDown}
-              className="mt-1 w-full border rounded p-2"
-              value={member ? `${member.name ?? "Member"}${member.email ? ` <${member.email}>` : ""}` : memberQuery}
-              onChange={(e) => { setMember(null); setMemberQuery(e.target.value); }}
-              disabled={busy}
-            />
-            {member && (
-              <div className="mt-1 text-xs text-gray-600">
-                Selected: {member.name || "Member"}{member.email ? ` (${member.email})` : ""}
-                <button className="ml-2 underline" onClick={() => setMember(null)} type="button">Clear</button>
+        {/* Body */}
+        <div className="modal-body">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            {/* Member Search */}
+            <div>
+              <label className="modal-label">Pick existing member</label>
+              <div className="relative">
+                <Search className="modal-search-icon" size={18} />
+                <input
+                  type="text"
+                  placeholder="Search by name or email"
+                  className="modal-input pl-10"
+                  value={member ? `${member.name ?? "Member"}${member.email ? ` <${member.email}>` : ""}` : memberQuery}
+                  onChange={(e) => {
+                    setMember(null);
+                    setMemberQuery(e.target.value);
+                  }}
+                  onKeyDown={onKeyDown}
+                  disabled={busy}
+                />
               </div>
-            )}
-            {!member && memberHits.length > 0 && (
-              <div className="mt-1 max-h-40 overflow-auto border rounded">
-                {memberHits.map((m, i) => (
-                  <button
-                    key={m.id} data-idx={i} onMouseEnter={() => setActiveIdx(i)}
-                    type="button"
-                    className={`w-full text-left px-2 py-1 cursor-pointer ${i === activeIdx ? "bg-slate-100" : "bg-white"}`}
-                    onClick={() => { setMember(m); setMemberQuery(""); setMemberHits([]); setActiveIdx(-1); if (m.email) setEmail(m.email); if (m.name) setName(m.name); }}
-                  >
-                    <div className="font-medium">{m.name || "Member"}</div>
-                    {m.email && <div className="text-xs text-gray-500">{m.email}</div>}
+
+              {member && (
+                <div className="mt-2 text-xs text-muted">
+                  Selected: {member.name || "Member"} ({member.email})
+                  <button className="ml-2 underline" onClick={() => setMember(null)} type="button">
+                    Clear
                   </button>
-                ))}
+                </div>
+              )}
+
+              {!member && memberHits.length > 0 && (
+                <div ref={listRef} className="modal-dropdown">
+                  {memberHits.map((m, i) => (
+                    <button
+                      key={m.id}
+                      data-idx={i}
+                      className={`modal-dropdown-item ${i === activeIdx ? "selected" : ""}`}
+                      onMouseEnter={() => setActiveIdx(i)}
+                      onClick={() => {
+                        setMember(m);
+                        setMemberQuery("");
+                        setMemberHits([]);
+                        setActiveIdx(-1);
+                        if (m.email) setEmail(m.email);
+                        if (m.name) setName(m.name);
+                      }}
+                    >
+                      <div className="font-medium text-sm">{m.name || "Member"}</div>
+                      {m.email && <div className="text-xs text-muted">{m.email}</div>}
+                    </button>
+                  ))}
+                </div>
+              )}
+              <p className="text-xs text-muted mt-1">
+                Select a member or use quick-add on the right.
+              </p>
+            </div>
+
+            {/* Quick Add */}
+            <div>
+              <label className="modal-label">Quick-add (email + optional name)</label>
+              <input
+                type="email"
+                placeholder="Email (required if not picking)"
+                className="modal-input"
+                value={email}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  if (!name) setName(e.target.value.split("@")[0] || "");
+                }}
+                disabled={!!member || busy}
+              />
+              <input
+                type="text"
+                placeholder="Full name (optional)"
+                className="modal-input mt-3"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                disabled={!!member || busy}
+              />
+            </div>
+          </div>
+
+          {/* Position + Credentials */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-5">
+            <div>
+              <label className="modal-label">
+                Position {positions.length === 0 && <span className="text-muted">(optional)</span>}
+              </label>
+              <div className="relative">
+                <select
+                  className="modal-select"
+                  value={positionId ?? ""}
+                  onChange={(e) => setPositionId(e.target.value ? Number(e.target.value) : undefined)}
+                  disabled={positions.length === 0}
+                >
+                  <option value="">
+                    {positions.length === 0 ? "— No positions available —" : "Unassigned"}
+                  </option>
+                  {positions.map((p) => (
+                    <option key={p.id} value={p.id}>
+                      {p.title}
+                    </option>
+                  ))}
+                </select>
+                <ChevronDown className="modal-select-chevron" size={16} />
               </div>
-            )}
-            <p className="text-xs text-gray-500 mt-1">Select a member or use quick-add on the right.</p>
+            </div>
+
+            <div>
+              <label className="modal-label">Credentials / Platform</label>
+              <textarea
+                rows={4}
+                className="modal-textarea"
+                value={credentials}
+                onChange={(e) => setCredentials(e.target.value)}
+                placeholder="Achievements, platform, etc."
+              />
+            </div>
           </div>
 
-          <div>
-            <label className="block text-sm font-medium">Quick-add (email + optional name)</label>
-            <input
-              type="email"
-              placeholder="Email (required if not picking)"
-              className="mt-1 w-full border rounded p-2"
-              value={email}
-              onChange={(e) => { setEmail(e.target.value); if (!name) setName(e.target.value.split("@")[0] || ""); }}
-              disabled={!!member || busy}
-            />
-            <input
-              type="text"
-              placeholder="Full name (optional)"
-              className="mt-2 w-full border rounded p-2"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              disabled={!!member || busy}
-            />
-          </div>
-        </div>
-
-        <div className="mt-4 grid grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium">Position {positions.length === 0 && (<span className="text-gray-500">(optional)</span>)}</label>
-            <select
-              value={positionId ?? ""}
-              onChange={(e) => setPositionId(e.target.value ? Number(e.target.value) : undefined)}
-              className="mt-1 w-full border rounded p-2"
-              disabled={positions.length === 0}
-            >
-              <option value="">{positions.length === 0 ? "— No positions available —" : "— Select —"}</option>
-              {positions.map((p) => (
-                <option key={p.id} value={p.id}>{p.title}</option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label className="block text-sm font-medium">Credentials / Platform</label>
-            <textarea className="mt-1 w-full border rounded p-2 min-h-[80px]" value={credentials} onChange={(e) => setCredentials(e.target.value)} />
+          {/* Status Toggle */}
+          <div className="mt-5">
+            <label className="candidacy-toggle">
+              <input type="checkbox" checked={status} onChange={(e) => setStatus(e.target.checked)} />
+              <span className="candidacy-toggle-slider" />
+              <span className="candidacy-toggle-label">{status ? "Enabled" : "Disabled"}</span>
+            </label>
           </div>
         </div>
 
-        <div className="mt-3">
-          <label className="inline-flex items-center gap-2">
-            <input type="checkbox" checked={status} onChange={(e) => setStatus(e.target.checked)} />
-            <span>Status: {status ? "Enabled" : "Disabled"}</span>
-          </label>
-        </div>
-
-        <div className="mt-6 flex justify-end gap-2">
-          <button className="px-4 py-2 border rounded" onClick={onClose} disabled={busy}>Cancel</button>
+        {/* Footer */}
+        <div className="modal-footer">
+          <button className="btn btn-secondary" onClick={onClose} disabled={busy}>
+            Cancel
+          </button>
           <button
-            className="px-4 py-2 rounded bg-blue-600 text-white disabled:opacity-50"
+            className="btn btn-primary flex items-center gap-2"
             disabled={!canSubmit || busy}
             onClick={async () => {
-              setErrText(null); setBusy(true);
+              setErrText(null);
+              setBusy(true);
               try {
                 await onSubmit({
                   id: initial?.id,
-                  memberId: member?.id,
-                  name: name || undefined,
-                  email: email || undefined,
                   positionId: positionId ?? null,
                   credentials: credentials || undefined,
                 });
+                toast.success(initial?.id ? "Candidate updated" : "Candidate added");
                 onClose();
-              } catch (e: any) {
+              } catch (e) {
                 const msg = friendlyErrorFromResponse(e);
                 setErrText(msg);
                 toast.error(msg);
@@ -231,10 +336,12 @@ export const CandidacyFormModal: React.FC<Props> = ({ open, initial, positions, 
               }
             }}
           >
+            {busy && <Loader2 className="animate-spin" size={16} />}
             {isEdit ? "Save changes" : "Add candidate"}
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };

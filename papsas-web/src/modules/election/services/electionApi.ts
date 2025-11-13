@@ -1,10 +1,18 @@
 import { http } from "../../lib/http";
 export type Position = { id: number; title: string; enabled?: boolean; sort?: number };
+type RawPositionRow = {
+  position_id?: number;
+  positionId?: number;
+  position?: { id?: number; title?: string };
+  position_title?: string;
+  positionTitle?: string;
+};
 
-function unwrap<T = any>(data: any): T[] {
+function unwrap<T = unknown>(data: unknown): T[] {
   if (Array.isArray(data)) return data as T[];
-  if (data?.results && Array.isArray(data.results)) return data.results as T[];
-  if (data?.items && Array.isArray(data.items)) return data.items as T[];
+  const container = data as { results?: unknown; items?: unknown };
+  if (Array.isArray(container.results)) return container.results as T[];
+  if (Array.isArray(container.items)) return container.items as T[];
   return [];
 }
 
@@ -12,23 +20,27 @@ export async function listPositions(electionId: number): Promise<Position[]> {
   try {
     const { data } = await http.get(`elections/${electionId}/positions`);
     const rows = unwrap<Position>(data);
-    return rows.map((r: any) => ({
+    return rows.map((r) => ({
       id: r.id,
-      title: r.title ?? r.name,
+      title: r.title,
       enabled: r.enabled ?? true,
       sort: r.sort ?? 0,
     }));
-  } catch {}
+  } catch {
+    // ignore and try the next endpoint
+  }
   try {
     const { data } = await http.get("positions", { params: { election: electionId } });
     const rows = unwrap<Position>(data);
-    return rows.map((r: any) => ({ id: r.id, title: r.title ?? r.name, enabled: r.enabled ?? true, sort: r.sort ?? 0 }));
-  } catch {}
+    return rows.map((r) => ({ id: r.id, title: r.title, enabled: r.enabled ?? true, sort: r.sort ?? 0 }));
+  } catch {
+    // ignore and try candidacy fallback
+  }
 
   // Fallback: derive from candidacies
   try {
     const { data } = await http.get(`elections/${electionId}/candidacies`);
-    const rows = unwrap<any>(data);
+    const rows = unwrap<RawPositionRow>(data);
     const map = new Map<number, string>();
     for (const r of rows) {
       const pid = r.position_id ?? r.positionId ?? r.position?.id;
@@ -48,7 +60,7 @@ export async function createPosition(electionId: number, p: { title: string; ena
 }
 
 export async function updatePosition(id: number, p: Partial<Position>): Promise<Position> {
-  const body: any = {};
+  const body: Partial<Position> = {};
   if (p.title !== undefined) body.title = p.title;
   if (p.enabled !== undefined) body.enabled = p.enabled;
   if (p.sort !== undefined) body.sort = p.sort;
@@ -67,29 +79,35 @@ export async function getCurrent() {
   return data as { id: number; title?: string };
 }
 
-export async function getBallot(eid: number) {
+export async function getBallot(eid: number): Promise<unknown> {
   const { data } = await http.get(`elections/${eid}/ballot`);
-  return data as any;
+  return data;
 }
 
-export async function postVote(eid: number, body: { candidacyId: number }) {
+export type VoteChoice = { position_id?: number | null; candidacy_id: number };
+export interface VoteRequestPayload {
+  positions?: VoteChoice[];
+  atLarge?: number[];
+}
+
+export async function postVote(eid: number, body: VoteRequestPayload) {
   const { data } = await http.post(`elections/${eid}/vote`, body);
-  return data as any;
+  return data;
 }
 
 export async function getResults(eid: number) {
   const { data } = await http.get(`elections/${eid}/results`);
-  return data as any;
+  return data;
 }
 
 // Soft re-export style to keep call-sites stable if they prefer electionApi.
 export async function getAnalytics(eid: number) {
   const { data } = await http.get(`elections/${eid}/analytics`);
-  return data as any;
+  return data;
 }
 
-export async function postExplain(eid: number, opts: any = {}) {
+export async function postExplain(eid: number, opts: Record<string, unknown> = {}) {
   const { data } = await http.post(`elections/${eid}/explain`, opts);
-  return data as any;
+  return data;
 }
 // <<< PAPSAS v1.3 END

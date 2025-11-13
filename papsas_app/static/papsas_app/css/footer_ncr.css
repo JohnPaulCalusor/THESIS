@@ -1,0 +1,108 @@
+/* === FOOTER FOR NCR PAGE ONLY === */
+.footer-ncr {
+    background-color: #ffffff;
+    color: #000000;
+    padding: 2rem 0;
+    width: 100%;
+    margin-top: auto; /* sticky footer */
+}
+
+.footer-ncr__container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding-inline: 15px;
+    max-width: 1500px;
+    margin: 0 auto;
+}
+
+.footer-ncr__content {
+    margin-bottom: 2rem;
+}
+
+.footer-ncr__title {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    color: #ff0000;
+}
+
+.footer-ncr__description {
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    font-weight: 300;
+}
+
+.footer-ncr__links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.footer-ncr__link {
+    color: #ff0000;
+    text-decoration: none;
+    font-size: 0.8rem;
+    transition: color 0.3s;
+    font-weight: 300;
+}
+
+.footer-ncr__link:hover {
+    color: #ff0a0a;
+}
+
+.footer-ncr__socials {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.footer-ncr__social {
+    color: #000;
+    font-size: 1.5rem;
+    transition: color 0.3s;
+}
+
+.footer-ncr__social:hover {
+    color: #ff0a0a;
+}
+
+.footer-ncr__bottom {
+    font-size: 0.875rem;
+    border-top: 1px solid #444;
+    padding-top: 1rem;
+    width: 100%;
+    text-align: center;
+    font-weight: 300;
+    color: #ff0000;
+}
+
+/* Desktop layout */
+@media (min-width: 768px) {
+    .footer-ncr__container {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: flex-start;
+        text-align: left;
+    }
+    .footer-ncr__socials {
+        margin-bottom: 0;
+    }
+    .footer-ncr__bottom {
+        margin-top: 1rem;
+    }
+}
+
+/* Scroll button spacing */
+#scrollUpButton {
+    bottom: 100px !important;
+}
+@media (max-width: 767px) {
+    #scrollUpButton {
+        bottom: 90px !important;
+    }
+}

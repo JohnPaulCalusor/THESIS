@@ -1,13 +1,11 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
-# If your project relies on global DEFAULT_AUTHENTICATION_CLASSES (SimpleJWT), you can omit the next line.
-# If your JSON view sets authentication_classes explicitly, mirror it here as well.
-# from rest_framework_simplejwt.authentication import JWTAuthentication
-
+from django.shortcuts import get_object_or_404
 from django.http import HttpResponse
 import csv
 
+from papsas_app.models import Election
 from papsas_app.services.results import compute_election_results
 
 
@@ -19,7 +17,8 @@ class ElectionResultsView(APIView):
     # authentication_classes = [JWTAuthentication]  # uncomment only if your JSON view uses it explicitly
 
     def get(self, request, election_id: int):
-        data = compute_election_results(election_id)
+        election = get_object_or_404(Election, pk=election_id)
+        data = compute_election_results(election.id)
         return Response(data)
 
 
@@ -33,7 +32,8 @@ class ElectionResultsCsvView(APIView):
     # authentication_classes = ElectionResultsView.authentication_classes  # if used above
 
     def get(self, request, election_id: int):
-        data = compute_election_results(election_id)
+        election = get_object_or_404(Election, pk=election_id)
+        data = compute_election_results(election.id)
         resp = HttpResponse(content_type="text/csv")
         resp["Content-Disposition"] = f'attachment; filename="election_{election_id}_results.csv"'
         writer = csv.writer(resp)

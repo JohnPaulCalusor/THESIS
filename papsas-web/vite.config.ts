@@ -8,9 +8,9 @@ export default defineConfig({
     port: 5179,
     proxy: {
       "/proxy_api": {
-        target: "https://api.papsasinc.com/api",
+        target: "http://localhost:8000/api",
         changeOrigin: true,
-        secure: true,
+        secure: false,
         rewrite: (p) => p.replace(/^\/proxy_api/, ""),
       },
     },

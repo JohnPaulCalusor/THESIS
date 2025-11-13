@@ -1,11 +1,12 @@
-from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from django.shortcuts import get_object_or_404
 
 from .permissions import IsOfficerOrAdmin
 from .throttles import ExplainPerUserElectionThrottle
-from papsas_app.services.results import compute_election_results
+from papsas_app.models import Election
+from papsas_app.services.analytics import compute_election_analytics
 
 
 class ElectionAnalyticsView(APIView):
@@ -17,12 +18,8 @@ class ElectionAnalyticsView(APIView):
         Build from the canonical helper and, if analytics needs extra fields,
         compute them from this base dict rather than recounting.
         """
-        try:
-            base = compute_election_results(election_id)
-        except ObjectDoesNotExist:
-            return Response({"detail": "Election not found."}, status=status.HTTP_404_NOT_FOUND)
-
-        payload = base
+        election = get_object_or_404(Election, pk=election_id)
+        payload = compute_election_analytics(election.id)
         return Response(payload, status=status.HTTP_200_OK)
 
 
@@ -39,12 +36,8 @@ class ElectionExplainView(APIView):
 
     def post(self, request, election_id: int):
         style = (request.data or {}).get("style") or "short"
-        try:
-            base = compute_election_results(election_id)
-        except ObjectDoesNotExist:
-            return Response({"detail": "Election not found."}, status=status.HTTP_404_NOT_FOUND)
-
-        positions = base.get("positions", [])
+        election = get_object_or_404(Election, pk=election_id)
+        positions = compute_election_analytics(election.id).get("positions", [])
 
         lines = []
         for p in positions:

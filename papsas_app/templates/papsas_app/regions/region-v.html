@@ -3,231 +3,172 @@
 
 {% block head %}
 <link rel="stylesheet" href="{% static 'papsas_app/css/regional_chapter.css' %}">
+<link rel="stylesheet" href="{% static 'papsas_app/css/regional_content.css' %}">
 {% endblock %}
 
 {% block body %}
 <main class="main">
-    <!-- Page Title at Top Center -->
+    <!-- Page Title -->
     <header class="page-title">
         <h1 class="page-title__text">PAPSAS REGION 5</h1>
     </header>
 
-<!-- Student Safety Summit - PAPSAS Region 5 & Naga City -->
-<section class="home">
-    <div class="home__container container">
-        <img src="/media/papsas_app/images/1reg5.png" alt="Student Safety Summit at Ateneo de Naga University" class="feature-img">
-        <div class="home__data">
-            <h2 class="home__title">Student Safety Summit: PAPSAS Region 5 Meets Naga City Officials</h2>
+    <!-- ===== CONTENT POSTS ===== -->
+    <div class="container" style="max-width: 1400px; margin: 0 auto; padding: 0 1rem;">
 
-            <p class="home__description">
-                Student affairs and Services practitioners will meet with Naga City Mayor Nelson S. Legacion, and other city and barangay officials to discuss student safety and campus security issues, and craft action plans today, August 14, 2023. 
-                This is a follow-up of the partnership meeting and collaborative activities of PAPSAS Region 5 Chapter and the City Government of Naga City. 
-                The Student Safety Summit shall be hosted by Ateneo de Naga University.
-            </p>
+        <!-- Post 1: Student Safety Summit -->
+        <article class="content-card">
+            <img src="/media/papsas_app/images/1reg5.png" alt="Student Safety Summit at Ateneo de Naga University" class="content-card__img">
+            <div class="content-card__body">
+                <h2 class="content-card__title">Student Safety Summit: PAPSAS Region 5 Meets Naga City Officials</h2>
+                <p class="content-card__text">
+                    Student affairs and Services practitioners will meet with Naga City Mayor Nelson S. Legacion, and other city and barangay officials to discuss student safety and campus security issues, and craft action plans today, August 14, 2023. 
+                    This is a follow-up of the partnership meeting and collaborative activities of PAPSAS Region 5 Chapter and the City Government of Naga City. 
+                    The Student Safety Summit shall be hosted by Ateneo de Naga University.
+                </p>
+                <span class="content-card__highlight">
+                    Prioritizing Student Safety in Naga City<br>
+                    #PAPSASRegion5 #StudentSafety #NagaCity
+                </span>
+            </div>
+        </article>
 
-            <p class="home__description" style="color:#ff0a0a; font-weight:600; margin-top:1.5rem;">
-                Prioritizing Student Safety in Naga City <br>#PAPSASRegion5 <br>#StudentSafety <br>#NagaCity
-            </p>
-        </div>
-    </div>
-</section>
+        <hr class="content-divider">
 
-    <!-- Divider to indicate different content, aligned with content edges -->
-    <div class="container">
-        <div class="content-divider"></div>
-    </div>
+        <!-- Post 2: Bicol Young Leaders Summit 2023 -->
+        <article class="content-card">
+            <img src="/media/papsas_app/images/2reg5.png" alt="Bicol Young Leaders Summit 2023 - Day 1" class="content-card__img">
+            <div class="content-card__body">
+                <h2 class="content-card__title">HAPPENING NOW: BICOL YOUNG LEADERS SUMMIT 2023</h2>
+                <p class="content-card__text">
+                    Student leaders from all over Bicol Region have gathered today, <strong>January 20, 2023</strong> at <em>Alingal Convention Center, Ateneo de Naga University</em> for the first day of the summit.
+                </p>
+                <p class="content-card__text">
+                    <em>Photo by: Jasmine Anne Baguio</em>
+                </p>
+                <span class="content-card__highlight">
+                    #BicolYoungLeadersSummit2023 #BYLS2023
+                </span>
+            </div>
+        </article>
 
-<!-- Happening Now: Bicol Young Leaders Summit 2023 -->
-<section class="home">
-    <div class="home__container container">
-        <img src="/media/papsas_app/images/2reg5.png" alt="Bicol Young Leaders Summit 2023 - Day 1" class="feature-img">
-        <div class="home__data">
-            <h2 class="home__title">HAPPENING NOW: BICOL YOUNG LEADERS SUMMIT 2023</h2>
+        <hr class="content-divider">
 
-            <p class="home__description">
-                Student leaders from all over Bicol Region have gathered today, <strong>January 20, 2023</strong> at <em>Alingal Convention Center, Ateneo de Naga University</em> for the first day of the summit.
-            </p>
+        <!-- Post 3: CHED x PAPSAS Region 5 SAS Assembly -->
+        <article class="content-card">
+            <img src="/media/papsas_app/images/3reg5.png" alt="CHED x PAPSAS Region 5 SAS Assembly" class="content-card__img">
+            <div class="content-card__body">
+                <h2 class="content-card__title">CHED x PAPSAS Region 5 Collab</h2>
+                <p class="content-card__text">
+                    First-ever face-to-face <strong>Student Affairs and Services (SAS) Practitioners Assembly of Region 5</strong>, <em>Dec. 14</em>, <strong>The Pepperland Hotel - Convention Center, Legazpi City</strong>
+                </p>
+                <span class="content-card__highlight">
+                    #PAPSAS #PAPSAS5
+                </span>
+            </div>
+        </article>
 
-            <p class="home__description" style="margin-top:1.2rem;">
-                <em> photo by: Jasmine Anne Baguio</em>
-            </p>
+        <hr class="content-divider">
 
-            <p class="home__description" style="color:#ff0a0a; font-weight:600; margin-top:1.5rem;">
-                #BicolYoungLeadersSummit2023 <br>#BYLS2023
-            </p>
-        </div>
-    </div>
-</section>
+        <!-- Post 4: Bicol SAS at PAPSAS NatCon 2022 -->
+        <article class="content-card">
+            <img src="/media/papsas_app/images/4reg5.png" alt="Bicol SAS at PAPSAS NatCon 2022" class="content-card__img">
+            <div class="content-card__body">
+                <h2 class="content-card__title">Bicol SAS Animated in PAPSAS NatCon 2022</h2>
+                <p class="content-card__text">
+                    The student affairs and services practitioners (SAS) from Bicol Region took part in the 27th national convention and training of the Philippine Association of Practitioners of Student Affairs and Services, Inc. (PAPSAS) held at Chali Resort and Conference Center in Cagayan de Oro on November 17-19, 2022. 
+                    The said event was the first-ever face-to-face national gathering of SAS personnel in the Philippines. It was attended by 290 practitioners from 147 schools.
+                </p>
+                <p class="content-card__text">
+                    Seven schools represented Bicol in the assembly, namely: <strong>Ateneo de Naga University (ADNU)</strong>, <strong>Bicol University (BU)</strong>, <strong>Camarines Sur Polytechnic Colleges (CSPC)</strong>, <strong>Central Bicol State University of Agriculture (CBSUA)</strong>, <strong>Dr. Emilio B Espinosa Memorial State College of Agriculture and Technology</strong>, <strong>Divine Word College of Legazpi</strong>, and <strong>Shepherdville College</strong>.
+                </p>
+                <p class="content-card__text">
+                    Two Bicolano participants were elected to the new PAPSAS Board. <strong>Dr. Baby Boy Benjamin Nebres III (BU)</strong> assumed the position of Vice President for State Universities and Colleges, while <strong>Rodolfo ‘Sonny’ Virtus Jr (ADNU)</strong>, the regional chapter president, was voted in the PRO role. 
+                    The PAPSAS Region 5 Chapter’s initiatives were featured in the National President’s Report.
+                </p>
+                <p class="content-card__text">
+                    Further, <strong>ADNU’s Virtus</strong>, <strong>CSPC’s Charmayn Nate</strong>, and <strong>DEBESMSCAT’s Froilyn Ancajas and Alvin Mahawan</strong> served as facilitators in all the workshops of the national event. In the Socials Night, the Bicol delegation, led by DEBESMSCAT group, performed Masbate-style rodeo dance.
+                </p>
+                <span class="content-card__highlight">
+                    #PAPSAS #PAPSAS5 #BicolPride #NatCon2022
+                </span>
+            </div>
+        </article>
 
-    <!-- Divider to indicate different content, aligned with content edges -->
-    <div class="container">
-        <div class="content-divider"></div>
-    </div>
+        <!-- VIDEO SECTION (REGION 3 STYLE) -->
+        <section class="video-section">
+            <h2 class="video-section__title">VIDEO SECTION</h2>
+            <div class="video-grid">
 
-<!-- CHED x PAPSAS Region 5 SAS Assembly -->
-<section class="home">
-    <div class="home__container container">
-        <img src="/media/papsas_app/images/3reg5.png" alt="CHED x PAPSAS Region 5 SAS Assembly" class="feature-img">
-        <div class="home__data">
-            <h2 class="home__title">CHED x PAPSAS Region 5 Collab</h2>
-
-            <p class="home__description">
-                First-ever face-to-face <strong>Student Affairs and Services (SAS) Practitioners Assembly of Region 5</strong>, <em>Dec. 14</em>, <strong>The Pepperland Hotel - Convention Center, Legazpi City</strong>
-            </p>
-
-            <p class="home__description" style="color:#ff0a0a; font-weight:600; margin-top:1.5rem;">
-                #PAPSAS <br>#PAPSAS5
-            </p>
-        </div>
-    </div>
-</section>
-
-    <!-- Divider to indicate different content, aligned with content edges -->
-    <div class="container">
-        <div class="content-divider"></div>
-    </div>
-
-<!-- Bicol SAS at PAPSAS NatCon 2022 -->
-<section class="home">
-    <div class="home__container container">
-        <img src="/media/papsas_app/images/4reg5.png" alt="Bicol SAS at PAPSAS NatCon 2022" class="feature-img">
-        <div class="home__data">
-            <h2 class="home__title">Bicol SAS Animated in PAPSAS NatCon 2022</h2>
-
-            <p class="home__description">
-                The student affairs and services practitioners (SAS) from Bicol Region took part in the 27th national convention and training of the Philippine Association of Practitioners of Student Affairs and Services, Inc. (PAPSAS) held at Chali Resort and Conference Center in Cagayan de Oro on November 17-19, 2022. 
-                The said event was the first-ever face-to-face national gathering of SAS personnel in the Philippines. It was attended by 290 practitioners from 147 schools.
-            </p>
-                <br>
-            <p class="home__description">
-                Seven schools represented Bicol in the assembly, namely: <strong>Ateneo de Naga University (ADNU)</strong>, <strong>Bicol University (BU)</strong>, <strong>Camarines Sur Polytechnic Colleges (CSPC)</strong>, <strong>Central Bicol State University of Agriculture (CBSUA)</strong>, <strong>Dr. Emilio B Espinosa Memorial State College of Agriculture and Technology</strong>, <strong>Divine Word College of Legazpi</strong>, and <strong>Shepherdville College</strong>.
-            </p>
-                <br>
-            <p class="home__description">
-                Two Bicolano participants were elected to the new PAPSAS Board. <strong>Dr. Baby Boy Benjamin Nebres III (BU)</strong> assumed the position of Vice President for State Universities and Colleges, while <strong>Rodolfo ‘Sonny’ Virtus Jr (ADNU)</strong>, the regional chapter president, was voted in the PRO role. 
-                The PAPSAS Region 5 Chapter’s initiatives were featured in the National President’s Report.
-            </p>
-                <br>
-            <p class="home__description">
-                Further, <strong>ADNU’s Virtus</strong>, <strong>CSPC’s Charmayn Nate</strong>, and <strong>DEBESMSCAT’s Froilyn Ancajas and Alvin Mahawan</strong> served as facilitators in all the workshops of the national event. In the Socials Night, the Bicol delegation, led by DEBESMSCAT group, performed Masbate-style rodeo dance.
-            </p>
-                <br>
-            <p class="home__description" style="color:#ff0a0a; font-weight:600; margin-top:1.5rem;">
-                #PAPSAS <br>#PAPSAS5 <br>#BicolPride <br>#NatCon2022
-            </p>
-        </div>
-
-    </div>
-</section>
-
-    <!-- Region 5 Video Section -->
-    <section class="video-papsas">
-        <div class="video-feed-container">
-            <h2 class="video-title-container">VIDEO SECTION</h2>
-
-            <!-- PAPSAS Region 5 Launches Bicol Young Leaders Summit (BYLS) -->
-            <div class="video-post">
-                <div class="video-wrapper">
-                    <video controls poster="/media/papsas_app/images/byls_2023_poster.jpg">
-                        <source src="/media/papsas_app/videos/byls_2023_highlights.mp4" type="video/mp4">
-                        Your browser does not support the video tag.
-                    </video>
+                <!-- Video 1: Bicol Young Leaders Summit -->
+                <div class="video-card">
+                    <div class="video-card__player">
+                        <video controls poster>
+                            <source src="/media/papsas_app/videos/region5_1st vid.mp4" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                    <div class="video-card__content">
+                        <h3 class="video-card__title">PAPSAS Region 5 Launches Bicol Young Leaders Summit</h3>
+                        <p class="video-card__caption">
+                            The Region 5 Chapter of the Philippine Association of Practitioners of Student Affairs and Services, Inc. (PAPSAS) launched the <strong>Bicol Young Leaders Summit (BYLS)</strong> as its flagship student development program.<br><br>
+                            The 1st PAPSAS BYLS was hosted by <strong>Ateneo de Naga University, Naga City</strong>, on <em>January 20 – 21, 2023</em>. More than 200 student llamas, SAS administrators, staff, and advisers from across Bicol Region participated.<br><br>
+                            Featured speakers: <strong>Ralph Jacinto Quiblat</strong> (Ateneo de Manila), <strong>Magno Edilberto Conag III</strong> (Nueca Technologies), and <strong>Ben Secretario</strong> (Ten Outstanding Boy Scouts). Topics: Self Awareness, Servant Leadership, Project Development, and Collaboration.<br><br>
+                            Keynote addresses by <strong>Naga City Mayor Nelson Legacion</strong> and <strong>Fr. Roberto Exequiel Rivera, S.J.</strong> (ADNU President).<br><br>
+                            Highlights included an <em>Amazing Race</em>-style challenge, <strong>BYLS Got Talent</strong>, and project pitches using the Business Model Canvas.<br><br>
+                            Event led by <strong>Jerwin Roy Villacruz</strong> and master of ceremony <strong>Allysa Salvino</strong>, under the supervision of PAPSAS Region 5 President <strong>Rodolfo ‘Sonny’ Virtus Jr.</strong><br><br>
+                            <strong>#BYLS2023 #LideratongOragon #PAPSAS #PAPSAS5</strong>
+                        </p>
+                    </div>
                 </div>
-                <div class="video-content">
-                    <h3 class="video-title">PAPSAS Region 5 Launches Bicol Young Leaders Summit</h3>
-                    <p class="video-caption">
-                        The Region 5 Chapter of the Philippine Association of Practitioners of Student Affairs and Services, Inc. (PAPSAS) launched the <strong>Bicol Young Leaders Summit (BYLS)</strong> as its flagship student development program.<br><br>
-                        The 1st PAPSAS BYLS was hosted by <strong>Ateneo de Naga University, Naga City</strong>, on <em>January 20 – 21, 2023</em>. More than 200 student leaders, SAS administrators, staff, and advisers from across Bicol Region participated.<br><br>
-                        Featured speakers: <strong>Ralph Jacinto Quiblat</strong> (Ateneo de Manila), <strong>Magno Edilberto Conag III</strong> (Nueca Technologies), and <strong>Ben Secretario</strong> (Ten Outstanding Boy Scouts). Topics: Self Awareness, Servant Leadership, Project Development, and Collaboration.<br><br>
-                        Keynote addresses by <strong>Naga City Mayor Nelson Legacion</strong> and <strong>Fr. Roberto Exequiel Rivera, S.J.</strong> (ADNU President).<br><br>
-                        Highlights included an <em>Amazing Race</em>-style challenge, <strong>BYLS Got Talent</strong>, and project pitches using the Business Model Canvas.<br><br>
-                        Event led by <strong>Jerwin Roy Villacruz</strong> and master of ceremony <strong>Allysa Salvino</strong>, under the supervision of PAPSAS Region 5 President <strong>Rodolfo ‘Sonny’ Virtus Jr.</strong><br><br>
-                        <strong>#BYLS2023 #LideratongOragon #PAPSAS #PAPSAS5</strong>
-                    </p>
+
+                <!-- Video 2: Thriving Together -->
+                <div class="video-card">
+                    <div class="video-card__player">
+                        <video controls poster>
+                            <source src="/media/papsas_app/videos/region5_2nd vid.mp4" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                    <div class="video-card__content">
+                        <h3 class="video-card__title">IN FOCUS | PAPSAS Region 5 Chapter: Thriving Together</h3>
+                        <p class="video-card__caption">
+                            The <strong>PAPSAS Region 5 Chapter</strong> has thrived during the pandemic and continues to lead with purpose. It has created vital venues for conversation, collaboration, and capability-building among SAS professionals while championing student development, ethics, and safety across Bicol and the nation.<br><br>
+                            Key accomplishments include the <em>Student Discipline Cluster Conversation Series</em>, <em>Guidance and Counseling Cluster Series</em>, and <em>Student Organizations’ Leaders and Moderators Conversations</em>. The fully-virtual <strong>Regional-turned-National Convention and Training</strong> drew over <strong>400 participants nationwide</strong>.<br><br>
+                            In partnership with <strong>CHED</strong>, the chapter organized impactful webinars and the <strong>first face-to-face Bicol SAS Practitioners’ General Assembly</strong>. It also pioneered collaboration with local government to review and strengthen <strong>student-safety measures</strong>.<br><br>
+                            <strong style="color:#ff0a0a; font-style:italic;">Sararong Bicol PAPSAS: Thriving Together for a Better Normal!</strong><br><br>
+                       </p>
+                    </div>
                 </div>
-            </div>
 
-    <!-- IN FOCUS: PAPSAS Region 5 Thriving Together -->
-    <div class="video-post">
-        <div class="video-wrapper">
-            <video controls poster="/media/papsas_app/images/papsas_region5_infocus_poster.jpg">
-                <source src="/media/papsas_app/videos/papsas_region5_infocus.mp4" type="video/mp4">
-                Your browser does not support the video tag.
-            </video>
-        </div>
-        <div class="video-content">
-            <h3 class="video-title">IN FOCUS | PAPSAS Region 5 Chapter: Thriving Together</h3>
-            <p class="video-caption">
-                The <strong>PAPSAS Region 5 Chapter</strong> has thrived during the pandemic and continues to lead with purpose. It has created vital venues for conversation, collaboration, and capability-building among SAS professionals while championing student development, ethics, and safety across Bicol and the nation.<br><br>
-                Key accomplishments include the <em>Student Discipline Cluster Conversation Series</em>, <em>Guidance and Counseling Cluster Series</em>, and <em>Student Organizations’ Leaders and Moderators Conversations</em>. The fully-virtual <strong>Regional-turned-National Convention and Training</strong> drew over <strong>400 participants nationwide</strong>.<br><br>
-                In partnership with <strong>CHED</strong>, the chapter organized impactful webinars and the <strong>first face-to-face Bicol SAS Practitioners’ General Assembly</strong>. It also pioneered collaboration with local government to review and strengthen <strong>student-safety measures</strong>.<br><br>
-                <strong style="color:#ff0a0a; font-style:italic;">Sararong Bicol PAPSAS: Thriving Together for a Better Normal!</strong><br><br>
-                <strong>#PAPSAS</strong>
-            </p>
-        </div>
+            </div>
+        </section>
+
     </div>
- 
-    <!-- WATCH: PAPSAS Region 5 Accomplishment Report Highlights -->
-    <div class="video-post">
-        <div class="video-wrapper">
-            <video controls poster="/media/papsas_app/images/papsas_r5_accomplishment_poster.jpg">
-                <source src="/media/papsas_app/videos/papsas_r5_accomplishment_report.mp4" type="video/mp4">
-                Your browser does not support the video tag.
-            </video>
-        </div>
-        <div class="video-content">
-            <h3 class="video-title">WATCH: HIGHLIGHTS of PAPSAS Region 5 Chapter's ACCOMPLISHMENT REPORT (Aug 2021 – Sep 2022)</h3>
-            <p class="video-caption">
-                The PAPSAS R5 Chapter would like to thank all those who took part in all our initiatives — the <strong>PAPSAS National Board of Trustees</strong> (led by Dr. Ian Loyola and Dr. Ren Salcedo), <strong>Commission on Higher Education</strong> (especially Dr. Ma. Pamela Viñas), all the resource speakers, organizers, volunteers, and participating schools, student affairs and services practitioners, and students. <em>Dios mabalos</em> for your invaluable contributions to the success of the regional association. <strong>Padagos lang!</strong><br><br>
-                <strong style="color:#ff0a0a; font-style:italic;">Sararong Bicol PAPSAS: Thriving Together for a Better Normal!</strong><br><br>
-                <strong>#PAPSAS #PAPSAS5</strong>
-            </p>
-        </div>
-    </div>
-
-        </div>
-    </section>
-    
-
-    <!-- Footer -->
-    <button onclick="scrollToTop()" id="scrollUpButton" title="Go to top">↑</button>
-    <footer class="footer">
-        <div class="footer__container container">
-            <div class="footer__content">
-                <h3 class="footer__title">Philippine Association of Practitioners of Student Affairs and Services, Inc.</h3>
-                <p class="footer__description">Dedicated to the pursuit of excellence in student affairs and services work.</p>
-                <ul class="footer__links">
-                    <li><a href="#" class="footer__link">(043) 778 0656</a></li>
-                    <li><a href="#" class="footer__link">/papsasinc</a></li>
-                    <li><a href="#" class="footer__link">papsasinc.national@gmail.com</a></li>
-                    <li><a href="bit.ly/papsasinc" class="footer__link">bit.ly/papsasinc</a></li>
-                    <li><a href="#" class="footer__link">Visitor: {{ total_visitors }}</a></li>
-                </ul>
-            </div>
-            <div class="footer__socials">
-                <a href="#" class="footer__social"><i class="fab fa-facebook-f"></i></a>
-                <a href="#" class="footer__social"><i class="fab fa-twitter"></i></a>
-                <a href="#" class="footer__social"><i class="fab fa-instagram"></i></a>
-            </div>
-        </div>
-        <div class="footer__bottom">
-            <p>&copy; 2024 PAPSAS, Inc. All Rights Reserved.</p>
-        </div>
-    </footer>
 </main>
 
-<script>
-    window.onscroll = function() {
-        let button = document.getElementById("scrollUpButton");
-        if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
-            button.style.display = "block";
-        } else {
-            button.style.display = "none";
-        }
-    };
-
-    function scrollToTop() {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-</script>
+<!-- FOOTER OUTSIDE main -->
+<footer class="footer">
+    <div class="footer__container container">
+        <div class="footer__content">
+            <h3 class="footer__title">Philippine Association of Practitioners of Student Affairs and Services, Inc.</h3>
+            <p class="footer__description">Dedicated to the pursuit of excellence in student affairs and services work.</p>
+            <ul class="footer__links">
+                <li><a href="#" class="footer__link">(043) 778 0656</a></li>
+                <li><a href="#" class="footer__link">/papsasinc</a></li>
+                <li><a href="#" class="footer__link">papsasinc.national@gmail.com</a></li>
+                <li><a href="bit.ly/papsasinc" class="footer__link">bit.ly/papsasinc</a></li>
+                <li><a href="#" class="footer__link">Visitor: {{ total_visitors }}</a></li>
+            </ul>
+        </div>
+        <div class="footer__socials">
+            <a href="#" class="footer__social">Facebook</a>
+            <a href="#" class="footer__social">Twitter</a>
+            <a href="#" class="footer__social">Instagram</a>
+        </div>
+    </div>
+    <div class="footer__bottom">
+        <p>© 2024 PAPSAS, Inc. All Rights Reserved.</p>
+    </div>
+</footer>
 {% endblock %}

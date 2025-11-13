@@ -1,6 +1,12 @@
-﻿import axios from "axios";
+﻿import axios, { AxiosHeaders } from "axios";
+import type { AxiosRequestHeaders } from "axios";
 
-const baseURL = ((import.meta.env.VITE_API_BASE as string) || "").replace(/\/$/, "");
+// PAPSAS HTTP audit (Codex): baseURL comes from VITE_API_BASE with "/proxy_api" fallback for dev; the Vite proxy rewrites /proxy_api → http://localhost:8000/api; no raw production URLs remain.
+const baseURL = ((import.meta.env.VITE_API_BASE as string) || "/proxy_api").replace(/\/$/, "");
+/*
+ * Dev: unset VITE_API_BASE → baseURL="/proxy_api" and Vite proxies requests to http://localhost:8000/api
+ * Prod: set VITE_API_BASE="/api" during build → baseURL="/api" so the browser hits the deployed API directly.
+ */
 export const http = axios.create({ baseURL, withCredentials: false });
 export const raw  = axios.create({ baseURL });
 
@@ -53,9 +59,10 @@ for (const c of [http, raw]) {
   c.interceptors.request.use((cfg) => {
     if (cfg.url) cfg.url = normalize(cfg.url);
     if (accessToken) {
-      cfg.headers = cfg.headers || {};
-      // axios will coerce this into AxiosHeaders
-      (cfg.headers as any).Authorization = `Bearer ${accessToken}`;
+      const existing = cfg.headers as AxiosRequestHeaders | undefined;
+      const merged = new AxiosHeaders(existing ?? {});
+      merged.set("Authorization", `Bearer ${accessToken}`);
+      cfg.headers = merged;
     }
     return cfg;
   });

@@ -1,4 +1,5 @@
-﻿import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+﻿/* eslint-disable react-refresh/only-export-components */
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import http, { getTokens, setTokens, clearTokens } from "../lib/http";
 
 export type User = {
@@ -9,6 +10,28 @@ export type User = {
   groups?: string[];
   is_staff?: boolean;
   is_superuser?: boolean;
+};
+
+type AuthResponseUser = {
+  username?: string;
+  email?: string;
+  role?: string;
+  groups?: string[];
+  is_staff?: boolean;
+  is_superuser?: boolean;
+};
+
+type AuthResponse = {
+  id?: number;
+  user_id?: number;
+  pk?: number;
+  username?: string;
+  email?: string;
+  role?: string;
+  groups?: string[];
+  is_staff?: boolean;
+  is_superuser?: boolean;
+  user?: AuthResponseUser;
 };
 
 type AuthCtx = {
@@ -27,7 +50,7 @@ export function useAuth(): AuthCtx {
   return v;
 }
 
-async function tryGet<T=any>(url: string): Promise<T | null> {
+async function tryGet<T = unknown>(url: string): Promise<T | null> {
   try {
     const { data } = await http.get(url);
     return data as T;
@@ -43,7 +66,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
     // Try a few common endpoints, first success wins
     const urls = ["users/me", "auth/me", "me", "auth/user", "auth/profile"];
     for (const u of urls) {
-      const data = await tryGet<any>(u);
+      const data = await tryGet<AuthResponse>(u);
       if (data) {
         // normalize some common shapes
         const norm: User = {

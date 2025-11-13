@@ -1,0 +1,217 @@
+{
+  "generatedAt": "2025-11-10T14:47:08.160Z",
+  "css": {
+    "mainPath": "src/main.tsx",
+    "cssOrder": [
+      "./index.css",
+      "./styles/election.css"
+    ],
+    "cssOrderOk": true,
+    "expectedOrder": [
+      "./index.css",
+      "./styles/election.css"
+    ],
+    "indexCssPath": "src/index.css",
+    "indexCssOk": true,
+    "portalCssPath": "src/styles/election.css",
+    "portalCssExists": true
+  },
+  "tokens": {
+    "path": "src/styles/election.css",
+    "status": {
+      "--brand": true,
+      "--card": true,
+      "--surface": true,
+      "--muted": true,
+      "--border": true,
+      "--ring": true
+    },
+    "ok": true
+  },
+  "topbar": {
+    "path": "src/modules/components/Topbar.tsx",
+    "hasEpNav": false,
+    "hasEpNavInner": false,
+    "ok": false
+  },
+  "duplicates": {
+    "adminElectionPages": [
+      "src/modules/election/pages/AdminElectionPage.tsx"
+    ]
+  },
+  "inlineStyleHotspots": [
+    {
+      "file": "src/modules/election/components/AddCandidateModal.tsx",
+      "matches": [
+        "style={{ background: \"rgba(0,0,0,0.4)\" }}"
+      ]
+    },
+    {
+      "file": "src/modules/election/components/CandidacyFormModal2.tsx",
+      "matches": [
+        "style={{ background: \"rgba(0,0,0,0.4)\" }}"
+      ]
+    },
+    {
+      "file": "src/modules/pages/BallotPage.tsx",
+      "matches": [
+        "style={{ borderColor: \"rgba(16,185,129,.4)\", background: \"rgba(16,185,129,.1)\" }}",
+        "style={{ borderColor: \"var(--ring)\", background: \"#fff\" }}",
+        "style={{ borderColor: \"var(--ring)\", background: \"#fff\" }}",
+        "style={{ borderColor: \"rgba(248,113,113,.4)\", background: \"rgba(248,113,113,.1)\" }}"
+      ]
+    },
+    {
+      "file": "src/modules/pages/OfficerResults.tsx",
+      "matches": [
+        "style={{ borderColor: \"rgba(248,113,113,.4)\", background: \"rgba(248,113,113,.1)\" }}"
+      ]
+    }
+  ],
+  "classUsage": {
+    "totals": {
+      "btn": 35,
+      "btnPrimary": 11,
+      "btnSecondary": 5,
+      "card": 25,
+      "badge": 0,
+      "epAny": 3
+    },
+    "varUsages": [
+      "var(--bg)",
+      "var(--border)",
+      "var(--brand)",
+      "var(--brand-600)",
+      "var(--card)",
+      "var(--muted)",
+      "var(--muted-bg)",
+      "var(--r-lg)",
+      "var(--r-md)",
+      "var(--r-pill)",
+      "var(--r-sm)",
+      "var(--ring)",
+      "var(--s-3)",
+      "var(--shadow-1)",
+      "var(--shadow-2)",
+      "var(--surface)",
+      "var(--text)"
+    ]
+  },
+  "pages": [
+    {
+      "file": "src/modules/election/pages/AdminElectionPage.tsx",
+      "component": "AdminElectionPage",
+      "hasEpWrapper": false,
+      "hasEpPage": false,
+      "scope": null,
+      "outerWrapperClasses": "p-6 space-y-4",
+      "h1": "{head}",
+      "inlineStyleMatches": [],
+      "classCounts": {
+        "btn": 0,
+        "btnPrimary": 0,
+        "btnSecondary": 0,
+        "card": 0,
+        "badge": 0,
+        "epAny": 0
+      },
+      "varsUsed": []
+    },
+    {
+      "file": "src/modules/pages/BallotPage.tsx",
+      "component": "BallotPage",
+      "hasEpWrapper": false,
+      "hasEpPage": false,
+      "scope": null,
+      "outerWrapperClasses": "page grid place-items-center",
+      "h1": "Ballot",
+      "inlineStyleMatches": [
+        "style={{ borderColor: \"rgba(16,185,129,.4)\", background: \"rgba(16,185,129,.1)\" }}",
+        "style={{ borderColor: \"var(--ring)\", background: \"#fff\" }}",
+        "style={{ borderColor: \"var(--ring)\", background: \"#fff\" }}",
+        "style={{ borderColor: \"rgba(248,113,113,.4)\", background: \"rgba(248,113,113,.1)\" }}"
+      ],
+      "classCounts": {
+        "btn": 2,
+        "btnPrimary": 1,
+        "btnSecondary": 0,
+        "card": 6,
+        "badge": 0,
+        "epAny": 0
+      },
+      "varsUsed": [
+        "var(--brand)",
+        "var(--ring)",
+        "var(--surface)"
+      ]
+    },
+    {
+      "file": "src/modules/pages/ElectionsIndex.tsx",
+      "component": "ElectionsIndex",
+      "hasEpWrapper": false,
+      "hasEpPage": false,
+      "scope": null,
+      "outerWrapperClasses": null,
+      "h1": "Elections",
+      "inlineStyleMatches": [],
+      "classCounts": {
+        "btn": 4,
+        "btnPrimary": 1,
+        "btnSecondary": 0,
+        "card": 1,
+        "badge": 0,
+        "epAny": 0
+      },
+      "varsUsed": []
+    },
+    {
+      "file": "src/modules/pages/LoginPage.tsx",
+      "component": "LoginPage",
+      "hasEpWrapper": false,
+      "hasEpPage": false,
+      "scope": null,
+      "outerWrapperClasses": "max-w-3xl mx-auto px-6 py-10",
+      "h1": "Sign in",
+      "inlineStyleMatches": [],
+      "classCounts": {
+        "btn": 2,
+        "btnPrimary": 1,
+        "btnSecondary": 0,
+        "card": 1,
+        "badge": 0,
+        "epAny": 0
+      },
+      "varsUsed": [
+        "var(--card)",
+        "var(--muted)",
+        "var(--muted-bg)"
+      ]
+    },
+    {
+      "file": "src/modules/pages/OfficerResults.tsx",
+      "component": "OfficerResults",
+      "hasEpWrapper": false,
+      "hasEpPage": false,
+      "scope": null,
+      "outerWrapperClasses": "card",
+      "h1": "{data.election?.title ?? `Election #${effectiveId}`}",
+      "inlineStyleMatches": [
+        "style={{ borderColor: \"rgba(248,113,113,.4)\", background: \"rgba(248,113,113,.1)\" }}"
+      ],
+      "classCounts": {
+        "btn": 10,
+        "btnPrimary": 2,
+        "btnSecondary": 3,
+        "card": 4,
+        "badge": 0,
+        "epAny": 0
+      },
+      "varsUsed": [
+        "var(--border)",
+        "var(--brand)",
+        "var(--card)",
+        "var(--muted)"
+      ]
+    }
+  ]
+}
