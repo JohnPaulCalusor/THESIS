@@ -60,6 +60,7 @@ class ElectionBallotView(APIView):
             positions.append({
                 "id": p.id,
                 "title": p.title,
+                "winners": getattr(p, "winners", None),
                 # web expects options/choices; include both for compatibility
                 "options": by_pos.get(p.id, []),
                 "choices": by_pos.get(p.id, []),
@@ -67,7 +68,11 @@ class ElectionBallotView(APIView):
 
         # payload; positions-first; keep atLarge as fallback for legacy UI
         return Response({
-            "election": {"id": e.id, "title": getattr(e, "title", None)},
+            "election": {
+                "id": e.id,
+                "title": getattr(e, "title", None),
+                "numWinners": getattr(e, "numWinners", None),
+            },
             "positions": positions,
             "atLarge": at_large,  # safe extra; frontend can ignore
         }, status=200)

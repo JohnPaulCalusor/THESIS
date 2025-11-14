@@ -34,8 +34,11 @@ const router = createBrowserRouter([
     children: [
       { path: "/", element: <Navigate to="/ballot" replace /> },
       { path: "/login", element: <Suspense fallback={null}><LoginPage /></Suspense> },
+
+      // protected ballot
       { path: "/ballot", element: <Private><Suspense fallback={null}><BallotPage /></Suspense></Private> },
-      { path: "/results", element: <Private><Suspense fallback={null}><OfficerResults /></Suspense></Private> },
+
+      // admin-only
       {
         path: "/admin/election",
         element: (
@@ -46,8 +49,15 @@ const router = createBrowserRouter([
           </Private>
         ),
       },
+
+      // public results
+      { path: "/results", element: <Suspense fallback={null}><OfficerResults /></Suspense> },
+
+      // legacy redirects
       { path: "/elections/:id/ballot", element: <Navigate to="/ballot" replace /> },
       { path: "/elections/:id/results", element: <Navigate to="/results" replace /> },
+
+      // 404
       { path: "*", element: <div style={{ padding: 16 }}>Not found</div> }
     ]
   }

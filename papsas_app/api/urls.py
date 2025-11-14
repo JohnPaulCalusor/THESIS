@@ -5,15 +5,24 @@ from django.urls import path
 
 # Core/auth/me views
 from .views import (
-    health, LoginView, RefreshView, MeView,
-    ElectionListView, BallotView, VoteView, ResultsView,
+    health,
+    LoginView,
+    RefreshView,
+    MeView,
+    EmailVerificationStartView,
+    EmailVerificationVerifyView,
+    ElectionListView,
+    BallotView,
+    VoteView,
+    ResultsView,
 )
 
 # Current election + candidacy quick-create
 from .views_candidacy import CurrentElectionView, CandidacyQuickCreate
 from .views_results import ElectionResultsView, ElectionResultsCsvView
-from .views_analytics import ElectionAnalyticsView, ElectionExplainView
+from .views_analytics import election_analytics, ElectionExplainView
 from .views_candidacy_admin import CandidacyListCreateView, CandidacyDetailPatchView
+from .views_candidacy import candidacy_partial_update
 
 # Positions list/detail
 from .views_position import PositionViewSet
@@ -33,11 +42,18 @@ urlpatterns = [
     path("health", health, name="api-health"),
 
     # Auth
+    path("auth/email/start", EmailVerificationStartView.as_view(), name="api-auth-email-start"),
+    path("auth/email/start/", EmailVerificationStartView.as_view()),
+    path("auth/email/verify", EmailVerificationVerifyView.as_view(), name="api-auth-email-verify"),
+    path("auth/email/verify/", EmailVerificationVerifyView.as_view()),
+    path("auth/me", MeView.as_view(), name="api-auth-me"),
+    path("auth/me/", MeView.as_view()),
     path("auth/login/",   LoginView.as_view(),   name="api-login"),
     path("auth/refresh/", RefreshView.as_view(), name="api-refresh"),
 
     # Me
-    path("me/", MeView.as_view(), name="api-me"),
+    path("me", MeView.as_view(), name="api-me"),
+    path("me/", MeView.as_view()),
 
     # Canonical election endpoints
     path("elections/", ElectionListView.as_view(), name="elections-list"),
@@ -46,7 +62,7 @@ urlpatterns = [
     path("elections/<int:election_id>/vote", VoteView.as_view(), name="election-vote"),
     path("elections/<int:election_id>/results", ElectionResultsView.as_view(), name="election-results"),
     path("elections/<int:election_id>/results/export.csv", ElectionResultsCsvView.as_view(), name="election-results-csv"),
-    path("elections/<int:election_id>/analytics", ElectionAnalyticsView.as_view(), name="election-analytics"),
+    path("elections/<int:election_id>/analytics", election_analytics, name="election-analytics"),
     path("elections/<int:election_id>/explain",   ElectionExplainView.as_view(),   name="election-explain"),
 
     # Positions
@@ -59,6 +75,8 @@ urlpatterns = [
     # Candidacies admin write path + list
     path("elections/<int:election_id>/candidacies", CandidacyListCreateView.as_view()),
     path("elections/<int:election_id>/candidacies/<int:pk>", CandidacyDetailPatchView.as_view()),
+    # compat: slashless PATCH + DELETE used by legacy tests
+    path("candidacies/<int:pk>", candidacy_partial_update, name="candidacy-partial-update-noslash"),
 
     # Users search (admin-only)
     path("users", UserSearchView.as_view(), name="user-search"),

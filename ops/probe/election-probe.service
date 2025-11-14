@@ -1,0 +1,17 @@
+[Unit]
+Description=Probe current election endpoints
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+User=papsas
+Group=papsas
+EnvironmentFile=-/etc/papsas/probe.env
+RuntimeDirectory=papsas
+RuntimeDirectoryMode=0750
+StandardOutput=append:/var/log/papsas/probe.log
+StandardError=append:/var/log/papsas/probe.log
+ExecStart=/usr/local/bin/probe_election_current.sh
+NoNewPrivileges=true
+PrivateTmp=true

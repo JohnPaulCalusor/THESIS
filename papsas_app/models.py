@@ -1,13 +1,12 @@
+from django.conf import settings
+from django.core.exceptions import ValidationError
 from django.db import models
-from django.db.models import UniqueConstraint, Q
+from django.db.models import Avg, Q, UniqueConstraint
 from django.contrib import admin
 from django.contrib.auth.models import AbstractUser
 from django import forms
-from django.db.models import F
 from django.utils import timezone
-from datetime import date
-from django.db.models import Avg
-from datetime import timedelta
+from datetime import date, timedelta
 from django.core.validators import RegexValidator, MinValueValidator, MaxValueValidator
 from django.utils.translation import gettext_lazy as _
 
@@ -132,6 +131,45 @@ class User(AbstractUser):
         ordering = ['id']
 
 
+class UserSecurity(models.Model):
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="security",
+    )
+    email_verified_at = models.DateTimeField(blank=True, null=True)
+    otp_hash = models.CharField(max_length=128, blank=True)
+    otp_expires_at = models.DateTimeField(blank=True, null=True)
+    otp_attempts = models.PositiveSmallIntegerField(default=0)
+    otp_locked_until = models.DateTimeField(blank=True, null=True)
+    otp_last_sent_at = models.DateTimeField(blank=True, null=True)
+
+    class Meta:
+        verbose_name = "user security guard"
+        verbose_name_plural = "user security guards"
+        ordering = ["user_id"]
+
+    def is_locked(self):
+        return bool(self.otp_locked_until and timezone.now() < self.otp_locked_until)
+
+    def clear_otp_state(self, *, update_fields=None):
+        self.otp_hash = ""
+        self.otp_expires_at = None
+        self.otp_attempts = 0
+        self.otp_locked_until = None
+        self.otp_last_sent_at = None
+        self.save(
+            update_fields=update_fields
+            or [
+                "otp_hash",
+                "otp_expires_at",
+                "otp_attempts",
+                "otp_locked_until",
+                "otp_last_sent_at",
+            ]
+        )
+
+
 class MembershipTypes(models.Model):
     pubmat = models.ImageField(upload_to="papsas_app/pubmat/event", null=False)
     type = models.CharField(max_length=16, null=True)
@@ -209,6 +247,8 @@ class Candidacy(models.Model):
     # <<< PAPSAS v1.4 END
 
 class Vote(models.Model):
+    # LEGACY: candidateID M2M is deprecated; selections now live in VoteChoice.
+    # TODO: remove this once VoteChoice is fully populated and consumers stop touching the M2M.
     candidateID = models.ManyToManyField(Candidacy, related_name="nominee")
     voterID = models.ForeignKey(User, on_delete=models.CASCADE, related_name="voter")
     voteDate = models.DateField(auto_now_add=True)
@@ -224,6 +264,50 @@ class Vote(models.Model):
         ]
     def __str__(self):
         return f'{self.candidateID.all()}'
+
+    @property
+    def selections(self):
+        # expose new VoteChoice rows for ease of access
+        return self.choices.select_related("candidacy", "position")
+
+
+class VoteChoice(models.Model):
+    """
+    Captures one candidacy selection per ballot so we can enforce per-position constraints and aggregate safely.
+    """
+    vote = models.ForeignKey("Vote", on_delete=models.CASCADE, related_name="choices")
+    candidacy = models.ForeignKey("Candidacy", on_delete=models.PROTECT, related_name="vote_choices")
+    position = models.ForeignKey("Position", on_delete=models.PROTECT, related_name="vote_choices")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["vote", "candidacy"], name="uq_choice_vote_candidacy"),
+        ]
+
+    def clean(self):
+        candidacy = getattr(self, "candidacy", None)
+        candidacy_position_id = getattr(candidacy, "position_id", None)
+        if candidacy_position_id is None and self.candidacy_id:
+            candidacy_position_id = (
+                Candidacy.objects.filter(id=self.candidacy_id)
+                .values_list("position_id", flat=True)
+                .first()
+            )
+        if candidacy_position_id is None:
+            return
+        if not self.position_id:
+            self.position_id = candidacy_position_id
+            return
+        if self.position_id != candidacy_position_id:
+            raise ValidationError("position must equal candidacy.position")
+
+    def save(self, *args, **kwargs):
+        self.clean()
+        return super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"VoteChoice(vote={self.vote_id}, candidacy={self.candidacy_id}, position={self.position_id})"
 
 
 class Officer(models.Model):

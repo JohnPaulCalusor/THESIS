@@ -1,9 +1,12 @@
+from django.conf import settings
 from django.db import transaction
 from django.db.models import Count
 from django.utils import timezone
+from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.throttling import ScopedRateThrottle
 from rest_framework.views import APIView
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
@@ -12,10 +15,27 @@ User = get_user_model()
 
 from .permissions import IsOfficer
 from .serializers import (
-    UserLiteSerializer, ElectionListSerializer, ElectionDetailSerializer,
-    BallotInSerializer, BallotOutSerializer, ElectionResultsSerializer,
-    Election, Candidate, VoteModel,
-    cand_elec_fk_name, position_label_field,
+    UserLiteSerializer,
+    ElectionListSerializer,
+    ElectionDetailSerializer,
+    BallotInSerializer,
+    BallotOutSerializer,
+    ElectionResultsSerializer,
+    Election,
+    Candidate,
+    VoteModel,
+    cand_elec_fk_name,
+    position_label_field,
+    MeSerializer,
+    MeUpdateSerializer,
+    EmailVerificationStartSerializer,
+    EmailVerificationVerifySerializer,
+)
+from .email_otp import (
+    EmailOTPError,
+    get_user_security,
+    issue_email_otp,
+    verify_email_otp,
 )
 
 def fk_field(model, to_model):
@@ -60,6 +80,24 @@ vote_elec_fk = vote_elec_fk_field.name if vote_elec_fk_field else None
 
 def _schema_error(detail):
     return Response({"error": "SCHEMA_MISMATCH", "detail": detail}, status=500)
+
+class OTPThrottledMixin:
+    def throttled(self, request, throttle):
+        payload = {
+            "code": "TOO_MANY_REQUESTS",
+            "message": "Please wait before requesting a new code.",
+        }
+        wait = getattr(throttle, "wait", lambda: None)()
+        if wait:
+            payload["retry_after"] = int(wait)
+        return Response(payload, status=status.HTTP_429_TOO_MANY_REQUESTS)
+
+
+def _otp_error_response(code, message, status_code, retry_after=None):
+    payload = {"code": code, "message": message}
+    if retry_after is not None:
+        payload["retry_after"] = retry_after
+    return Response(payload, status=status_code)
 
 def _votes_qs_for_election(election):
     """Return Vote queryset limited to the election, whether Vote has an election FK or not."""
@@ -115,8 +153,96 @@ class RefreshView(TokenRefreshView):
 
 class MeView(APIView):
     permission_classes = [IsAuthenticated]
+
     def get(self, request):
-        return Response(UserLiteSerializer(request.user).data)
+        return Response(MeSerializer(request.user).data)
+
+    def patch(self, request):
+        serializer = MeUpdateSerializer(
+            request.user,
+            data=request.data,
+            partial=True,
+            context={"request": request},
+        )
+        serializer.is_valid(raise_exception=True)
+        email_before = request.user.email
+        serializer.save()
+        payload = MeSerializer(request.user).data
+        if request.user.email != email_before:
+            request.user.email_verified = False
+            request.user.save(update_fields=["email_verified"])
+            expires_at = issue_email_otp(request.user)
+            payload["otp_expires_at"] = expires_at.isoformat()
+        return Response(payload, status=status.HTTP_200_OK)
+
+
+class EmailVerificationStartView(OTPThrottledMixin, APIView):
+    permission_classes = [IsAuthenticated]
+    throttle_scope = "otp_start"
+    throttle_classes = [ScopedRateThrottle]
+
+    def post(self, request):
+        serializer = EmailVerificationStartSerializer(data=request.data, context={"request": request})
+        serializer.is_valid(raise_exception=True)
+        try:
+            security = get_user_security(request.user)
+            now = timezone.now()
+            cooldown = settings.EMAIL_OTP_SEND_THROTTLE_SECONDS
+            if security.otp_last_sent_at and (now - security.otp_last_sent_at).total_seconds() < cooldown:
+                retry_after = int(cooldown - (now - security.otp_last_sent_at).total_seconds())
+                raise EmailOTPError(
+                    "Please wait before requesting a new code.",
+                    status_code=429,
+                    retry_after=retry_after,
+                )
+            expires_at = issue_email_otp(request.user)
+            return Response(
+                {"status": "sent", "expires_at": expires_at.isoformat()},
+                status=status.HTTP_202_ACCEPTED,
+            )
+        except EmailOTPError as exc:
+            if exc.status_code == status.HTTP_429_TOO_MANY_REQUESTS:
+                return _otp_error_response(
+                    "TOO_MANY_REQUESTS",
+                    "Please wait before requesting a new code.",
+                    exc.status_code,
+                    exc.retry_after,
+                )
+            return _otp_error_response(
+                "EMAIL_OTP_ERROR",
+                exc.detail,
+                exc.status_code,
+                exc.retry_after,
+            )
+
+
+class EmailVerificationVerifyView(OTPThrottledMixin, APIView):
+    permission_classes = [IsAuthenticated]
+    throttle_scope = "otp_verify"
+    throttle_classes = [ScopedRateThrottle]
+
+    def post(self, request):
+        serializer = EmailVerificationVerifySerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        try:
+            verified_at = verify_email_otp(request.user, serializer.validated_data["code"])
+        except EmailOTPError as exc:
+            if exc.status_code == status.HTTP_429_TOO_MANY_REQUESTS:
+                return _otp_error_response(
+                    "TOO_MANY_ATTEMPTS",
+                    "Please request a new code later.",
+                    exc.status_code,
+                    exc.retry_after,
+                )
+            return _otp_error_response(
+                "INVALID_OTP",
+                "Invalid or expired code.",
+                exc.status_code,
+            )
+        return Response(
+            {"email_verified": True, "email_verified_at": verified_at.isoformat()},
+            status=status.HTTP_200_OK,
+        )
 
 class ElectionListView(APIView):
     permission_classes = [AllowAny]
