@@ -1,5 +1,4 @@
 from django.core.exceptions import ObjectDoesNotExist
-from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
@@ -7,6 +6,7 @@ from rest_framework.views import APIView
 
 from .permissions import IsAdminOrOfficer
 from .throttles import ExplainPerUserElectionThrottle
+from papsas_app.services.analytics import compute_election_analytics
 from papsas_app.services.results import compute_election_results
 from papsas_app.models import Election
 
@@ -16,24 +16,14 @@ from papsas_app.models import Election
 def election_analytics(request, election_id: int):
     """
     Returns analytics for an election.
-    Tests require keys: 'positions', 'results', and 'meta': {'totalVotes': <int>}
+    Tests expect 'election', 'total_votes', 'by_position', and 'by_candidate'.
     """
-    elec = get_object_or_404(Election, pk=election_id)
-
-    data = {
-        "election": {"id": elec.id, "title": elec.title},
-        "positions": [],
-        "results": [],
-    }
-
-    results = data.get("results") or []
     try:
-        total = sum((row.get("votes") or row.get("count") or 0) for row in results)
-    except Exception:
-        total = 0
-    data["meta"] = {"totalVotes": int(total)}
+        data = compute_election_analytics(election_id)
+    except ObjectDoesNotExist:
+        return Response({"detail": "Election not found."}, status=status.HTTP_404_NOT_FOUND)
 
-    return Response(data)
+    return Response(data, status=status.HTTP_200_OK)
 
 
 class ElectionExplainView(APIView):

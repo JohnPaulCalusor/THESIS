@@ -6,11 +6,12 @@ from django.http import JsonResponse
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 
-from .models import Election, Candidacy, Vote
+from .models import Election, Candidacy, Vote, VoteChoice
 from .models_position import Position
 from papsas_app.utils.election_mode import get_election_mode
 
 logger = logging.getLogger(__name__)
+
 def _as_int_list(v) -> List[int]:
     if isinstance(v, list):
         out = []
@@ -39,13 +40,6 @@ def _as_pos_pairs(v) -> List[Dict[str, int]]:
                 out.append({"candidacy_id": cid_i, "position_id": pid_i})
     return out
 
-def _count_per_position(pairs: List[Dict[str, int]]) -> Dict[int | None, int]:
-    counts: dict[int | None, int] = {}
-    for pair in pairs:
-        pid = pair.get("position_id")
-        counts[pid] = counts.get(pid, 0) + 1
-    return counts
-
 def _already_voted(user, election):
     return Vote.objects.filter(voterID=user, election=election).exists()
 
@@ -61,6 +55,60 @@ def _record_vote(user, election, cand_ids: List[int]):
 
     v = Vote.objects.create(voterID=user, election=election)
     v.candidateID.add(*Candidacy.objects.filter(id__in=valid))
+    return JsonResponse({"ok": True})
+
+
+def _record_position_vote(user, election, pairs: List[Dict[str, int]]):
+    if _already_voted(user, election):
+        return JsonResponse({"code": "ALREADY_VOTED", "message": "You already voted."}, status=409)
+    if not pairs:
+        return JsonResponse({"code": "BAD_REQUEST", "detail": "No candidates provided."}, status=400)
+
+    candidacy_ids = [p["candidacy_id"] for p in pairs if p.get("candidacy_id") is not None]
+    if len(candidacy_ids) != len(pairs):
+        return JsonResponse({"code": "BAD_REQUEST", "detail": "Each position entry requires candidacy_id."}, status=400)
+
+    candidacies = (
+        Candidacy.objects.filter(id__in=set(candidacy_ids), election=election)
+        .select_related("position")
+    )
+    cand_map = {c.id: c for c in candidacies}
+    if len(cand_map) != len(set(candidacy_ids)):
+        return JsonResponse(
+            {"code": "BAD_REQUEST", "detail": "One or more candidates are invalid for this election."},
+            status=400,
+        )
+
+    choices = []
+    seen = set()
+    with transaction.atomic():
+        vote = Vote.objects.create(voterID=user, election=election)
+        for pair in pairs:
+            cid = pair["candidacy_id"]
+            pid = pair["position_id"]
+            candidacy = cand_map.get(cid)
+            if not candidacy:
+                return JsonResponse(
+                    {"code": "BAD_REQUEST", "detail": f"candidacy_id {cid} not found"},
+                    status=400,
+                )
+            position = getattr(candidacy, "position", None)
+            if not position or position.id != pid:
+                return JsonResponse(
+                    {
+                        "code": "BAD_REQUEST",
+                        "detail": f"candidacy_id {cid} does not belong to position_id {pid}",
+                    },
+                    status=400,
+                )
+            key = (vote.id, candidacy.id)
+            if key in seen:
+                continue
+            seen.add(key)
+            choices.append(
+                VoteChoice(vote=vote, candidacy=candidacy, position=position)
+            )
+        VoteChoice.objects.bulk_create(choices)
     return JsonResponse({"ok": True})
 
 @api_view(["POST"])
@@ -80,27 +128,17 @@ def api_vote_json(request, eid: int):
     wants_position = bool(pairs)
     mode = get_election_mode(election)
 
-    cand_ids: List[int]
-    per_pos_counts: Dict[int | None, int]
-
-    if wants_at_large and not wants_position:
-        cand_ids = atlarge
-        per_pos_counts = {None: len(cand_ids)}
-    elif wants_position:
-        cand_ids = [p["candidacy_id"] for p in pairs if p.get("candidacy_id") is not None]
-        per_pos_counts = _count_per_position(pairs)
-    else:
-        return JsonResponse({"code": "BAD_REQUEST", "detail": "Provide positions[] or atLarge[]"}, status=400)
-
     if mode == "atLarge":
-        total_picks = len(cand_ids)
+        if not wants_at_large:
+            return JsonResponse({"code": "BAD_REQUEST", "detail": "Provide atLarge[]"}, status=400)
+        total_picks = len(atlarge)
         logger.info(
             "Vote attempt",
             extra={
                 "mode": mode,
                 "election_id": election.id,
                 "total_picks": total_picks,
-                "per_position_counts": per_pos_counts,
+                "per_position_counts": {None: total_picks},
             },
         )
         allowed = int(election.numWinners or 0)
@@ -113,19 +151,18 @@ def api_vote_json(request, eid: int):
                 },
                 status=400,
             )
-        return _record_vote(request.user, election, cand_ids)
+        return _record_vote(request.user, election, atlarge)
 
     if mode == "positions":
+        if not wants_position:
+            return JsonResponse({"code": "BAD_REQUEST", "detail": "Provide positions[]"}, status=400)
         if wants_at_large:
             return JsonResponse(
                 {"code": "WRONG_MODE", "detail": "This election uses position-based voting."},
                 status=400,
             )
-        if not wants_position:
-            return JsonResponse({"code": "BAD_REQUEST", "detail": "Provide positions[]"}, status=400)
 
         per_pos_counts = {}
-        cand_ids = []
         position_ids: set[int] = set()
         for pair in pairs:
             pid = pair.get("position_id")
@@ -134,7 +171,6 @@ def api_vote_json(request, eid: int):
                     {"code": "BAD_REQUEST", "detail": "position_id is required for positions[]"},
                     status=400,
                 )
-            cand_ids.append(pair["candidacy_id"])
             per_pos_counts[pid] = per_pos_counts.get(pid, 0) + 1
             position_ids.add(pid)
 
@@ -143,6 +179,7 @@ def api_vote_json(request, eid: int):
             for pos in Position.objects.filter(id__in=position_ids)
         }
 
+        cand_ids = [pair["candidacy_id"] for pair in pairs]
         logger.info(
             "Vote attempt",
             extra={
@@ -166,7 +203,7 @@ def api_vote_json(request, eid: int):
                     },
                     status=400,
                 )
-        return _record_vote(request.user, election, cand_ids)
+        return _record_position_vote(request.user, election, pairs)
 
     return JsonResponse(
         {"code": "BAD_REQUEST", "detail": "Invalid election voting mode."}, status=400
