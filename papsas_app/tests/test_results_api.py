@@ -13,8 +13,8 @@ class ResultsApiTest(TestCase):
         self.Candidacy = apps.get_model(label, "Candidacy")
         self.Vote = apps.get_model(label, "Vote")
 
-        self.u1 = self.User.objects.create_user(username="u1", password="x")
-        self.u2 = self.User.objects.create_user(username="u2", password="x")
+        self.u1 = self.User.objects.create_user(username="u1", password="x", email="u1@example.com")
+        self.u2 = self.User.objects.create_user(username="u2", password="x", email="u2@example.com")
 
         self.e = self.Election.objects.create(
             title="T",
