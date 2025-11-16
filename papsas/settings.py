@@ -126,7 +126,8 @@ INSTALLED_APPS = [
     "rest_framework",
     # (No need to add 'rest_framework_simplejwt' to INSTALLED_APPS to use its auth class)
 ]
-
+if DEBUG:
+    INSTALLED_APPS.append("django_extensions")
 # ----- Middleware -------------------------------------------------------------
 MIDDLEWARE = [
     "papsas_app.analytics.middleware.ClientIPMiddleware",
