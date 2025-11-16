@@ -304,10 +304,11 @@ REST_FRAMEWORK.setdefault("DEFAULT_THROTTLE_CLASSES", []).extend([
     "rest_framework.throttling.ScopedRateThrottle",
 ])
 REST_FRAMEWORK.setdefault("DEFAULT_THROTTLE_RATES", {})
+DRF_THROTTLE_LOGIN = env_str("DRF_THROTTLE_LOGIN", "5/min")
 REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"].update({
     "otp_start": "3/min",
     "otp_verify": "10/min",
-    "auth_login": "5/min",
+    "auth_login": DRF_THROTTLE_LOGIN,
 })
 
 # >>> PAPSAS v1.4 BEGIN

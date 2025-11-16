@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.contrib.postgres.indexes import GinIndex
 from django.db import models
 
 
@@ -34,5 +35,6 @@ class AuditEvent(models.Model):
             models.Index(fields=["action", "ts"]),
             models.Index(fields=["scope_election_id", "ts"]),
             models.Index(fields=["actor", "ts"]),
+            GinIndex(fields=["meta"], name="analytics_a_meta_gin_idx"),
         ]
         ordering = ["-ts"]

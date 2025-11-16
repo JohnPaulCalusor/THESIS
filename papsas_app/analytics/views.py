@@ -1,9 +1,10 @@
 import csv
+import io
 import json
 
 from datetime import datetime, timezone as dt_timezone
 
-from django.http import HttpResponse
+from django.http import StreamingHttpResponse
 from django.utils import timezone
 from django.utils.dateparse import parse_date, parse_datetime
 from django.db.models import Q
@@ -15,6 +16,52 @@ from rest_framework.response import Response
 from papsas_app.analytics.models import AuditEvent
 from papsas_app.analytics.serializers import AuditEventSerializer
 from papsas_app.api.permissions import IsAdminOnly
+
+
+def _audit_csv_rows(qs):
+    pseudo = io.StringIO()
+    writer = csv.writer(pseudo, lineterminator="\n")
+    header = [
+        "id",
+        "ts",
+        "actor_username",
+        "action",
+        "status",
+        "scope_election_id",
+        "target_type",
+        "target_id",
+        "ip",
+        "method",
+        "path",
+        "payload_hash",
+        "meta_json",
+    ]
+    writer.writerow(header)
+    pseudo.seek(0)
+    yield pseudo.getvalue()
+
+    for ev in qs:
+        pseudo.truncate(0)
+        pseudo.seek(0)
+        writer.writerow(
+            [
+                ev.id,
+                ev.ts.isoformat(),
+                ev.actor_username,
+                ev.action,
+                ev.status,
+                ev.scope_election_id,
+                ev.target_type,
+                ev.target_id,
+                ev.ip,
+                ev.method,
+                ev.path,
+                ev.payload_hash,
+                json.dumps(ev.meta, separators=(",", ":")),
+            ]
+        )
+        pseudo.seek(0)
+        yield pseudo.getvalue()
 
 
 def _parse_date(value):
@@ -96,42 +143,6 @@ def audit_events(request):
 def audit_export_csv(request):
     qs = _filter_events(request)[:50000]
     now = timezone.now().strftime("%Y%m%d%H%M%S")
-    resp = HttpResponse(content_type="text/csv")
+    resp = StreamingHttpResponse(_audit_csv_rows(qs), content_type="text/csv")
     resp["Content-Disposition"] = f'attachment; filename="audit-events-{now}.csv"'
-    writer = csv.writer(resp, lineterminator="\n")
-    writer.writerow(
-        [
-            "id",
-            "ts",
-            "actor_username",
-            "action",
-            "status",
-            "scope_election_id",
-            "target_type",
-            "target_id",
-            "ip",
-            "method",
-            "path",
-            "payload_hash",
-            "meta_json",
-        ]
-    )
-    for ev in qs:
-        writer.writerow(
-            [
-                ev.id,
-                ev.ts.isoformat(),
-                ev.actor_username,
-                ev.action,
-                ev.status,
-                ev.scope_election_id,
-                ev.target_type,
-                ev.target_id,
-                ev.ip,
-                ev.method,
-                ev.path,
-                ev.payload_hash,
-                json.dumps(ev.meta, separators=(",", ":")),
-            ]
-        )
     return resp
