@@ -8,6 +8,7 @@ from .permissions import IsAdminOrOfficer
 from .throttles import ExplainPerUserElectionThrottle
 from papsas_app.services.analytics import compute_election_analytics
 from papsas_app.services.results import compute_election_results
+from papsas_app.analytics.audit import log_event
 from papsas_app.models import Election
 
 
@@ -22,6 +23,18 @@ def election_analytics(request, election_id: int):
         data = compute_election_analytics(election_id)
     except ObjectDoesNotExist:
         return Response({"detail": "Election not found."}, status=status.HTTP_404_NOT_FOUND)
+
+    try:
+        log_event(
+            request,
+            action="ANALYTICS_VIEWED",
+            status="success",
+            scope_election_id=election_id,
+            target_type="analytics",
+            target_id=str(election_id),
+        )
+    except Exception:
+        pass
 
     return Response(data, status=status.HTTP_200_OK)
 

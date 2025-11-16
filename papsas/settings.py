@@ -98,6 +98,9 @@ CSRF_COOKIE_SAMESITE = env_str("CSRF_COOKIE_SAMESITE", "Lax")
 # Respect Nginx HTTPS redirect; also allow toggling from env
 SECURE_SSL_REDIRECT = env_bool("SECURE_SSL_REDIRECT", ENV == "prod")
 
+AUDIT_ENABLED = bool(int(os.getenv("AUDIT_ENABLED", "1")))
+AUDIT_RETENTION_DAYS = int(os.getenv("AUDIT_RETENTION_DAYS", "180"))
+
 # (Optional) If you want Django to also emit HSTS (in addition to Nginx),
 # uncomment the following three lines. Nginx is already configured to add HSTS.
 # SECURE_HSTS_SECONDS = 31536000
@@ -107,6 +110,7 @@ SECURE_SSL_REDIRECT = env_bool("SECURE_SSL_REDIRECT", ENV == "prod")
 # ----- Apps ------------------------------------------------------------------
 INSTALLED_APPS = [
     "papsas_app",
+    "papsas_app.analytics",
 
     "django.contrib.admin",
     "django.contrib.auth",
@@ -125,6 +129,7 @@ INSTALLED_APPS = [
 
 # ----- Middleware -------------------------------------------------------------
 MIDDLEWARE = [
+    "papsas_app.analytics.middleware.ClientIPMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
 
@@ -302,6 +307,7 @@ REST_FRAMEWORK.setdefault("DEFAULT_THROTTLE_RATES", {})
 REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"].update({
     "otp_start": "3/min",
     "otp_verify": "10/min",
+    "auth_login": "5/min",
 })
 
 # >>> PAPSAS v1.4 BEGIN

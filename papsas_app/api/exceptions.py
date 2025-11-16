@@ -1,11 +1,24 @@
 from rest_framework import status
-from rest_framework.exceptions import APIException, NotAuthenticated
+from rest_framework.exceptions import APIException, NotAuthenticated, Throttled
 from rest_framework.views import exception_handler as drf_handler
 
 
 def api_exception_handler(exc, context):
     resp = drf_handler(exc, context)
     if resp is None:
+        return resp
+
+    if isinstance(exc, Throttled):
+        detail = resp.data.get("detail") if isinstance(resp.data, dict) else None
+        message = detail or getattr(exc, "detail", "Request was throttled.")
+        payload = {
+            "code": "RATE_LIMITED",
+            "message": str(message),
+        }
+        wait = getattr(exc, "wait", None)
+        if wait is not None:
+            payload["retry_after"] = int(wait)
+        resp.data = payload
         return resp
 
     detail = resp.data.get("detail") if isinstance(resp.data, dict) else None

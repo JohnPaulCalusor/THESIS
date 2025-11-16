@@ -7,6 +7,7 @@ from rest_framework import status
 from .permissions import IsAdminOnly, IsAdminWrite, IsOfficerOrAdmin, IsOfficerOrAdminRead
 from ..models import Candidacy, Position  # adjust import if your models path differs
 from .serializers import CandidacyCreateSerializer, CandidacyPatchSerializer
+from papsas_app.analytics.audit import log_event
 
 User = get_user_model()
 
@@ -25,7 +26,23 @@ def _serialize_candidacy(c: Candidacy):
             "username": getattr(u, "username", ""),
         },
         "position": ({"id": pos.id, "title": pos.title} if pos else None),
-    }
+}
+
+
+def _try_log_candidacy_event(request, action, c_obj, status_label="success"):
+    if not c_obj:
+        return
+    try:
+        log_event(
+            request,
+            action=action,
+            status=status_label,
+            scope_election_id=getattr(c_obj, "election_id", None),
+            target_type="candidacy",
+            target_id=str(getattr(c_obj, "id", "")),
+        )
+    except Exception:
+        pass
 
 # --- Read-only list (keep existing behavior; officers may read if you prefer) ---
 class CandidacyListView(APIView):
@@ -82,6 +99,7 @@ class CandidacyListCreateView(APIView):
             )
 
         c = Candidacy.objects.create(election_id=election_id, candidate=user, position=pos)
+        _try_log_candidacy_event(request, "CANDIDACY_CREATED", c)
         return Response(_serialize_candidacy(c), status=status.HTTP_201_CREATED)
 
 # --- New: admin-only PATCH ---
@@ -111,4 +129,5 @@ class CandidacyDetailPatchView(APIView):
             )
 
         c.save(update_fields=["position", "candidacyStatus", "credentials"])
+        _try_log_candidacy_event(request, "CANDIDACY_UPDATED", c)
         return Response({"ok": True})

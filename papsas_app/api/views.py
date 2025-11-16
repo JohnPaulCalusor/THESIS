@@ -37,6 +37,7 @@ from .email_otp import (
     issue_email_otp,
     verify_email_otp,
 )
+from papsas_app.analytics.audit import log_event
 
 def fk_field(model, to_model):
     for f in model._meta.get_fields():
@@ -306,6 +307,18 @@ class VoteView(APIView):
             return _schema_error("Vote model is not linked to User directly or via a membership model.")
 
         if qs_user.exists():
+            try:
+                log_event(
+                    request,
+                    action="VOTE_REJECTED",
+                    status="rejected",
+                    scope_election_id=e.id,
+                    target_type="vote",
+                    target_id=str(getattr(request.user, "pk", "")),
+                    meta={"reason": "already_voted"},
+                )
+            except Exception:
+                pass
             return Response({"code":"ALREADY_VOTED","detail":"You have already voted in this election."}, status=409)
 
         ser = BallotInSerializer(data=request.data)
@@ -339,6 +352,19 @@ class VoteView(APIView):
         objs = [VoteModel(**{**base, f"{vote_cand_fk}_id": cid}) for cid in cand_map.keys()]
         with transaction.atomic():
             VoteModel.objects.bulk_create(objs)
+
+        try:
+            log_event(
+                request,
+                action="VOTE_SUBMITTED",
+                status="success",
+                scope_election_id=e.id,
+                target_type="vote",
+                target_id=str(getattr(request.user, "pk", "")),
+                meta={"votes_created": len(objs)},
+            )
+        except Exception:
+            pass
 
         return Response({"ok": True, "votes_created": len(objs)})
 

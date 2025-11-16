@@ -7,7 +7,24 @@ from rest_framework.views import APIView
 from papsas_app.api.permissions import IsAdminOnly
 from rest_framework import status
 
+from papsas_app.analytics.audit import log_event
 from papsas_app.models import Candidacy, Election
+
+
+def _try_log_candidacy_event(request, action, c_obj):
+    if not c_obj:
+        return
+    try:
+        log_event(
+            request,
+            action=action,
+            status="success",
+            scope_election_id=getattr(c_obj, "election_id", None),
+            target_type="candidacy",
+            target_id=str(getattr(c_obj, "id", "")),
+        )
+    except Exception:
+        pass
 
 
 class CurrentElectionView(APIView):
@@ -73,6 +90,7 @@ class CandidacyQuickCreate(APIView):
             cand.status = bool(data["status"])
 
         cand.save()
+        _try_log_candidacy_event(request, "CANDIDACY_CREATED", cand)
         return Response({"id": cand.id, "credentials": getattr(cand, "credentials", "")}, status=status.HTTP_201_CREATED)
 
 
@@ -85,9 +103,11 @@ def candidacy_partial_update(request, pk: int):
     obj = get_object_or_404(Candidacy, pk=pk)
     if request.method == "DELETE":
         obj.delete()
+        _try_log_candidacy_event(request, "CANDIDACY_DELETED", obj)
         return Response(status=status.HTTP_204_NO_CONTENT)
     creds = request.data.get("credentials", None)
     if creds is not None:
         obj.credentials = creds
         obj.save(update_fields=["credentials"])
+        _try_log_candidacy_event(request, "CANDIDACY_UPDATED", obj)
     return Response({"id": obj.id, "credentials": getattr(obj, "credentials", "")})

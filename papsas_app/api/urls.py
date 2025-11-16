@@ -21,6 +21,7 @@ from .views import (
 from .views_candidacy import CurrentElectionView, CandidacyQuickCreate
 from .views_results import ElectionResultsView, ElectionResultsCsvView
 from .views_analytics import election_analytics, ElectionExplainView
+from papsas_app.analytics.views import audit_events, audit_export_csv
 from .views_candidacy_admin import CandidacyListCreateView, CandidacyDetailPatchView
 from .views_candidacy import candidacy_partial_update
 
@@ -64,6 +65,8 @@ urlpatterns = [
     path("elections/<int:election_id>/results/export.csv", ElectionResultsCsvView.as_view(), name="election-results-csv"),
     path("elections/<int:election_id>/analytics", election_analytics, name="election-analytics"),
     path("elections/<int:election_id>/explain",   ElectionExplainView.as_view(),   name="election-explain"),
+    path("audit/events", audit_events),
+    path("audit/events/export.csv", audit_export_csv),
 
     # Positions
     path("elections/<int:election_id>/positions", position_list, name="positions-list-create"),
