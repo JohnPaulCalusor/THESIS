@@ -2,6 +2,7 @@ from venv import logger
 from django.shortcuts import render, redirect, get_list_or_404, get_object_or_404
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.utils.decorators import method_decorator
 from django.contrib.auth import login, logout, authenticate
 from .models import User, Officer, Candidacy, Election, Event, Attendance, EventRegistration, MembershipTypes, UserMembership, Vote, Achievement, NewsandOffers, Venue, EventRating
@@ -41,6 +42,7 @@ from .filters import UserFilter, ElectionFilter, MembershipFilter, EventFilter, 
 from django_filters.views import FilterView
 from django.contrib.auth.password_validation import validate_password
 from django.core.mail import EmailMessage
+from papsas_app.api.permissions import _is_admin, _is_officer
 
 # papsas_app/views.py (snippets)
 from django.conf import settings
@@ -197,6 +199,14 @@ def secretary_required(view_func):
             return view_func(request, *args, **kwargs)
         return HttpResponseForbidden()
     return decorated_view
+
+
+class AdminOrOfficerRequiredMixin(LoginRequiredMixin, UserPassesTestMixin):
+    raise_exception = True
+
+    def test_func(self):
+        user = getattr(self.request, "user", None)
+        return bool(user and (_is_admin(user) or _is_officer(user)))
 
 def index(request):
     today = date.today()
@@ -2065,8 +2075,7 @@ class EventListView(SingleTableView):
                 messages.error(request, 'Error updating user. Please check the form.')
                 return self.get(request, *args, **kwargs)
             
-@method_decorator(member_required, name='dispatch')
-class EventRegistrationListView(SingleTableView):
+class EventRegistrationListView(AdminOrOfficerRequiredMixin, SingleTableView):
     model = EventRegistration
     table_class = EventRegistrationTable
     template_name = 'papsas_app/record/event_registration_table.html'
@@ -2098,8 +2107,7 @@ class EventRegistrationListView(SingleTableView):
         context['event_id'] = self.kwargs.get('event_id')
         return context
 
-@method_decorator(member_required, name='dispatch')
-class UserEventRegistrationListView(SingleTableView):
+class UserEventRegistrationListView(LoginRequiredMixin, SingleTableView):
     model = EventRegistration
     table_class = UserEventRegistrationTable
     template_name = 'papsas_app/record/user_event_registration_table.html'
@@ -2637,4 +2645,3 @@ def export_results_csv(request, election_id):
         writer.writerow([row["candidate__email"], row["votes"]])
 
     return resp
-
