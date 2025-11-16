@@ -6,6 +6,7 @@ from django.contrib import admin
 from django.contrib.auth.models import AbstractUser
 from django import forms
 from django.utils import timezone
+from django.utils.text import slugify
 from datetime import date, timedelta
 from django.core.validators import RegexValidator, MinValueValidator, MaxValueValidator
 from django.utils.translation import gettext_lazy as _
@@ -346,25 +347,51 @@ class Event(models.Model):
     eventDescription = models.TextField(max_length=9999, null=True)
     eventStatus = models.BooleanField(default=True)
     pubmat = models.ImageField(upload_to="papsas_app/pubmat/event", null=False)
+    cover_image = models.ImageField(upload_to="events/", null=True, blank=True)
     price = models.DecimalField(max_digits=10, decimal_places=2, null=True)
     startTime = models.TimeField(null=True)
     endTime = models.TimeField(null=True)
-    postStamp = models.DateTimeField(auto_now_add=True, null=True) #date na pinost
+    slug = models.SlugField(max_length=255, unique=True, blank=True, null=True)
+    postStamp = models.DateTimeField(auto_now_add=True, null=True)  # date na pinost
+    updated_at = models.DateTimeField(auto_now=True, null=True)
+    created_by = models.ForeignKey(
+        User,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="events_created",
+    )
 
     def __str__(self):
-        return f'{self.id} - {self.eventName} {self.startDate.year} - Date : {self.startDate} to {self.endDate} - {self.exclusive}'
+        date_year = self.startDate.year if self.startDate else "n/a"
+        return f"{self.id} - {self.eventName} {date_year} - Date : {self.startDate} to {self.endDate} - {self.exclusive}"
     
     def short_description(self):
-        if len(self.description) > 100:
-            return f'{self.description[:100]}...'
-        return self.description
+        text = (self.eventDescription or "").strip()
+        if len(text) > 100:
+            return f'{text[:100]}...'
+        return text
     
     def average_rating(self):
         return self.ratings.aggregate(Avg('rating'))['rating__avg']
-    
+
+    def _generate_slug(self):
+        base = slugify(self.eventName or "event")
+        if not base:
+            base = "event"
+        candidate = base
+        counter = 1
+        Klass = self.__class__
+        while Klass.objects.exclude(pk=self.pk).filter(slug=candidate).exists():
+            counter += 1
+            candidate = f"{base}-{counter}"
+        return candidate
+
     def save(self, *args, **kwargs):
         if self.endDate and self.startDate and self.endDate < self.startDate:
             raise ValueError("The end date cannot be less than start Date.")
+        if not self.slug:
+            self.slug = self._generate_slug()
         super().save(*args, **kwargs)
 
     class Meta:
