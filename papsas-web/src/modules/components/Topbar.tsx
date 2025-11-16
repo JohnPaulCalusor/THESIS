@@ -1,4 +1,4 @@
-import { Link, NavLink, useLocation } from "react-router-dom";
+﻿import { Link, NavLink, useLocation } from "react-router-dom";
 import { useAuth } from "../auth/AuthProvider";
 import { isAdminUser } from "../auth/roles";
 import { useElection } from "../election/hooks/useElection";
@@ -8,17 +8,51 @@ export default function Topbar() {
   const { election } = useElection();
   const loc = useLocation();
 
-  const showAdmin = isAdminUser(user);
+  const isLoginRoute = loc.pathname === "/login" || loc.pathname.startsWith("/login/");
+  const isAuthed = Boolean(user);
+
+  const showAdmin = isAuthed && isAdminUser(user);
+  const showResults = showAdmin; // <- RESULTS visible only to admin/officer
+  const showNav = isAuthed && !isLoginRoute;
+  const showAuthedActions = isAuthed && !isLoginRoute;
+
   const uname = user?.username || user?.email || "user";
-  const showAuthedActions = Boolean(user) && loc.pathname !== "/login";
+  const avatarLetter = (uname || "U").charAt(0).toUpperCase();
+
+  const [open, setOpen] = React.useState(false);
+  React.useEffect(() => { setOpen(false); }, [loc.pathname]);
+  React.useEffect(() => {
+    function onKey(e: KeyboardEvent){ if(e.key === "Escape") setOpen(false); }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
 
   return (
-    <header className="topbar">
-      <div className="max-w-6xl w-full mx-auto px-4 flex items-center justify-between gap-6">
-        <div className="flex items-center gap-10">
-          <div className="flex items-baseline gap-2">
-            <Link to="/" className="brand font-semibold">PAPSAS</Link>
-            {election && <span className="text-gray-500">- {election.title}</span>}
+    <>
+      <header className={`topbar ${isLoginRoute ? "topbar--login" : ""}`}>
+        <div className="max-w-6xl w-full mx-auto px-4 flex items-center justify-between gap-6">
+          {/* LEFT — LOGO + DESKTOP NAV */}
+          <div className="flex items-center gap-10">
+            <NavLink to="/" className="flex items-center" aria-label="Home">
+              <img src={logo} alt="PAPSAS Logo" className="topbar__logo" />
+            </NavLink>
+
+            {showNav && (
+              <nav className="topbar__nav">
+                <NavLink to="/ballot" className={({isActive}) => (isActive ? "active" : "")}>Ballot</NavLink>
+                {showResults && (
+                  <NavLink to="/results" className={({isActive}) => (isActive ? "active" : "")}>Results</NavLink>
+                )}
+                {showAdmin && (
+                  <NavLink
+                    to="/admin/election"
+                    className={({isActive}) => (isActive || loc.pathname.startsWith("/admin")) ? "active" : ""}
+                  >
+                    Admin
+                  </NavLink>
+                )}
+              </nav>
+            )}
           </div>
           <nav className="topbar__nav ml-8 flex items-center gap-8">
             <NavLink to="/ballot" className={({ isActive }) => (isActive ? "active" : "")}>Ballot</NavLink>
@@ -36,18 +70,82 @@ export default function Topbar() {
         <div className="flex items-center gap-3">
           {showAuthedActions && (
             <>
-              <span className="text-xs text-[var(--muted)]">@{uname}</span>
+              <div className="topbar__user">
+                <div className="topbar__avatar">{avatarLetter}</div>
+                <span className="font-medium">@{uname}</span>
+                <button onClick={logout} className="topbar__logout" title="Log out">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round"
+                          d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                  </svg>
+                  Logout
+                </button>
+              </div>
+
+              {/* MOBILE HAMBURGER */}
               <button
                 onClick={logout}
                 className="px-3 py-1 rounded bg-gray-900 text-white hover:opacity-90"
                 title="Log out"
               >
-                Logout
+                <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
+                  <path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                </svg>
               </button>
             </>
           )}
         </div>
-      </div>
-    </header>
+      </header>
+
+      {/* MOBILE MENU */}
+      {showNav && (
+        <div className={`mobile-menu-root ${open ? "open" : ""}`}>
+          <div className="mobile-menu-overlay" onClick={() => setOpen(false)} />
+          <nav id="mobile-menu" className="mobile-menu" aria-label="Mobile menu" role="dialog" aria-modal="true">
+            <div className="mobile-menu-head">
+              <button className="mobile-menu-close" aria-label="Close menu" onClick={() => setOpen(false)}>
+                <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+                  <path d="M6 6l12 12M18 6l-12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                </svg>
+              </button>
+            </div>
+
+            <ul className="mobile-menu-nav">
+              <li>
+                <NavLink to="/ballot" className={({isActive}) => (isActive ? "active" : "")} onClick={() => setOpen(false)}>
+                  Ballot
+                </NavLink>
+              </li>
+              {showResults && (
+                <li>
+                  <NavLink to="/results" className={({isActive}) => (isActive ? "active" : "")} onClick={() => setOpen(false)}>
+                    Results
+                  </NavLink>
+                </li>
+              )}
+              {showAdmin && (
+                <li>
+                  <NavLink
+                    to="/admin/election"
+                    className={({isActive}) => (isActive || loc.pathname.startsWith("/admin")) ? "active" : ""}
+                    onClick={() => setOpen(false)}
+                  >
+                    Admin
+                  </NavLink>
+                </li>
+              )}
+            </ul>
+
+            <div className="mobile-menu-footer">
+              <div className="mobile-user">
+                <div className="mobile-avatar">{avatarLetter}</div>
+                <div className="mobile-username">@{uname}</div>
+              </div>
+              <button className="mobile-logout" onClick={logout}>Logout</button>
+            </div>
+          </nav>
+        </div>
+      )}
+    </>
   );
 }
