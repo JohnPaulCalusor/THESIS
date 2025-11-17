@@ -411,6 +411,29 @@ class EventRating(models.Model):
     def __str__(self):
         return f"{self.user.username}'s rating for {self.event.eventName}"
 
+
+class EventSignup(models.Model):
+    event = models.ForeignKey(
+        Event,
+        on_delete=models.CASCADE,
+        related_name="signup_records",
+    )
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="event_signups",
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            UniqueConstraint(fields=["event", "user"], name="unique_event_signup"),
+        ]
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"EventSignup(event={self.event_id}, user={self.user_id})"
+
 class Achievement(models.Model):
     name = models.CharField(max_length=255, null=True)
     description = models.TextField(max_length=9999, null=True)

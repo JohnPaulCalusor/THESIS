@@ -306,10 +306,12 @@ REST_FRAMEWORK.setdefault("DEFAULT_THROTTLE_CLASSES", []).extend([
 ])
 REST_FRAMEWORK.setdefault("DEFAULT_THROTTLE_RATES", {})
 DRF_THROTTLE_LOGIN = env_str("DRF_THROTTLE_LOGIN", "5/min")
+DRF_THROTTLE_EVENT_REGISTER = env_str("DRF_THROTTLE_EVENT_REGISTER", "10/min")
 REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"].update({
     "otp_start": "3/min",
     "otp_verify": "10/min",
     "auth_login": DRF_THROTTLE_LOGIN,
+    "event_register": DRF_THROTTLE_EVENT_REGISTER,
 })
 
 # >>> PAPSAS v1.4 BEGIN

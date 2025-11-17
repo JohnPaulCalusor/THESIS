@@ -23,6 +23,7 @@ from .views_results import ElectionResultsView, ElectionResultsCsvView
 from .views_analytics import election_analytics, ElectionExplainView
 from papsas_app.analytics.views import audit_events, audit_export_csv
 from .views_events import event_detail, events_ics, events_list
+from .views_event_registration import EventRegistrationView
 from .views_candidacy_admin import CandidacyListCreateView, CandidacyDetailPatchView
 from .views_candidacy import candidacy_partial_update
 
@@ -46,6 +47,8 @@ urlpatterns = [
     path("events", events_list, name="api-events-list"),
     path("events/<slug:slug>", event_detail, name="api-events-detail"),
     path("events.ics", events_ics, name="api-events-ics"),
+    path("events/<int:event_id>/registration", EventRegistrationView.as_view(), name="event-registration"),
+    path("events/<int:event_id>/registration/", EventRegistrationView.as_view()),
 
     # Auth
     path("auth/email/start", EmailVerificationStartView.as_view(), name="api-auth-email-start"),

@@ -7,6 +7,9 @@ CODES = {
     'HAS_VOTES': 409,
     'VALIDATION_ERROR': 400,
     'EMAIL_TAKEN': 409,
+    'ALREADY_REGISTERED': 409,
+    'NOT_REGISTERED': 409,
+    'RATE_LIMITED': 429,
 }
 
 def error_response(code: str, message: str):
