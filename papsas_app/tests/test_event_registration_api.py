@@ -1,11 +1,17 @@
+from datetime import timedelta
+from decimal import Decimal
+from unittest.mock import patch
+
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.cache import cache
+from django.db import IntegrityError
+from django.utils import timezone
 from rest_framework import status
 from rest_framework.test import APITestCase
 
 from papsas_app.analytics.models import AuditEvent
-from papsas_app.models import Event, EventSignup
+from papsas_app.models import Event, EventSignup, MembershipTypes, UserMembership
 
 
 class EventRegistrationAPITest(APITestCase):
@@ -16,6 +22,19 @@ class EventRegistrationAPITest(APITestCase):
             email="member@example.com",
             password="pw",
             is_active=True,
+        )
+        self.membership_type = MembershipTypes.objects.create(
+            pubmat="papsas_app/pubmat/event/default.png",
+            type="Member",
+            description="Test membership",
+            fee=Decimal("0"),
+        )
+        UserMembership.objects.create(
+            user=self.user,
+            membership=self.membership_type,
+            expirationDate=timezone.localdate() + timedelta(days=30),
+            reference_number=123456,
+            status="Approved",
         )
         self.event = Event.objects.create(
             eventName="Annual Meetup",
@@ -112,3 +131,101 @@ class EventRegistrationAPITest(APITestCase):
                 settings.REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"].pop("event_register", None)
             else:
                 settings.REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"]["event_register"] = original_rate
+
+    def test_member_only_guard_blocks_registration_and_delete(self):
+        User = get_user_model()
+        non_member = User.objects.create_user(
+            username="outsider",
+            email="outsider@example.com",
+            password="pw",
+            is_active=True,
+        )
+        self.client.force_authenticate(user=non_member)
+
+        response = self.client.post(self.url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.json().get("code"), "MEMBER_ONLY")
+
+        response = self.client.delete(self.url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.json().get("code"), "MEMBER_ONLY")
+
+        rejections = AuditEvent.objects.filter(
+            action="REGISTRATION_REJECTED",
+            meta__event_id=self.event.id,
+            meta__user_id=non_member.id,
+            meta__reason="non_member",
+        )
+        self.assertGreaterEqual(
+            rejections.count(),
+            2,
+            "Expected both POST and DELETE to log non-member rejection",
+        )
+
+    def test_unpublished_event_behaves_like_not_found(self):
+        unpublished = Event.objects.create(
+            eventName="Invisible Gathering",
+            exclusive=True,
+            eventStatus=False,
+        )
+        url = f"/api/events/{unpublished.id}/registration"
+        response = self.client.post(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.json().get("code"), "EVENT_NOT_FOUND")
+
+        rejected = AuditEvent.objects.filter(
+            action="REGISTRATION_REJECTED",
+            meta__event_id=unpublished.id,
+            meta__user_id=self.user.id,
+            meta__reason="unpublished",
+        ).last()
+        self.assertIsNotNone(rejected)
+
+    def test_ended_event_returns_event_closed(self):
+        ended_event = Event.objects.create(
+            eventName="Past Conference",
+            exclusive=True,
+            endDate=timezone.localdate() - timedelta(days=1),
+        )
+        url = f"/api/events/{ended_event.id}/registration"
+        response = self.client.post(url)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.json().get("code"), "EVENT_CLOSED")
+
+        rejected = AuditEvent.objects.filter(
+            action="REGISTRATION_REJECTED",
+            meta__event_id=ended_event.id,
+            meta__user_id=self.user.id,
+            meta__reason="closed",
+        ).last()
+        self.assertIsNotNone(rejected)
+
+    def test_double_post_uses_concurrency_safe_logic(self):
+        first = self.client.post(self.url)
+        self.assertEqual(first.status_code, status.HTTP_201_CREATED)
+        second = self.client.post(self.url)
+        self.assertEqual(second.status_code, status.HTTP_409_CONFLICT)
+        self.assertEqual(second.json().get("code"), "ALREADY_REGISTERED")
+
+        rejected = AuditEvent.objects.filter(
+            action="REGISTRATION_REJECTED",
+            meta__event_id=self.event.id,
+            meta__user_id=self.user.id,
+            meta__reason="already_registered",
+        ).last()
+        self.assertIsNotNone(rejected)
+
+    @patch("papsas_app.api.views_event_registration.EventSignup.objects.get_or_create")
+    def test_post_handles_integrity_error_as_conflict(self, mock_get_or_create):
+        mock_get_or_create.side_effect = IntegrityError
+        response = self.client.post(self.url)
+        self.assertEqual(response.status_code, status.HTTP_409_CONFLICT)
+        self.assertEqual(response.json().get("code"), "ALREADY_REGISTERED")
+
+        rejected = AuditEvent.objects.filter(
+            action="REGISTRATION_REJECTED",
+            meta__event_id=self.event.id,
+            meta__user_id=self.user.id,
+            meta__reason="already_registered",
+        ).last()
+        self.assertIsNotNone(rejected)
