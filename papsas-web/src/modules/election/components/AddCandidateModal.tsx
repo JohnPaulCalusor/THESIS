@@ -109,8 +109,7 @@ export const AddCandidateModal: React.FC<{
                 }
                 onAdded();
               } catch (err: unknown) {
-                const ax = err as { response?: { data?: { message?: string } }; message?: string };
-                toast.apiError?.(ax, "Failed to add");
+                toast.apiError(err, "Failed to add");
                 // Acceptance: 409 duplicate -> toast "Already exists"
                 // <<< PAPSAS v1.3 END
               } finally {

@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useEffect, useMemo, useRef, useState } from "react";
+import { isAxiosError } from "axios";
 
 type ToastKind = "info" | "success" | "error";
 type ToastItem = {
@@ -12,6 +13,7 @@ type ToastCtx = {
   show: (message: string, kind?: ToastKind, timeoutMs?: number) => string;
   success: (message: string, timeoutMs?: number) => string;
   error: (message: string, timeoutMs?: number) => string;
+  apiError: (error: unknown, fallback?: string, timeoutMs?: number) => string;
   dismiss: (id: string) => void;
 };
 
@@ -61,7 +63,19 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
     };
   }, []);
 
-  const value = useMemo<ToastCtx>(() => ({ show, success, error, dismiss }), [show, success, error, dismiss]);
+  const apiError = React.useCallback((error: unknown, fallback = "Something went wrong.", timeoutMs?: number) => {
+    const axiosMessage = isAxiosError(error)
+      ? (error.response?.data as { message?: unknown } | undefined)?.message
+      : undefined;
+    const message = typeof axiosMessage === "string"
+      ? axiosMessage
+      : error instanceof Error
+        ? error.message
+        : fallback;
+    return show(message || fallback, "error", timeoutMs);
+  }, [show]);
+
+  const value = useMemo<ToastCtx>(() => ({ show, success, error, apiError, dismiss }), [show, success, error, apiError, dismiss]);
 
   return (
     <Ctx.Provider value={value}>

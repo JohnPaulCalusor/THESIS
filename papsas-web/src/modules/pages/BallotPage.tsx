@@ -1,11 +1,13 @@
 // src/modules/pages/BallotPage.tsx
-import { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState } from "react";
 import { http } from "../lib/http";
 import { useElection } from "../election/hooks/useElection";
+import { useAuth } from "../auth/AuthProvider";
 import { useToast } from "../ui/Toast";
+import "./styles/election.css";
 
-// Hydrate credentials/photo from candidacies
-import { listCandidacies } from "../election/services/candidacyApi";
+import { postVote } from "../election/services/electionApi";
+import type { VoteChoice, VoteRequestPayload } from "../election/services/electionApi";
 
 /* =========================
    Types
@@ -16,16 +18,33 @@ type Choice = {
   name: string;
   credentials?: string | string[];
   photoUrl?: string;
+
+  // Extra fields the backend might use
+  bio?: string | null;
+  platform?: string | null;
+  description?: string | null;
+  summary?: string | null;
 };
+
 type Section = { id: number; title: string; options: Choice[] };
+
 type BallotPositionPayload = {
   id?: string | number;
   title?: string;
   options?: Choice[] | unknown[];
   choices?: Choice[] | unknown[];
 };
-type BallotDebug = { tried: Array<{ url: string; status: number }>; winner?: string; payload?: unknown };
-type BallotError = { response?: { status?: number; data?: { code?: string; message?: string } }; message?: string };
+
+type BallotDebug = {
+  tried: Array<{ url: string; status: number }>;
+  winner?: string;
+  payload?: unknown;
+};
+
+type BallotError = {
+  response?: { status?: number; data?: { code?: string; message?: string } };
+  message?: string;
+};
 
 /* =========================
    Helpers
@@ -55,43 +74,32 @@ function initialsFrom(name: string) {
   return parts.map((p) => p[0]?.toUpperCase() || "").join("") || "•";
 }
 
-function normalizeCreds(val: unknown): string[] {
-  if (Array.isArray(val)) return val.map(String).map((s) => s.trim()).filter(Boolean);
-  if (typeof val === "string") {
-    return val.split(/\r?\n|;|•|·/).map((s) => s.trim()).filter(Boolean);
-  }
-  return [];
+function pickCredSource(c: Choice): unknown {
+  // Prefer explicit credentials; fall back to other likely fields
+  return (
+    c.credentials ??
+    c.bio ??
+    c.platform ??
+    c.description ??
+    c.summary ??
+    null
+  );
 }
 
-/** Overlay credentials/photo from candidacy list */
-async function hydrateWithCandidacies(electionId: number, secs: Section[], list: Choice[]) {
-  try {
-    const rows = await listCandidacies(electionId);
-    const map = new Map<number, { credentials?: string | string[]; photoUrl?: string; name?: string }>();
-    for (const r of rows as any[]) {
-      map.set(Number(r.id), {
-        credentials: r.credentials ?? r.bio ?? r.platform,
-        photoUrl: r.photoUrl ?? r.photo_url ?? r.avatar ?? r.member?.avatar_url,
-        name: r.name,
-      });
-    }
-    const overlay = (c: Choice): Choice => {
-      const m = map.get(Number(c.candidacyId));
-      if (!m) return c;
-      return {
-        ...c,
-        credentials: c.credentials ?? m.credentials,
-        photoUrl: c.photoUrl ?? m.photoUrl,
-        name: c.name || m.name || c.name,
-      };
-    };
-    return {
-      sections: secs.map((s) => ({ ...s, options: s.options.map(overlay) })),
-      choices: list.map(overlay),
-    };
-  } catch {
-    return { sections: secs, choices: list };
+function normalizeCreds(val: unknown): string[] {
+  if (Array.isArray(val)) {
+    return val
+      .map(String)
+      .map((s) => s.trim())
+      .filter(Boolean);
   }
+  if (typeof val === "string") {
+    return val
+      .split(/\r?\n|;|•|·/)
+      .map((s) => s.trim())
+      .filter(Boolean);
+  }
+  return [];
 }
 
 /* =========================
@@ -100,8 +108,8 @@ async function hydrateWithCandidacies(electionId: number, secs: Section[], list:
 function Avatar({
   src,
   name,
-  size = 84,            // bigger
-  radius = 12,          // square with gentle rounding
+  size = 84,
+  radius = 12,
 }: {
   src?: string;
   name: string;
@@ -123,6 +131,7 @@ function Avatar({
     border: "1px solid var(--ring)",
     flex: "0 0 auto",
   };
+
   return (
     <span className="ballot-avatar" style={wrapStyle} aria-hidden={src ? undefined : true}>
       {src ? (
@@ -151,13 +160,10 @@ function OptionRow({
   onSelect: () => void;
   voted: boolean;
 }) {
-  const creds = normalizeCreds(c.credentials);
+  const creds = normalizeCreds(pickCredSource(c));
 
   return (
-    <label
-      className="ep-candidate block" // let CSS style it; no inline red ring
-    >
-      {/* Row: radio | (avatar + text) */}
+    <label className="ep-candidate block">
       <div className="flex items-start gap-5 md:gap-6">
         {/* Radio */}
         <input
@@ -202,9 +208,6 @@ function OptionRow({
   );
 }
 
-
-
-
 /* =========================
    Page
    ========================= */
@@ -222,18 +225,7 @@ export default function BallotPage() {
   const [debug, setDebug] = useState<BallotDebug>({ tried: [] });
   const toast = useToast();
 
-  const isPrivileged = useMemo(() => {
-    if (!user) return false;
-    if ((user as any).is_superuser) return true;
-    if ((user as any).is_staff) return true;
-    if ((user as any).role && ["admin", "officer"].includes((user as any).role.toLowerCase())) return true;
-    if (Array.isArray((user as any).groups) && (user as any).groups.some((g: string) => ["admin", "officer"].includes(g.toLowerCase())))
-      return true;
-    return false;
-  }, [user]);
-
   const effectiveId = election?.id?.toString();
-  const positionMode = sections.length > 0; // true when API returns positions[]
 
   useEffect(() => {
     let cancelled = false;
@@ -244,41 +236,44 @@ export default function BallotPage() {
       setSections([]);
       setChoices([]);
       setSelected(null);
+
       if (!effectiveId) {
         setLoading(false);
         return;
       }
+
       const url = `elections/${effectiveId}/ballot`;
+
       try {
         const res = await http.get(url);
         if (cancelled) return;
+
         const payload = res.data || {};
         const secs = buildSections(payload);
 
-        const list: Choice[] =
+        const baseList: Choice[] =
           secs.length === 0
-            ? Array.isArray(payload.choices)
-              ? (payload.choices as Choice[])
-              : Array.isArray(payload.atLarge)
-              ? (payload.atLarge as Choice[])
+            ? Array.isArray((payload as any).choices)
+              ? ((payload as any).choices as Choice[])
+              : Array.isArray((payload as any).atLarge)
+              ? ((payload as any).atLarge as Choice[])
               : []
             : [];
 
-        const hydrated = await hydrateWithCandidacies(Number(effectiveId), secs, list);
-
-        setSections(hydrated.sections);
-        setChoices(hydrated.choices);
+        setSections(secs);
+        setChoices(baseList);
         setPicks({});
 
         if (import.meta.env.DEV) {
           setDebug({
             tried: [{ url, status: 200 }],
             winner: url,
-            payload: {
-              ballot: payload,
-              hydratedPreview: hydrated.sections?.[0]?.options?.slice?.(0, 1) ?? [],
-            },
+            payload,
           });
+          if (secs[0]?.options?.[0]) {
+            // eslint-disable-next-line no-console
+            console.debug("Ballot sample candidate:", secs[0].options[0]);
+          }
         }
       } catch (error) {
         const err = error as BallotError;
@@ -292,6 +287,7 @@ export default function BallotPage() {
         if (!cancelled) setLoading(false);
       }
     })();
+
     return () => {
       cancelled = true;
     };
@@ -319,7 +315,8 @@ export default function BallotPage() {
       return;
     }
 
-    const payload: VoteRequestPayload = sections.length > 0 ? { positions: positionsPayload } : { atLarge: [selected!] };
+    const payload: VoteRequestPayload =
+      sections.length > 0 ? { positions: positionsPayload } : { atLarge: [selected!] };
 
     setSubmitting(true);
     setError(null);
@@ -338,23 +335,22 @@ export default function BallotPage() {
         const secs = buildSections(payload);
         const list: Choice[] =
           secs.length === 0
-            ? Array.isArray(payload.choices)
-              ? (payload.choices as Choice[])
-              : Array.isArray(payload.atLarge)
-              ? (payload.atLarge as Choice[])
+            ? Array.isArray((payload as any).choices)
+              ? ((payload as any).choices as Choice[])
+              : Array.isArray((payload as any).atLarge)
+              ? ((payload as any).atLarge as Choice[])
               : []
             : [];
-        const hydrated = await hydrateWithCandidacies(Number(effectiveId), secs, list);
-        setSections(hydrated.sections);
-        setChoices(hydrated.choices);
+        setSections(secs);
+        setChoices(list);
         setPicks({});
       } catch {
         /* ignore */
       }
     } catch (err: unknown) {
-      const info = err as { response?: { status?: number; data?: Record<string, unknown> } };
+      const info = err as { response?: { status?: number; data?: Record<string, any> } };
       const s = info.response?.status;
-      const data = info.response?.data;
+      const data = info.response?.data as any;
 
       if (data?.code === "TOO_MANY_FOR_POSITION" && s === 400) {
         const allowed = typeof data?.allowed === "number" ? data.allowed : "?";
@@ -375,6 +371,7 @@ export default function BallotPage() {
 
   // ---- Rendering helpers ----------------------------------------------------
 
+  if (!user) return <Blocked title="Not signed in." sub="You need to sign in to view the ballot." />;
   if (!effectiveId) return <Blocked title="No active election." sub="There is no current election to vote on." />;
   if (loading) return <Loader text="Loading ballot…" />;
 
@@ -389,92 +386,91 @@ export default function BallotPage() {
     return <Blocked title="You already voted." sub="Your vote has been recorded. You cannot vote again for this election." />;
   if (error && ![403, 409].includes(error.code)) return <DevError code={error.code} msg={error.msg} debug={debug} />;
 
+  const positionMode = sections.length > 0;
   const empty = !positionMode && choices.length === 0;
 
   const canSubmit = positionMode
-    ? Object.values(byPosition).some((cid) => typeof cid === "number")
+    ? Object.values(picks).some((cid) => typeof cid === "number")
     : Boolean(selected);
 
   return (
-    <div>
-      <div className="page-ballot">
-  <div className="ballot-wrap max-w-2xl mx-auto px-4 py-3">
-    <h1 className="text-2xl font-semibold mb-4">BALLOT</h1>
-    <p className="subtle mb-6">Select one candidate.</p>
+    <div className="page-ballot">
+      <div className="ballot-wrap max-w-2xl mx-auto px-4 py-3">
+        <h1 className="text-2xl font-semibold mb-4">BALLOT</h1>
+        <p className="subtle mb-6">Select one candidate for each position.</p>
 
-    {voted && (
-      <div
-        className="card mb-6"
-        style={{ borderColor: "rgba(16,185,129,.4)", background: "rgba(16,185,129,.1)" }}
-      >
-        <div className="font-medium">Your vote was submitted.</div>
-        <div className="text-sm subtle">You cannot modify your vote for this election.</div>
-      </div>
-    )}
-
-    {empty && (
-      <div className="callout callout-warn mb-6">
-        No choices returned. If this user already voted, this is expected.
-      </div>
-    )}
-
-    {!empty && (
-      <>
-        {sections.length > 0 ? (
-          sections.map((sec) => (
-            <fieldset key={sec.id} className="card mb-6">
-              <legend className="px-2 text-lg font-medium">{sec.title}</legend>
-              <div className="mt-2 space-y-2">
-                {sec.options.map((c) => (
-                  <OptionRow
-                    key={c.candidacyId}
-                    c={c}
-                    checked={picks[sec.id] === c.candidacyId}
-                    name={`position-${sec.id}`}
-                    onSelect={() => {
-                      if (!c.candidacyId) return;
-                      setPicks((prev) => ({ ...prev, [sec.id]: c.candidacyId }));
-                    }}
-                    voted={voted}
-                  />
-                ))}
-              </div>
-            </fieldset>
-          ))
-        ) : (
-          <fieldset className="card mb-6">
-            <legend className="px-2 text-lg font-medium">Candidates</legend>
-            <div className="mt-2 space-y-2">
-              {choices.map((c) => (
-                <OptionRow
-                  key={c.candidacyId}
-                  c={c}
-                  checked={selected === c.candidacyId}
-                  name="choice-global"
-                  onSelect={() => {
-                    if (c.candidacyId) setSelected(c.candidacyId);
-                  }}
-                  voted={voted}
-                />
-              ))}
-            </div>
-          </fieldset>
+        {voted && (
+          <div
+            className="card mb-6"
+            style={{ borderColor: "rgba(16,185,129,.4)", background: "rgba(16,185,129,.1)" }}
+          >
+            <div className="font-medium">Your vote was submitted.</div>
+            <div className="text-sm subtle">You cannot modify your vote for this election.</div>
+          </div>
         )}
-      </>
-    )}
 
-    <button onClick={submit} disabled={!canSubmit || submitting || voted} className="btn btn-primary w-full">
-      Submit vote
-    </button>
+        {empty && (
+          <div className="callout callout-warn mb-6">
+            No choices returned. If this user already voted, this is expected.
+          </div>
+        )}
 
-    {import.meta.env.DEV && isPrivileged && (
-      <details className="mt-8 card">
-        <summary className="cursor-pointer">Debug</summary>
-        <pre className="mt-2 text-xs whitespace-pre-wrap">{JSON.stringify(debug, null, 2)}</pre>
-      </details>
-    )}
-  </div>
-</div>
+        {!empty && (
+          <>
+            {sections.length > 0 ? (
+              sections.map((sec) => (
+                <fieldset key={sec.id} className="card mb-6">
+                  <legend className="px-2 text-lg font-medium">{sec.title}</legend>
+                  <div className="mt-2 space-y-2">
+                    {sec.options.map((c) => (
+                      <OptionRow
+                        key={c.candidacyId}
+                        c={c}
+                        checked={picks[sec.id] === c.candidacyId}
+                        name={`position-${sec.id}`}
+                        onSelect={() => {
+                          if (!c.candidacyId) return;
+                          setPicks((prev) => ({ ...prev, [sec.id]: c.candidacyId }));
+                        }}
+                        voted={voted}
+                      />
+                    ))}
+                  </div>
+                </fieldset>
+              ))
+            ) : (
+              <fieldset className="card mb-6">
+                <legend className="px-2 text-lg font-medium">Candidates</legend>
+                <div className="mt-2 space-y-2">
+                  {choices.map((c) => (
+                    <OptionRow
+                      key={c.candidacyId}
+                      c={c}
+                      checked={selected === c.candidacyId}
+                      name="choice-global"
+                      onSelect={() => {
+                        if (c.candidacyId) setSelected(c.candidacyId);
+                      }}
+                      voted={voted}
+                    />
+                  ))}
+                </div>
+              </fieldset>
+            )}
+          </>
+        )}
+
+        <button onClick={submit} disabled={!canSubmit || submitting || voted} className="btn btn-primary w-full">
+          Submit vote
+        </button>
+
+        {import.meta.env.DEV && (
+          <details className="mt-8 card">
+            <summary className="cursor-pointer">Debug</summary>
+            <pre className="mt-2 text-xs whitespace-pre-wrap">{JSON.stringify(debug, null, 2)}</pre>
+          </details>
+        )}
+      </div>
     </div>
   );
 }

@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
+import type { AxiosError } from "axios";
 import type { Candidacy } from "../services/candidacyApi";
 import { deleteCandidacy, listCandidacies, updateCandidacy } from "../services/candidacyApi";
 import { CandidacyFormModal as CandidacyFormModal2 } from "./CandidacyFormModal2";
@@ -40,7 +41,7 @@ export const CandidacyTable: React.FC<{ electionId: number; readOnly?: boolean }
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<"all" | "enabled" | "disabled">("all");
   const [adding, setAdding] = useState(false);
-  const [editing, setEditing] = useState<Candidacy | null>(null);
+  const [editing, setEditing] = useState<CandidacyRow | null>(null);
   const [positions, setPositions] = useState<Position[]>([]);
   const toast = useToast();
 
@@ -123,20 +124,45 @@ export const CandidacyTable: React.FC<{ electionId: number; readOnly?: boolean }
                       <select
                         className="border rounded p-1"
                         value={row.position.id ?? ""}
-                        onChange={async (e: React.ChangeEvent<HTMLInputElement>) => {
+                        onChange={async (e: React.ChangeEvent<HTMLSelectElement>) => {
                           const val = e.target.value;
                           const nextId = val === "" ? null : Number(val);
                           const prevId = row.position.id;
-                          setRows(rs => rs.map(r => (r.id === row.id ? { ...r, position: { id: nextId, title: positions.find(p=>p.id===nextId)?.title ?? "Unassigned" }, source: { ...r.source, positionId: nextId } } : r)));
+                          setRows((rs) =>
+                            rs.map((r) =>
+                              r.id === row.id
+                                ? {
+                                    ...r,
+                                    position: {
+                                      id: nextId,
+                                      title: positions.find((p) => p.id === nextId)?.title ?? "Unassigned",
+                                    },
+                                    source: { ...r.source, positionId: nextId },
+                                  }
+                                : r
+                            )
+                          );
                           try {
                             await patchCandidacy(electionId, row.id, { position_id: nextId });
                             toast.success("Position updated");
                           } catch (err: unknown) {
                             const info = err as AxiosError<unknown>;
-                            setRows(rs => rs.map(r => (r.id === row.id ? { ...r, position: { id: prevId, title: positions.find(p=>p.id===(prevId ?? -1))?.title ?? "Unassigned" }, source: { ...r.source, positionId: prevId } } : r)));
-                            // >>> PAPSAS v1.4 BEGIN
-                            toast.apiError?.(info, "Failed to update position");
-                            // <<< PAPSAS v1.4 END
+                            setRows((rs) =>
+                              rs.map((r) =>
+                                r.id === row.id
+                                  ? {
+                                      ...r,
+                                      position: {
+                                        id: prevId,
+                                        title:
+                                          positions.find((p) => p.id === (prevId ?? -1))?.title ?? "Unassigned",
+                                      },
+                                      source: { ...r.source, positionId: prevId },
+                                    }
+                                  : r
+                              )
+                            );
+                            toast.apiError(info, "Failed to update position");
                           }
                         }}
                       >
@@ -153,19 +179,41 @@ export const CandidacyTable: React.FC<{ electionId: number; readOnly?: boolean }
                       <label className="inline-flex items-center gap-2">
                         <input
                           type="checkbox"
-                          checked={row.status}
+                          checked={row.active}
                           onChange={async (e) => {
-                            const prev = row.status;
-                            setRows(rs => rs.map(r => (r.id === row.id ? { ...r, status: e.target.checked ? "approved" : "disabled", active: e.target.checked, source: { ...r.source, _status: e.target.checked } } : r)));
+                            const nextActive = e.target.checked;
+                            const prevStatus = row.status;
+                            const prevActive = row.active;
+                            setRows((rs) =>
+                              rs.map((r) =>
+                                r.id === row.id
+                                  ? {
+                                      ...r,
+                                      status: nextActive ? "approved" : "disabled",
+                                      active: nextActive,
+                                      source: { ...r.source, _status: nextActive },
+                                    }
+                                  : r
+                              )
+                            );
                             try {
-                              await updateCandidacy(electionId, row.id, { status: e.target.checked });
-                          } catch (err: unknown) {
-                            const info = err as AxiosError<unknown>;
-                            // >>> PAPSAS v1.4 BEGIN
-                            toast.apiError?.(info, "Update failed");
-                            // <<< PAPSAS v1.4 END
-                            setRows(rs => rs.map(r => (r.id === row.id ? { ...r, status: prev, active: prev === "approved", source: { ...r.source, _status: prev === "approved" } } : r)));
-                          }
+                              await updateCandidacy(electionId, row.id, { _status: nextActive });
+                            } catch (err: unknown) {
+                              const info = err as AxiosError<unknown>;
+                              toast.apiError(info, "Update failed");
+                              setRows((rs) =>
+                                rs.map((r) =>
+                                  r.id === row.id
+                                    ? {
+                                        ...r,
+                                        status: prevStatus,
+                                        active: prevActive,
+                                        source: { ...r.source, _status: prevActive },
+                                      }
+                                    : r
+                                )
+                              );
+                            }
                           }}
                         />
                         <span>{row.status ? "Enabled" : "Disabled"}</span>
@@ -192,7 +240,7 @@ export const CandidacyTable: React.FC<{ electionId: number; readOnly?: boolean }
                           } catch (err: unknown) {
                             // >>> PAPSAS v1.4 BEGIN
                             const info = err as AxiosError<unknown>;
-                            toast.apiError?.(info, "Delete failed");
+                            toast.apiError(info, "Delete failed");
                             // <<< PAPSAS v1.4 END
                             setRows(prev); // rollback
                           }
@@ -230,21 +278,22 @@ export const CandidacyTable: React.FC<{ electionId: number; readOnly?: boolean }
           positions={positions}
           initial={{
             id: editing.id,
-            name: editing.name,
-            email: editing.email,
-            positionId: editing.positionId ?? null,
+            name: editing.candidate.name,
+            email: editing.candidate.email,
+            positionId: editing.position.id ?? null,
             credentials: editing.credentials,
-            status: editing.status,
+            status: editing.active,
           }}
           onClose={() => setEditing(null)}
-          onSubmit={async (data) => {
-            await updateCandidacy(electionId, data.id!, {
-              memberId: data.memberId,
-              name: data.name,
-              email: data.email,
-              positionId: data.positionId,
-              credentials: data.credentials,
-            });
+              onSubmit={async (data) => {
+                await updateCandidacy(electionId, data.id!, {
+                  memberId: data.memberId,
+                  name: data.name,
+                  email: data.email,
+                  positionId: data.positionId,
+                  credentials: data.credentials,
+                  _status: data.status ?? undefined,
+                });
             await refresh();
             toast.success("Candidate updated");
             setEditing(null);

@@ -18,7 +18,7 @@ type Props = {
     positionId?: number; credentials?: string; status?: boolean;
   };
   onClose: () => void;
-  onSubmit: (data: CandidacyCreate & { id?: number }) => Promise<void>;
+  onSubmit: (data: CandidacyCreate & { id?: number; status?: boolean }) => Promise<void>;
 };
 
 export const CandidacyFormModal: React.FC<Props> = ({ electionId, open, initial, onClose, onSubmit }) => {
@@ -157,9 +157,10 @@ export const CandidacyFormModal: React.FC<Props> = ({ electionId, open, initial,
                 onClose();
               } catch (e: unknown) {
                 // >>> PAPSAS v1.4 BEGIN
-                toast.apiError?.(e, "Save failed");
-                const resp = e?.response?.data;
-                const msg = resp?.message || e?.message || "Save failed";
+                toast.apiError(e, "Save failed");
+                const ax = e as { response?: { data?: { message?: string; code?: string } }; message?: string };
+                const resp = ax.response?.data as { message?: string; code?: string } | undefined;
+                const msg = resp?.message || ax.message || "Save failed";
                 const code = resp?.code;
                 setErr(code ? `${code}: ${msg}` : msg);
                 // <<< PAPSAS v1.4 END

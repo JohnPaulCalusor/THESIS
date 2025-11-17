@@ -12,10 +12,11 @@ from .views import (
     EmailVerificationStartView,
     EmailVerificationVerifyView,
     ElectionListView,
-    BallotView,
     VoteView,
     ResultsView,
 )
+
+
 
 # Current election + candidacy quick-create
 from .views_candidacy import CurrentElectionView, CandidacyQuickCreate
@@ -40,7 +41,6 @@ position_detail = PositionViewSet.as_view({"patch": "partial_update", "delete": 
 urlpatterns = [
     path('elections/<int:eid>/vote', api_vote_json),
 # (shadowed)     path("elections/<int:election_id>/candidacies", CandidacyListView.as_view(), name="election-candidacies"),
-    path("elections/<int:election_id>/ballot", ElectionBallotView.as_view(), name="election-ballot"),
     # Health
     path("health", health, name="api-health"),
 
@@ -67,7 +67,7 @@ urlpatterns = [
     # Canonical election endpoints
     path("elections/", ElectionListView.as_view(), name="elections-list"),
     path("elections/current", CurrentElectionView.as_view(), name="elections-current"),
-    path("elections/<int:election_id>/ballot", BallotView.as_view(), name="election-ballot"),
+    path("elections/<int:election_id>/ballot", ElectionBallotView.as_view(), name="election-ballot"),
     path("elections/<int:election_id>/vote", VoteView.as_view(), name="election-vote"),
     path("elections/<int:election_id>/results", ElectionResultsView.as_view(), name="election-results"),
     path("elections/<int:election_id>/results/export.csv", ElectionResultsCsvView.as_view(), name="election-results-csv"),

@@ -13,6 +13,7 @@ const LoginPage = lazy(() => import("./modules/pages/LoginPage"));
 const BallotPage = lazy(() => import("./modules/pages/BallotPage"));
 const OfficerResults = lazy(() => import("./modules/pages/OfficerResults"));
 const AdminElectionPage = lazy(() => import("./modules/election/pages/AdminElectionPage"));
+const AuditLogPage = lazy(() => import("./modules/audit/AuditLogPage"));
 
 function Shell() {
   return (
@@ -42,6 +43,16 @@ const router = createBrowserRouter([
           <Private>
             <RequireAdmin>
               <Suspense fallback={null}><AdminElectionPage /></Suspense>
+            </RequireAdmin>
+          </Private>
+        ),
+      },
+      {
+        path: "/admin/audit",
+        element: (
+          <Private>
+            <RequireAdmin>
+              <Suspense fallback={null}><AuditLogPage /></Suspense>
             </RequireAdmin>
           </Private>
         ),

@@ -31,6 +31,14 @@ export type CandidacyDTO = {
 
 type Json = Record<string, unknown>;
 
+function asRecord(value: unknown): Json | null {
+  return typeof value === "object" && value !== null ? (value as Json) : null;
+}
+
+function asString(value: unknown): string | undefined {
+  return typeof value === "string" ? value : undefined;
+}
+
 function unwrap<T>(data: unknown): T[] {
   if (Array.isArray(data)) return data as T[];
   if (typeof data === "object" && data !== null) {
@@ -42,30 +50,55 @@ function unwrap<T>(data: unknown): T[] {
 }
 
 function normalize(row: Json): Candidacy {
-  const id = (typeof row.id === "number" ? row.id : undefined) ??
+  const candidate = asRecord(row.candidate);
+  const position = asRecord(row.position);
+  const id =
+    (typeof row.id === "number" ? row.id : undefined) ??
     (typeof row.candidacyId === "number" ? row.candidacyId : undefined) ??
     (typeof row.candidacy_id === "number" ? row.candidacy_id : undefined) ??
     (typeof row._id === "number" ? row._id : undefined);
-  const positionId = (typeof row.positionId === "number" ? row.positionId : undefined) ??
+  const positionId =
+    (typeof row.positionId === "number" ? row.positionId : undefined) ??
     (typeof row.position_id === "number" ? row.position_id : undefined) ??
-    (typeof row.position === "object" && row.position !== null && typeof (row.position as Json).id === "number" ? (row.position as Json).id : null) ??
+    (position && typeof position.id === "number" ? position.id : null) ??
     null;
+  const titleFromPosition = position && asString(position.title);
   const positionTitle =
-    typeof row.positionTitle === "string" ? row.positionTitle :
-    typeof row.position_title === "string" ? row.position_title :
-    typeof row.position?.title === "string" ? (row.position as Json).title :
+    asString(row.positionTitle) ??
+    asString(row.position_title) ??
+    titleFromPosition ??
     (positionId != null ? String(positionId) : undefined);
-  const name =
-    typeof row.name === "string" ? row.name :
-    typeof row.candidate_name === "string" ? row.candidate_name :
-    ((Array.isArray(row.first_name) ? row.first_name : [row.first_name]).filter(Boolean).join(" ") ||
-      typeof row.candidate?.name === "string" ? (row.candidate as Json).name as string : "-");
-  const email = typeof row.email === "string" ? row.email :
-    typeof row.candidate?.email === "string" ? (row.candidate as Json).email : undefined;
-  const credentials = typeof row.credentials === "string" ? row.credentials :
-    typeof row.bio === "string" ? row.bio :
-    typeof row.platform === "string" ? row.platform : "";
-  return { id: id ?? 0, name, email, positionId, positionTitle, credentials, _status: Boolean(row._status ?? row.status ?? true) };
+  const firstNameParts = Array.isArray(row.first_name)
+    ? row.first_name
+    : row.first_name !== undefined
+      ? [row.first_name]
+      : [];
+  const firstName = firstNameParts
+    .filter((part): part is string => typeof part === "string")
+    .join(" ")
+    .trim();
+  const candidateName =
+    asString(row.name) ??
+    asString(row.candidate_name) ??
+    (candidate && asString(candidate.name));
+  const name = candidateName || firstName || "-";
+  const email =
+    asString(row.email) ??
+    (candidate ? asString(candidate.email) : undefined);
+  const credentials =
+    asString(row.credentials) ??
+    asString(row.bio) ??
+    asString(row.platform) ??
+    "";
+  return {
+    id: id ?? 0,
+    name,
+    email,
+    positionId,
+    positionTitle,
+    credentials,
+    _status: Boolean(row._status ?? row.status ?? true),
+  };
 }
 
 const base = (electionId: number) => `elections/${electionId}/candidacies`;

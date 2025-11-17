@@ -154,7 +154,7 @@ export default function OfficerResults() {
       const res = await getAnalytics(Number(effectiveId));
       setPanel({ kind: "analytics", payload: res });
     } catch (e: unknown) {
-      toast.error(e?.response?.data?.message || e?.message || "Failed to load analytics");
+      toast.apiError(e, "Failed to load analytics");
     }
   }, [effectiveId, toast, canViewInsights]);
 
@@ -165,7 +165,7 @@ export default function OfficerResults() {
       const res = await postExplain(Number(effectiveId), { style: "short" });
       setPanel({ kind: "explain", payload: res });
     } catch (e: unknown) {
-      toast.error(e?.response?.data?.message || e?.message || "Failed to load explanation");
+      toast.apiError(e, "Failed to load explanation");
     }
   }, [effectiveId, toast, canViewInsights]);
 

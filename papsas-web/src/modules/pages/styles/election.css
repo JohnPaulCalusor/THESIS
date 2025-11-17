@@ -1,0 +1,39 @@
+/* Ballot / election page styles
+ *
+ * This file exists to satisfy the import in `BallotPage.tsx`:
+ *   import "./styles/election.css";
+ *
+ * You can freely adjust these rules to match your desired ballot UI.
+ */
+
+.ballot-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.ballot-columns {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1rem;
+}
+
+.ballot-card {
+  border-radius: 0.5rem;
+  border: 1px solid #e5e7eb;
+  background-color: #ffffff;
+  padding: 1rem;
+}
+
+.ballot-card h2 {
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.ballot-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}

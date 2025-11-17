@@ -3,6 +3,9 @@ import { http } from "../../lib/http";
 export type ElectionDTO = { id: number; title?: string | null };
 export type PositionDTO = { id: number; title: string; enabled?: boolean; sort?: number };
 export type Position = PositionDTO;
+export type VoteChoice = { position_id: number; candidacy_id: number };
+export type VoteRequestPayload = { positions: VoteChoice[] } | { atLarge: number[] };
+type Json = Record<string, unknown>;
 
 function unwrap<T>(data: unknown): T[] {
   if (Array.isArray(data)) return data as T[];
@@ -89,7 +92,7 @@ export async function getBallot(eid: number): Promise<unknown> {
   return data;
 }
 
-export async function postVote(eid: number, body: { candidacyId: number }): Promise<unknown> {
+export async function postVote(eid: number, body: VoteRequestPayload): Promise<unknown> {
   const { data } = await http.post<unknown>(`elections/${eid}/vote`, body);
   return data;
 }

@@ -1,22 +1,29 @@
-﻿import axios, { type AxiosError } from "axios";
+import axios, { type AxiosError, type AxiosRequestHeaders } from "axios";
 
+/* ---------------- baseURL ---------------- */
+// Dev: use Vite proxy via /proxy_api
+// Prod: usually /api or a full absolute URL from VITE_API_BASE
 const defaultDevBase = "/proxy_api/";
 const defaultProdBase = "/api/";
 
 function normalizeBase(value?: string) {
   if (!value) return "/";
   const absoluteMatch = /^https?:\/\//i.test(value);
-  const trimmed = value.replace(/\/+$/, "");
-  if (absoluteMatch) return trimmed;
+  const trimmed = value.replace(/\/+$/, ""); // drop trailing slashes
+  if (absoluteMatch) return trimmed;        // keep absolute URLs as-is
+
+  // normalize relative paths to a single leading slash, optional trailing slash
   const withoutSlashes = trimmed.replace(/^\/+/, "");
   return withoutSlashes ? `/${withoutSlashes}/` : "/";
 }
 
-const envBase = (import.meta.env.VITE_API_BASE as string) || "";
+const envBase = (import.meta.env.VITE_API_BASE as string | undefined) || "";
 const baseCandidate = envBase || (import.meta.env.DEV ? defaultDevBase : defaultProdBase);
 const baseURL = normalizeBase(baseCandidate);
+
+// Axios instances that everything else uses
 export const http = axios.create({ baseURL, withCredentials: false });
-export const raw = axios.create({ baseURL });
+export const raw  = axios.create({ baseURL });
 
 /* ---------------- tokens ---------------- */
 const LS_KEY = "papsas.auth";
@@ -27,9 +34,9 @@ let refreshToken = "";
 
 export function getTokens(): Tokens {
   try {
-    const raw = localStorage.getItem(LS_KEY);
-    if (!raw) return {};
-    const { access, refresh } = JSON.parse(raw) || {};
+    const rawVal = localStorage.getItem(LS_KEY);
+    if (!rawVal) return {};
+    const { access, refresh } = JSON.parse(rawVal) || {};
     return { access, refresh };
   } catch (err: unknown) {
     const ax = err as AxiosError<unknown>;
@@ -60,8 +67,9 @@ export function clearTokens() {
 
 /* ---------------- url normalize ---------------- */
 function normalize(u?: string) {
-  if (!u) return u;  if (/^https?:\/\//i.test(u)) return u;       // absolute  leave
-  return u.replace(/^\/+/, "");                 // strip leading slashes only
+  if (!u) return u;
+  if (/^https?:\/\//i.test(u)) return u;  // absolute → leave as-is
+  return u.replace(/^\/+/, "");           // strip leading slashes only
 }
 
 /* ---------------- interceptors ---------------- */
@@ -69,7 +77,7 @@ for (const c of [http, raw]) {
   c.interceptors.request.use((cfg) => {
     if (cfg.url) cfg.url = normalize(cfg.url);
     if (accessToken) {
-      const headers = (cfg.headers ?? {}) as Record<string, string>;
+      const headers = { ...(cfg.headers ?? {}) } as AxiosRequestHeaders;
       headers.Authorization = `Bearer ${accessToken}`;
       cfg.headers = headers;
     }
