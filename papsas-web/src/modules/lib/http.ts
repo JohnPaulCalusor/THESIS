@@ -1,8 +1,22 @@
 ﻿import axios, { type AxiosError } from "axios";
 
-const baseURL = ((import.meta.env.VITE_API_BASE as string) || "").replace(/\/$/, "");
+const defaultDevBase = "/proxy_api/";
+const defaultProdBase = "/api/";
+
+function normalizeBase(value?: string) {
+  if (!value) return "/";
+  const absoluteMatch = /^https?:\/\//i.test(value);
+  const trimmed = value.replace(/\/+$/, "");
+  if (absoluteMatch) return trimmed;
+  const withoutSlashes = trimmed.replace(/^\/+/, "");
+  return withoutSlashes ? `/${withoutSlashes}/` : "/";
+}
+
+const envBase = (import.meta.env.VITE_API_BASE as string) || "";
+const baseCandidate = envBase || (import.meta.env.DEV ? defaultDevBase : defaultProdBase);
+const baseURL = normalizeBase(baseCandidate);
 export const http = axios.create({ baseURL, withCredentials: false });
-export const raw  = axios.create({ baseURL });
+export const raw = axios.create({ baseURL });
 
 /* ---------------- tokens ---------------- */
 const LS_KEY = "papsas.auth";

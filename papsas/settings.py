@@ -314,6 +314,23 @@ REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"].update({
     "event_register": DRF_THROTTLE_EVENT_REGISTER,
 })
 
+REDIS_URL = env_str("REDIS_URL", "")
+
+if REDIS_URL:
+    CACHES = {
+        "default": {
+            "BACKEND": "django_redis.cache.RedisCache",
+            "LOCATION": REDIS_URL,
+            "OPTIONS": {"CLIENT_CLASS": "django_redis.client.DefaultClient"},
+        }
+    }
+else:
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        }
+    }
+
 # >>> PAPSAS v1.4 BEGIN
 # Throttle rate for per-user per-election explain endpoint
 REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"].update({"explain": "1/min"})
