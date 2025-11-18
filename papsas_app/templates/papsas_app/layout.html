@@ -34,7 +34,7 @@
                         {% if officer is not None %}
                             {% if officer.termEnd > today %}
                                 {% if officer.position == 'Secretary' %}
-                                <li class="nav__item"><a href="{% url 'admin_dashboard' %}"class="nav__link">Dashboard</a></li>
+                                <li class="nav__item"><a href="{% url 'admin_dashboard' %}" class="nav__link">Dashboard</a></li>
                                 <li class="nav__item dropdown">
                                         <a href="{% url 'user_table' %}" class="nav__link">Records<i class="fa-solid fa-caret-down"></i></a>
                                         <ul class="dropdown-content">
@@ -46,7 +46,7 @@
                                 
                                         </ul>
                                 </li>
-                                <li class="nav__item"> <a href="{% url 'election' %}"class="nav__link">Election</a></li>
+                                <li class="nav__item"> <a href="{% url 'election' %}" class="nav__link">Election</a></li>
                                 <li class="nav__item dropdown"><a href="{% url 'event_list' %}" class="nav__link">Event</a>
                                 </li>
                                 <li class="nav__item dropdown"><a href="{% url 'event' %}" class="nav__link">Compose<i class="fa-solid fa-caret-down"></i></a>
@@ -57,7 +57,7 @@
                            
                                     </ul>
                                 </li>
-                                <li class="nav__item"><a href="{% url 'logout' %}"class="nav__link">Logout</a></li>
+                                <li class="nav__item"><a href="{% url 'logout' %}" class="nav__link">Logout</a></li>
 
                                 <li class="nav__item profileLink">
                                     <span>{{ user.first_name }} </span>
@@ -76,16 +76,16 @@
                                  
                                     </ul>
                                 </li>
-                                <li class="nav__item dropdown"><a href="{% url 'event_list' %}"class="nav__link">Event</a>
+                                <li class="nav__item dropdown"><a href="{% url 'event_list' %}" class="nav__link">Event</a>
                                 </li>
-                                <li class="nav__item dropdown"><a href=""class="nav__link">Compose<i class="fa-solid fa-caret-down"></i></a>
+                                <li class="nav__item dropdown"><a href="#" class="nav__link">Compose<i class="fa-solid fa-caret-down"></i></a>
                                     <ul class="dropdown-content">
                                         <li><a href="{% url 'compose_venue'%}">Venue</a></li>
                                         <li><a href="{% url 'compose_achievement' %}">SAS Research</a></li>
                                   
                                     </ul>
                                 </li>
-                                <li class="nav__item"><a href="{% url 'logout' %}"class="nav__link">Logout</a></li>
+                                <li class="nav__item"><a href="{% url 'logout' %}" class="nav__link">Logout</a></li>
                                 <li class="nav__item profileLink">
                                     <span>{{ user.first_name }} </span>
                                     <a href="{% url 'profile' user.id %}">
@@ -272,12 +272,17 @@
     // Current URL path
     const currentPath = window.location.pathname;
 
-    navLinks.forEach(link => {
-        const href = link.getAttribute('href');
-        const linkPath = new URL(link.href).pathname;
+    navLinks.forEach((link) => {
+        const rawHref = (link.getAttribute('href') || '').trim();
+        if (!rawHref || rawHref === "#" || rawHref.toLowerCase().startsWith("javascript:")) {
+            return;
+        }
 
-        // Skip dummy links (# or javascript:void)
-        if (href === "#" || href.startsWith("javascript")) {
+        let linkPath;
+        try {
+            linkPath = new URL(rawHref, window.location.origin).pathname;
+        } catch (e) {
+            // If the URL is invalid, skip this link
             return;
         }
 

@@ -4,8 +4,8 @@ from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.utils.decorators import method_decorator
-from django.contrib.auth import login, logout, authenticate
-from .models import User, Officer, Candidacy, Election, Event, Attendance, EventRegistration, MembershipTypes, UserMembership, Vote, Achievement, NewsandOffers, Venue, EventRating
+from django.contrib.auth import login, logout, authenticate, get_user_model
+from .models import Officer, Candidacy, Election, Event, Attendance, EventRegistration, MembershipTypes, UserMembership, Vote, Achievement, NewsandOffers, Venue, EventRating
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, HttpResponseNotFound, HttpResponseForbidden, HttpResponseNotAllowed
 from django.urls import reverse
 from django.core.mail import send_mail
@@ -22,7 +22,7 @@ from django.db.models.functions import TruncDay, TruncMonth, TruncYear
 from django.utils.dateformat import DateFormat
 from django.core.exceptions import ValidationError
 from django.http import JsonResponse
-from .models import User, MembershipTypes, Vote, Event, Officer
+from .models import MembershipTypes, Vote, Event, Officer
 from django.db import models
 from django.contrib.auth.hashers import make_password
 # Imported Forms
@@ -51,6 +51,8 @@ from django.contrib.auth.decorators import user_passes_test
 from .utils.otp_throttle import (
     can_send_otp, too_many_verify_attempts, register_verify_failure, reset_verify_window
 )
+
+User = get_user_model()
 
 @login_required
 def request_email_otp(request):
@@ -355,39 +357,61 @@ def logout_view(request):
 
 def login_view(request):
     if request.user.is_authenticated:
-        return redirect('index')
+        return redirect("index")
 
+    form = LoginForm(request.POST or None)
 
-    try:
-        if request.method == 'POST':
-            email = request.POST['email']
-            password = request.POST['password']
-            user = authenticate(request, username=email, password=password)
-            if user is not None:
-                if user.email_verified and user.is_active:
-                    login(request, user)
-                    return HttpResponseRedirect(reverse("index"))
-                elif not user.email_verified:
-                    return redirect('email_not_verified', user_id=user.id)
-                else:
-                    form = LoginForm(request.POST)
-                    return render(request, 'papsas_app/login.html', {
-                        'message' : 'Your account is not active.',
-                        'form' : form
-                    })
-            else:
-                form = LoginForm(request.POST)
-                return render(request, 'papsas_app/login.html', {
-                    'message' : 'Invalid email and/or password',
-                    'form' : form
-                    })
-        else:
-            form = LoginForm()
-            return render(request, 'papsas_app/login.html', {
-                'form' : form
-            })
-    except Exception as e:
-        return HttpResponse(f'Error: {e}')
+    if request.method == "POST":
+        raw_identifier = (request.POST.get("email") or "").strip()
+        password = request.POST.get("password") or ""
+
+        candidate = (
+            User.objects.filter(
+                Q(email__iexact=raw_identifier) | Q(username__iexact=raw_identifier)
+            )
+            .order_by("id")
+            .first()
+        )
+
+        lookup_username = candidate.username if candidate else raw_identifier
+
+        user = authenticate(request, username=lookup_username, password=password)
+
+        if user is None:
+            messages.error(request, "Invalid email and/or password")
+            return render(
+                request,
+                "papsas_app/login.html",
+                {
+                    "form": form,
+                    "message": "Invalid email and/or password",
+                    "email": raw_identifier,
+                },
+            )
+
+        if getattr(user, "email_verified", True) is False:
+            return render(
+                request,
+                "papsas_app/email_not_verified.html",
+                {"email": user.email},
+            )
+
+        if not user.is_active:
+            messages.error(request, "Account is inactive.")
+            return render(
+                request,
+                "papsas_app/login.html",
+                {
+                    "form": form,
+                    "message": "Account is inactive.",
+                    "email": raw_identifier,
+                },
+            )
+
+        login(request, user)
+        return redirect("index")
+
+    return render(request, "papsas_app/login.html", {"form": form})
 
 
 def verify_email(request, user_id):
