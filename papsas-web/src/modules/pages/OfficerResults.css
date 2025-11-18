@@ -1,0 +1,350 @@
+/* OfficerResults.css — responsive layout for Results page */
+
+:root {
+  /* Fallbacks in case globals are missing */
+  --brand: #dc2626;
+  --muted-text: #6b7280;
+  --card: #ffffff;
+  --border: #e5e7eb;
+}
+
+/* ---------- Page shell ---------- */
+
+.officer-results-page {
+  min-height: calc(100vh - 80px);
+  background: #f3f4f6;
+  padding: 2.5rem 1rem;
+  overflow-x: hidden;
+}
+
+.officer-results-container {
+  max-width: 70rem;
+  margin: 0 auto;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.05),
+    0 10px 25px -3px rgba(0, 0, 0, 0.08);
+  padding: 2.5rem 2.75rem;
+  box-sizing: border-box;
+}
+
+/* ---------- Header / title + actions ---------- */
+
+.officer-results-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.officer-results-title {
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 0.35rem;
+}
+
+.officer-results-subtitle {
+  font-size: 0.95rem;
+  color: #6b7280;
+  margin-bottom: 0.15rem;
+}
+
+.officer-results-updated {
+  font-size: 0.75rem;
+  color: var(--muted-text);
+}
+
+.officer-results-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+/* Give the header buttons a nice pill look (relies on existing .btn styles) */
+.officer-results-actions .btn {
+  border-radius: 999px;
+  padding-inline: 1.4rem;
+}
+
+/* ---------- Analytics / Explain panel ---------- */
+
+.officer-results-panel {
+  margin-bottom: 2.5rem;
+}
+
+.officer-results-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.officer-results-panel-title {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.officer-results-panel-close {
+  font-size: 0.85rem;
+  color: #6b7280;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.officer-results-panel-close:hover {
+  color: #111827;
+}
+
+/* ensure analytics table scrolls horizontally on small screens */
+.officer-results-panel .overflow-auto {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+/* ---------- Positions / charts ---------- */
+
+.officer-results-positions {
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+}
+
+.officer-results-position-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.officer-results-position-title {
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+.officer-results-position-csv {
+  font-size: 0.8rem;
+  padding: 0.25rem 0.65rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: #f9fafb;
+  cursor: pointer;
+}
+
+.officer-results-position-csv:hover {
+  background: #e5e7eb;
+}
+
+/* “No votes yet” block in card */
+.no-votes {
+  border-radius: 0.75rem;
+  border: 1px solid var(--border);
+  background: var(--card);
+  padding: 1.25rem 1.5rem;
+  font-size: 0.9rem;
+  color: var(--muted-text);
+}
+
+/* Loader center */
+.officer-results-loader {
+  display: grid;
+  place-items: center;
+  min-height: calc(100vh - 80px);
+}
+
+/* ---------- Responsive tweaks ---------- */
+
+/* Medium screens (tablets / small laptops) */
+@media (max-width: 1024px) {
+  .officer-results-container {
+    padding: 2rem 1.75rem;
+  }
+
+  .officer-results-title {
+    font-size: 1.8rem;
+  }
+}
+
+/* Tablets & large phones */
+@media (max-width: 768px) {
+  .officer-results-page {
+    padding: 1.75rem 1rem;
+  }
+
+  .officer-results-container {
+    padding: 1.75rem 1.5rem;
+    border-radius: 14px;
+  }
+
+  .officer-results-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .officer-results-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .officer-results-actions .btn {
+    font-size: 0.9rem;
+    padding-inline: 1.1rem;
+    padding-block: 0.55rem;
+  }
+}
+
+/* Small phones */
+@media (max-width: 640px) {
+  .officer-results-page {
+    padding: 1.25rem 0.75rem;
+  }
+
+  .officer-results-container {
+    padding: 1.5rem 1.25rem;
+    border-radius: 12px;
+  }
+
+  .officer-results-title {
+    font-size: 1.55rem;
+  }
+
+  .officer-results-actions {
+    gap: 0.5rem;
+  }
+
+  .officer-results-actions .btn {
+    flex: 1 1 100%;
+    text-align: center;
+  }
+
+  .officer-results-panel-header {
+    align-items: flex-start;
+  }
+
+  .officer-results-position-header {
+    flex-direction: row;
+    align-items: center;
+  }
+}
+
+/* Very small phones */
+@media (max-width: 400px) {
+  .officer-results-container {
+    padding: 1.25rem 1rem;
+    border-radius: 10px;
+  }
+
+  .officer-results-title {
+    font-size: 1.4rem;
+  }
+
+  .officer-results-actions .btn {
+    font-size: 0.85rem;
+  }
+}
+
+/* ---------- Analytics table layout ---------- */
+
+.officer-results-table-wrap {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.officer-results-table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.officer-results-table th,
+.officer-results-table td {
+  padding: 0.45rem 0.9rem;
+}
+
+/* give the candidate column a bit more room */
+.officer-results-table th:nth-child(2),
+.officer-results-table td:nth-child(2) {
+  min-width: 9rem;
+}
+
+/* align numeric columns nicely */
+.officer-results-table th:nth-child(3),
+.officer-results-table td:nth-child(3),
+.officer-results-table th:nth-child(4),
+.officer-results-table td:nth-child(4) {
+  text-align: right;
+}
+
+/* ---------- Analytics summary lines ---------- */
+
+.officer-results-summary {
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  font-size: 0.8rem;
+  color: var(--muted-text);
+}
+
+.officer-results-summary-label {
+  font-weight: 500;
+}
+
+/* ---------- Mobile tweaks for analytics ---------- */
+@media (max-width: 640px) {
+  .officer-results-table th,
+  .officer-results-table td {
+    padding: 0.35rem 0.5rem;
+    font-size: 0.85rem;
+  }
+
+  /* a bit more breathing room on small width */
+  .officer-results-table th:nth-child(2),
+  .officer-results-table td:nth-child(2) {
+    min-width: 7.5rem;
+  }
+
+  .officer-results-summary {
+    font-size: 0.78rem;
+  }
+}
+
+/* Explain panel layout */
+.officer-results-explain-lines {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.officer-results-explain-line {
+  line-height: 1.5;
+}
+
+.officer-results-explain-long {
+  padding-top: 0.75rem;
+  margin-top: 0.5rem;
+  border-top: 1px solid var(--border);
+  color: var(--muted-text);
+}
+
+@media (max-width: 640px) {
+  .officer-results-explain-line {
+    font-size: 0.9rem;
+  }
+
+  .officer-results-explain-long {
+    font-size: 0.78rem;
+  }
+}

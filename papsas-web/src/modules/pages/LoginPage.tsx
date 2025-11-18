@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../auth/AuthProvider";
+import "./LoginPage.css";
 
 export default function LoginPage() {
   const { user, login, intendedPath, setIntendedPath } = useAuth();
@@ -10,12 +11,19 @@ export default function LoginPage() {
 
   const [username, setUsername] = useState("admin");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   // If we landed here from a protected route, remember it once
   useEffect(() => {
-    if (!intendedPath && loc.state && typeof loc.state === "object" && loc.state !== null && "from" in loc.state) {
+    if (
+      !intendedPath &&
+      loc.state &&
+      typeof loc.state === "object" &&
+      loc.state !== null &&
+      "from" in loc.state
+    ) {
       const from = (loc.state as { from?: string }).from;
       if (typeof from === "string") {
         setIntendedPath(from);
@@ -33,8 +41,11 @@ export default function LoginPage() {
     }
   }, [user, intendedPath, setIntendedPath, nav]);
 
-  const onUser = (e: React.ChangeEvent<HTMLInputElement>) => setUsername(e.target.value);
-  const onPass = (e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value);
+  const onUser = (e: React.ChangeEvent<HTMLInputElement>) =>
+    setUsername(e.target.value);
+  const onPass = (e: React.ChangeEvent<HTMLInputElement>) =>
+    setPassword(e.target.value);
+
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError(null);
@@ -43,47 +54,83 @@ export default function LoginPage() {
       await login(username, password);
       // nav will also run from the effect when user is set
     } catch (err: unknown) {
-      const info = err as { response?: { data?: { message?: string } }; message?: string };
-      setError(info.response?.data?.message || info.message || "Login failed");
+      const info = err as {
+        response?: { data?: { message?: string } };
+        message?: string;
+      };
+      setError(
+        info.response?.data?.message || info.message || "Login failed"
+      );
     } finally {
       setSubmitting(false);
     }
-  }
+  };
 
   return (
-    <div className="max-w-3xl mx-auto px-6 py-10">
-      <div className="rounded-xl border p-6 bg-[var(--card)]">
-        <h1 className="text-3xl font-bold mb-2">Sign in</h1>
-        <p className="text-sm text-[var(--muted)] mb-6">Access your PAPSAS officer tools and ballot.</p>
-        <form onSubmit={onSubmit} className="space-y-3">
-          <div>
-            <label className="text-sm">Username</label>
-            <input
-              className="w-full rounded-md border px-3 py-2 bg-[var(--muted-bg)]"
-              value={username}
-              onChange={onUser}
-              autoComplete="username"
+    <div className="login-page">
+      <div className="login-page__container">
+        <div className="login-card card">
+          <header className="login-card__header">
+            {/* Centered logo */}
+            <img
+              src="/papsas.png" // change this path if your logo file is different
+              alt="PAPSAS Inc."
+              className="login-card__logo"
             />
-          </div>
-          <div>
-            <label className="text-sm">Password</label>
-            <input
-              type="password"
-              className="w-full rounded-md border px-3 py-2 bg-[var(--muted-bg)]"
-              value={password}
-              onChange={onPass}
-              autoComplete="current-password"
-            />
-          </div>
-          {error && <div className="text-sm text-red-600">{error}</div>}
-          <button
-            type="submit"
-            disabled={submitting}
-            className="btn btn-primary w-full"
-          >
-            {submitting ? "Signing in…" : "Continue"}
-          </button>
-        </form>
+            <h1 className="login-card__title">Sign in to Vote</h1>
+          </header>
+
+          <form onSubmit={onSubmit} className="login-form">
+            <div className="login-field">
+              <label className="login-label" htmlFor="login-username">
+                Username
+              </label>
+              <input
+                id="login-username"
+                className="login-input"
+                value={username}
+                onChange={onUser}
+                autoComplete="username"
+                placeholder="Enter your username"
+              />
+            </div>
+
+            <div className="login-field">
+              <label className="login-label" htmlFor="login-password">
+                Password
+              </label>
+              <div className="login-password-wrap">
+                <input
+                  id="login-password"
+                  type={showPassword ? "text" : "password"}
+                  className="login-input login-input--password"
+                  value={password}
+                  onChange={onPass}
+                  autoComplete="current-password"
+                  placeholder="Enter your password"
+                />
+                <button
+                  type="button"
+                  className="login-password-toggle"
+                  onClick={() => setShowPassword((v) => !v)}
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                >
+                  {showPassword ? "Hide" : "Show"}
+                </button>
+              </div>
+            </div>
+
+            {error && <div className="login-error">{error}</div>}
+
+            <button
+              type="submit"
+              disabled={submitting}
+              className="btn btn-primary login-submit"
+            >
+              {submitting ? "Signing in…" : "Continue"}
+            </button>
+          </form>
+        </div>
       </div>
     </div>
   );

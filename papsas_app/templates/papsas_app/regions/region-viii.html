@@ -3,155 +3,168 @@
 
 {% block head %}
 <link rel="stylesheet" href="{% static 'papsas_app/css/regional_chapter.css' %}">
+<link rel="stylesheet" href="{% static 'papsas_app/css/regional_content.css' %}">
 {% endblock %}
 
 {% block body %}
 <main class="main">
-    <!-- Page Title at Top Center -->
+    <!-- Page Title -->
     <header class="page-title">
         <h1 class="page-title__text">PAPSAS REGION 8</h1>
     </header>
 
-    <!-- 3rd PAPSAS VIII Regional Conference -->
-<section class="home">
-    <div class="home__container container">
-        <img src="/media/papsas_app/images/1reg8.png" alt="Fan's Hotel, Palo, Leyte" class="feature-img">
-        <div class="home__data">
-            <h2 class="home__title">WELCOME TO FAN’S HOTEL, PALO, LEYTE!</h2>
+    <!-- ===== CONTENT POSTS ===== -->
+    <div class="container" style="max-width: 1400px; margin: 0 auto; padding: 0 1rem;">
 
-            <p class="home__description">
-                Your official venue for the <strong>3rd PAPSAS VIII Regional Conference</strong> happening on <em>December 3–5, 2025</em>!<br><br>
-                Experience comfort, accessibility, and a perfect learning environment as Student Affairs and Services practitioners across Eastern Visayas gather for three days of growth, collaboration, and professional engagement.<br><br>
-                Let’s make meaningful connections and build empowered leaders in SAS!
-            </p>
-
-            <p class="home__description" style="color:#ff0a0a; font-weight:600; margin-top:1.5rem;">
-                #PAPSASRegion8 <br>#StudentAffairs <br>#PAPSASConference <br>#EasternVisayas
-            </p>
-        </div>
-    </div>
-</section>
-
-    <!-- Divider to indicate different content, aligned with content edges -->
-    <div class="container">
-        <div class="content-divider"></div>
-    </div>
-
-<!-- PAPSAS Region 8 at 29th National Conference -->
-<section class="home">
-    <div class="home__container container">
-        <img src="/media/papsas_app/images/2reg8.png" alt="PAPSAS Region 8 at 29th National Conference" class="feature-img">
-        <div class="home__data">
-            <h2 class="home__title">PAPSAS Region 8 at the 29th PAPSAS National Conference</h2>
-
-            <p class="home__description">
-                Some Officers and Members of PAPSAS Region 8 attended the 29th PAPSAS National Conference (April 10-12, 2025, in Puerto Princesa) with the theme "Weaving an Integrated SAS Approach toward a Healthy Learning Environment".
-            </p>
-
-            <p class="home__description" style="color:#ff0a0a; font-weight:600; margin-top:1.5rem;">
-                <br>#PAPSASNational <br>#Region8Pride <br>#SASLeadership <br>#HealthyLearning
-            </p>
-        </div>
-    </div>
-</section>
-
-    <!-- Divider to indicate different content, aligned with content edges -->
-    <div class="container">
-        <div class="content-divider"></div>
-    </div>
-
-<!-- PAPSAS Region VIII President at CMO Revision Workshop -->
-<section class="home">
-    <div class="home__container container">
-        <img src="/media/papsas_app/images/3reg8.png" alt="Workshop on Revision of CMO No. 09 s. 2013" class="feature-img">
-        <div class="home__data">
-            <h2 class="home__title">PAPSAS Region VIII President Attends CMO Revision Workshop</h2>
-
-            <p class="home__description">
-                PAPSAS Region VIII President Lowe S. Taña and member CHED TWG for SAS attended the Workshop on the revision of CMO No. 09 S. 2013 - Policies and Guidelines on Student Affairs and Services at Twin Lakes Hotel, Tagaytay.
-            </p>
-
-            <p class="home__description" style="color:#ff0a0a; font-weight:600; margin-top:1.5rem;">
-                <br>#PAPSASRegion8 <br>#CHED <br>#SASPolicies <br>#StudentAffairs
-            </p>
-        </div>
-    </div>
-</section>
-
-    <!-- Divider to indicate different content, aligned with content edges -->
-    <div class="container">
-        <div class="content-divider"></div>
-    </div>
-
-<!-- 2nd PAPSAS-8 Regional Student Leadership Summit -->
-<section class="home">
-    <div class="home__container container">
-        <img src="/media/papsas_app/images/4reg8.png" alt="2nd PAPSAS-8 Regional Student Leadership Summit at VSU" class="feature-img">
-        <div class="home__data">
-            <h2 class="home__title">2nd PAPSAS-8 Regional Student Leadership Summit</h2>
-
-            <p class="home__description">
-                VSU hosted the <strong>2nd PAPSAS-8 Regional Student Leadership Summit</strong> last <em>February 26-28, 2025</em>, bringing together student leaders from higher education institutions across Eastern Visayas region.
-            </p>
-
-            <p class="home__description" style="color:#ff0a0a; font-weight:600; margin-top:1.5rem;">
-                <br>#PAPSASRegion8 <br>#StudentLeadership <br>#VSU <br>#EasternVisayas
-            </p>
-        </div>
-    </div>
-</section>
-    </div>
-</section>
-
-    <!-- Region  Video Section -->
-    <section class="video-papsas">
-        <div class="video-feed-container">
-            <h2 class="video-title-container">VIDEO SECTION</h2>
-
-
-        </div>
-    </section>
-    
-
-    <!-- Footer -->
-    <button onclick="scrollToTop()" id="scrollUpButton" title="Go to top">↑</button>
-    <footer class="footer">
-        <div class="footer__container container">
-            <div class="footer__content">
-                <h3 class="footer__title">Philippine Association of Practitioners of Student Affairs and Services, Inc.</h3>
-                <p class="footer__description">Dedicated to the pursuit of excellence in student affairs and services work.</p>
-                <ul class="footer__links">
-                    <li><a href="#" class="footer__link">(043) 778 0656</a></li>
-                    <li><a href="#" class="footer__link">/papsasinc</a></li>
-                    <li><a href="#" class="footer__link">papsasinc.national@gmail.com</a></li>
-                    <li><a href="bit.ly/papsasinc" class="footer__link">bit.ly/papsasinc</a></li>
-                    <li><a href="#" class="footer__link">Visitor: {{ total_visitors }}</a></li>
-                </ul>
+        <!-- Post 1: 3rd PAPSAS VIII Regional Conference -->
+        <article class="content-card">
+            <img src="/media/papsas_app/images/1reg8.png" alt="Fan's Hotel, Palo, Leyte" class="content-card__img">
+            <div class="content-card__body">
+                <h2 class="content-card__title">WELCOME TO FAN’S HOTEL, PALO, LEYTE!</h2>
+                <p class="content-card__text">
+                    Your official venue for the <strong>3rd PAPSAS VIII Regional Conference</strong> happening on <em>December 3–5, 2025</em>!<br><br>
+                    Experience comfort, accessibility, and a perfect learning environment as Student Affairs and Services practitioners across Eastern Visayas gather for three days of growth, collaboration, and professional engagement.<br><br>
+                    Let’s make meaningful connections and build empowered leaders in SAS!
+                </p>
+                <span class="content-card__highlight">#PAPSASRegion8 <br>#StudentAffairs <br>#PAPSASConference <br>#EasternVisayas</span>
             </div>
-            <div class="footer__socials">
-                <a href="#" class="footer__social"><i class="fab fa-facebook-f"></i></a>
-                <a href="#" class="footer__social"><i class="fab fa-twitter"></i></a>
-                <a href="#" class="footer__social"><i class="fab fa-instagram"></i></a>
+        </article>
+
+        <hr class="content-divider">
+
+        <!-- Post 2: PAPSAS Region 8 at 29th National Conference -->
+        <article class="content-card">
+            <img src="/media/papsas_app/images/2reg8.png" alt="PAPSAS Region 8 at 29th National Conference" class="content-card__img">
+            <div class="content-card__body">
+                <h2 class="content-card__title">PAPSAS Region 8 at the 29th PAPSAS National Conference</h2>
+                <p class="content-card__text">
+                    Some Officers and Members of PAPSAS Region 8 attended the 29th PAPSAS National Conference (April 10-12, 2025, in Puerto Princesa) with the theme "Weaving an Integrated SAS Approach toward a Healthy Learning Environment".
+                </p>
+                <span class="content-card__highlight">#PAPSASNational <br>#Region8Pride <br>#SASLeadership <br>#HealthyLearning</span>
             </div>
-        </div>
-        <div class="footer__bottom">
-            <p>&copy; 2024 PAPSAS, Inc. All Rights Reserved.</p>
-        </div>
-    </footer>
+        </article>
+
+        <hr class="content-divider">
+
+        <!-- Post 3: PAPSAS Region VIII President at CMO Revision Workshop -->
+        <article class="content-card">
+            <img src="/media/papsas_app/images/3reg8.png" alt="Workshop on Revision of CMO No. 09 s. 2013" class="content-card__img">
+            <div class="content-card__body">
+                <h2 class="content-card__title">PAPSAS Region VIII President Attends CMO Revision Workshop</h2>
+                <p class="content-card__text">
+                    PAPSAS Region VIII President Lowe S. Taña and member CHED TWG for SAS attended the Workshop on the revision of CMO No. 09 S. 2013 - Policies and Guidelines on Student Affairs and Services at Twin Lakes Hotel, Tagaytay.
+                </p>
+                <span class="content-card__highlight">#PAPSASRegion8 <br>#CHED <br>#SASPolicies <br>#StudentAffairs</span>
+            </div>
+        </article>
+
+        <hr class="content-divider">
+
+        <!-- Post 4: 2nd PAPSAS-8 Regional Student Leadership Summit -->
+        <article class="content-card">
+            <img src="/media/papsas_app/images/4reg8.png" alt="2nd PAPSAS-8 Regional Student Leadership Summit at VSU" class="content-card__img">
+            <div class="content-card__body">
+                <h2 class="content-card__title">2nd PAPSAS-8 Regional Student Leadership Summit</h2>
+                <p class="content-card__text">
+                    VSU hosted the <strong>2nd PAPSAS-8 Regional Student Leadership Summit</strong> last <em>February 26-28, 2025</em>, bringing together student leaders from higher education institutions across Eastern Visayas region.
+                </p>
+                <span class="content-card__highlight">#PAPSASRegion8 <br>#StudentLeadership <br>#VSU <br>#EasternVisayas</span>
+            </div>
+        </article>
+
+        <!-- VIDEO SECTION (REGION 3 STYLE) -->
+        <section class="video-section">
+            <h2 class="video-section__title">VIDEO SECTION</h2>
+            <div class="video-grid">
+            </div>
+        </section>
+
+    </div>
 </main>
 
-<script>
-    window.onscroll = function() {
-        let button = document.getElementById("scrollUpButton");
-        if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
-            button.style.display = "block";
-        } else {
-            button.style.display = "none";
-        }
-    };
+<!-- FOOTER OUTSIDE main -->
+<footer class="footer">
+    <div class="footer__container container">
+        <div class="footer__content">
+            <h3 class="footer__title">Philippine Association of Practitioners of Student Affairs and Services, Inc.</h3>
+            <p class="footer__description">Dedicated to the pursuit of excellence in student affairs and services work.</p>
+            <ul class="footer__links">
+                <li><a href="#" class="footer__link">(043) 778 0656</a></li>
+                <li><a href="#" class="footer__link">/papsasinc</a></li>
+                <li><a href="#" class="footer__link">papsasinc.national@gmail.com</a></li>
+                <li><a href="bit.ly/papsasinc" class="footer__link">bit.ly/papsasinc</a></li>
+                <li><a href="#" class="footer__link">Visitor: {{ total_visitors }}</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer__bottom">
+        <p>© 2024 PAPSAS, Inc. All Rights Reserved.</p>
+    </div>
+</footer>
 
-    function scrollToTop() {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+<!-- Image Zoom Modal -->
+<div id="imageModal" class="modal">
+    <span class="close">&times;</span>
+    <img class="modal-content" id="zoomedImage">
+</div>
+
+<style>
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        padding-top: 100px;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0,0,0,0.9);
+    }
+    .modal-content {
+        margin: auto;
+        display: block;
+        width: 80%;
+        max-width: 700px;
+    }
+    .close {
+        position: absolute;
+        top: 15px;
+        right: 35px;
+        color: #f1f1f1;
+        font-size: 40px;
+        font-weight: bold;
+        transition: 0.3s;
+    }
+    .close:hover,
+    .close:focus {
+        color: #bbb;
+        text-decoration: none;
+        cursor: pointer;
+    }
+</style>
+
+<script>
+    // Get the modal
+    var modal = document.getElementById("imageModal");
+
+    // Get the image and insert it inside the modal
+    var modalImg = document.getElementById("zoomedImage");
+    var images = document.getElementsByClassName('content-card__img');
+
+    for (var i = 0; i < images.length; i++) {
+        images[i].onclick = function(){
+            modal.style.display = "block";
+            modalImg.src = this.src;
+        }
+    }
+
+    // Get the <span> element that closes the modal
+    var span = document.getElementsByClassName("close")[0];
+
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function() {
+        modal.style.display = "none";
     }
 </script>
 {% endblock %}

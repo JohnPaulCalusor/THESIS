@@ -1,0 +1,235 @@
+/* src/modules/election/components/PositionsTab.css */
+
+.positions-tab {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 0.75rem;
+}
+
+/* Header */
+
+.positions-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.positions-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.positions-subtitle {
+  margin: 0.1rem 0 0;
+  font-size: 0.875rem;
+  color: var(--muted-text, #6b7280);
+}
+
+.positions-count-badge {
+  font-size: 0.75rem;
+  font-weight: 500;
+  border-radius: 999px;
+  padding: 0.2rem 0.6rem;
+  background: rgba(59, 130, 246, 0.08);
+  color: #1d4ed8;
+}
+
+/* Cards */
+
+.positions-card {
+  padding: 1rem 1.25rem;
+  border-radius: 0.75rem;
+  border: 1px solid var(--border-subtle, #e5e7eb);
+  background: var(--card, #ffffff);
+}
+
+/* Quick add */
+
+.positions-quick-add {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.positions-quick-add-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--muted-text, #4b5563);
+}
+
+.positions-quick-add-row {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.positions-input {
+  flex: 1;
+  border-radius: 0.5rem;
+  border: 1px solid var(--border-subtle, #e5e7eb);
+  padding: 0.45rem 0.7rem;
+  font-size: 0.875rem;
+}
+
+.positions-input:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.18);
+}
+
+.positions-add-btn {
+  white-space: nowrap;
+  padding-inline: 0.9rem;
+  padding-block: 0.45rem;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.positions-quick-add-hint {
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--muted-text, #6b7280);
+}
+
+/* States */
+
+.positions-error {
+  color: #b91c1c;
+  font-size: 0.875rem;
+}
+
+.positions-loading {
+  font-size: 0.875rem;
+  color: var(--muted-text, #6b7280);
+}
+
+.positions-empty {
+  font-size: 0.875rem;
+}
+
+/* Table */
+
+.positions-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.positions-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+.positions-table thead {
+  background: #f9fafb;
+}
+
+.positions-table th,
+.positions-table td {
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid var(--border-subtle, #e5e7eb);
+  text-align: left;
+}
+
+.positions-table th {
+  font-weight: 500;
+  font-size: 0.8rem;
+  color: var(--muted-text, #6b7280);
+}
+
+.positions-col-sort {
+  width: 3rem;
+}
+
+.positions-col-actions {
+  width: 6.5rem;
+  text-align: right;
+}
+
+.positions-cell-sort {
+  font-variant-numeric: tabular-nums;
+}
+
+.positions-cell-actions {
+  text-align: right;
+}
+
+/* Actions */
+
+.positions-delete-link {
+  border: none;
+  background: none;
+  padding: 0;
+  font-size: 0.8rem;
+  color: #b91c1c;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.positions-delete-link:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+/* Inline editable */
+
+.positions-inline-edit {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.positions-inline-input {
+  flex: 1;
+  border-radius: 0.4rem;
+  border: 1px solid var(--border-subtle, #e5e7eb);
+  padding: 0.3rem 0.55rem;
+  font-size: 0.875rem;
+}
+
+.positions-inline-input:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.16);
+}
+
+.positions-inline-save-btn {
+  border-radius: 0.4rem;
+  border: 1px solid var(--border-subtle, #e5e7eb);
+  padding: 0.25rem 0.6rem;
+  font-size: 0.75rem;
+  background: #f9fafb;
+  cursor: pointer;
+}
+
+.positions-inline-save-btn:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+/* Responsive tweaks */
+
+@media (max-width: 640px) {
+  .positions-tab {
+    padding: 0.75rem 0.5rem;
+  }
+
+  .positions-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .positions-quick-add-row {
+    flex-direction: column;
+  }
+
+  .positions-add-btn {
+    width: 100%;
+  }
+
+  .positions-col-actions {
+    width: 4.5rem;
+  }
+}

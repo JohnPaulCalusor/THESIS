@@ -1,13 +1,20 @@
+// src/modules/election/components/CandidacyTable.tsx
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import type { AxiosError } from "axios";
 import type { Candidacy } from "../services/candidacyApi";
-import { deleteCandidacy, listCandidacies, updateCandidacy } from "../services/candidacyApi";
+import {
+  deleteCandidacy,
+  listCandidacies,
+  updateCandidacy,
+} from "../services/candidacyApi";
 import { CandidacyFormModal as CandidacyFormModal2 } from "./CandidacyFormModal2";
 import { patchCandidacy } from "../services/candidacyAdminApi";
-import { AddCandidateModal } from "./AddCandidateModal";
 import type { Position } from "../services/electionApi";
 import { listPositions } from "../services/electionApi";
+import { AddCandidateModal } from "./AddCandidateModal";
 import { useToast } from "../../ui/Toast";
+
+import "./CandidacyTable.css";
 
 export type CandidacyRow = {
   id: number;
@@ -34,19 +41,22 @@ const toRow = (c: Candidacy): CandidacyRow => ({
   source: { ...c },
 });
 
-export const CandidacyTable: React.FC<{ electionId: number; readOnly?: boolean }> = ({ electionId, readOnly }) => {
+export const CandidacyTable: React.FC<{
+  electionId: number;
+  readOnly?: boolean;
+}> = ({ electionId, readOnly }) => {
   const [rows, setRows] = useState<CandidacyRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setErr] = useState<string | null>(null);
   const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState<"all" | "enabled" | "disabled">("all");
   const [adding, setAdding] = useState(false);
   const [editing, setEditing] = useState<CandidacyRow | null>(null);
   const [positions, setPositions] = useState<Position[]>([]);
   const toast = useToast();
 
   const refresh = useCallback(async () => {
-    setLoading(true); setErr(null);
+    setLoading(true);
+    setErr(null);
     try {
       const data = await listCandidacies(electionId);
       setRows(data.map(toRow));
@@ -58,206 +68,219 @@ export const CandidacyTable: React.FC<{ electionId: number; readOnly?: boolean }
     }
   }, [electionId]);
 
-  useEffect(() => { void refresh(); }, [refresh]);
-  useEffect(() => { listPositions(electionId).then(setPositions).catch(() => setPositions([])); }, [electionId]);
+  useEffect(() => {
+    void refresh();
+  }, [refresh]);
+
+  useEffect(() => {
+    listPositions(electionId)
+      .then(setPositions)
+      .catch(() => setPositions([]));
+  }, [electionId]);
 
   const filtered = useMemo(() => {
     const q = search.toLowerCase();
     return rows.filter((r) => {
-      const statusOk =
-        statusFilter === "all" ||
-        (statusFilter === "enabled" && r.active) ||
-        (statusFilter === "disabled" && !r.active);
       const textOk =
         !q ||
-        `${r.candidate.name} ${r.candidate.email ?? ""} ${r.position.title} ${r.credentials ?? ""}`
+        `${r.candidate.name} ${r.candidate.email ?? ""} ${
+          r.position.title
+        } ${r.credentials ?? ""}`
           .toLowerCase()
           .includes(q);
-      return statusOk && textOk;
+
+      return textOk;
     });
-  }, [rows, search, statusFilter]);
+  }, [rows, search]);
 
   return (
-    <div className="space-y-3">
-      <div className="flex items-center gap-2">
-        <input className="border rounded p-2 flex-1" placeholder="Search…" value={search} onChange={e => setSearch(e.target.value)} />
-        <select
-          className="border rounded p-2"
-          value={statusFilter}
-          onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setStatusFilter(e.target.value as "all" | "enabled" | "disabled")}
-        >
-          <option value="all">All</option>
-          <option value="enabled">Enabled</option>
-          <option value="disabled">Disabled</option>
-        </select>
-        {!readOnly && (
-          <button className="px-3 py-2 rounded bg-blue-600 text-white" onClick={() => setAdding(true)} disabled={adding || !!editing}>+ Add Candidate</button>
-        )}
+    <div className="candidacy-admin">
+      {/* Toolbar */}
+      <div className="candidacy-admin-toolbar">
+        <div className="candidacy-admin-search-wrap">
+          <label
+            className="candidacy-admin-search-label"
+            htmlFor="candidate-search"
+          >
+            Search
+          </label>
+          <input
+            id="candidate-search"
+            className="candidacy-admin-search-input"
+            placeholder="Search by name, email, position, or credentials…"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        </div>
+        <div className="candidacy-admin-toolbar-right">
+          {!readOnly && (
+            <button
+              className="btn btn-primary candidacy-admin-add-btn"
+              onClick={() => setAdding(true)}
+              disabled={adding || !!editing}
+            >
+              + Add candidate
+            </button>
+          )}
+        </div>
       </div>
 
-      {error && <div className="text-red-600">{error}</div>}
-      {loading && <div>Loading…</div>}
+      {error && <div className="candidacy-admin-error">{error}</div>}
+      {loading && <div className="candidacy-admin-loading">Loading…</div>}
 
       {!loading && (
-        <div className="overflow-auto border rounded">
-          <table className="min-w-full text-sm">
-            <thead className="bg-gray-50">
-              <tr className="[&>th]:px-3 [&>th]:py-2 text-left">
-                <th>Candidate</th>
-                <th>Position</th>
-                <th>Credentials</th>
-                <th>Status</th>
-                {!readOnly && <th className="w-32">Actions</th>}
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.map(row => (
-                <tr key={row.id} className="border-t [&>td]:px-3 [&>td]:py-2 align-top">
-                  <td>
-                    <div className="font-medium">{row.candidate.name}</div>
-                    {row.candidate.email && <div className="text-gray-500 text-xs">{row.candidate.email}</div>}
-                  </td>
-                  <td>
-                    {readOnly ? (
-                      row.position.title ?? row.position.id ?? "�"
-                    ) : (
-                      <select
-                        className="border rounded p-1"
-                        value={row.position.id ?? ""}
-                        onChange={async (e: React.ChangeEvent<HTMLSelectElement>) => {
-                          const val = e.target.value;
-                          const nextId = val === "" ? null : Number(val);
-                          const prevId = row.position.id;
-                          setRows((rs) =>
-                            rs.map((r) =>
-                              r.id === row.id
-                                ? {
-                                    ...r,
-                                    position: {
-                                      id: nextId,
-                                      title: positions.find((p) => p.id === nextId)?.title ?? "Unassigned",
-                                    },
-                                    source: { ...r.source, positionId: nextId },
-                                  }
-                                : r
-                            )
-                          );
-                          try {
-                            await patchCandidacy(electionId, row.id, { position_id: nextId });
-                            toast.success("Position updated");
-                          } catch (err: unknown) {
-                            const info = err as AxiosError<unknown>;
+        <div className="card candidacy-admin-table">
+          <div className="candidacy-admin-table-scroll">
+            <table className="candidacy-admin-table-grid">
+              <thead>
+                <tr>
+                  <th>Candidate</th>
+                  <th>Position</th>
+                  <th>Credentials</th>
+                  {!readOnly && (
+                    <th className="candidacy-admin-actions-col">Actions</th>
+                  )}
+                </tr>
+              </thead>
+              <tbody>
+                {filtered.map((row) => (
+                  <tr key={row.id}>
+                    <td>
+                      <div className="candidacy-admin-name">
+                        {row.candidate.name}
+                      </div>
+                      {row.candidate.email && (
+                        <div className="candidacy-admin-email">
+                          {row.candidate.email}
+                        </div>
+                      )}
+                    </td>
+                    <td>
+                      {readOnly ? (
+                        row.position.title ?? row.position.id ?? "�"
+                      ) : (
+                        <select
+                          className="candidacy-admin-position-select"
+                          value={row.position.id ?? ""}
+                          onChange={async (
+                            e: React.ChangeEvent<HTMLSelectElement>
+                          ) => {
+                            const val = e.target.value;
+                            const nextId = val === "" ? null : Number(val);
+                            const prevId = row.position.id;
+
+                            // optimistic update
                             setRows((rs) =>
                               rs.map((r) =>
                                 r.id === row.id
                                   ? {
                                       ...r,
                                       position: {
-                                        id: prevId,
+                                        id: nextId,
                                         title:
-                                          positions.find((p) => p.id === (prevId ?? -1))?.title ?? "Unassigned",
+                                          positions.find(
+                                            (p) => p.id === nextId
+                                          )?.title ?? "Unassigned",
                                       },
-                                      source: { ...r.source, positionId: prevId },
-                                    }
-                                  : r
-                              )
-                            );
-                            toast.apiError(info, "Failed to update position");
-                          }
-                        }}
-                      >
-                        <option value="">Unassigned</option>
-                        {positions.map(p => (
-                          <option key={p.id} value={p.id}>{p.title}</option>
-                        ))}
-                      </select>
-                    )}
-                  </td>
-                  <td className="whitespace-pre-wrap">{row.credentials}</td>
-                  <td>
-                    {!readOnly ? (
-                      <label className="inline-flex items-center gap-2">
-                        <input
-                          type="checkbox"
-                          checked={row.active}
-                          onChange={async (e) => {
-                            const nextActive = e.target.checked;
-                            const prevStatus = row.status;
-                            const prevActive = row.active;
-                            setRows((rs) =>
-                              rs.map((r) =>
-                                r.id === row.id
-                                  ? {
-                                      ...r,
-                                      status: nextActive ? "approved" : "disabled",
-                                      active: nextActive,
-                                      source: { ...r.source, _status: nextActive },
+                                      source: {
+                                        ...r.source,
+                                        positionId: nextId,
+                                      },
                                     }
                                   : r
                               )
                             );
                             try {
-                              await updateCandidacy(electionId, row.id, { _status: nextActive });
+                              await patchCandidacy(electionId, row.id, {
+                                position_id: nextId,
+                              });
+                              toast.success("Position updated");
                             } catch (err: unknown) {
                               const info = err as AxiosError<unknown>;
-                              toast.apiError(info, "Update failed");
+                              toast.apiError(info, "Failed to update position");
+                              // rollback
                               setRows((rs) =>
                                 rs.map((r) =>
                                   r.id === row.id
                                     ? {
                                         ...r,
-                                        status: prevStatus,
-                                        active: prevActive,
-                                        source: { ...r.source, _status: prevActive },
+                                        position: {
+                                          id: prevId,
+                                          title:
+                                            positions.find(
+                                              (p) => p.id === (prevId ?? -1)
+                                            )?.title ?? "Unassigned",
+                                        },
+                                        source: {
+                                          ...r.source,
+                                          positionId: prevId,
+                                        },
                                       }
                                     : r
                                 )
                               );
                             }
                           }}
-                        />
-                        <span>{row.status ? "Enabled" : "Disabled"}</span>
-                      </label>
-                    ) : (
-                      <span className={row.status ? "text-green-700" : "text-gray-400"}>
-                        {row.status ? "Enabled" : "Disabled"}
-                      </span>
-                    )}
-                  </td>
-                  {!readOnly && (
-                    <td className="space-x-2">
-                      <button className="text-blue-700 underline" onClick={() => setEditing(row)} disabled={adding || !!editing}>Edit</button>
-                      <button
-                        className="text-red-700 underline"
-                        onClick={async () => {
-                          if (!confirm("Remove this candidacy?")) return;
-                          const prev = rows;
-                          setRows(rs => rs.filter(r => r.id !== row.id)); // optimistic
-                          try {
-                            await deleteCandidacy(electionId, row.id);
-                            await refresh();
-                            toast.success("Candidate removed");
-                          } catch (err: unknown) {
-                            // >>> PAPSAS v1.4 BEGIN
-                            const info = err as AxiosError<unknown>;
-                            toast.apiError(info, "Delete failed");
-                            // <<< PAPSAS v1.4 END
-                            setRows(prev); // rollback
-                          }
-                        }}
-                        disabled={adding || !!editing}
-                      >
-                        Remove
-                      </button>
+                        >
+                          <option value="">Unassigned</option>
+                          {positions.map((p) => (
+                            <option key={p.id} value={p.id}>
+                              {p.title}
+                            </option>
+                          ))}
+                        </select>
+                      )}
                     </td>
-                  )}
-                </tr>
-              ))}
-              {!filtered.length && (
-                <tr><td colSpan={readOnly ? 4 : 5} className="text-center text-gray-500 py-6">No candidates found.</td></tr>
-              )}
-            </tbody>
-          </table>
+                    <td className="candidacy-admin-credentials">
+                      {row.credentials}
+                    </td>
+                    {!readOnly && (
+                      <td className="candidacy-admin-actions">
+                        <button
+                          className="candidacy-admin-link"
+                          onClick={() => setEditing(row)}
+                          disabled={adding || !!editing}
+                        >
+                          Edit
+                        </button>
+                        <button
+                          className="candidacy-admin-link candidacy-admin-link--danger"
+                          onClick={async () => {
+                            if (!confirm("Remove this candidacy?")) return;
+                            const prev = rows;
+                            // optimistic removal
+                            setRows((rs) => rs.filter((r) => r.id !== row.id));
+                            try {
+                              await deleteCandidacy(electionId, row.id);
+                              await refresh();
+                              toast.success("Candidate removed");
+                            } catch (err: unknown) {
+                              const info = err as AxiosError<unknown>;
+                              toast.apiError(info, "Delete failed");
+                              setRows(prev);
+                            }
+                          }}
+                          disabled={adding || !!editing}
+                        >
+                          Remove
+                        </button>
+                      </td>
+                    )}
+                  </tr>
+                ))}
+                {!filtered.length && (
+                  <tr>
+                    <td
+                      colSpan={readOnly ? 3 : 4}
+                      className="candidacy-admin-empty-state"
+                    >
+                      No candidates found.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
 
@@ -268,7 +291,11 @@ export const CandidacyTable: React.FC<{ electionId: number; readOnly?: boolean }
           open={adding}
           positions={positions}
           onClose={() => setAdding(false)}
-          onAdded={async () => { await refresh(); toast.success("Candidate added"); setAdding(false); }}
+          onAdded={async () => {
+            await refresh();
+            toast.success("Candidate added");
+            setAdding(false);
+          }}
         />
       )}
       {editing && (
@@ -282,18 +309,16 @@ export const CandidacyTable: React.FC<{ electionId: number; readOnly?: boolean }
             email: editing.candidate.email,
             positionId: editing.position.id ?? null,
             credentials: editing.credentials,
-            status: editing.active,
           }}
           onClose={() => setEditing(null)}
-              onSubmit={async (data) => {
-                await updateCandidacy(electionId, data.id!, {
-                  memberId: data.memberId,
-                  name: data.name,
-                  email: data.email,
-                  positionId: data.positionId,
-                  credentials: data.credentials,
-                  _status: data.status ?? undefined,
-                });
+          onSubmit={async (data) => {
+            await updateCandidacy(electionId, data.id!, {
+              memberId: data.memberId,
+              name: data.name,
+              email: data.email,
+              positionId: data.positionId,
+              credentials: data.credentials,
+            });
             await refresh();
             toast.success("Candidate updated");
             setEditing(null);

@@ -1,3 +1,6 @@
+// src/modules/audit/components/AuditFilterBar.tsx
+import "./AuditFilterBar.css";
+
 export type AuditFilterDraft = {
   action: string;
   status: "" | "success" | "error";
@@ -13,70 +16,108 @@ type Props = {
   onReset: () => void;
 };
 
-export function AuditFilterBar({ draft, onChange, onApply, onReset }: Props) {
+export function AuditFilterBar({
+  draft,
+  onChange,
+  onApply,
+  onReset,
+}: Props) {
   return (
-    <div className="rounded border bg-white p-4 shadow-sm space-y-3">
-      <h2 className="text-lg font-semibold">Filters</h2>
-      <div className="grid gap-4 md:grid-cols-3">
-        <label className="flex flex-col text-sm">
-          <span className="font-medium mb-1">Action</span>
+    <div className="card audit-filters">
+      <div className="audit-filters-header">
+        <div>
+          <h2 className="audit-filters-title">Filters</h2>
+          <p className="audit-filters-subtitle">
+            Narrow results by action type, status, election or time range.
+          </p>
+        </div>
+      </div>
+
+      <div className="audit-filters-grid audit-filters-grid--top">
+        <label className="audit-field">
+          <span className="audit-field-label">Action</span>
           <input
             type="text"
-            placeholder="AUTH_LOGIN_SUCCESS"
-            className="border rounded px-3 py-2"
+            placeholder="e.g., AUTH_LOGIN_SUCCESS"
+            className="audit-input"
             value={draft.action}
-            onChange={(e) => onChange({ ...draft, action: e.target.value })}
+            onChange={(e) =>
+              onChange({ ...draft, action: e.target.value })
+            }
           />
         </label>
-        <label className="flex flex-col text-sm">
-          <span className="font-medium mb-1">Status</span>
+
+        <label className="audit-field">
+          <span className="audit-field-label">Status</span>
           <select
-            className="border rounded px-3 py-2"
+            className="audit-input"
             value={draft.status}
-            onChange={(e) => onChange({ ...draft, status: e.target.value as AuditFilterDraft["status"] })}
+            onChange={(e) =>
+              onChange({
+                ...draft,
+                status: e.target.value as AuditFilterDraft["status"],
+              })
+            }
           >
             <option value="">All</option>
             <option value="success">success</option>
             <option value="error">error</option>
           </select>
         </label>
-        <label className="flex flex-col text-sm">
-          <span className="font-medium mb-1">Election ID</span>
+
+        <label className="audit-field">
+          <span className="audit-field-label">Election ID</span>
           <input
             type="number"
             min="1"
-            placeholder="123"
-            className="border rounded px-3 py-2"
+            placeholder="e.g., 42"
+            className="audit-input"
             value={draft.election}
-            onChange={(e) => onChange({ ...draft, election: e.target.value })}
+            onChange={(e) =>
+              onChange({ ...draft, election: e.target.value })
+            }
           />
         </label>
       </div>
-      <div className="grid gap-4 md:grid-cols-2">
-        <label className="flex flex-col text-sm">
-          <span className="font-medium mb-1">Since</span>
+
+      <div className="audit-filters-grid audit-filters-grid--bottom">
+        <label className="audit-field">
+          <span className="audit-field-label">Since</span>
           <input
             type="datetime-local"
-            className="border rounded px-3 py-2"
+            className="audit-input"
             value={draft.since}
-            onChange={(e) => onChange({ ...draft, since: e.target.value })}
+            onChange={(e) =>
+              onChange({ ...draft, since: e.target.value })
+            }
           />
         </label>
-        <label className="flex flex-col text-sm">
-          <span className="font-medium mb-1">Until</span>
+        <label className="audit-field">
+          <span className="audit-field-label">Until</span>
           <input
             type="datetime-local"
-            className="border rounded px-3 py-2"
+            className="audit-input"
             value={draft.until}
-            onChange={(e) => onChange({ ...draft, until: e.target.value })}
+            onChange={(e) =>
+              onChange({ ...draft, until: e.target.value })
+            }
           />
         </label>
       </div>
-      <div className="flex flex-wrap gap-2">
-        <button className="px-4 py-2 rounded bg-blue-600 text-white" type="button" onClick={onApply}>
+
+      <div className="audit-filters-actions">
+        <button
+          className="audit-btn audit-btn--primary"
+          type="button"
+          onClick={onApply}
+        >
           Apply
         </button>
-        <button className="px-4 py-2 rounded border text-sm text-gray-600" type="button" onClick={onReset}>
+        <button
+          className="audit-btn audit-btn--ghost"
+          type="button"
+          onClick={onReset}
+        >
           Reset
         </button>
       </div>

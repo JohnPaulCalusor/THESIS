@@ -53,25 +53,3 @@ html, body, #root { height: 100%; background: var(--bg); color: var(--text); }
 /* ---- callouts / alerts ---- */
 .callout{ border-radius:12px; padding:12px 14px; border:1px solid var(--ring); }
 .callout-warn, .alert-warn{ background:#fff7e6; color:#7a5d00; }
-
-/* ---- topbar ---- */
-.topbar{
-  position:sticky; top:0; z-index:10;
-  background:var(--bg); border-bottom:1px solid var(--ring);
-  height:56px; display:flex; align-items:center;
-}
-.topbar .brand{
-  font-weight:800; letter-spacing:.02em; color:var(--text);
-}
-.topbar nav{ margin-left: 0; display:flex; gap:16px; }
-.topbar nav a{
-  color:var(--text); text-decoration:none; padding:6px 0; position:relative;
-}
-.topbar nav a:hover{ color:var(--brand); }
-.topbar nav a.active{
-  color:var(--brand); font-weight:700;
-}
-.topbar nav a.active::after{
-  content:""; position:absolute; left:0; right:0; bottom:-10px;
-  height:2px; background:var(--brand); border-radius:2px;
-}

@@ -1,0 +1,163 @@
+/* LoginPage.css — PAPSAS Election Portal Login */
+
+.login-page {
+  min-height: calc(100vh - 80px); /* account for topbar height */
+  padding: 2.5rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-page__container {
+  width: 100%;
+  max-width: 420px;
+}
+
+/* Card */
+
+.login-card {
+  border-radius: 1.25rem;
+  padding: 1.75rem 1.75rem 1.5rem;
+  border: 1px solid var(--border-subtle, #e5e7eb);
+  background: var(--card, #ffffff);
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.12);
+}
+
+.login-card__header {
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.login-card__logo {
+  height: 150px;
+  width: auto;
+  margin-bottom: -2rem;
+}
+
+.login-card__title {
+  margin: 0;
+  font-size: 1.75rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: #0f172a;
+}
+
+/* (subtitle removed in markup, kept here in case needed later)
+.login-card__subtitle {
+  margin: 0.4rem 0 0;
+  font-size: 0.9rem;
+  color: var(--muted-text, #6b7280);
+}
+*/
+
+/* Form */
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.login-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.login-label {
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: #374151;
+}
+
+.login-input {
+  border-radius: 0.75rem;
+  border: 1px solid var(--border-subtle, #e5e7eb);
+  padding: 0.6rem 0.85rem;
+  font-size: 0.9rem;
+  background: #f9fafb;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease,
+    background-color 0.15s ease;
+}
+
+.login-input:focus {
+  background: #ffffff;
+  border-color: #fb3743;
+  box-shadow: 0 0 0 1px rgba(248, 113, 113, 0.35);
+}
+
+/* Password view toggle */
+
+.login-password-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.login-input--password {
+  padding-right: 3.25rem; /* room for Show/Hide button */
+}
+
+.login-password-toggle {
+  position: absolute;
+  right: 0.6rem;
+  border: none;
+  background: transparent;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: #6b7280;
+  cursor: pointer;
+}
+
+.login-password-toggle:hover {
+  color: #111827;
+}
+
+.login-error {
+  margin-top: 0.25rem;
+  font-size: 0.85rem;
+  color: #b91c1c;
+}
+
+/* Submit button */
+
+.login-submit {
+  margin-top: 0.5rem;
+  width: 100%;
+  border-radius: 999px;
+  padding-block: 0.7rem;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.login-submit:disabled {
+  opacity: 0.75;
+  cursor: default;
+}
+
+/* Hint text removed from layout, keeping class in case needed later */
+/*
+.login-hint {
+  margin-top: 0.85rem;
+  font-size: 0.75rem;
+  color: #9ca3af;
+  text-align: center;
+}
+*/
+
+/* Responsive */
+
+@media (max-width: 640px) {
+  .login-page {
+    padding: 1.75rem 1.25rem;
+  }
+
+  .login-card {
+    padding-inline: 1.25rem;
+  }
+
+  .login-card__title {
+    font-size: 1.5rem;
+  }
+}

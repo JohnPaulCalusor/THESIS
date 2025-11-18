@@ -1,0 +1,669 @@
+/* BallotPage.css — Enhanced Modern PAPSAS Election Ballot Layout */
+
+:root {
+  --brand-primary: #dc2626;
+  --brand-hover: #b91c1c;
+  --brand-light: #fee2e2;
+  --success-bg: #f0fdf4;
+  --success-border: #86efac;
+  --success-text: #166534;
+  --warning-bg: #fefce8;
+  --warning-border: #fef08a;
+  --warning-text: #854d0e;
+  --error-bg: #fef2f2;
+  --error-border: #fecaca;
+  --error-text: #991b1b;
+}
+
+/* =========================
+   Layout
+   ========================= */
+.ballot-page-container {
+  min-height: calc(100vh - 80px);
+  background: #ffffff;
+  padding: 2rem 0.75rem;
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+  box-sizing: border-box;
+}
+
+.ballot-page-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 300px;
+  background: transparent;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.ballot-content {
+  position: relative;
+  z-index: 1;
+  background: white;
+  border-radius: 16px;
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.05),
+    0 10px 25px -3px rgba(0, 0, 0, 0.08);
+  padding: 2rem 1.75rem;
+  max-width: 54rem;
+  width: 100%;
+  box-sizing: border-box;
+  margin: 0 auto;
+  animation: fadeInUp 0.4s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* =========================
+   Header Section
+   ========================= */
+.ballot-title {
+  font-size: 2rem; /* slightly smaller */
+  font-weight: 800;
+  background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.025em;
+}
+
+.ballot-instructions {
+  font-size: 0.98rem;
+  color: #6b7280;
+  margin-bottom: 2rem;
+  line-height: 1.6;
+  padding-bottom: 1.25rem;
+  border-bottom: 2px solid #f3f4f6;
+}
+
+/* =========================
+   Alert Messages
+   ========================= */
+.ballot-success-message {
+  background: var(--success-bg);
+  border: 2px solid var(--success-border);
+  border-radius: 12px;
+  padding: 1.1rem 1.3rem;
+  margin-bottom: 1.75rem;
+  color: var(--success-text);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  animation: slideIn 0.3s ease-out;
+}
+
+.ballot-success-message::before {
+  content: '✓';
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background: var(--success-text);
+  color: white;
+  border-radius: 50%;
+  font-weight: bold;
+  font-size: 1rem;
+  margin-bottom: 0.25rem;
+}
+
+.ballot-empty-message {
+  background: var(--warning-bg);
+  border: 2px solid var(--warning-border);
+  border-radius: 12px;
+  padding: 1.1rem 1.3rem;
+  margin-bottom: 1.75rem;
+  color: var(--warning-text);
+  text-align: center;
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* =========================
+   Ballot Sections
+   ========================= */
+.ballot-section {
+  background: #ffffff;
+  border: 2px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 1.75rem 1.4rem;
+  margin-bottom: 1.75rem;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.ballot-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #dc2626 0%, #ef4444 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.ballot-section:hover::before {
+  opacity: 1;
+}
+
+/* Redesigned position title — pill style, no underline */
+.ballot-section-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 1.25rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.35rem 0.95rem;
+  border-radius: 999px;
+  background: #f9fafb;
+  box-shadow: 0 0 0 1px #e5e7eb;
+}
+
+.ballot-section-title::before {
+  content: '';
+  width: 9px;
+  height: 9px;
+  background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+  border-radius: 999px;
+  flex-shrink: 0;
+}
+
+.ballot-options {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 0.9rem;
+}
+
+/* =========================
+   Candidate Cards
+   ========================= */
+.ep-candidate {
+  background: white;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 1.1rem 1rem;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.ep-candidate::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+  transform: translateX(-4px);
+  transition: transform 0.25s ease;
+}
+
+.ep-candidate:hover {
+  border-color: var(--brand-primary);
+  background: #ffffff;
+  box-shadow:
+    0 4px 6px -1px rgba(220, 38, 38, 0.1),
+    0 10px 20px -3px rgba(220, 38, 38, 0.08);
+  transform: translateY(-2px);
+}
+
+.ep-candidate:hover::before {
+  transform: translateX(0);
+}
+
+.ep-candidate:has(input:checked) {
+  border-color: var(--brand-primary);
+  background: #fff5f5;
+  box-shadow:
+    0 0 0 3px rgba(220, 38, 38, 0.1),
+    0 4px 6px -1px rgba(220, 38, 38, 0.15),
+    0 10px 20px -3px rgba(220, 38, 38, 0.12);
+}
+
+.ep-candidate:has(input:checked)::before {
+  transform: translateX(0);
+  width: 5px;
+}
+
+.ep-candidate:has(input:disabled) {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Avatar Styling */
+.ballot-avatar {
+  position: relative;
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.1),
+    0 0 0 3px rgba(255, 255, 255, 1),
+    0 0 0 4px #e5e7eb;
+  transition: all 0.3s ease;
+  margin-right: 0.45rem;
+}
+
+/* Better spacing for candidate info container */
+.ep-candidate .flex.items-center {
+  gap: 1.1rem !important;
+}
+
+.ep-candidate:hover .ballot-avatar {
+  box-shadow:
+    0 4px 8px rgba(220, 38, 38, 0.15),
+    0 0 0 3px rgba(255, 255, 255, 1),
+    0 0 0 4px var(--brand-primary);
+  transform: scale(1.05);
+}
+
+.ep-candidate:has(input:checked) .ballot-avatar {
+  box-shadow:
+    0 4px 12px rgba(220, 38, 38, 0.2),
+    0 0 0 3px rgba(255, 255, 255, 1),
+    0 0 0 5px var(--brand-primary);
+}
+
+/* Radio Input Styling */
+.ep-radio-wrap {
+  width: 2.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ep-candidate input[type="radio"] {
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  margin-top: 0;
+  vertical-align: middle;
+}
+
+.ep-candidate:hover input[type="radio"]:not(:disabled) {
+  transform: scale(1.12);
+}
+
+.ep-candidate input[type="radio"]:disabled {
+  cursor: not-allowed;
+}
+
+/* =========================
+   Credentials Section
+   ========================= */
+.ep-cred {
+  margin-top: 0.45rem;
+}
+
+.ep-cred summary {
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: #6b7280;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.8rem;
+  border-radius: 999px;
+  background: #f3f4f6;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+
+/* remove default marker and any emojis/icons */
+.ep-cred summary::marker {
+  display: none;
+  content: '';
+}
+
+/* no emoji / arrow icon, just plain text */
+.ep-cred summary::before {
+  content: '';
+  display: none;
+}
+
+.ep-cred[open] summary::before {
+  content: '';
+}
+
+.ep-cred summary:hover {
+  background: #e5e7eb;
+  border-color: #d1d5db;
+  color: #374151;
+}
+
+.ep-cred[open] summary {
+  background: var(--brand-light);
+  color: var(--brand-primary);
+  border-color: #93c5fd;
+}
+
+.ep-cred-list {
+  margin-top: 0.75rem;
+  padding: 0.85rem;
+  padding-left: 1.3rem;
+  background: #f9fafb;
+  border-radius: 8px;
+  border-left: 3px solid var(--brand-primary);
+  animation: expandDown 0.2s ease-out;
+}
+
+@keyframes expandDown {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.ep-cred-list li {
+  color: #4b5563;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  margin-bottom: 0.45rem;
+}
+
+.ep-cred-list li:last-child {
+  margin-bottom: 0;
+}
+
+/* =========================
+   Submit Button
+   ========================= */
+.ballot-submit-btn {
+  width: 100%;
+  padding: 0.9rem 1.4rem;
+  background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+  color: white;
+  font-weight: 700;
+  font-size: 1rem;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow:
+    0 4px 6px -1px rgba(220, 38, 38, 0.3),
+    0 10px 20px -3px rgba(220, 38, 38, 0.2);
+  margin-top: 1rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.ballot-submit-btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.ballot-submit-btn:hover:not(:disabled)::before {
+  width: 280px;
+  height: 280px;
+}
+
+.ballot-submit-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #b91c1c 0%, #dc2626 100%);
+  box-shadow:
+    0 6px 12px -1px rgba(220, 38, 38, 0.4),
+    0 14px 30px -3px rgba(220, 38, 38, 0.3);
+  transform: translateY(-2px);
+}
+
+.ballot-submit-btn:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow:
+    0 2px 4px -1px rgba(220, 38, 38, 0.3),
+    0 4px 10px -3px rgba(220, 38, 38, 0.2);
+}
+
+.ballot-submit-btn:disabled {
+  background: linear-gradient(135deg, #9ca3af 0%, #6b7280 100%);
+  cursor: not-allowed;
+  opacity: 0.6;
+  box-shadow: none;
+  transform: none;
+}
+
+/* =========================
+   Debug Section
+   ========================= */
+.ballot-debug {
+  margin-top: 2.5rem;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  padding: 1.1rem;
+  border-radius: 12px;
+  font-size: 0.82rem;
+  color: #4b5563;
+}
+
+.ballot-debug summary {
+  font-weight: 600;
+  cursor: pointer;
+  color: #374151;
+  padding: 0.4rem;
+  user-select: none;
+}
+
+.ballot-debug summary:hover {
+  color: var(--brand-primary);
+}
+
+.ballot-debug pre {
+  margin-top: 0.9rem;
+  padding: 0.85rem;
+  background: white;
+  border-radius: 8px;
+  white-space: pre-wrap;
+  overflow: auto;
+  max-height: 400px;
+  font-size: 0.78rem;
+  line-height: 1.6;
+  border: 1px solid #e5e7eb;
+}
+
+/* =========================
+   Blocked/Error Cards
+   ========================= */
+.ballot-blocked-card,
+.ballot-error-card {
+  background: white;
+  border: 2px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 2.5rem 2rem;
+  text-align: center;
+  max-width: 32rem;
+  width: 100%;
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.05),
+    0 10px 25px -3px rgba(0, 0, 0, 0.08);
+  animation: fadeInUp 0.4s ease-out;
+}
+
+.ballot-blocked-card h1,
+.ballot-error-card h2 {
+  color: #111827;
+  margin-bottom: 0.9rem;
+  font-weight: 700;
+  font-size: 1.3rem;
+}
+
+.ballot-blocked-card p,
+.ballot-error-card p {
+  color: #6b7280;
+  line-height: 1.6;
+  font-size: 0.98rem;
+}
+
+.ballot-error-card {
+  border-color: var(--error-border);
+  background: #ffffff;
+}
+
+/* =========================
+   Responsive Design
+   ========================= */
+@media (max-width: 768px) {
+  .ballot-page-container {
+    padding: 1.5rem 0.75rem;
+  }
+
+  .ballot-content {
+    padding: 1.6rem 1.25rem;
+    border-radius: 12px;
+  }
+
+  .ballot-title {
+    font-size: 1.8rem;
+  }
+
+  .ballot-instructions {
+    font-size: 0.95rem;
+    margin-bottom: 1.8rem;
+  }
+
+  .ballot-section {
+    padding: 1.5rem 1.25rem;
+  }
+
+  .ep-candidate {
+    padding: 1rem 0.9rem;
+  }
+
+  .ballot-submit-btn {
+    padding: 0.85rem 1.2rem;
+    font-size: 0.97rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .ballot-page-container {
+    padding: 1rem 0.7rem;
+  }
+
+  .ballot-content {
+    padding: 1.4rem 1.05rem;
+    border-radius: 10px;
+  }
+
+  .ballot-title {
+    font-size: 1.6rem;
+  }
+
+  .ballot-instructions {
+    font-size: 0.9rem;
+  }
+
+  .ballot-section {
+    padding: 1.25rem 1rem;
+    margin-bottom: 1.4rem;
+  }
+
+  .ballot-section-title {
+    font-size: 1rem;
+    padding: 0.32rem 0.85rem;
+  }
+
+  .ep-candidate {
+    padding: 0.9rem 0.75rem;
+  }
+
+  .ep-candidate .flex.items-center {
+    gap: 0.8rem !important;
+  }
+
+  .ballot-avatar {
+    width: 44px !important;
+    height: 44px !important;
+    margin-right: 0 !important;
+  }
+
+  .ep-candidate input[type="radio"] {
+    width: 1.1rem;
+    height: 1.1rem;
+  }
+
+  .ep-candidate .font-semibold {
+    font-size: 0.9rem;
+  }
+
+  .ballot-submit-btn {
+    padding: 0.8rem 1rem;
+    font-size: 0.92rem;
+  }
+
+  .ballot-blocked-card,
+  .ballot-error-card {
+    padding: 2rem 1.5rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .ballot-page-container {
+    padding: 0.85rem 0.6rem;
+  }
+
+  .ballot-content {
+    padding: 1.25rem 0.9rem;
+  }
+
+  .ballot-section {
+    padding: 1.05rem 0.85rem;
+  }
+
+  .ep-candidate {
+    padding: 0.8rem 0.7rem;
+  }
+
+  .ep-candidate .flex.items-center {
+    gap: 0.7rem !important;
+  }
+
+  .ballot-avatar {
+    width: 40px !important;
+    height: 40px !important;
+  }
+}
