@@ -1,0 +1,224 @@
+/* src/modules/election/components/ElectionModals.css */
+/* Shared styling for AddCandidateModal + CandidacyFormModal2 */
+
+.election-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgba(15, 23, 42, 0.35);
+  backdrop-filter: blur(6px);
+}
+
+.election-modal {
+  background: #ffffff;
+  border-radius: 18px;
+  width: min(720px, 100%);
+  max-height: calc(100vh - 64px);
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.18);
+  padding: 18px 20px 16px;
+}
+
+/* Header */
+
+.election-modal-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.election-modal-title {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+.election-modal-subtitle {
+  margin: 2px 0 0;
+  font-size: 0.8125rem;
+  color: #6b7280;
+}
+
+.election-modal-close {
+  border: none;
+  background: none;
+  font-size: 1.125rem;
+  line-height: 1;
+  padding: 4px;
+  cursor: pointer;
+  color: #6b7280;
+}
+
+.election-modal-close:hover {
+  color: #111827;
+}
+
+/* Body */
+
+.election-modal-body {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding-top: 4px;
+  padding-bottom: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.election-modal-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 12px;
+}
+
+.election-modal-grid--bottom {
+  margin-top: 4px;
+}
+
+.election-modal-section {
+  margin-top: 4px;
+}
+
+/* Labels & controls */
+
+.election-modal-label {
+  display: block;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 4px;
+}
+
+.election-modal-label-optional {
+  font-weight: 400;
+  color: #9ca3af;
+  margin-left: 4px;
+}
+
+.election-modal-input,
+.election-modal-select,
+.election-modal-textarea {
+  width: 100%;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  padding: 8px 10px;
+  font-size: 0.875rem;
+  outline: none;
+  background: #ffffff;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.election-modal-input--spaced {
+  margin-top: 6px;
+}
+
+.election-modal-input:focus,
+.election-modal-select:focus,
+.election-modal-textarea:focus {
+  border-color: #fb3743;
+  box-shadow: 0 0 0 1px rgba(248, 113, 113, 0.4);
+}
+
+.election-modal-textarea {
+  min-height: 96px;
+  resize: vertical;
+}
+
+/* Search hits */
+
+.election-modal-hits {
+  margin-top: 4px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  max-height: 180px;
+  overflow: auto;
+  background: #ffffff;
+}
+
+.election-modal-hit-row {
+  width: 100%;
+  border: none;
+  background: #ffffff;
+  text-align: left;
+  padding: 6px 10px;
+  cursor: pointer;
+}
+
+.election-modal-hit-row:hover,
+.election-modal-hit-row--active {
+  background: #f3f4f6;
+}
+
+.election-modal-hit-name {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #111827;
+}
+
+.election-modal-hit-email {
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+/* Selected info & help */
+
+.election-modal-selected {
+  margin-top: 4px;
+  font-size: 0.75rem;
+  color: #4b5563;
+}
+
+.election-modal-selected-clear {
+  margin-left: 4px;
+  border: none;
+  padding: 0;
+  background: none;
+  color: #2563eb;
+  text-decoration: underline;
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+
+.election-modal-help {
+  margin-top: 4px;
+  font-size: 0.75rem;
+  color: #9ca3af;
+}
+
+/* Alert */
+
+.election-modal-alert {
+  margin: 4px 0 8px;
+}
+
+/* Footer */
+
+.election-modal-footer {
+  padding-top: 10px;
+  border-top: 1px solid #e5e7eb;
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+/* Responsive */
+
+@media (max-width: 768px) {
+  .election-modal {
+    width: 100%;
+    max-height: calc(100vh - 32px);
+    padding-inline: 14px;
+  }
+
+  .election-modal-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

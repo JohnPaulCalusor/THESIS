@@ -4,10 +4,11 @@ import { http } from "../lib/http";
 import { useElection } from "../election/hooks/useElection";
 import { useAuth } from "../auth/AuthProvider";
 import { useToast } from "../ui/Toast";
-import "./styles/election.css";
+import "./BallotPage.css";
 
 import { postVote } from "../election/services/electionApi";
 import type { VoteChoice, VoteRequestPayload } from "../election/services/electionApi";
+import { isAdminUser } from "../auth/roles";
 
 /* =========================
    Types
@@ -108,8 +109,8 @@ function normalizeCreds(val: unknown): string[] {
 function Avatar({
   src,
   name,
-  size = 84,
-  radius = 12,
+  size = 64,
+  radius = 50,
 }: {
   src?: string;
   name: string;
@@ -126,9 +127,8 @@ function Avatar({
     placeItems: "center",
     fontWeight: 700,
     letterSpacing: ".5px",
-    background: "var(--surface)",
-    color: "var(--brand-700)",
-    border: "1px solid var(--ring)",
+    background: "#e5e7eb",
+    color: "#374151",
     flex: "0 0 auto",
   };
 
@@ -164,25 +164,28 @@ function OptionRow({
 
   return (
     <label className="ep-candidate block">
-      <div className="flex items-start gap-5 md:gap-6">
+      {/* Outer flex row so radio is perfectly centered vertically */}
+      <div className="flex items-center gap-4">
         {/* Radio */}
-        <input
-          type="radio"
-          name={name}
-          checked={checked}
-          onChange={onSelect}
-          disabled={voted}
-          className="size-4 mt-1 flex-none"
-          style={{ accentColor: "var(--brand)" }}
-        />
+        <div className="ep-radio-wrap flex items-center justify-center flex-none">
+          <input
+            type="radio"
+            name={name}
+            checked={checked}
+            onChange={onSelect}
+            disabled={voted}
+            className="size-5"
+            style={{ accentColor: "var(--brand-primary)" }}
+          />
+        </div>
 
         {/* Avatar + content */}
-        <div className="flex items-start gap-5 md:gap-6 flex-1 min-w-0">
-          <Avatar src={c.photoUrl} name={c.name} size={88} radius={12} />
+        <div className="flex items-center gap-4 flex-1 min-w-0">
+          <Avatar src={c.photoUrl} name={c.name} size={48} radius={9999} />
 
           {/* Name + credentials */}
           <div className="flex-1 min-w-0">
-            <div className="font-medium text-[15px] leading-snug break-words mb-2">
+            <div className="font-semibold text-base leading-tight break-words">
               {c.name}
             </div>
 
@@ -193,10 +196,15 @@ function OptionRow({
                 onMouseDown={(e) => e.stopPropagation()}
                 onKeyDown={(e) => e.stopPropagation()}
               >
-                <summary>Credentials</summary>
-                <ul className="ep-cred-list">
+                {/* No emoji/icon here, just the text */}
+                <summary className="text-sm text-gray-500 hover:text-gray-700 cursor-pointer">
+                  View Credentials
+                </summary>
+                <ul className="ep-cred-list mt-2 space-y-1 text-sm text-gray-600">
                   {creds.map((line, i) => (
-                    <li key={i}>{line}</li>
+                    <li key={i} className="list-disc ml-4">
+                      {line}
+                    </li>
                   ))}
                 </ul>
               </details>
@@ -214,6 +222,7 @@ function OptionRow({
 export default function BallotPage() {
   const { election } = useElection();
   const { user } = useAuth();
+  const showDebug = import.meta.env.DEV && !!user && isAdminUser(user);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<{ code: number; msg: string } | null>(null);
   const [choices, setChoices] = useState<Choice[]>([]);
@@ -271,7 +280,7 @@ export default function BallotPage() {
             payload,
           });
           if (secs[0]?.options?.[0]) {
-            // eslint-disable-next-line no-console
+             
             console.debug("Ballot sample candidate:", secs[0].options[0]);
           }
         }
@@ -297,6 +306,11 @@ export default function BallotPage() {
     if (!effectiveId) return;
     setError(null);
 
+        // Count how many positions are filled
+    const filledPositionsCount = sections.reduce((count, sec) => {
+      return typeof picks[sec.id] === "number" ? count + 1 : count;
+    }, 0);
+
     const positionsPayload: VoteChoice[] =
       sections.length > 0
         ? sections.flatMap((sec) => {
@@ -306,10 +320,13 @@ export default function BallotPage() {
           })
         : [];
 
-    if (sections.length > 0 && !positionsPayload.length) {
-      toast.error("Select at least one candidate per position.");
+    // Position-based voting: require ALL positions to be filled
+    if (sections.length > 0 && filledPositionsCount < sections.length) {
+      toast.error("Please select a candidate for every position.");
       return;
     }
+
+    // At-large voting: require one candidate
     if (sections.length === 0 && !selected) {
       toast.error("Select a candidate before submitting.");
       return;
@@ -371,8 +388,20 @@ export default function BallotPage() {
 
   // ---- Rendering helpers ----------------------------------------------------
 
-  if (!user) return <Blocked title="Not signed in." sub="You need to sign in to view the ballot." />;
-  if (!effectiveId) return <Blocked title="No active election." sub="There is no current election to vote on." />;
+  if (!user)
+    return (
+      <Blocked
+        title="Not signed in."
+        sub="You need to sign in to view the ballot."
+      />
+    );
+  if (!effectiveId)
+    return (
+      <Blocked
+        title="No active election."
+        sub="There is no current election to vote on."
+      />
+    );
   if (loading) return <Loader text="Loading ballot…" />;
 
   if (error?.code === 403)
@@ -383,35 +412,50 @@ export default function BallotPage() {
       />
     );
   if (error?.code === 409)
-    return <Blocked title="You already voted." sub="Your vote has been recorded. You cannot vote again for this election." />;
-  if (error && ![403, 409].includes(error.code)) return <DevError code={error.code} msg={error.msg} debug={debug} />;
+    return (
+      <Blocked
+        title="You already voted."
+        sub="Your vote has been recorded. You cannot vote again for this election."
+      />
+    );
+  if (error && ![403, 409].includes(error.code))
+    return <DevError code={error.code} msg={error.msg} debug={debug} />;
 
   const positionMode = sections.length > 0;
   const empty = !positionMode && choices.length === 0;
 
+  // How many positions currently have a selected candidacy
+  const filledPositionsCount = sections.reduce((count, sec) => {
+    return typeof picks[sec.id] === "number" ? count + 1 : count;
+  }, 0);
+
   const canSubmit = positionMode
-    ? Object.values(picks).some((cid) => typeof cid === "number")
+    ? filledPositionsCount === sections.length // ALL positions must be filled
     : Boolean(selected);
 
+
   return (
-    <div className="page-ballot">
-      <div className="ballot-wrap max-w-2xl mx-auto px-4 py-3">
-        <h1 className="text-2xl font-semibold mb-4">BALLOT</h1>
-        <p className="subtle mb-6">Select one candidate for each position.</p>
+    <div className="ballot-page-container">
+      <div className="ballot-content">
+        <h1 className="ballot-title">Ballot</h1>
+        <p className="ballot-instructions">
+          Select one candidate for each position.
+        </p>
 
         {voted && (
-          <div
-            className="card mb-6"
-            style={{ borderColor: "rgba(16,185,129,.4)", background: "rgba(16,185,129,.1)" }}
-          >
-            <div className="font-medium">Your vote was submitted.</div>
-            <div className="text-sm subtle">You cannot modify your vote for this election.</div>
+          <div className="ballot-success-message">
+            <div className="font-semibold">
+              Your vote was submitted successfully.
+            </div>
+            <div className="text-sm text-gray-600">
+              You cannot modify your vote for this election.
+            </div>
           </div>
         )}
 
         {empty && (
-          <div className="callout callout-warn mb-6">
-            No choices returned. If this user already voted, this is expected.
+          <div className="ballot-empty-message">
+            No choices available. If you've already voted, this is expected.
           </div>
         )}
 
@@ -419,9 +463,9 @@ export default function BallotPage() {
           <>
             {sections.length > 0 ? (
               sections.map((sec) => (
-                <fieldset key={sec.id} className="card mb-6">
-                  <legend className="px-2 text-lg font-medium">{sec.title}</legend>
-                  <div className="mt-2 space-y-2">
+                <fieldset key={sec.id} className="ballot-section">
+                  <legend className="ballot-section-title">{sec.title}</legend>
+                  <div className="ballot-options">
                     {sec.options.map((c) => (
                       <OptionRow
                         key={c.candidacyId}
@@ -430,7 +474,10 @@ export default function BallotPage() {
                         name={`position-${sec.id}`}
                         onSelect={() => {
                           if (!c.candidacyId) return;
-                          setPicks((prev) => ({ ...prev, [sec.id]: c.candidacyId }));
+                          setPicks((prev) => ({
+                            ...prev,
+                            [sec.id]: c.candidacyId,
+                          }));
                         }}
                         voted={voted}
                       />
@@ -439,9 +486,9 @@ export default function BallotPage() {
                 </fieldset>
               ))
             ) : (
-              <fieldset className="card mb-6">
-                <legend className="px-2 text-lg font-medium">Candidates</legend>
-                <div className="mt-2 space-y-2">
+              <fieldset className="ballot-section">
+                <legend className="ballot-section-title">Candidates</legend>
+                <div className="ballot-options">
                   {choices.map((c) => (
                     <OptionRow
                       key={c.candidacyId}
@@ -460,16 +507,21 @@ export default function BallotPage() {
           </>
         )}
 
-        <button onClick={submit} disabled={!canSubmit || submitting || voted} className="btn btn-primary w-full">
-          Submit vote
+        <button
+          onClick={submit}
+          disabled={!canSubmit || submitting || voted}
+          className="ballot-submit-btn"
+        >
+          Submit Vote
         </button>
 
-        {import.meta.env.DEV && (
-          <details className="mt-8 card">
-            <summary className="cursor-pointer">Debug</summary>
-            <pre className="mt-2 text-xs whitespace-pre-wrap">{JSON.stringify(debug, null, 2)}</pre>
-          </details>
-        )}
+{showDebug && (
+  <details className="ballot-debug">
+    <summary>Debug Info</summary>
+    <pre>{JSON.stringify(debug, null, 2)}</pre>
+  </details>
+)}
+
       </div>
     </div>
   );
@@ -479,8 +531,10 @@ export default function BallotPage() {
    Misc UI helpers
    ========================= */
 function messageForStatus(code: number, fallback: string) {
-  if (code === 403) return "This election is not open for voting. If you believe this is an error, contact your officer.";
-  if (code === 409) return "Your vote has been recorded. You cannot vote again for this election.";
+  if (code === 403)
+    return "This election is not open for voting. If you believe this is an error, contact your officer.";
+  if (code === 409)
+    return "Your vote has been recorded. You cannot vote again for this election.";
   if (code === 404) return "Ballot endpoint not found (404).";
   return fallback || `Request failed (HTTP ${code}).`;
 }
@@ -488,32 +542,48 @@ function messageForStatus(code: number, fallback: string) {
 function Loader({ text }: { text: string }) {
   return (
     <div className="flex min-h-screen items-center justify-center bg-white">
-      <div className="animate-pulse text-lg font-medium text-[var(--text-muted)]">{text}</div>
+      <div className="animate-pulse text-lg font-medium text-gray-500">
+        {text}
+      </div>
     </div>
   );
 }
 
 function Blocked({ title, sub }: { title: string; sub: string }) {
   return (
-    <div className="page grid place-items-center px-4">
-      <div className="card text-center max-w-lg w-full">
+    <div className="flex min-h-screen items-center justify-center px-4">
+      <div className="ballot-blocked-card">
         <h1 className="text-2xl font-semibold">{title}</h1>
-        <p className="subtle mt-2">{sub}</p>
+        <p className="mt-2 text-gray-600">{sub}</p>
       </div>
     </div>
   );
 }
 
-function DevError({ code, msg, debug }: { code: number; msg: string; debug?: BallotDebug | null }) {
+function DevError({
+  code,
+  msg,
+  debug,
+}: {
+  code: number;
+  msg: string;
+  debug?: BallotDebug | null;
+}) {
   return (
-    <div className="page grid place-items-center px-4">
-      <div className="card" style={{ borderColor: "rgba(248,113,113,.4)", background: "rgba(248,113,113,.1)" }}>
-        <h2 className="text-xl font-semibold">Error loading ballot (HTTP {code})</h2>
+    <div className="flex min-h-screen items-center justify-center px-4">
+      <div className="ballot-error-card">
+        <h2 className="text-xl font-semibold">
+          Error Loading Ballot (HTTP {code})
+        </h2>
         <p className="mt-2">{msg}</p>
         {import.meta.env.DEV && debug && (
-          <details className="mt-3">
-            <summary className="cursor-pointer">Show debug</summary>
-            <pre className="mt-2 text-xs whitespace-pre-wrap">{JSON.stringify(debug, null, 2)}</pre>
+          <details className="mt-4">
+            <summary className="cursor-pointer font-medium">
+              Show Debug Info
+            </summary>
+            <pre className="mt-2 text-xs overflow-auto">
+              {JSON.stringify(debug, null, 2)}
+            </pre>
           </details>
         )}
       </div>

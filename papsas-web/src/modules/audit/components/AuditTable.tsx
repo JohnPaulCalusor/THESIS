@@ -1,4 +1,6 @@
+// src/modules/audit/components/AuditTable.tsx
 import type { AuditEvent } from "../hooks/useAuditEvents";
+import "./AuditTable.css";
 
 type Props = {
   events: AuditEvent[];
@@ -18,79 +20,103 @@ const timestampFormatter = new Intl.DateTimeFormat("en-PH", {
 
 export function AuditTable({ events, isLoading, error }: Props) {
   return (
-    <div className="rounded border bg-white shadow-sm">
+    <div className="card audit-table-card">
       {isLoading && (
-        <div className="p-4 text-sm text-gray-500">Loading audit events…</div>
+        <div className="audit-table-message">
+          Loading audit events…
+        </div>
       )}
       {error && (
-        <div className="p-4 text-sm text-red-600">{error}</div>
+        <div className="audit-table-message audit-table-message--error">
+          {error}
+        </div>
       )}
       {!isLoading && !error && events.length === 0 && (
-        <div className="p-4 text-sm text-gray-500">
+        <div className="audit-table-message">
           No events found for the current filters.
         </div>
       )}
+
       {events.length > 0 && (
-        <div className="overflow-auto">
-          <table className="min-w-full text-sm">
-            <thead className="bg-gray-50 text-xs uppercase tracking-wide text-gray-600">
+        <div className="audit-table-wrapper">
+          <table className="audit-table">
+            <thead>
               <tr>
-                <th className="px-3 py-2 text-left">Timestamp</th>
-                <th className="px-3 py-2 text-left">Action</th>
-                <th className="px-3 py-2 text-left">Actor</th>
-                <th className="px-3 py-2 text-left">Target</th>
-                <th className="px-3 py-2 text-left">Election</th>
-                <th className="px-3 py-2 text-left">IP</th>
-                <th className="px-3 py-2 text-left">Method</th>
-                <th className="px-3 py-2 text-left">Path</th>
-                <th className="px-3 py-2 text-left">Status</th>
-                <th className="px-3 py-2 text-left">Details</th>
+                <th>Timestamp</th>
+                <th>Action</th>
+                <th>Actor</th>
+                <th>Target</th>
+                <th>Election</th>
+                <th>IP</th>
+                <th>Method</th>
+                <th>Path</th>
+                <th>Status</th>
+                <th>Details</th>
               </tr>
             </thead>
             <tbody>
               {events.map((ev) => {
-                const actor = ev.actor_username || (ev.ip ? "(anonymous)" : "(system)");
-                const targetParts = [];
+                const actor =
+                  ev.actor_username ||
+                  (ev.ip ? "(anonymous)" : "(system)");
+                const targetParts: string[] = [];
                 if (ev.target_type) targetParts.push(ev.target_type);
-                if (ev.target_id) targetParts.push(ev.target_id);
+                if (ev.target_id) targetParts.push(String(ev.target_id));
                 const target = targetParts.join("/") || "—";
-                const formattedTime = timestampFormatter.format(new Date(ev.ts));
-                const statusClass =
-                  ev.status === "success"
-                    ? "bg-emerald-100 text-emerald-700"
-                    : ev.status === "error"
-                      ? "bg-rose-100 text-rose-700"
-                      : "bg-gray-100 text-gray-700";
+                const formattedTime = timestampFormatter.format(
+                  new Date(ev.ts)
+                );
+
+                let statusClass = "audit-status-pill";
+                if (ev.status === "success") {
+                  statusClass += " audit-status-pill--success";
+                } else if (ev.status === "error") {
+                  statusClass += " audit-status-pill--error";
+                }
+
                 const metaJson = JSON.stringify(ev.meta || {}, null, 2);
+
                 return (
-                  <tr key={ev.id} className="border-t even:bg-gray-50">
-                    <td className="px-3 py-2 align-top">
-                      <time title={ev.ts} className="font-mono text-xs">
+                  <tr key={ev.id}>
+                    <td>
+                      <time
+                        title={ev.ts}
+                        className="audit-table-timestamp"
+                      >
                         {formattedTime}
                       </time>
                     </td>
-                    <td className="px-3 py-2 align-top">
-                      <div className="font-mono text-[13px] tracking-wide">{ev.action}</div>
+                    <td>
+                      <div className="audit-table-action">
+                        {ev.action}
+                      </div>
                     </td>
-                    <td className="px-3 py-2 align-top">{actor}</td>
-                    <td className="px-3 py-2 align-top">{target}</td>
-                    <td className="px-3 py-2 align-top">{ev.scope_election_id ?? "—"}</td>
-                    <td className="px-3 py-2 align-top">{ev.ip || "—"}</td>
-                    <td className="px-3 py-2 align-top">{ev.method}</td>
-                    <td className="px-3 py-2 align-top break-all">{ev.path}</td>
-                    <td className="px-3 py-2 align-top">
-                      <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold ${statusClass}`}>
-                        {ev.status}
-                      </span>
+                    <td>{actor}</td>
+                    <td>{target}</td>
+                    <td>{ev.scope_election_id ?? "—"}</td>
+                    <td>{ev.ip || "—"}</td>
+                    <td>{ev.method}</td>
+                    <td className="audit-table-path">{ev.path}</td>
+                    <td>
+                      <span className={statusClass}>{ev.status}</span>
                     </td>
-                    <td className="px-3 py-2 align-top">
-                      <details>
-                        <summary className="cursor-pointer text-xs text-blue-700">View</summary>
-                        <div className="mt-1 text-[11px] text-slate-600 space-y-1">
-                          <div>User Agent:</div>
-                          <div className="break-all text-[10px]">{ev.user_agent || "—"}</div>
-                          <div>Payload Hash: {ev.payload_hash || "—"}</div>
-                          <pre className="mt-1 max-h-48 overflow-auto rounded bg-slate-50 p-2 text-[10px]">
+                    <td>
+                      <details className="audit-details">
+                        <summary>View</summary>
+                        <div className="audit-details-body">
+                          <div className="audit-details-label">
+                            User Agent:
+                          </div>
+                          <div className="audit-details-ua">
+                            {ev.user_agent || "—"}
+                          </div>
+                          <div className="audit-details-label">
+                            Payload Hash:
+                          </div>
+                          <div className="audit-details-hash">
+                            {ev.payload_hash || "—"}
+                          </div>
+                          <pre className="audit-details-meta">
                             {metaJson}
                           </pre>
                         </div>

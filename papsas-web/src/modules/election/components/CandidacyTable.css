@@ -1,0 +1,220 @@
+/* CandidacyTable.css */
+
+.candidacy-admin {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Toolbar */
+
+.candidacy-admin-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+
+.candidacy-admin-search-wrap {
+  flex: 1 1 260px;
+  min-width: 0;
+}
+
+.candidacy-admin-search-label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #6b7280;
+  margin-bottom: 2px;
+}
+
+.candidacy-admin-search-input {
+  width: 100%;
+  border-radius: 999px;
+  border: 1px solid #e5e7eb;
+  padding: 8px 12px;
+  font-size: 0.875rem;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  background: #ffffff;
+}
+
+.candidacy-admin-search-input:focus {
+  border-color: #fb3743;
+  box-shadow: 0 0 0 1px rgba(248, 113, 113, 0.4);
+}
+
+.candidacy-admin-toolbar-right {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.candidacy-admin-status-select {
+  border-radius: 999px;
+  border: 1px solid #e5e7eb;
+  padding: 8px 12px;
+  font-size: 0.875rem;
+  background: #ffffff;
+}
+
+.candidacy-admin-add-btn {
+  white-space: nowrap;
+}
+
+/* Table */
+
+.candidacy-admin-table {
+  padding: 0;
+}
+
+.candidacy-admin-table-scroll {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.candidacy-admin-table-grid {
+  width: 100%;
+  min-width: 760px;
+  border-collapse: collapse;
+}
+
+.candidacy-admin-table-grid thead {
+  background: #f9fafb;
+}
+
+.candidacy-admin-table-grid th,
+.candidacy-admin-table-grid td {
+  padding: 10px 12px;
+  text-align: left;
+  font-size: 0.875rem;
+}
+
+.candidacy-admin-table-grid th {
+  font-weight: 600;
+  color: #4b5563;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.candidacy-admin-table-grid tbody tr:nth-child(even) {
+  background-color: #fbfbfb;
+}
+
+.candidacy-admin-table-grid tbody tr:hover {
+  background-color: #f9fafb;
+}
+
+.candidacy-admin-name {
+  font-weight: 500;
+  color: #111827;
+}
+
+.candidacy-admin-email {
+  margin-top: 2px;
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+.candidacy-admin-position-select {
+  width: 100%;
+  max-width: 220px;
+  border-radius: 999px;
+  border: 1px solid #e5e7eb;
+  padding: 6px 10px;
+  font-size: 0.8125rem;
+  background: #ffffff;
+}
+
+.candidacy-admin-credentials {
+  white-space: pre-wrap;
+  font-size: 0.8125rem;
+  color: #374151;
+}
+
+.candidacy-admin-status-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8125rem;
+  color: #111827;
+}
+
+.candidacy-admin-status-toggle input {
+  width: 14px;
+  height: 14px;
+}
+
+.candidacy-admin-status-label {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+}
+
+.candidacy-admin-status-label--enabled {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.candidacy-admin-status-label--disabled {
+  background: #f3f4f6;
+  color: #4b5563;
+}
+
+.candidacy-admin-actions-col {
+  width: 120px;
+}
+
+.candidacy-admin-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.candidacy-admin-link {
+  border: none;
+  padding: 0;
+  background: none;
+  font-size: 0.8125rem;
+  color: #2563eb;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.candidacy-admin-link--danger {
+  color: #b91c1c;
+}
+
+.candidacy-admin-empty-state {
+  text-align: center;
+  padding: 18px 12px;
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+/* Messages */
+
+.candidacy-admin-error {
+  font-size: 0.875rem;
+  color: #b91c1c;
+}
+
+.candidacy-admin-loading {
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+/* Responsive */
+
+@media (max-width: 768px) {
+  .candidacy-admin-toolbar {
+    align-items: stretch;
+  }
+
+  .candidacy-admin-table-grid {
+    min-width: 640px;
+  }
+}
