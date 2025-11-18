@@ -5,7 +5,6 @@ from django.urls import path
 
 # Core/auth/me views
 from .views import (
-    health,
     LoginView,
     RefreshView,
     MeView,
@@ -15,6 +14,7 @@ from .views import (
     VoteView,
     ResultsView,
 )
+from .views_health import HealthView
 
 
 
@@ -42,7 +42,7 @@ urlpatterns = [
     path('elections/<int:eid>/vote', api_vote_json),
 # (shadowed)     path("elections/<int:election_id>/candidacies", CandidacyListView.as_view(), name="election-candidacies"),
     # Health
-    path("health", health, name="api-health"),
+    path("health", HealthView.as_view(), name="api-health"),
 
     path("events", events_list, name="api-events-list"),
     path("events/<slug:slug>", event_detail, name="api-events-detail"),
