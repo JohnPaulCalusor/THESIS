@@ -253,14 +253,21 @@ def index(request):
     today = date.today()
     events = Event.objects.all()
     upcoming_events = [event for event in events if event.startDate >= today]
-    if is_secretary(request):
+    user = getattr(request, "user", None)
+
+    # 🔴 NEW: Admins always see the admin dashboard on "/"
+    if _is_admin(request.user) or is_secretary(request):
         return render(request, 'papsas_app/admin_dashboard.html')
     elif is_officer(request):
-        return render(request, 'papsas_app/record/venue_table.html')
+        return redirect('venue_record')
     else:
-        return render(request, 'papsas_app/index.html', {
-            'events' : upcoming_events,
-        })
+        context = {
+            "news": news,
+            "events": events,
+            "achievement": achievement,
+            "openElection": openElection,
+        }
+        return render(request, 'papsas_app/index.html', context)
 
 @login_required(login_url='/login')
 def contact(request):
@@ -448,8 +455,11 @@ def login_view(request):
             )
 
         login(request, user)
-        return redirect("index")
+        if _is_admin(user):
+            return redirect("admin_dashboard")
 
+        # Everyone else keeps the old behavior
+        return redirect("index")
     return render(request, "papsas_app/login.html", {"form": form})
 
 

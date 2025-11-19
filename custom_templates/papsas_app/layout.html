@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="{% static 'papsas_app/css/regional_content.css' %}">
     <link rel="icon" type="image/jpg" href="/media/papsas_app/images/papsas_logo.png">
-
+    
     <!-- import htmx -->
     <script src="https://unpkg.com/htmx.org@1.9.2"></script>
     <script src="{% static 'papsas_app/js/alert.js' %}"></script>
@@ -26,16 +26,22 @@
                 <div class="nav-bar">
                     <a href="{% url 'index' %}">
                         <img src="/media/papsas_app/images/papsas.png" class="papsas-logo" alt="papsas_logo">
-                    </a>
+                    </a> 
 
                     {% if user.is_authenticated %}
                         <div class="nav__menu" id="nav-menu">
                             <ul class="nav__list">
-                                {# Officer / Admin navbar #}
-                                {% if officer is not None and officer.termEnd > today %}
-                                    {% if is_admin_user or officer.position == "Secretary" %}
+                                {# === 1) ADMIN – always gets admin_nav === #}
+                                {% if is_admin_user %}
+                                    {% include "papsas_app/partials/admin_nav.html" %}
+
+                                {# === 2) OFFICER WITH ACTIVE TERM === #}
+                                {% elif officer and officer.termEnd and officer.termEnd > today %}
+                                    {# Secretary also sees full admin nav #}
+                                    {% if officer.position == "Secretary" %}
                                         {% include "papsas_app/partials/admin_nav.html" %}
                                     {% else %}
+                                        {# Non-secretary officer nav #}
                                         <li class="nav__item dropdown">
                                             <a href="{% url 'venue_record' %}" class="nav__link">
                                                 Records<i class="fa-solid fa-caret-down"></i>
@@ -75,13 +81,11 @@
                                         {% endif %}
                                     {% endif %}
 
-                                {% elif is_admin_user %}
-                                    {# Admin with no Officer record still gets admin nav #}
-                                    {% include "papsas_app/partials/admin_nav.html" %}
-
+                                {# === 3) REGULAR MEMBER NAV === #}
                                 {% else %}
-                                    {# Regular member navbar #}
-                                    <li class="nav__item"><a href="{% url 'index' %}" class="nav__link">Home</a></li>
+                                    <li class="nav__item">
+                                        <a href="{% url 'index' %}" class="nav__link">Home</a>
+                                    </li>
                                     <li class="nav__item dropdown">
                                         <a href="{% url 'about' %}" class="nav__link">
                                             About Us<i class="fa-solid fa-caret-down"></i>
@@ -93,7 +97,7 @@
                                         </ul>
                                     </li>
 
-                                    {% if is_member and is_member.status == "Approved" %}
+                                    {% if is_member and is_member.status == 'Approved' %}
                                         <li class="nav__item dropdown">
                                             <a href="{% url 'user_membership_table' %}" class="nav__link">
                                                 Records<i class="fa-solid fa-caret-down"></i>
@@ -112,7 +116,7 @@
                                             {% endif %}
                                         {% endfor %}
                                     {% else %}
-                                        {% if user.occupation == "Practitioner" %}
+                                        {% if user.occupation == 'Practitioner' %}
                                             <li class="nav__item">
                                                 <a href="{% url 'become_member' %}" class="nav__link">Become a Member</a>
                                             </li>
@@ -155,13 +159,12 @@
                                         </ul>
                                     </li>
                                     <li class="nav__item">
-                                        <a href="{% url 'nat_con' %}" class="nav__link">
-                                            17th Interactive Youth Form
-                                        </a>
+                                        <a href="{% url 'nat_con' %}" class="nav__link">17th Interactive Youth Form</a>
                                     </li>
                                     <li class="nav__item">
                                         <a href="{% url 'logout' %}" class="nav__link">Logout</a>
                                     </li>
+
                                     {% if user.profilePic %}
                                         <li class="nav__item profileLink">
                                             <span>{{ user.first_name }} </span>
@@ -185,8 +188,9 @@
                         <div class="nav__toggle" id="nav-toggle">
                             <i class="fas fa-bars"></i>
                         </div>
+
                     {% else %}
-                        {# Not logged in navbar #}
+                        {# === GUEST NAV === #}
                         <div class="nav__menu" id="nav-menu">
                             <ul class="nav__list">
                                 <li class="nav__item">
@@ -213,7 +217,7 @@
                                         Regional Chapters <i class="fa-solid fa-caret-down"></i>
                                     </a>
                                     <ul class="dropdown-content">
-                                        <!-- same region list as above -->
+                                        <!-- Luzon -->
                                         <li><a href="{% url 'regional_chapter' 'car' %}">CAR</a></li>
                                         <li><a href="{% url 'regional_chapter' 'ncr' %}">NCR</a></li>
                                         <li><a href="{% url 'regional_chapter' 'region-i' %}">Region I</a></li>
@@ -221,9 +225,11 @@
                                         <li><a href="{% url 'regional_chapter' 'region-iii' %}">Region III</a></li>
                                         <li><a href="{% url 'regional_chapter' 'region-iv' %}">Region IV</a></li>
                                         <li><a href="{% url 'regional_chapter' 'region-v' %}">Region V</a></li>
+                                        <!-- Visayas -->
                                         <li><a href="{% url 'regional_chapter' 'region-vi' %}">Region VI</a></li>
                                         <li><a href="{% url 'regional_chapter' 'region-vii' %}">Region VII</a></li>
                                         <li><a href="{% url 'regional_chapter' 'region-viii' %}">Region VIII</a></li>
+                                        <!-- Mindanao -->
                                         <li><a href="{% url 'regional_chapter' 'region-ix' %}">Region IX</a></li>
                                         <li><a href="{% url 'regional_chapter' 'region-x' %}">Region X</a></li>
                                         <li><a href="{% url 'regional_chapter' 'region-xi' %}">Region XI</a></li>
@@ -232,7 +238,6 @@
                                         <li><a href="{% url 'regional_chapter' 'barmm' %}">BARMM</a></li>
                                     </ul>
                                 </li>
-
                                 <div class="login-container">
                                     <a href="{% url 'login' %}" class="login-submit">Login</a>
                                 </div>
@@ -258,6 +263,67 @@
 
     <script src="{% static 'papsas_app/js/scrollreveal.min.js' %}"></script>
     <script src="{% static 'papsas_app/js/main.js' %}"></script>
-    <!-- (keep your active-link + regional label JS here, unchanged) -->
+
+    <!-- updated script for active link highlighting -->
+    <script>
+        const navLinks = document.querySelectorAll('.nav__link, .dropdown-content a');
+        const currentPath = window.location.pathname;
+
+        navLinks.forEach((link) => {
+            const rawHref = (link.getAttribute('href') || '').trim();
+            if (!rawHref || rawHref === "#" || rawHref.toLowerCase().startsWith("javascript:")) {
+                return;
+            }
+
+            let linkPath;
+            try {
+                linkPath = new URL(rawHref, window.location.origin).pathname;
+            } catch (e) {
+                return;
+            }
+
+            if (currentPath.startsWith("/regional-chapters/")) {
+                if (linkPath === currentPath) {
+                    link.classList.add('active');
+                }
+                const parentLabel = document.getElementById("regionsDropdownLabel");
+                if (parentLabel) {
+                    parentLabel.classList.add("active");
+                }
+            } else if (linkPath === currentPath) {
+                link.classList.add('active');
+            }
+        });
+    </script>
+
+    <script>
+        function toggleDescription(counter) {
+            const description = document.getElementById(`event-description-${counter}`);
+            const viewMoreBtn = document.querySelector(`#event-description-${counter} + .view-more-btn`);
+
+            if (viewMoreBtn.innerText === "View More") {
+                description.classList.add('show-full');
+                viewMoreBtn.innerText = "View Less";
+            } else {
+                description.classList.remove('show-full');
+                viewMoreBtn.innerText = "View More";
+            }
+        }
+
+        const regionsDropdownLabel = document.getElementById("regionsDropdownLabel");
+        const regionLinks = document.querySelectorAll("ul.dropdown-content li a[href*='regional-chapters']");
+        const defaultLabel = 'Regional Chapters <i class="fa-solid fa-caret-down"></i>';
+
+        if (window.location.pathname.startsWith("/regional-chapters/")) {
+            regionLinks.forEach(link => {
+                const linkPath = new URL(link.href).pathname;
+                if (linkPath === window.location.pathname) {
+                    regionsDropdownLabel.innerHTML = link.textContent + ' <i class="fa-solid fa-caret-down"></i>';
+                }
+            });
+        } else if (regionsDropdownLabel) {
+            regionsDropdownLabel.innerHTML = defaultLabel;
+        }
+    </script>
 </body>
 </html>

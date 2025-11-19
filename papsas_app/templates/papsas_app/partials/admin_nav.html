@@ -1,0 +1,31 @@
+<li class="nav__item"><a href="{% url 'admin_dashboard' %}" class="nav__link">Dashboard</a></li>
+<li class="nav__item dropdown">
+    <a href="{% url 'user_table' %}" class="nav__link">Records<i class="fa-solid fa-caret-down"></i></a>
+    <ul class="dropdown-content">
+        <li><a href="{% url 'user_table' %}">Account</a></li>
+        <li><a href="{% url 'membership_table' %}">Membership</a></li>
+        <li><a href="{% url 'event_table' %}">Event</a></li>
+        <li><a href="{% url 'venue_table' %}">Venue</a></li>
+        <li><a href="{% url 'achievement_table' %}">SAS Research</a></li>
+    </ul>
+</li>
+<li class="nav__item"> <a href="{% url 'election' %}" class="nav__link">Election</a></li>
+<li class="nav__item dropdown"><a href="{% url 'event_list' %}" class="nav__link">Event</a>
+</li>
+<li class="nav__item dropdown"><a href="{% url 'event' %}" class="nav__link">Compose<i class="fa-solid fa-caret-down"></i></a>
+    <ul class="dropdown-content">
+        <li><a href="{% url 'event' %}">Event</a></li>
+        <li><a href="{% url 'compose_venue'%}">Venue</a></li>
+        <li><a href="{% url 'compose_achievement' %}">SAS Research</a></li>
+    </ul>
+</li>
+<li class="nav__item">
+    <a href="{% url 'nat_con' %}" class="nav__link"> 17th Interactive Youth Form</a>
+</li>
+<li class="nav__item"><a href="{% url 'logout' %}" class="nav__link">Logout</a></li>
+<li class="nav__item profileLink">
+    <span>{{ user.first_name }} </span>
+    <a href="{% url 'profile' user.id %}">
+        <img src="{{ user.profilePic.url }}" alt="profilePic" id="navProfile" class="profile">
+    </a>
+</li>
