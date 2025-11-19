@@ -5,7 +5,24 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.utils.decorators import method_decorator
 from django.contrib.auth import login, logout, authenticate, get_user_model
-from .models import Officer, Candidacy, Election, Event, Attendance, EventRegistration, MembershipTypes, UserMembership, Vote, Achievement, NewsandOffers, Venue, EventRating
+from .models import (
+    Officer,
+    Candidacy,
+    Election,
+    Event,
+    Attendance,
+    EventRegistration,
+    MembershipTypes,
+    UserMembership,
+    Vote,
+    Achievement,
+    NewsandOffers,
+    Venue,
+    EventRating,
+    VisitorStats,
+    PageVisit,
+    RegionalChapterFeedback,
+)
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, HttpResponseNotFound, HttpResponseForbidden, HttpResponseNotAllowed
 from django.urls import reverse
 from django.core.mail import send_mail
@@ -32,6 +49,7 @@ from django.contrib.auth.forms import PasswordResetForm
 from io import BytesIO
 from django.contrib.auth.views import PasswordResetView
 from django.db.models import Count, Avg, Q, F, Case, When, BooleanField
+from django.views.decorators.http import require_POST
 from django.core.exceptions import ObjectDoesNotExist
 from functools import wraps
 from django.conf import settings
@@ -2620,13 +2638,64 @@ ALLOWED_REGIONS = {
     "barmm": "BARMM - Bangsamoro",
 }
 
+
 def regional_chapter(request, slug: str):
+    """
+    Handles:
+    - per-region page view count
+    - rendering the correct regional content template
+    """
     if slug not in ALLOWED_REGIONS:
         raise Http404("Region not found")
-    # looks for templates/papsas_app/regions/<slug>.html
+
+    # Per-page visit counter – only increment on GET
+    key = f"regional-chapters/{slug}"
+    page_counter, _ = PageVisit.objects.get_or_create(key=key)
+
+    if request.method == "GET":
+        PageVisit.objects.filter(pk=page_counter.pk).update(count=F("count") + 1)
+        page_counter.refresh_from_db()
+
+    # Feedback: just read current counts here; mutations happen in regional_feedback
+    feedback, _ = RegionalChapterFeedback.objects.get_or_create(slug=slug)
+
     template = f"papsas_app/regions/{slug}.html"
-    context = {"region_name": ALLOWED_REGIONS[slug], "region_slug": slug}
+    context = {
+        "region_name": ALLOWED_REGIONS[slug],
+        "region_slug": slug,
+        "page_visitors": page_counter.count,
+        "likes": feedback.likes,
+        "dislikes": feedback.dislikes,
+    }
     return render(request, template, context)
+
+
+@require_POST
+def regional_feedback(request, slug: str):
+    """
+    Handles:
+    - like / dislike for a specific regional chapter
+    Does NOT increment page visits – it only updates feedback
+    then redirects back to the chapter page.
+    """
+    if slug not in ALLOWED_REGIONS:
+        raise Http404("Region not found")
+
+    feedback, _ = RegionalChapterFeedback.objects.get_or_create(slug=slug)
+    action = request.POST.get("action")
+
+    update_data = {}
+    if action == "like":
+        update_data["likes"] = F("likes") + 1
+    elif action == "dislike":
+        update_data["dislikes"] = F("dislikes") + 1
+
+    if update_data:
+        RegionalChapterFeedback.objects.filter(pk=feedback.pk).update(**update_data)
+
+    return redirect("regional_chapter", slug=slug)
+
+
 
 # --- Auto-added voting helpers ---
 
