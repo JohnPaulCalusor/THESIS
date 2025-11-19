@@ -14,7 +14,7 @@ from .views import (
     VoteView,
     ResultsView,
 )
-from .views_health import HealthView
+from .views_health import health_check
 
 
 
@@ -25,6 +25,7 @@ from .views_analytics import election_analytics, ElectionExplainView
 from papsas_app.analytics.views import audit_events, audit_export_csv
 from .views_events import event_detail, events_ics, events_list
 from .views_event_registration import EventRegistrationView
+from . import views_push
 from .views_candidacy_admin import CandidacyListCreateView, CandidacyDetailPatchView
 from .views_candidacy import candidacy_partial_update
 
@@ -42,13 +43,19 @@ urlpatterns = [
     path('elections/<int:eid>/vote', api_vote_json),
 # (shadowed)     path("elections/<int:election_id>/candidacies", CandidacyListView.as_view(), name="election-candidacies"),
     # Health
-    path("health", HealthView.as_view(), name="api-health"),
+    path("health/", health_check, name="api-health-check"),
 
     path("events", events_list, name="api-events-list"),
     path("events/<slug:slug>", event_detail, name="api-events-detail"),
     path("events.ics", events_ics, name="api-events-ics"),
     path("events/<int:event_id>/registration", EventRegistrationView.as_view(), name="event-registration"),
     path("events/<int:event_id>/registration/", EventRegistrationView.as_view()),
+    
+        
+    path("devices/push-token",  views_push.register_push_token, name="register-push-token"),
+    path("devices/push-token/", views_push.register_push_token),
+    path("mobile/devices/push-token",  views_push.register_push_token),
+    path("mobile/devices/push-token/", views_push.register_push_token),
 
     # Auth
     path("auth/email/start", EmailVerificationStartView.as_view(), name="api-auth-email-start"),

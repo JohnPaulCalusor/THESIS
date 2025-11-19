@@ -3,9 +3,32 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.hashers import make_password
 
+from exponent_server_sdk import (
+    PushClient,
+    PushMessage,
+    DeviceNotRegisteredError,
+    PushServerError,
+)
+
 # Register your models here.
 
-from .models import User, MembershipTypes, Vote, Candidacy, Officer, Election, Event, EventRegistration, UserMembership, Venue, Attendance, NewsandOffers, Achievement, EventRating
+from .models import (
+    User,
+    MembershipTypes,
+    Vote,
+    Candidacy,
+    Officer,
+    Election,
+    Event,
+    EventRegistration,
+    UserMembership,
+    Venue,
+    Attendance,
+    NewsandOffers,
+    Achievement,
+    EventRating,
+    DevicePushToken,
+)
 from .models_position import Position
 
 class UserAdmin(admin.ModelAdmin):
@@ -61,3 +84,37 @@ admin.site.register(Attendance)
 admin.site.register(Achievement)
 admin.site.register(NewsandOffers)
 admin.site.register(Position, PositionAdmin)
+
+
+@admin.action(description="Send test push to selected tokens")
+def send_test_push(modeladmin, request, queryset):
+    client = PushClient()
+    for device in queryset.filter(is_active=True):
+        message = PushMessage(
+            to=device.token,
+            title="PAPSAS test notification",
+            body="This is a test push from the admin.",
+            data={"eventId": 0},
+        )
+        try:
+            client.publish(message)
+        except DeviceNotRegisteredError:
+            DevicePushToken.objects.filter(pk=device.pk).update(is_active=False)
+        except PushServerError as exc:
+            # Log and continue
+            print(f"PushServerError for token {device.token}: {exc}")
+        except Exception as exc:
+            # Avoid crashing admin actions
+            print(f"Unexpected error sending test push: {exc}")
+
+
+@admin.register(DevicePushToken)
+class DevicePushTokenAdmin(admin.ModelAdmin):
+    list_display = ("user", "platform", "token_short", "is_active", "created_at")
+    list_filter = ("platform", "is_active", "created_at")
+    search_fields = ("user__username", "user__email", "token")
+    actions = [send_test_push]
+
+    @admin.display(description="Token")
+    def token_short(self, obj: DevicePushToken) -> str:
+        return f"{obj.token[:24]}..."

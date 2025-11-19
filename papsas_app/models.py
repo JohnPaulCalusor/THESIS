@@ -396,7 +396,32 @@ class Event(models.Model):
 
     class Meta:
         ordering = ['-startDate']
-    
+
+class DevicePushToken(models.Model):
+    PLATFORM_ANDROID = "android"
+    PLATFORM_IOS = "ios"
+
+    PLATFORM_CHOICES = (
+        (PLATFORM_ANDROID, "Android"),
+        (PLATFORM_IOS, "iOS"),
+    )
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="device_push_tokens",
+    )
+    token = models.CharField(max_length=255, unique=True)
+    platform = models.CharField(max_length=20, choices=PLATFORM_CHOICES)
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self) -> str:
+        return f"{self.user} - {self.platform} - {self.token[:16]}..."
+
 class EventRating(models.Model):
     event = models.ForeignKey('Event', on_delete=models.CASCADE, related_name='ratings')
     user = models.ForeignKey(User, on_delete=models.CASCADE)
