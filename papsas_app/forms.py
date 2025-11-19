@@ -137,43 +137,63 @@ occupation = [
 class EventForm(forms.ModelForm):
     price = forms.DecimalField(
         widget=forms.NumberInput(attrs={'min': '0'}),
+        required=False,
     )
+    eventStatus = forms.BooleanField(
+        widget=forms.HiddenInput(),
+        initial=True,
+        required=False,
+    )
+
     class Meta:
         model = Event
-        fields = ('eventName', 'startDate', 'endDate', 'venue', 'exclusive', 'eventDescription', 'pubmat', 'price', 'startTime', 'endTime')
+        fields = (
+            'eventName',
+            'startDate',
+            'endDate',
+            'venue',
+            'exclusive',
+            'eventDescription',
+            'pubmat',
+            'price',
+            'startTime',
+            'endTime',
+            'eventStatus',
+        )
         widgets = {
             'startDate': forms.DateInput(attrs={
                 'type': 'date',
-                'min': timezone.now().date().isoformat(),  # Set minimum date to today
-                'onchange' : "document.querySelector('#id_endDate').setAttribute('min', document.getElementById('id_startDate').value)"
-
+                'min': timezone.now().date().isoformat(),
+                'onchange': "document.querySelector('#id_endDate').setAttribute('min', document.getElementById('id_startDate').value)"
             }),
             'endDate': forms.DateInput(attrs={
                 'type': 'date',
-                'min' : timezone.now().date().isoformat(),
-                # 'onchange': "this.setAttribute('min', document.getElementById('id_startDate').value)"
-                'onchange' : "document.querySelector('#id_startDate').setAttribute('max', document.getElementById('id_endDate').value)"
+                'min': timezone.now().date().isoformat(),
+                'onchange': "document.querySelector('#id_startDate').setAttribute('max', document.getElementById('id_endDate').value)"
             }),
-            'startTime': forms.DateInput(attrs={'type': 'time'}),
-            'endTime': forms.DateInput(attrs={'type': 'time'}),
+            'startTime': forms.TimeInput(attrs={'type': 'time'}),
+            'endTime': forms.TimeInput(attrs={'type': 'time'}),
+            'eventStatus': forms.HiddenInput(),
         }
+
     def __init__(self, *args, **kwargs):
         super(EventForm, self).__init__(*args, **kwargs)
-        # Set the min attribute for endDate based on startDate
         if 'startDate' in self.data:
-            try:
-                start_date = self.data.get('startDate')
+            start_date = self.data.get('startDate')
+            if start_date:
                 self.fields['endDate'].widget.attrs['min'] = start_date
-            except ValueError:
-                pass  # Handle the case where the date is not valid
+
+        self.fields['startTime'].required = False
+        self.fields['endTime'].required = False
+        self.fields['startDate'].validators.append(self.validate_start_date)
+        self.fields['endDate'].validators.append(self.validate_end_date)
 
     def clean_pubmat(self):
         pubmat = self.cleaned_data.get('pubmat')
-        if self.instance and self.instance.pk is not None:  # If updating
-            # If no new image uploaded, we do not raise an error
+        if self.instance and self.instance.pk is not None:
             return pubmat
-        if not pubmat:  # If no image uploaded during creation
-            raise forms.ValidationError("Image is required when creating a new achievement.")
+        if not pubmat:
+            raise forms.ValidationError("Image is required when creating a new event.")
         return pubmat
     
     def clean(self):
@@ -182,7 +202,6 @@ class EventForm(forms.ModelForm):
         end_date = cleaned_data.get('endDate')
 
         if start_date and end_date:
-            # Convert to datetime objects to ensure proper comparison
             if isinstance(start_date, str):
                 start_date = datetime.strptime(start_date, '%Y-%m-%d').date()
             if isinstance(end_date, str):
@@ -196,22 +215,13 @@ class EventForm(forms.ModelForm):
         
         return cleaned_data
 
-    def __init__(self, *args, **kwargs):
-        super(EventForm, self).__init__(*args, **kwargs)
-        
-        # Add custom validators to ensure date validation
-        self.fields['startDate'].validators.append(self.validate_start_date)
-        self.fields['endDate'].validators.append(self.validate_end_date)
-
     def validate_start_date(self, value):
-        # Ensure start date is not after end date if end date exists
         if self.data.get('endDate'):
             end_date = datetime.strptime(self.data.get('endDate'), '%Y-%m-%d').date()
             if value > end_date:
                 raise forms.ValidationError("Start date must be less than or equal to end date.")
 
     def validate_end_date(self, value):
-        # Ensure end date is not before start date if start date exists
         if self.data.get('startDate'):
             start_date = datetime.strptime(self.data.get('startDate'), '%Y-%m-%d').date()
             if value < start_date:

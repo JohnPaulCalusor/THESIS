@@ -10,6 +10,15 @@
         submitButton.disabled = true;
         submitButton.innerText = 'Submitting...';
     }
+
+    function confirmAndDisable() {
+        const confirmed = confirm('Are you sure you want to post this event?');
+        if (!confirmed) {
+            return false;
+        }
+        disableButton();
+        return true;
+    }
 </script>
 {% endblock %}
 
@@ -28,61 +37,123 @@
     {% endif %}
     <div class="form-container ">
         <h3>Event Management Form</h3>
-        <form method="post" id="eventForm" enctype="multipart/form-data"
-            hx-post="{% url 'event' %}" onsubmit="disableButton()"
-            hx-confirm="Are you sure you want to post this event?">
+        <form method="post" id="eventForm" enctype="multipart/form-data" onsubmit="return confirmAndDisable()">
             {% csrf_token %}
-            
-                <div class="login_box">
-                    <div class="two-forms">
-                        <div class="input-box">
-                            <p>Event Name: </p> 
-                            {{ form.eventName }}
-                        </div>
+            <div style="display:none;">{{ form.eventStatus }}</div>
+            {% if form.non_field_errors %}
+                <div class="alert alert-danger mt-2 mb-3">
+                    {% for error in form.non_field_errors %}
+                        <div>{{ error }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+            <div class="login_box">
+                <div class="two-forms">
+                    <div class="input-box">
+                        <p>Event Name: </p> 
+                        {{ form.eventName }}
+                        {% if form.eventName.errors %}
+                            <div class="text-danger small">
+                                {{ form.eventName.errors }}
+                            </div>
+                        {% endif %}
                     </div>
-                    <div class="two-forms">
-                        <div class="input-box">
-                            <p>Start Date: </p> 
-                            {{ form.startDate }}
-                        </div>
-                        <div class="input-box">
-                            <p>End Date: </p>  {{ form.endDate }}
-                        </div>
+                </div>
+                <div class="two-forms">
+                    <div class="input-box">
+                        <p>Start Date: </p> 
+                        {{ form.startDate }}
+                        {% if form.startDate.errors %}
+                            <div class="text-danger small">
+                                {{ form.startDate.errors }}
+                            </div>
+                        {% endif %}
                     </div>
-                    <div class="two-forms">
-                        <div class="input-box">
-                            <p>Venue: </p>  {{ form.venue }}
-                        </div>
-                    </div>  
-                    <div class="two-forms">
-                        <div class="input-box">
-                            <p>Event Description: </p>  {{ form.eventDescription }}
-                        </div>
+                    <div class="input-box">
+                        <p>End Date: </p>  
+                        {{ form.endDate }}
+                        {% if form.endDate.errors %}
+                            <div class="text-danger small">
+                                {{ form.endDate.errors }}
+                            </div>
+                        {% endif %}
                     </div>
-                    <div class="two-forms">
-                        <div class="input-box">
-                            <p>Public Material: </p>  {{ form.pubmat }}
-                        </div>
+                </div>
+                <div class="two-forms">
+                    <div class="input-box">
+                        <p>Venue: </p>  
+                        {{ form.venue }}
+                        {% if form.venue.errors %}
+                            <div class="text-danger small">
+                                {{ form.venue.errors }}
+                            </div>
+                        {% endif %}
                     </div>
-                    <div class="two-forms">
-                        <div class="input-box">
-                            <p>Price: </p>  {{ form.price }}
-                        </div>
+                </div>  
+                <div class="two-forms">
+                    <div class="input-box">
+                        <p>Event Description: </p>  
+                        {{ form.eventDescription }}
+                        {% if form.eventDescription.errors %}
+                            <div class="text-danger small">
+                                {{ form.eventDescription.errors }}
+                            </div>
+                        {% endif %}
                     </div>
-                    <div class="two-forms">
-                        <div class="input-box">
-                            <p>Start Time: </p>  {{ form.startTime }}
-                        </div>
-                        <div class="input-box">
-                            <p>End Time: </p>  {{ form.endTime }}
-                        </div>
-
+                </div>
+                <div class="two-forms">
+                    <div class="input-box">
+                        <p>Public Material: </p>  
+                        {{ form.pubmat }}
+                        {% if form.pubmat.errors %}
+                            <div class="text-danger small">
+                                {{ form.pubmat.errors }}
+                            </div>
+                        {% endif %}
                     </div>
-                    <div class="two-forms">
-                        <div class="input-box">
-                            <p>Exclusive: </p>  {{ form.exclusive }}
-                        </div>
+                </div>
+                <div class="two-forms">
+                    <div class="input-box">
+                        <p>Price: </p>  
+                        {{ form.price }}
+                        {% if form.price.errors %}
+                            <div class="text-danger small">
+                                {{ form.price.errors }}
+                            </div>
+                        {% endif %}
                     </div>
+                </div>
+                <div class="two-forms">
+                    <div class="input-box">
+                        <p>Start Time: </p>  
+                        {{ form.startTime }}
+                        {% if form.startTime.errors %}
+                            <div class="text-danger small">
+                                {{ form.startTime.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="input-box">
+                        <p>End Time: </p>  
+                        {{ form.endTime }}
+                        {% if form.endTime.errors %}
+                            <div class="text-danger small">
+                                {{ form.endTime.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="two-forms">
+                    <div class="input-box">
+                        <p>Exclusive: </p>  
+                        {{ form.exclusive }}
+                        {% if form.exclusive.errors %}
+                            <div class="text-danger small">
+                                {{ form.exclusive.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
             </div>
             <button type="submit" class="btn" id="submitBtn">Submit</button>
         </form>

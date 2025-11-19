@@ -2,7 +2,6 @@
 {% load static %}
 
 {% block head %}
-<link rel="stylesheet" href="{% static 'papsas_app/css/regional_chapter.css' %}">
 <link rel="stylesheet" href="{% static 'papsas_app/css/regional_content.css' %}">
 {% endblock %}
 
@@ -18,7 +17,7 @@
 
         <!-- Post 1: OSA & NWU Guidance -->
         <article class="content-card">
-            <img src="/media/papsas_app/images/1reg1.png" alt="NWU Guidance Center and OSA in Action" class="content-card__img">
+            <img src="{% static 'papsas_app/images/1reg1.png' %}" alt="NWU Guidance Center and OSA in Action" class="content-card__img">
             <div class="content-card__body">
                 <h2 class="content-card__title">BACK-TO-BACK OSA and NWU Guidance Center IN ACTION</h2>
                 <p class="content-card__text">
@@ -35,7 +34,7 @@
 
         <!-- Post 2: Oath-Taking -->
         <article class="content-card">
-            <img src="/media/papsas_app/images/2reg1.png" alt="PAPSAS Region 1 Oath-Taking Ceremony" class="content-card__img">
+            <img src="{% static 'papsas_app/images/2reg1.png' %}" alt="PAPSAS Region 1 Oath-Taking Ceremony" class="content-card__img">
             <div class="content-card__body">
                 <h2 class="content-card__title">PAPSAS Region 1 Leaders Take Oath: A Unified Commitment to Empowering SAS Practitioners and Championing Student Welfare and Development</h2>
                 <p class="content-card__text">
@@ -70,7 +69,7 @@
 
         <!-- Post 3: Midyear Forum -->
         <article class="content-card">
-            <img src="/media/papsas_app/images/3reg1.png" alt="2025 Midyear Interactive Youth Forum" class="content-card__img">
+            <img src="{% static 'papsas_app/images/3reg1.png' %}" alt="2025 Midyear Interactive Youth Forum" class="content-card__img">
             <div class="content-card__body">
                 <h2 class="content-card__title">2025 Midyear Interactive Youth Forum</h2>
                 <p class="content-card__text">
@@ -87,7 +86,7 @@
 
         <!-- Post 4: Dr. Ferrer Appointed -->
         <article class="content-card">
-            <img src="/media/papsas_app/images/4reg1.png" alt="Dr. Christine Nabor-Ferrer Appointed Adviser" class="content-card__img">
+            <img src="{% static 'papsas_app/images/4reg1.png' %}" alt="Dr. Christine Nabor-Ferrer Appointed Adviser" class="content-card__img">
             <div class="content-card__body">
                 <h2 class="content-card__title">Dr. Christine Nabor-Ferrer Officially Appointed as PAPSAS Region I Adviser</h2>
                 <p class="content-card__text">
@@ -107,7 +106,7 @@
 
         <!-- Post 5: Board Meeting -->
         <article class="content-card">
-            <img src="/media/papsas_app/images/5reg1.png" alt="1st PAPSAS Region I Face-to-Face Board Meeting" class="content-card__img">
+            <img src="{% static 'papsas_app/images/5reg1.png' %}" alt="1st PAPSAS Region I Face-to-Face Board Meeting" class="content-card__img">
             <div class="content-card__body">
                 <h2 class="content-card__title">1st PAPSAS Region I Face-to-Face Board Meeting</h2>
                 <p class="content-card__text">
@@ -128,12 +127,16 @@
             <h2 class="video-section__title">VIDEO SECTION</h2>
             <div class="video-grid">
                 <div class="video-card">
-                    <div class="video-card__player">
-                        <video controls>
-                            <source src="/media/papsas_app/videos/reg1v1.mp4" type="video/mp4">
-                            Your browser does not support the video tag.
-                        </video>
-                    </div>
+                <div class="video-card__player">
+                    <iframe
+                        src="https://drive.google.com/file/d/12d-yQ6J8DfdUQWyr5ilSAZqgjr3Ak6Fq/preview"
+                        style="width:100%; aspect-ratio:16/9; display:block; border:0;"
+                        allow="autoplay; encrypted-media"
+                        allowfullscreen
+                        loading="lazy">
+                    </iframe>
+                </div>
+
                     <div class="video-card__content">
                         <h3 class="video-card__title">PAPSAS National Convention & Training 2023</h3>
                         <p class="video-card__caption">
@@ -154,7 +157,6 @@
 
 <!-- FOOTER OUTSIDE main -->
   <button onclick="scrollToTop()" id="scrollUpButton" title="Go to top">↑</button>
-
 <footer class="footer">
     <div class="footer__container container">
         <div class="footer__content">
@@ -222,7 +224,6 @@
     </div>
 </footer>
 
-
 <!-- Image Zoom Modal -->
 <div id="imageModal" class="modal">
     <span class="close">&times;</span>
@@ -286,26 +287,6 @@
     // When the user clicks on <span> (x), close the modal
     span.onclick = function() {
         modal.style.display = "none";
-    }
-    
-</script>
-<script>
-    // Show the button when the user scrolls down 20px from the top
-    window.onscroll = function() {
-        let button = document.getElementById("scrollUpButton");
-        if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
-            button.style.display = "block";
-        } else {
-            button.style.display = "none";
-        }
-    };
-
-    // Function to scroll to the top with smooth behavior
-    function scrollToTop() {
-        window.scrollTo({
-            top: 0,
-            behavior: 'smooth' // Smooth scroll effect
-        });
     }
 </script>
 {% endblock %}

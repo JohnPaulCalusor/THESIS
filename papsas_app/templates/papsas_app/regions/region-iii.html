@@ -2,7 +2,6 @@
 {% load static %}
 
 {% block head %}
-<link rel="stylesheet" href="{% static 'papsas_app/css/regional_chapter.css' %}">
 <link rel="stylesheet" href="{% static 'papsas_app/css/regional_content.css' %}">
 {% endblock %}
 
@@ -18,7 +17,7 @@
 
         <!-- Post 1: Oath-Taking Ceremony -->
         <article class="content-card">
-            <img src="/media/papsas_app/images/1reg3.png" alt="PAPSAS Region 3 Oath-Taking Ceremony" class="content-card__img">
+            <img src="{% static 'papsas_app/images/1reg3.png' %}" alt="PAPSAS Region 3 Oath-Taking Ceremony" class="content-card__img">
             <div class="content-card__body">
                 <h2 class="content-card__title">PAPSAS Region 3 Oath-Taking Ceremony</h2>
                 <p class="content-card__text">
@@ -35,7 +34,7 @@
 
         <!-- Post 2: Distinguished Speakers -->
         <article class="content-card">
-            <img src="/media/papsas_app/images/2reg3.png" alt="MEET OUR DISTINGUISHED SPEAKERS!" class="content-card__img">
+            <img src="{% static 'papsas_app/images/2reg3.png' %}" alt="MEET OUR DISTINGUISHED SPEAKERS!" class="content-card__img">
             <div class="content-card__body">
                 <h2 class="content-card__title">MEET OUR DISTINGUISHED SPEAKERS!</h2>
                 <p class="content-card__text">
@@ -57,7 +56,7 @@
 
         <!-- Post 4: SAS Reorientation 2025 -->
         <article class="content-card">
-            <img src="/media/papsas_app/images/3reg3.png" alt="SAS Reorientation 2025" class="content-card__img">
+            <img src="{% static 'papsas_app/images/3reg3.png' %}" alt="SAS Reorientation 2025" class="content-card__img">
             <div class="content-card__body">
                 <h2 class="content-card__title">SAS Reorientation: Legal Bases & Provisions</h2>
                 <p class="content-card__text">
@@ -80,7 +79,7 @@
 
         <!-- Post 5: 18th PAPSAS III Annual Convention -->
         <article class="content-card">
-            <img src="/media/papsas_app/images/4reg3.png" alt="18th PAPSAS III Annual Convention" class="content-card__img">
+            <img src="{% static 'papsas_app/images/4reg3.png' %}" alt="18th PAPSAS III Annual Convention" class="content-card__img">
             <div class="content-card__body">
                 <h2 class="content-card__title">18th PAPSAS III Annual Convention & Student Leader Summit</h2>
                 <p class="content-card__text">
@@ -104,7 +103,7 @@
 
         <!-- Post 6: 18th PAPSAS III Socials & Cultural Night -->
         <article class="content-card">
-            <img src="/media/papsas_app/images/5reg3.png" alt="18th PAPSAS III Socials & Cultural Night" class="content-card__img">
+            <img src="{% static 'papsas_app/images/5reg3.png' %}" alt="18th PAPSAS III Socials & Cultural Night" class="content-card__img">
             <div class="content-card__body">
                 <h2 class="content-card__title">18th PAPSAS III Socials & Cultural Night</h2>
                 <p class="content-card__text">
@@ -127,7 +126,7 @@
 
         <!-- Post 7: SAS Workshop & Enhanced M&E Tool Submission -->
         <article class="content-card">
-            <img src="/media/papsas_app/images/6reg3.png" alt="SAS Workshop by CHED Regional Office III" class="content-card__img">
+            <img src="{% static 'papsas_app/images/6reg3.png' %}" alt="SAS Workshop by CHED Regional Office III" class="content-card__img">
             <div class="content-card__body">
                 <h2 class="content-card__title">Student Affairs and Services (SAS) Workshop by CHED Regional Office III</h2>
                 <p class="content-card__text">
@@ -148,7 +147,7 @@
                 <div class="video-card">
                     <div class="video-card__player">
                         <video controls>
-                            <source src="/media/papsas_app/videos/region3_first vid.mp4" type="video/mp4">
+                            <source src="{% static 'papsas_app/videos/region3_first vid.mp4' %}" type="video/mp4">
                             Your browser does not support the video tag.
                         </video>
                     </div>

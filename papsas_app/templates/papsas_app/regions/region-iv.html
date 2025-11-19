@@ -2,7 +2,6 @@
 {% load static %}
 
 {% block head %}
-<link rel="stylesheet" href="{% static 'papsas_app/css/regional_chapter.css' %}">
 <link rel="stylesheet" href="{% static 'papsas_app/css/regional_content.css' %}">
 {% endblock %}
 
@@ -18,7 +17,7 @@
 
         <!-- Post 1: Collaborative Conference -->
         <article class="content-card">
-            <img src="/media/papsas_app/images/1reg4.png" alt="PAPSAS Region IV & CHED Region IV Collaborative Conference" class="content-card__img">
+            <img src="{% static 'papsas_app/images/1reg4.png' %}" alt="PAPSAS Region IV & CHED Region IV Collaborative Conference" class="content-card__img">
             <div class="content-card__body">
                 <h2 class="content-card__title">PAPSAS Region IV & CHED Region IV Collaborative Conference</h2>
                 <p class="content-card__text">
@@ -42,7 +41,7 @@
 
         <!-- Post 2: 29th National Conference -->
         <article class="content-card">
-            <img src="/media/papsas_app/images/2reg4.png" alt="29th PAPSAS National Conference Photos" class="content-card__img">
+            <img src="{% static 'papsas_app/images/2reg4.png' %}" alt="29th PAPSAS National Conference Photos" class="content-card__img">
             <div class="content-card__body">
                 <h2 class="content-card__title">IN PHOTOS: 29th PAPSAS National Conference and Training Workshop</h2>
                 <p class="content-card__text">
@@ -72,7 +71,7 @@
 
         <!-- Post 3: 15th Youth Forum -->
         <article class="content-card">
-            <img src="/media/papsas_app/images/3reg4.png" alt="15th Interactive Youth Forum" class="content-card__img">
+            <img src="{% static 'papsas_app/images/3reg4.png' %}" alt="15th Interactive Youth Forum" class="content-card__img">
             <div class="content-card__body">
                 <h2 class="content-card__title">Thrilled to Share the Success of the 15th Interactive Youth Forum!</h2>
                 <p class="content-card__text">
@@ -99,7 +98,7 @@
                 <div class="video-card">
                     <div class="video-card__player">
                         <video controls>
-                            <source src="/media/papsas_app/videos/region4_1st vid.mp4" type="video/mp4">
+                            <source src="{% static 'papsas_app/videos/region4_1st vid.mp4' %}" type="video/mp4">
                             Your browser does not support the video tag.
                         </video>
                     </div>
@@ -118,7 +117,7 @@
                 <div class="video-card">
                     <div class="video-card__player">
                         <video controls>
-                            <source src="/media/papsas_app/videos/region4_2nd vid.mp4" type="video/mp4">
+                            <source src="{% static 'papsas_app/videos/region4_2nd vid.mp4' %}" type="video/mp4">
                             Your browser does not support the video tag.
                         </video>
                     </div>

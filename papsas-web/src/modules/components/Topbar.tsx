@@ -11,16 +11,42 @@ const desktopNavLinkClass = ({ isActive }: { isActive: boolean }) =>
 const mobileNavLinkClass = ({ isActive }: { isActive: boolean }) =>
   `mobile-drawer__link${isActive ? " mobile-drawer__link--active" : ""}`;
 
+// Local typing for what we actually use from AuthProvider user
+type AuthUser = {
+  username?: string | null;
+  email?: string | null;
+  role?: string | null;
+  groups?: string[];
+  is_staff?: boolean;
+  is_superuser?: boolean;
+};
+
+// Local helper: decide if this user is an officer
+function isOfficerUser(u?: AuthUser | null): boolean {
+  if (!u) return false;
+  const role = String(u.role ?? "").toLowerCase();
+  const groups = (u.groups ?? []).map((g) => String(g ?? "").toLowerCase());
+
+  // Adjust "officer" here if your backend uses a different name,
+  // e.g. "election_officer"
+  return role === "officer" || groups.includes("officer");
+}
+
 export default function Topbar() {
-  const { user, logout } = useAuth();
+  // Type-cast to any so we don't fight existing AuthProvider types
+  const { user, logout } = useAuth() as { user: AuthUser | null; logout: () => void };
   const loc = useLocation();
 
   const isLoginRoute =
     loc.pathname === "/login" || loc.pathname.startsWith("/login/");
   const isAuthed = Boolean(user);
 
-  const showAdmin = isAuthed && isAdminUser(user);
-  const showResults = showAdmin;
+  const showAdmin = isAuthed && isAdminUser(user as any);
+  const showOfficer = isAuthed && isOfficerUser(user);
+
+  // Officers AND admins see RESULTS
+  const showResults = isAuthed && (showAdmin || showOfficer);
+
   const showNav = isAuthed && !isLoginRoute;
   const showAuthedActions = isAuthed && !isLoginRoute;
 
@@ -66,11 +92,13 @@ export default function Topbar() {
                 <NavLink to="/ballot" className={desktopNavLinkClass}>
                   BALLOT
                 </NavLink>
+
                 {showResults && (
                   <NavLink to="/results" className={desktopNavLinkClass}>
                     RESULTS
                   </NavLink>
                 )}
+
                 {showAdmin && (
                   <NavLink
                     to="/admin/election"
@@ -79,6 +107,7 @@ export default function Topbar() {
                     ADMIN
                   </NavLink>
                 )}
+
                 {showAdmin && (
                   <NavLink to="/admin/audit" className={desktopNavLinkClass}>
                     AUDIT LOG
@@ -94,7 +123,7 @@ export default function Topbar() {
               {/* Desktop User */}
               <div className="topbar__user-desktop">
                 <div className="topbar__avatar">{avatarLetter}</div>
-                <span className="topbar__username">@{uname}</span>
+                {/* display name beside avatar REMOVED on desktop */}
                 <button onClick={logout} className="topbar__logout-btn">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
