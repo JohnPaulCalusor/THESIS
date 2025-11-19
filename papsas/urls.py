@@ -1,22 +1,17 @@
 # papsas/urls.py
 from django.contrib import admin
 from django.urls import path, include
-from django.http import JsonResponse
 from django.conf import settings
 from django.conf.urls.static import static
 
-def health(_request):
-    # keep this import-free so health works even if app imports fail
-    return JsonResponse({"ok": True})
+from papsas_app.api.views_health import health_check
 
 urlpatterns = [
-    # Auth & user endpoints (you already had these here)
-    path("api/", include("papsas_api.urls")),
-    # Your app API (elections + health)
-    path("api/", include("papsas_app.api.urls")),
-    # HTML pages, if any
-    path("", include("papsas_app.urls")),
     path("admin/", admin.site.urls),
+    path("health/", health_check, name="root-health-check"),
+    path("api/", include("papsas_api.urls")),
+    path("api/", include("papsas_app.api.urls")),
+    path("", include("papsas_app.urls")),
 ]
 
 if settings.DEBUG:
