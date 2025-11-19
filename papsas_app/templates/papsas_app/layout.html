@@ -57,6 +57,9 @@
                            
                                     </ul>
                                 </li>
+                                    <li class="nav__item">
+                                        <a href="{% url 'nat_con' %}" class="nav__link"> 17th Interactive Youth Form</a>
+                                    </li>
                                 <li class="nav__item"><a href="{% url 'logout' %}" class="nav__link">Logout</a></li>
 
                                 <li class="nav__item profileLink">
@@ -85,6 +88,9 @@
                                   
                                     </ul>
                                 </li>
+                                    <li class="nav__item">
+                                        <a href="{% url 'nat_con' %}" class="nav__link"> 17th Interactive Youth Form</a>
+                                    </li>
                                 <li class="nav__item"><a href="{% url 'logout' %}" class="nav__link">Logout</a></li>
                                 <li class="nav__item profileLink">
                                     <span>{{ user.first_name }} </span>
@@ -138,30 +144,30 @@
                                         </a>
                                         <ul class="dropdown-content">
                                             <!-- Luzon -->
-                                            <li><a href="{% url 'regional_chapter' 'region-i' %}">Region I - Ilocos</a></li>
-                                            <li><a href="{% url 'regional_chapter' 'region-ii' %}">Region II - Cagayan Valley</a></li>
-                                            <li><a href="{% url 'regional_chapter' 'region-iii' %}">Region III - Central Luzon</a></li>
-                                            <li><a href="{% url 'regional_chapter' 'region-iv' %}">Region IV-A - CALABARZON</a></li>
-                                            <li><a href="{% url 'regional_chapter' 'mimaropa' %}">MIMAROPA - Southwestern Tagalog</a></li>
-                                            <li><a href="{% url 'regional_chapter' 'region-v' %}">Region V - Bicol</a></li>
-                                            <li><a href="{% url 'regional_chapter' 'ncr' %}">NCR - National Capital Region</a></li>
-                                            <li><a href="{% url 'regional_chapter' 'car' %}">CAR - Cordillera Admin. Region</a></li>
-
+                                            <li><a href="{% url 'regional_chapter' 'car' %}">CAR</a></li>
+                                            <li><a href="{% url 'regional_chapter' 'ncr' %}">NCR</a></li>
+                                            <li><a href="{% url 'regional_chapter' 'region-i' %}">Region I</a></li>
+                                            <li><a href="{% url 'regional_chapter' 'region-ii' %}">Region II </a></li>
+                                            <li><a href="{% url 'regional_chapter' 'region-iii' %}">Region III</a></li>
+                                            <li><a href="{% url 'regional_chapter' 'region-iv' %}">Region IV</a></li>
+                                            <li><a href="{% url 'regional_chapter' 'region-v' %}">Region V</a></li>
                                             <!-- Visayas -->
-                                            <li><a href="{% url 'regional_chapter' 'region-vi' %}">Region VI - Western Visayas</a></li>
-                                            <li><a href="{% url 'regional_chapter' 'region-vii' %}">Region VII - Central Visayas</a></li>
-                                            <li><a href="{% url 'regional_chapter' 'region-viii' %}">Region VIII - Eastern Visayas</a></li>
-                                            <li><a href="{% url 'regional_chapter' 'nir' %}">NIR - Negros Island Region</a></li>
+                                            <li><a href="{% url 'regional_chapter' 'region-vi' %}">Region VI</a></li>
+                                            <li><a href="{% url 'regional_chapter' 'region-vii' %}">Region VII</a></li>
+                                            <li><a href="{% url 'regional_chapter' 'region-viii' %}">Region VIII</a></li>
 
                                             <!-- Mindanao -->
-                                            <li><a href="{% url 'regional_chapter' 'region-ix' %}">Region IX - Zamboanga Peninsula</a></li>
-                                            <li><a href="{% url 'regional_chapter' 'region-x' %}">Region X - Northern Mindanao</a></li>
-                                            <li><a href="{% url 'regional_chapter' 'region-xi' %}">Region XI - Davao Region</a></li>
-                                            <li><a href="{% url 'regional_chapter' 'region-xii' %}">Region XII - SOCCSKSARGEN</a></li>
-                                            <li><a href="{% url 'regional_chapter' 'region-xiii' %}">Region XIII - Caraga</a></li>
-                                            <li><a href="{% url 'regional_chapter' 'barmm' %}">BARMM - Bangsamoro</a></li>
+                                            <li><a href="{% url 'regional_chapter' 'region-ix' %}">Region IX</a></li>
+                                            <li><a href="{% url 'regional_chapter' 'region-x' %}">Region X</a></li>
+                                            <li><a href="{% url 'regional_chapter' 'region-xi' %}">Region XI</a></li>
+                                            <li><a href="{% url 'regional_chapter' 'region-xii' %}">Region XII</a></li>
+                                            <li><a href="{% url 'regional_chapter' 'region-xiii' %}">Region XIII</a></li>
+                                            <li><a href="{% url 'regional_chapter' 'barmm' %}">BARMM</a></li>
                                         </ul>
                                         </li>
+                                    <li class="nav__item">
+                                        <a href="{% url 'nat_con' %}" class="nav__link"> 17th Interactive Youth Form</a>
+                                    </li>
 
                                     <li class="nav__item"><a href="{% url 'logout' %}" class="nav__link">Logout</a></li>
                                 {% if user.profilePic %}
@@ -212,29 +218,26 @@
                                         Regional Chapters <i class="fa-solid fa-caret-down"></i>
                                     </a>
                                     <ul class="dropdown-content">
-                                        <!-- Luzon -->
-                                        <li><a href="{% url 'regional_chapter' 'region-i' %}">Region I - Ilocos</a></li>
-                                        <li><a href="{% url 'regional_chapter' 'region-ii' %}">Region II - Cagayan Valley</a></li>
-                                        <li><a href="{% url 'regional_chapter' 'region-iii' %}">Region III - Central Luzon</a></li>
-                                        <li><a href="{% url 'regional_chapter' 'region-iv' %}">Region IV-A - CALABARZON</a></li>
-                                        <li><a href="{% url 'regional_chapter' 'mimaropa' %}">MIMAROPA - Southwestern Tagalog</a></li>
-                                        <li><a href="{% url 'regional_chapter' 'region-v' %}">Region V - Bicol</a></li>
-                                        <li><a href="{% url 'regional_chapter' 'ncr' %}">NCR - National Capital Region</a></li>
-                                        <li><a href="{% url 'regional_chapter' 'car' %}">CAR - Cordillera Admin. Region</a></li>
+                                            <!-- Luzon -->
+                                            <li><a href="{% url 'regional_chapter' 'car' %}">CAR</a></li>
+                                            <li><a href="{% url 'regional_chapter' 'ncr' %}">NCR</a></li>
+                                            <li><a href="{% url 'regional_chapter' 'region-i' %}">Region I</a></li>
+                                            <li><a href="{% url 'regional_chapter' 'region-ii' %}">Region II </a></li>
+                                            <li><a href="{% url 'regional_chapter' 'region-iii' %}">Region III</a></li>
+                                            <li><a href="{% url 'regional_chapter' 'region-iv' %}">Region IV</a></li>
+                                            <li><a href="{% url 'regional_chapter' 'region-v' %}">Region V</a></li>
+                                            <!-- Visayas -->
+                                            <li><a href="{% url 'regional_chapter' 'region-vi' %}">Region VI</a></li>
+                                            <li><a href="{% url 'regional_chapter' 'region-vii' %}">Region VII</a></li>
+                                            <li><a href="{% url 'regional_chapter' 'region-viii' %}">Region VIII</a></li>
 
-                                        <!-- Visayas -->
-                                        <li><a href="{% url 'regional_chapter' 'region-vi' %}">Region VI - Western Visayas</a></li>
-                                        <li><a href="{% url 'regional_chapter' 'region-vii' %}">Region VII - Central Visayas</a></li>
-                                        <li><a href="{% url 'regional_chapter' 'region-viii' %}">Region VIII - Eastern Visayas</a></li>
-                                        <li><a href="{% url 'regional_chapter' 'nir' %}">NIR - Negros Island Region</a></li>
-
-                                        <!-- Mindanao -->
-                                        <li><a href="{% url 'regional_chapter' 'region-ix' %}">Region IX - Zamboanga Peninsula</a></li>
-                                        <li><a href="{% url 'regional_chapter' 'region-x' %}">Region X - Northern Mindanao</a></li>
-                                        <li><a href="{% url 'regional_chapter' 'region-xi' %}">Region XI - Davao Region</a></li>
-                                        <li><a href="{% url 'regional_chapter' 'region-xii' %}">Region XII - SOCCSKSARGEN</a></li>
-                                        <li><a href="{% url 'regional_chapter' 'region-xiii' %}">Region XIII - Caraga</a></li>
-                                        <li><a href="{% url 'regional_chapter' 'barmm' %}">BARMM - Bangsamoro</a></li>
+                                            <!-- Mindanao -->
+                                            <li><a href="{% url 'regional_chapter' 'region-ix' %}">Region IX</a></li>
+                                            <li><a href="{% url 'regional_chapter' 'region-x' %}">Region X</a></li>
+                                            <li><a href="{% url 'regional_chapter' 'region-xi' %}">Region XI</a></li>
+                                            <li><a href="{% url 'regional_chapter' 'region-xii' %}">Region XII</a></li>
+                                            <li><a href="{% url 'regional_chapter' 'region-xiii' %}">Region XIII</a></li>
+                                            <li><a href="{% url 'regional_chapter' 'barmm' %}">BARMM</a></li>
                                     </ul>
                                     </li>
 

@@ -153,24 +153,75 @@
 </main>
 
 <!-- FOOTER OUTSIDE main -->
+  <button onclick="scrollToTop()" id="scrollUpButton" title="Go to top">↑</button>
+
 <footer class="footer">
     <div class="footer__container container">
         <div class="footer__content">
-            <h3 class="footer__title">Philippine Association of Practitioners of Student Affairs and Services, Inc.</h3>
-            <p class="footer__description">Dedicated to the pursuit of excellence in student affairs and services work.</p>
+            <h3 class="footer__title">
+                Philippine Association of Practitioners of Student Affairs and Services, Inc.
+            </h3>
+            <p class="footer__description">
+                Dedicated to the pursuit of excellence in student affairs and services work.
+            </p>
+
             <ul class="footer__links">
                 <li><a href="#" class="footer__link">(043) 778 0656</a></li>
                 <li><a href="#" class="footer__link">/papsasinc</a></li>
                 <li><a href="#" class="footer__link">papsasinc.national@gmail.com</a></li>
                 <li><a href="bit.ly/papsasinc" class="footer__link">bit.ly/papsasinc</a></li>
-                <li><a href="#" class="footer__link">Visitor: {{ total_visitors }}</a></li>
+
+                <!-- Page-specific visitor count -->
+                <li>
+                    <span class="footer__link">
+                        Visitor: {{ page_visitors }}
+                    </span>
+                </li>
+
+                {% if region_slug %}
+                    <!-- LIKE -->
+                    <li style="display: inline-flex; align-items: center; gap: .25rem;">
+                        <form method="post"
+                              action="{% url 'regional_feedback' region_slug %}"
+                              style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit"
+                                    name="action"
+                                    value="like"
+                                    class="footer__link"
+                                    style="border:none;background:none;cursor:pointer;padding:0;">
+                                👍 Like
+                            </button>
+                        </form>
+                        <span class="footer__link">({{ likes|default:0 }})</span>
+                    </li>
+
+                    <!-- DISLIKE -->
+                    <li style="display: inline-flex; align-items: center; gap: .25rem;">
+                        <form method="post"
+                              action="{% url 'regional_feedback' region_slug %}"
+                              style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit"
+                                    name="action"
+                                    value="dislike"
+                                    class="footer__link"
+                                    style="border:none;background:none;cursor:pointer;padding:0;">
+                                👎 Dislike
+                            </button>
+                        </form>
+                        <span class="footer__link">({{ dislikes|default:0 }})</span>
+                    </li>
+                {% endif %}
             </ul>
         </div>
     </div>
+
     <div class="footer__bottom">
         <p>© 2024 PAPSAS, Inc. All Rights Reserved.</p>
     </div>
 </footer>
+
 
 <!-- Image Zoom Modal -->
 <div id="imageModal" class="modal">
@@ -235,6 +286,26 @@
     // When the user clicks on <span> (x), close the modal
     span.onclick = function() {
         modal.style.display = "none";
+    }
+    
+</script>
+<script>
+    // Show the button when the user scrolls down 20px from the top
+    window.onscroll = function() {
+        let button = document.getElementById("scrollUpButton");
+        if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+            button.style.display = "block";
+        } else {
+            button.style.display = "none";
+        }
+    };
+
+    // Function to scroll to the top with smooth behavior
+    function scrollToTop() {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth' // Smooth scroll effect
+        });
     }
 </script>
 {% endblock %}

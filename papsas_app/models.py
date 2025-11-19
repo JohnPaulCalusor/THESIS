@@ -497,6 +497,29 @@ class VisitorStats(models.Model):
 
     def __str__(self):
         return f"Total Visitors: {self.total_visitors}"
+    
+class PageVisit(models.Model):
+    key = models.CharField(max_length=100, unique=True)  # e.g. "regional-chapters/region-i"
+    count = models.PositiveIntegerField(default=0)
+
+    def __str__(self):
+        return f"{self.key}: {self.count}"
+
+    class Meta:
+        ordering = ["key"]
+
+
+class RegionalChapterFeedback(models.Model):
+    slug = models.CharField(max_length=64, unique=True)  # e.g. "region-i"
+    likes = models.PositiveIntegerField(default=0)
+    dislikes = models.PositiveIntegerField(default=0)
+
+    def __str__(self):
+        return f"{self.slug}: 👍 {self.likes} / 👎 {self.dislikes}"
+
+    class Meta:
+        ordering = ["slug"]
+
 
 class VoteSelection(models.Model):
     vote = models.OneToOneField('papsas_app.Vote', on_delete=models.CASCADE, related_name='selection')
