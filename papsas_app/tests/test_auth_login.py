@@ -2,16 +2,17 @@ from django.contrib.auth import get_user_model
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
+from papsas_app.api.views import AUTHENTICATION_FAILED_MESSAGE
 
 
 class TestAuthLogin(APITestCase):
     """
-    Regression test for /api/auth/login (EmailTokenObtainPairView).
+    Regression tests for /api/auth/login (EmailTokenObtainPairView).
 
-    This test is defensive: it creates a user, ensures they are active and
-    "verified" (if such flags exist), then tries both email-based and
-    username-based payloads. It passes as soon as any payload returns 200
-    with {access, refresh} JWTs.
+    These tests are defensive: they create a user, ensure they are active and
+    verified (if such flags exist), and then exercise the username field as
+    either a username or an email identifier. We also assert an unknown
+    identifier returns the expected AUTHENTICATION_FAILED error.
     """
 
     def setUp(self):
@@ -51,33 +52,37 @@ class TestAuthLogin(APITestCase):
         except Exception:
             self.login_url = "/api/auth/login"
 
-    def test_auth_login_returns_jwt_tokens(self):
-        # Try logging in with email and/or username depending on what exists
-        payloads = []
-
-        if getattr(self.user, "email", None):
-            payloads.append({"email": self.user.email, "password": self.password})
-
-        if hasattr(self.user, "username") and getattr(self.user, "username", None):
-            payloads.append({"username": self.user.username, "password": self.password})
-
-        last_response = None
-
-        for payload in payloads:
-            last_response = self.client.post(self.login_url, payload, format="json")
-
-            if last_response.status_code == status.HTTP_200_OK:
-                data = last_response.json()
-                self.assertIn("access", data)
-                self.assertIn("refresh", data)
-                self.assertIsInstance(data["access"], str)
-                self.assertIsInstance(data["refresh"], str)
-                return  # success → stop the test
-
-        # If we get here, no payload succeeded
-        status_code = getattr(last_response, "status_code", None)
-        content = getattr(last_response, "content", b"")
-        self.fail(
-            f"Login did not succeed with any tested credential payloads; "
-            f"last status {status_code}, body={content!r}"
+    def _login_with_identifier(self, identifier):
+        return self.client.post(
+            self.login_url,
+            {"username": identifier, "password": self.password},
+            format="json",
         )
+
+    def _assert_jwt_response(self, response):
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.json()
+        self.assertIn("access", data)
+        self.assertIn("refresh", data)
+        self.assertIsInstance(data["access"], str)
+        self.assertIsInstance(data["refresh"], str)
+
+    def test_auth_login_returns_jwt_tokens_with_username(self):
+        response = self._login_with_identifier(self.user.username)
+        self._assert_jwt_response(response)
+
+    def test_auth_login_returns_jwt_tokens_with_email_identifier(self):
+        response = self._login_with_identifier(self.user.email)
+        self._assert_jwt_response(response)
+
+    def test_auth_login_returns_authentication_failed_for_unknown_identifier(self):
+        response = self._login_with_identifier("unknown-identifier@example.com")
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(
+            response.json(),
+            {
+                "code": "AUTHENTICATION_FAILED",
+                "message": AUTHENTICATION_FAILED_MESSAGE,
+            },
+        )
+

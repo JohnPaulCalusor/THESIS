@@ -1,6 +1,7 @@
 from django.conf import settings
+from django.contrib.auth import authenticate, get_user_model
 from django.db import transaction
-from django.db.models import Count
+from django.db.models import Count, Q
 from django.utils import timezone
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
@@ -8,10 +9,9 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.throttling import ScopedRateThrottle
 from rest_framework.views import APIView
+from rest_framework_simplejwt.exceptions import AuthenticationFailed
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-from django.contrib.auth import get_user_model
-User = get_user_model()
 
 from .permissions import IsOfficer
 from .serializers import (
@@ -38,6 +38,22 @@ from .email_otp import (
     verify_email_otp,
 )
 from papsas_app.analytics.audit import log_event
+
+User = get_user_model()
+AUTHENTICATION_FAILED_MESSAGE = TokenObtainPairSerializer.default_error_messages[
+    "no_active_account"
+]
+def _resolve_login_identifier(identifier):
+    identifier = (identifier or "").strip()
+    if not identifier:
+        return identifier
+    user_qs = User.objects.filter(
+        Q(username__iexact=identifier) | Q(email__iexact=identifier)
+    )
+    if not user_qs.exists():
+        return identifier
+    user_obj = user_qs.order_by("id").first()
+    return user_obj.username or identifier
 
 def fk_field(model, to_model):
     for f in model._meta.get_fields():
@@ -148,6 +164,21 @@ class LoginSerializer(TokenObtainPairSerializer):
 
 class LoginView(TokenObtainPairView):
     serializer_class = LoginSerializer
+
+    def post(self, request, *args, **kwargs):
+        payload = request.data or {}
+        identifier = (payload.get("username") or "").strip()
+        password = payload.get("password") or ""
+        resolved_username = _resolve_login_identifier(identifier)
+        user = authenticate(request, username=resolved_username, password=password)
+        if user is None or not getattr(user, "is_active", True):
+            raise AuthenticationFailed(NO_ACTIVE_ACCOUNT_MESSAGE)
+        serializer_data = payload.copy()
+        serializer_data["username"] = resolved_username
+        serializer_data["password"] = password
+        serializer = self.get_serializer(data=serializer_data)
+        serializer.is_valid(raise_exception=True)
+        return Response(serializer.validated_data, status=status.HTTP_200_OK)
 
 class RefreshView(TokenRefreshView):
     pass
