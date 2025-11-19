@@ -2,15 +2,13 @@ from django import forms
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.hashers import make_password
-
 from exponent_server_sdk import (
     PushClient,
     PushMessage,
     DeviceNotRegisteredError,
     PushServerError,
 )
-
-# Register your models here.
+import logging
 
 from .models import (
     User,
@@ -31,21 +29,27 @@ from .models import (
 )
 from .models_position import Position
 
+
 class UserAdmin(admin.ModelAdmin):
-    list_display = ('id' ,'first_name', 'last_name', 'username','email_verified')
-    search_fields = ['id__icontains', 'email']
+    list_display = ("id", "first_name", "last_name", "username", "email_verified")
+    search_fields = ["id__icontains", "email"]
+
     # disables admin to change anything
     # readonly_fields = ('password',)
+
     def save_model(self, request, obj, form, change):
-        if 'password' in form.changed_data:
+        if "password" in form.changed_data:
             obj.password = make_password(obj.password)  # Hash the password
         super().save_model(request, obj, form, change)
 
+
 class EventRegistrationAdmin(admin.ModelAdmin):
-    search_fields = ['id__icontains', 'user__email']
+    search_fields = ["id__icontains", "user__email"]
+
 
 class UserMembershipAdmin(admin.ModelAdmin):
-    search_fields = ['id__icontains', 'user__email']
+    search_fields = ["id__icontains", "user__email"]
+
 
 class ElectionAdminForm(forms.ModelForm):
     class Meta:
@@ -59,15 +63,18 @@ class ElectionAdminForm(forms.ModelForm):
             "numWinners": "At-large winner cap (leave blank/zero to use per-position winners)"
         }
 
+
 class ElectionAdmin(admin.ModelAdmin):
     form = ElectionAdminForm
 
-class PositionAdmin(admin.ModelAdmin):
-    list_display = ('id', 'election', 'title', 'winners', 'enabled', 'sort')
-    list_editable = ('winners',)
-    list_filter = ('election', 'enabled')
 
-# register user
+class PositionAdmin(admin.ModelAdmin):
+    list_display = ("id", "election", "title", "winners", "enabled", "sort")
+    list_editable = ("winners",)
+    list_filter = ("election", "enabled")
+
+
+# --- Standard model registrations ---
 
 admin.site.register(User, UserAdmin)
 admin.site.register(MembershipTypes)
@@ -86,31 +93,50 @@ admin.site.register(NewsandOffers)
 admin.site.register(Position, PositionAdmin)
 
 
+# --- Device push tokens + admin action ---
+
+logger = logging.getLogger(__name__)
+
+
 @admin.action(description="Send test push to selected tokens")
 def send_test_push(modeladmin, request, queryset):
+    """
+    Admin action: send a small test push to the selected tokens.
+    """
     client = PushClient()
+
     for device in queryset.filter(is_active=True):
         message = PushMessage(
             to=device.token,
             title="PAPSAS test notification",
             body="This is a test push from the admin.",
-            data={"eventId": 0},
+            data={"eventId": 3},  # demo event ID; adjust later if needed
         )
         try:
             client.publish(message)
         except DeviceNotRegisteredError:
+            # Expo says token is no longer valid – mark it inactive
             DevicePushToken.objects.filter(pk=device.pk).update(is_active=False)
         except PushServerError as exc:
-            # Log and continue
-            print(f"PushServerError for token {device.token}: {exc}")
+            logger.warning(
+                "PushServerError for token %s (DevicePushToken %s): %s",
+                device.token,
+                device.pk,
+                exc,
+            )
         except Exception as exc:
-            # Avoid crashing admin actions
-            print(f"Unexpected error sending test push: {exc}")
+            # Avoid breaking the admin action completely
+            logger.warning(
+                "Unexpected push error for token %s (DevicePushToken %s): %s",
+                device.token,
+                device.pk,
+                exc,
+            )
 
 
 @admin.register(DevicePushToken)
 class DevicePushTokenAdmin(admin.ModelAdmin):
-    list_display = ("user", "platform", "token_short", "is_active", "created_at")
+    list_display = ("id", "user", "platform", "token_short", "is_active", "created_at")
     list_filter = ("platform", "is_active", "created_at")
     search_fields = ("user__username", "user__email", "token")
     actions = [send_test_push]

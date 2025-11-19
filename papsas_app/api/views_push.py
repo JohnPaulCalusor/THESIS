@@ -3,9 +3,11 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
+import logging
 
 from papsas_app.models import DevicePushToken
 
+logger = logging.getLogger(__name__)
 
 VALID_PLATFORMS = ("android", "ios")
 
@@ -36,6 +38,13 @@ def register_push_token(request):
     user = request.user
     data = request.data or {}
 
+    logger.info(
+        "register_push_token: user=%s authenticated=%s data=%r",
+        getattr(user, "id", None),
+        getattr(user, "is_authenticated", False),
+        data,
+    )
+
     raw_token = data.get("token") or ""
     token = str(raw_token).strip()
     platform = str(data.get("platform") or "").strip().lower()
@@ -58,13 +67,11 @@ def register_push_token(request):
             status=status.HTTP_400_BAD_REQUEST,
         )
 
-    # Defaults for upsert
     defaults = {
         "user": user,
         "platform": platform,
         "is_active": True,
     }
-    # If the model has an updated_at field, maintain it; otherwise this is a no-op
     if hasattr(DevicePushToken, "updated_at"):
         defaults["updated_at"] = timezone.now()
 
