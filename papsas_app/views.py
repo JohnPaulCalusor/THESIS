@@ -141,41 +141,62 @@ def is_member(request):
             is_member = False
         
 def is_officer(request):
-    # check if user is officer
+    """
+    Returns True if the current user should be treated as an officer.
+
+    - Admins (according to _is_admin) are ALWAYS treated as officers.
+    - Non-admins must have an active Officer term (same logic as before).
+    """
     today = date.today()
     user = request.user
-    if user.is_authenticated:
-        try:
-            candidacy = Candidacy.objects.filter( candidate = user).latest('id')
-            officer = Officer.objects.filter( candidateID = candidacy).latest('id')
-        except (Officer.DoesNotExist, Candidacy.DoesNotExist):
-            officer = None
-    else:
-        officer = None
 
-    if officer is not None and officer.termEnd > today:
+    # Not logged in → definitely not officer
+    if not user.is_authenticated:
+        return False
+
+    # ✅ Treat admins as officers automatically
+    if _is_admin(user):
         return True
 
-    else:
+    # ⬇️ Original officer logic
+    try:
+        candidacy = Candidacy.objects.filter(candidate=user).latest("id")
+        officer = Officer.objects.filter(candidateID=candidacy).latest("id")
+    except (Officer.DoesNotExist, Candidacy.DoesNotExist):
         return False
+
+    return officer is not None and officer.termEnd > today
+
 
 def is_secretary(request):
+    """
+    Returns True if the current user should be treated as secretary-level.
+
+    - Admins (according to _is_admin) are ALWAYS treated as secretary-level.
+    - Non-admins must have an active Officer record with position='Secretary'.
+    """
     today = date.today()
     user = request.user
-    if user.is_authenticated:
-        try:
-            candidacy = Candidacy.objects.filter( candidate = user).latest('id')
-            officer = Officer.objects.filter( candidateID = candidacy, position = 'Secretary' ).latest('id')
-        except (Officer.DoesNotExist, Candidacy.DoesNotExist):
-            officer = None
-    else:
-        officer = None
 
-    if officer is not None and officer.termEnd > today:
+    # Not logged in → definitely not secretary
+    if not user.is_authenticated:
+        return False
+
+    # ✅ Treat admins as secretary-level automatically
+    if _is_admin(user):
         return True
 
-    else:
+    # ⬇️ Original secretary logic
+    try:
+        candidacy = Candidacy.objects.filter(candidate=user).latest("id")
+        officer = Officer.objects.filter(
+            candidateID=candidacy,
+            position="Secretary",
+        ).latest("id")
+    except (Officer.DoesNotExist, Candidacy.DoesNotExist):
         return False
+
+    return officer is not None and officer.termEnd > today
     
 def member_required(view_func):
     @wraps(view_func)
