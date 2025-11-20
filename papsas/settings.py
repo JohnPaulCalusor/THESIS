@@ -71,6 +71,20 @@ ALLOWED_HOSTS = env_list("DJANGO_ALLOWED_HOSTS", "ALLOWED_HOSTS", default="local
 CSRF_TRUSTED_ORIGINS = env_list("DJANGO_CSRF_TRUSTED_ORIGINS", "CSRF_TRUSTED_ORIGINS", default="")
 
 SITE_DOMAIN = env_str("SITE_DOMAIN", "www.papsasinc.com")
+
+# ---- Email (env-driven) ---------------------------------------------
+ELECTION_PORTAL_URL = env_str("ELECTION_PORTAL_URL", "http://localhost:5179/")
+
+import os
+
+EMAIL_BACKEND = os.environ.get(
+    "EMAIL_BACKEND",
+    os.environ.get("DJANGO_EMAIL_BACKEND", "django.core.mail.backends.smtp.EmailBackend"),
+)
+# Only used by FileBasedEmailBackend; harmless otherwise
+EMAIL_FILE_PATH = os.environ.get("EMAIL_FILE_PATH", "/srv/papsas/var/test-emails")
+DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL", f"no-reply@{SITE_DOMAIN}")
+
 LOGIN_URL = env_str("DJANGO_LOGIN_URL", "/login")
 AUTH_USER_MODEL = "papsas_app.User"
 

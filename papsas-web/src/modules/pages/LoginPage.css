@@ -91,27 +91,36 @@
 
 .login-password-wrap {
   position: relative;
-  display: flex;
-  align-items: center;
+  width: 100%;
 }
 
 .login-input--password {
-  padding-right: 3.25rem; /* room for Show/Hide button */
+  width: 100%;
+  padding-right: 2.5rem; /* room for the eye icon */
 }
 
 .login-password-toggle {
   position: absolute;
-  right: 0.6rem;
+  right: 0.7rem;
+  top: 50%;
+  transform: translateY(-50%);
   border: none;
   background: transparent;
-  font-size: 0.78rem;
-  font-weight: 500;
-  color: #6b7280;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
+  padding: 0;
+  color: #6b7280;
 }
 
 .login-password-toggle:hover {
   color: #111827;
+}
+
+.login-password-icon {
+  width: 18px;
+  height: 18px;
 }
 
 .login-error {

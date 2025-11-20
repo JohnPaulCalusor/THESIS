@@ -43,6 +43,7 @@ export default function LoginPage() {
 
   const onUser = (e: React.ChangeEvent<HTMLInputElement>) =>
     setUsername(e.target.value);
+
   const onPass = (e: React.ChangeEvent<HTMLInputElement>) =>
     setPassword(e.target.value);
 
@@ -115,7 +116,74 @@ export default function LoginPage() {
                   onClick={() => setShowPassword((v) => !v)}
                   aria-label={showPassword ? "Hide password" : "Show password"}
                 >
-                  {showPassword ? "Hide" : "Show"}
+                  {showPassword ? (
+                    // Eye with slash (hide)
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      className="login-password-icon"
+                      aria-hidden="true"
+                    >
+                      <path
+                        d="M2 12s4-7 10-7c1.52 0 2.9.34 4.14.9"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1.8"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                      <path
+                        d="M22 12s-4 7-10 7c-2.03 0-3.84-.6-5.45-1.53"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1.8"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                      <path
+                        d="M9.88 9.88A3 3 0 0 1 14.12 14.12"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1.8"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                      <line
+                        x1="3"
+                        y1="3"
+                        x2="21"
+                        y2="21"
+                        stroke="currentColor"
+                        strokeWidth="1.8"
+                        strokeLinecap="round"
+                      />
+                    </svg>
+                  ) : (
+                    // Simple eye (show)
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      className="login-password-icon"
+                      aria-hidden="true"
+                    >
+                      <path
+                        d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1.8"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                      <circle
+                        cx="12"
+                        cy="12"
+                        r="3"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1.8"
+                      />
+                    </svg>
+                  )}
                 </button>
               </div>
             </div>

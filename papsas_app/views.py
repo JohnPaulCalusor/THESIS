@@ -69,8 +69,18 @@ from django.contrib.auth.decorators import user_passes_test
 from .utils.otp_throttle import (
     can_send_otp, too_many_verify_attempts, register_verify_failure, reset_verify_window
 )
+from .models import NewsandOffers
+
 
 User = get_user_model()
+
+def election_portal_redirect(request):
+    """
+    Redirect to the React election portal.
+    URL is env-driven via ELECTION_PORTAL_URL.
+    """
+    return redirect(settings.ELECTION_PORTAL_URL)
+
 
 @login_required
 def request_email_otp(request):
@@ -254,6 +264,11 @@ def index(request):
     events = Event.objects.all()
     upcoming_events = [event for event in events if event.startDate >= today]
     user = getattr(request, "user", None)
+    news = NewsandOffers.objects.all().order_by("-id")[:5]  # or any filter
+    achievement = Achievement.objects.all().order_by("-id")[:5]  # <--- ADD THIS
+    openElection = Election.objects.filter(electionStatus=True)
+
+
 
     # 🔴 NEW: Admins always see the admin dashboard on "/"
     if _is_admin(request.user) or is_secretary(request):

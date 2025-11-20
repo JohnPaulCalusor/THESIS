@@ -144,7 +144,8 @@ urlpatterns = [
         views.regional_feedback,
         name="regional_feedback",
     ),
-    
+    path("election-portal/", views.election_portal_redirect, name="election_portal"),
+
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

@@ -9,13 +9,17 @@ const defaultProdBase = "/api/";
 function normalizeBase(value?: string) {
   if (!value) return "/";
   const absoluteMatch = /^https?:\/\//i.test(value);
-  const trimmed = value.replace(/\/+$/, ""); // drop trailing slashes
-  if (absoluteMatch) return trimmed;        // keep absolute URLs as-is
+  const trimmed = value.replace(/\/+$/, ""); // drop extra trailing slashes
 
-  // normalize relative paths to a single leading slash, optional trailing slash
+  if (absoluteMatch) {
+    // ensure exactly ONE trailing slash for absolute URLs
+    return trimmed + "/";
+  }
+
   const withoutSlashes = trimmed.replace(/^\/+/, "");
   return withoutSlashes ? `/${withoutSlashes}/` : "/";
 }
+
 
 const envBase = (import.meta.env.VITE_API_BASE as string | undefined) || "";
 const baseCandidate = envBase || (import.meta.env.DEV ? defaultDevBase : defaultProdBase);
