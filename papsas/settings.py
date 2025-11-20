@@ -73,7 +73,7 @@ CSRF_TRUSTED_ORIGINS = env_list("DJANGO_CSRF_TRUSTED_ORIGINS", "CSRF_TRUSTED_ORI
 SITE_DOMAIN = env_str("SITE_DOMAIN", "www.papsasinc.com")
 
 # ---- Email (env-driven) ---------------------------------------------
-ELECTION_PORTAL_URL = env_str("ELECTION_PORTAL_URL", "http://localhost:5179/")
+ELECTION_PORTAL_URL = env_str("ELECTION_PORTAL_URL", "https://election.papsasinc.com/")
 
 import os
 
