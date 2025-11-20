@@ -140,17 +140,30 @@ class MeUpdateSerializer(serializers.ModelSerializer):
 
 
 class EmailVerificationStartSerializer(serializers.Serializer):
-    email = serializers.EmailField(required=False)
+    email = serializers.EmailField()
 
     def validate_email(self, value):
-        user = self.context["request"].user
-        if value and value != user.email:
+        request = self.context.get("request")
+        user = getattr(request, "user", None)
+        if not user:
+            raise serializers.ValidationError("Authentication required for email verification.")
+        if value.strip().lower() != (user.email or "").lower():
             raise serializers.ValidationError("Cannot request verification for another address.")
         return user.email
 
 
 class EmailVerificationVerifySerializer(serializers.Serializer):
+    email = serializers.EmailField()
     code = serializers.CharField(min_length=6, max_length=6)
+
+    def validate_email(self, value):
+        request = self.context.get("request")
+        user = getattr(request, "user", None)
+        if not user:
+            raise serializers.ValidationError("Authentication required for email verification.")
+        if value.strip().lower() != (user.email or "").lower():
+            raise serializers.ValidationError("Email must match the authenticated user.")
+        return user.email
 
 # ---------- display helpers ----------
 def candidate_name(obj):

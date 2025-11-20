@@ -62,6 +62,18 @@ urlpatterns = [
     path("auth/email/start/", EmailVerificationStartView.as_view()),
     path("auth/email/verify", EmailVerificationVerifyView.as_view(), name="api-auth-email-verify"),
     path("auth/email/verify/", EmailVerificationVerifyView.as_view()),
+    path(
+        "auth/email/verify/start",
+        EmailVerificationStartView.as_view(),
+        name="api-auth-email-verify-start",
+    ),
+    path("auth/email/verify/start/", EmailVerificationStartView.as_view()),
+    path(
+        "auth/email/verify/confirm",
+        EmailVerificationVerifyView.as_view(),
+        name="api-auth-email-verify-confirm",
+    ),
+    path("auth/email/verify/confirm/", EmailVerificationVerifyView.as_view()),
     path("auth/me", MeView.as_view(), name="api-auth-me"),
     path("auth/me/", MeView.as_view()),
     path("auth/login/",   LoginView.as_view(),   name="api-login"),

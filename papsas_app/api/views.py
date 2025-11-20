@@ -229,7 +229,7 @@ class EmailVerificationStartView(OTPThrottledMixin, APIView):
                 )
             expires_at = issue_email_otp(request.user)
             return Response(
-                {"status": "sent", "expires_at": expires_at.isoformat()},
+                {"detail": "Verification code sent.", "expires_at": expires_at.isoformat()},
                 status=status.HTTP_202_ACCEPTED,
             )
         except EmailOTPError as exc:
@@ -254,7 +254,7 @@ class EmailVerificationVerifyView(OTPThrottledMixin, APIView):
     throttle_classes = [ScopedRateThrottle]
 
     def post(self, request):
-        serializer = EmailVerificationVerifySerializer(data=request.data)
+        serializer = EmailVerificationVerifySerializer(data=request.data, context={"request": request})
         serializer.is_valid(raise_exception=True)
         try:
             verified_at = verify_email_otp(request.user, serializer.validated_data["code"])
@@ -272,7 +272,11 @@ class EmailVerificationVerifyView(OTPThrottledMixin, APIView):
                 exc.status_code,
             )
         return Response(
-            {"email_verified": True, "email_verified_at": verified_at.isoformat()},
+            {
+                "detail": "Email verified.",
+                "email_verified": True,
+                "email_verified_at": verified_at.isoformat(),
+            },
             status=status.HTTP_200_OK,
         )
 

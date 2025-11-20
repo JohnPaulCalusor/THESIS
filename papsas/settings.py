@@ -71,17 +71,6 @@ ALLOWED_HOSTS = env_list("DJANGO_ALLOWED_HOSTS", "ALLOWED_HOSTS", default="local
 CSRF_TRUSTED_ORIGINS = env_list("DJANGO_CSRF_TRUSTED_ORIGINS", "CSRF_TRUSTED_ORIGINS", default="")
 
 SITE_DOMAIN = env_str("SITE_DOMAIN", "www.papsasinc.com")
-# ---- Email (env-driven) ---------------------------------------------
-import os
-
-EMAIL_BACKEND = os.environ.get(
-    "EMAIL_BACKEND",
-    os.environ.get("DJANGO_EMAIL_BACKEND", "django.core.mail.backends.smtp.EmailBackend"),
-)
-# Only used by FileBasedEmailBackend; harmless otherwise
-EMAIL_FILE_PATH = os.environ.get("EMAIL_FILE_PATH", "/srv/papsas/var/test-emails")
-DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL", f"no-reply@{SITE_DOMAIN}")
-
 LOGIN_URL = env_str("DJANGO_LOGIN_URL", "/login")
 AUTH_USER_MODEL = "papsas_app.User"
 
@@ -220,7 +209,13 @@ EMAIL_USE_TLS = env_bool("EMAIL_USE_TLS", True)
 EMAIL_HOST_USER = env_str("EMAIL_HOST_USER", "")
 EMAIL_HOST_PASSWORD = env_str("EMAIL_HOST_PASSWORD", "")
 DEFAULT_FROM_EMAIL = env_str("DEFAULT_FROM_EMAIL", f"no-reply@{SITE_DOMAIN}")
-EMAIL_BACKEND = env_str("EMAIL_BACKEND", "django.core.mail.backends.smtp.EmailBackend")
+EMAIL_FILE_PATH = env_str("EMAIL_FILE_PATH", "/srv/papsas/var/test-emails")
+default_email_backend = (
+    "django.core.mail.backends.console.EmailBackend"
+    if DEBUG
+    else "django.core.mail.backends.smtp.EmailBackend"
+)
+EMAIL_BACKEND = env_str("EMAIL_BACKEND", default_email_backend)
 
 # ----- django-tables2 ---------------------------------------------------------
 DJANGO_TABLES2_TABLE_ATTRS = {"class": "table", "th": {"class": "header-bold"}}
