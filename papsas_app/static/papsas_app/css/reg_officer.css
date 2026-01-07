@@ -1,0 +1,93 @@
+.officer {
+    text-align: center;
+    padding: 20px;
+  }
+  .officer_title{
+    text-align: center;
+    padding: 20px;
+    margin-top: 30px;
+  }
+  .officer_title h1 {
+    font-size: 2rem;
+    color: #ff0000;
+    font-weight: bold;
+  }
+  .officer h1 {
+    font-size: 2.5rem;
+    color: #ff0000;
+    font-weight: bold;
+  }
+  
+  .officer p {
+    font-size: 1rem;
+    color: #ff0000;
+    margin-top: 1px;
+    font-weight: 300;
+  }
+  
+  /* Mobile responsiveness */
+  @media (max-width: 768px) {
+    .officer h1 {
+        font-size: 1.5rem;
+    }
+  
+    .officer p {
+        font-size: 0.875rem;
+    }
+  }
+  
+  /* Container for the officer images */
+.officer__container {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr)); /* 5 columns */
+  column-gap: 0.75rem;   /* horizontal space between cards */
+  row-gap: 0.75rem;      /* vertical space */
+  height: auto;
+  align-items: start;
+}
+
+  /* Responsive styling for medium screens (tablets) */
+  @media (max-width: 1024px) {
+    .officer__container {
+      grid-template-columns: repeat(3, 1fr); /* 3 columns for medium screens */
+    }
+  }
+  
+  /* Responsive styling for small screens (phones) */
+  @media (max-width: 768px) {
+    .officer__container {
+      grid-template-columns: repeat(2, 1fr); /* 2 columns for small screens */
+    }
+  }
+  
+  /* Styling for very small screens */
+  @media (max-width: 480px) {
+    .officer__container {
+      grid-template-columns: 1fr; /* Stacks images vertically for very small screens */
+    }
+  }
+  
+  /* Officer box styling */
+.officer__box {
+  background-color: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+  
+  /* Officer image styling */
+.officer__img {
+  width: 100%;
+  max-width: 300px;  /* was smaller, bump this up */
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
+  /* General Reset */
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+  }
