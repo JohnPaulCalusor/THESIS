@@ -1,5 +1,6 @@
 from datetime import date
 from .models import User, Officer, Candidacy, Election, VisitorStats
+from .regional_data import get_public_regional_page_choices
 
 def is_officer(request):
     """
@@ -33,6 +34,7 @@ def is_officer(request):
         "today": today,
         "openElection": openElection,
         "is_admin_user": is_admin_user,
+        "regional_chapter_choices": get_public_regional_page_choices(),
     }
 
 

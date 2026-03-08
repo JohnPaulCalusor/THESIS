@@ -22,8 +22,11 @@ from .models import (
     VisitorStats,
     PageVisit,
     RegionalChapterFeedback,
+    RegionalOfficer,
+    RegionalPost,
+    RegionalVideo,
 )
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, HttpResponseNotFound, HttpResponseForbidden, HttpResponseNotAllowed
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, HttpResponseNotFound, HttpResponseForbidden, HttpResponseNotAllowed, Http404
 from django.urls import reverse
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
@@ -43,7 +46,7 @@ from .models import MembershipTypes, Vote, Event, Officer
 from django.db import models
 from django.contrib.auth.hashers import make_password
 # Imported Forms
-from .forms import AttendanceForm, EventRegistrationForm, EventForm, ProfileForm, RegistrationForm, LoginForm, MembershipRegistration, Attendance, VenueForm, AchievementForm, NewsForm, UserUpdateForm, EventRatingForm, TORForm, ProfileUpdateForm, ElectionForm, ContactForm
+from .forms import AttendanceForm, EventRegistrationForm, EventForm, ProfileForm, RegistrationForm, LoginForm, MembershipRegistration, Attendance, VenueForm, AchievementForm, NewsForm, UserUpdateForm, EventRatingForm, TORForm, ProfileUpdateForm, ElectionForm, ContactForm, RegionalOfficerForm, RegionalPostForm, RegionalVideoForm
 from datetime import date, timedelta
 from django.contrib.auth.forms import PasswordResetForm
 from io import BytesIO
@@ -70,6 +73,12 @@ from .utils.otp_throttle import (
     can_send_otp, too_many_verify_attempts, register_verify_failure, reset_verify_window
 )
 from .models import NewsandOffers
+from .regional_data import (
+    REGIONAL_CHAPTERS,
+    PUBLIC_REGIONAL_PAGE_CHOICES,
+    PUBLIC_REGIONAL_PAGE_SLUGS,
+    PUBLIC_REGIONAL_PAGE_LABELS,
+)
 
 
 User = get_user_model()
@@ -450,7 +459,7 @@ def login_view(request):
                 },
             )
 
-        if getattr(user, "email_verified", True) is False:
+        if getattr(user, "email_verified", True) is False and not _is_admin(user):
             return render(
                 request,
                 "papsas_app/email_not_verified.html",
@@ -2649,41 +2658,299 @@ def nat_con_view(request):
     return render(request, 'papsas_app/view/national_conference.html')
 
 # papsas_app/views.py/ newly added for regional chapters
-from django.shortcuts import render
-from django.http import Http404
-
 ALLOWED_REGIONS = {
-    # Luzon
-    "region-i": "Region I - Ilocos",
-    "region-ii": "Region II - Cagayan Valley",
-    "region-iii": "Region III - Central Luzon",
-    "region-iv": "Region IV-A - CALABARZON",
-    "mimaropa": "MIMAROPA - Southwestern Tagalog",
-    "region-v": "Region V - Bicol",
-    "ncr": "National Capital Region",
-    "car": "Cordillera Administrative Region",
-    # Visayas
-    "region-vi": "Region VI - Western Visayas",
-    "region-vii": "Region VII - Central Visayas",
-    "region-viii": "Region VIII - Eastern Visayas",
-    "nir": "Negros Island Region",
-    # Mindanao
-    "region-ix": "Region IX - Zamboanga Peninsula",
-    "region-x": "Region X - Northern Mindanao",
-    "region-xi": "Region XI - Davao Region",
-    "region-xii": "Region XII - SOCCSKSARGEN",
-    "region-xiii": "Region XIII - Caraga",
-    "barmm": "BARMM - Bangsamoro",
+    slug: region.get("region_name", slug) for slug, region in REGIONAL_CHAPTERS.items()
 }
+REGIONAL_REGION_CHOICES = PUBLIC_REGIONAL_PAGE_CHOICES
+REGIONAL_REGION_MAP = PUBLIC_REGIONAL_PAGE_LABELS
+REGIONAL_REGION_SLUGS = set(PUBLIC_REGIONAL_PAGE_SLUGS)
+REGIONAL_DEFAULT_REGION = PUBLIC_REGIONAL_PAGE_SLUGS[0] if PUBLIC_REGIONAL_PAGE_SLUGS else "region-i"
+
+
+def _normalize_region_slug(value):
+    if value in REGIONAL_REGION_SLUGS:
+        return value
+    return REGIONAL_DEFAULT_REGION
+
+
+def _normalize_content_tab(value):
+    if value in ("posts", "videos", "officers"):
+        return value
+    return "posts"
+
+
+def _regional_content_dashboard_url(region_slug, tab):
+    return f"{reverse('regional_content_dashboard')}?region={region_slug}&tab={tab}"
+
+
+def _require_staff_user(request):
+    if not request.user.is_staff:
+        return HttpResponseForbidden("Only staff users can manage regional chapter content.")
+    return None
+
+
+@login_required
+def regional_content_dashboard(request):
+    forbidden = _require_staff_user(request)
+    if forbidden:
+        return forbidden
+
+    selected_region = _normalize_region_slug(request.GET.get("region"))
+    active_tab = _normalize_content_tab(request.GET.get("tab"))
+
+    posts = RegionalPost.objects.filter(region_slug=selected_region).order_by("display_order", "-created_at", "-id")
+    videos = RegionalVideo.objects.filter(region_slug=selected_region).order_by("display_order", "-created_at", "-id")
+    officers = (
+        RegionalOfficer.objects
+        .filter(region_slug=selected_region)
+        .annotate(
+            group_order=Case(
+                When(group=RegionalOfficer.GROUP_EXECUTIVE, then=0),
+                When(group=RegionalOfficer.GROUP_BOARD, then=1),
+                When(group=RegionalOfficer.GROUP_ADVISER, then=2),
+                default=99,
+                output_field=models.IntegerField(),
+            )
+        )
+        .order_by("group_order", "display_order", "name", "id")
+    )
+
+    context = {
+        "region_choices": REGIONAL_REGION_CHOICES,
+        "selected_region": selected_region,
+        "selected_region_label": REGIONAL_REGION_MAP.get(selected_region, selected_region),
+        "active_tab": active_tab,
+        "posts": posts,
+        "videos": videos,
+        "officers": officers,
+    }
+    return render(request, "papsas_app/dashboard/regional_content.html", context)
+
+
+@login_required
+def regional_post_create(request):
+    forbidden = _require_staff_user(request)
+    if forbidden:
+        return forbidden
+
+    selected_region = _normalize_region_slug(request.GET.get("region") or request.POST.get("region_slug"))
+    active_tab = "posts"
+
+    if request.method == "POST":
+        form = RegionalPostForm(request.POST, request.FILES)
+        if form.is_valid():
+            post = form.save()
+            messages.success(request, "Regional post created successfully.")
+            return redirect(_regional_content_dashboard_url(post.region_slug, active_tab))
+    else:
+        form = RegionalPostForm(initial={"region_slug": selected_region})
+
+    context = {
+        "form": form,
+        "page_title": "Add Regional Post",
+        "submit_label": "Save Post",
+        "cancel_url": _regional_content_dashboard_url(selected_region, active_tab),
+    }
+    return render(request, "papsas_app/dashboard/regional_post_form.html", context)
+
+
+@login_required
+def regional_post_edit(request, post_id):
+    forbidden = _require_staff_user(request)
+    if forbidden:
+        return forbidden
+
+    post = get_object_or_404(RegionalPost, pk=post_id)
+    selected_region = _normalize_region_slug(
+        request.GET.get("region") or request.POST.get("region") or post.region_slug
+    )
+    active_tab = "posts"
+
+    if request.method == "POST":
+        form = RegionalPostForm(request.POST, request.FILES, instance=post)
+        if form.is_valid():
+            updated_post = form.save()
+            messages.success(request, "Regional post updated successfully.")
+            return redirect(_regional_content_dashboard_url(updated_post.region_slug, active_tab))
+    else:
+        form = RegionalPostForm(instance=post)
+
+    context = {
+        "form": form,
+        "page_title": "Edit Regional Post",
+        "submit_label": "Update Post",
+        "cancel_url": _regional_content_dashboard_url(selected_region, active_tab),
+        "selected_region": selected_region,
+    }
+    return render(request, "papsas_app/dashboard/regional_post_form.html", context)
+
+
+@login_required
+@require_POST
+def regional_post_delete(request, post_id):
+    forbidden = _require_staff_user(request)
+    if forbidden:
+        return forbidden
+
+    post = get_object_or_404(RegionalPost, pk=post_id)
+    redirect_region = _normalize_region_slug(request.POST.get("region") or post.region_slug)
+    post.delete()
+    messages.success(request, "Regional post deleted.")
+    return redirect(_regional_content_dashboard_url(redirect_region, "posts"))
+
+
+@login_required
+def regional_video_create(request):
+    forbidden = _require_staff_user(request)
+    if forbidden:
+        return forbidden
+
+    selected_region = _normalize_region_slug(request.GET.get("region") or request.POST.get("region_slug"))
+    active_tab = "videos"
+
+    if request.method == "POST":
+        form = RegionalVideoForm(request.POST, request.FILES)
+        if form.is_valid():
+            video = form.save()
+            messages.success(request, "Regional video created successfully.")
+            return redirect(_regional_content_dashboard_url(video.region_slug, active_tab))
+    else:
+        form = RegionalVideoForm(initial={"region_slug": selected_region})
+
+    context = {
+        "form": form,
+        "page_title": "Add Regional Video",
+        "submit_label": "Save Video",
+        "cancel_url": _regional_content_dashboard_url(selected_region, active_tab),
+    }
+    return render(request, "papsas_app/dashboard/regional_video_form.html", context)
+
+
+@login_required
+def regional_video_edit(request, video_id):
+    forbidden = _require_staff_user(request)
+    if forbidden:
+        return forbidden
+
+    video = get_object_or_404(RegionalVideo, pk=video_id)
+    selected_region = _normalize_region_slug(
+        request.GET.get("region") or request.POST.get("region") or video.region_slug
+    )
+    active_tab = "videos"
+
+    if request.method == "POST":
+        form = RegionalVideoForm(request.POST, request.FILES, instance=video)
+        if form.is_valid():
+            updated_video = form.save()
+            messages.success(request, "Regional video updated successfully.")
+            return redirect(_regional_content_dashboard_url(updated_video.region_slug, active_tab))
+    else:
+        form = RegionalVideoForm(instance=video)
+
+    context = {
+        "form": form,
+        "page_title": "Edit Regional Video",
+        "submit_label": "Update Video",
+        "cancel_url": _regional_content_dashboard_url(selected_region, active_tab),
+        "selected_region": selected_region,
+    }
+    return render(request, "papsas_app/dashboard/regional_video_form.html", context)
+
+
+@login_required
+@require_POST
+def regional_video_delete(request, video_id):
+    forbidden = _require_staff_user(request)
+    if forbidden:
+        return forbidden
+
+    video = get_object_or_404(RegionalVideo, pk=video_id)
+    redirect_region = _normalize_region_slug(request.POST.get("region") or video.region_slug)
+    video.delete()
+    messages.success(request, "Regional video deleted.")
+    return redirect(_regional_content_dashboard_url(redirect_region, "videos"))
+
+
+@login_required
+def regional_officer_create(request):
+    forbidden = _require_staff_user(request)
+    if forbidden:
+        return forbidden
+
+    selected_region = _normalize_region_slug(request.GET.get("region") or request.POST.get("region_slug"))
+    active_tab = "officers"
+
+    if request.method == "POST":
+        form = RegionalOfficerForm(request.POST, request.FILES)
+        if form.is_valid():
+            officer = form.save()
+            messages.success(request, "Regional officer created successfully.")
+            return redirect(_regional_content_dashboard_url(officer.region_slug, active_tab))
+    else:
+        form = RegionalOfficerForm(initial={"region_slug": selected_region})
+
+    context = {
+        "form": form,
+        "page_title": "Add Regional Officer",
+        "submit_label": "Save Officer",
+        "cancel_url": _regional_content_dashboard_url(selected_region, active_tab),
+    }
+    return render(request, "papsas_app/dashboard/regional_officer_form.html", context)
+
+
+@login_required
+def regional_officer_edit(request, officer_id):
+    forbidden = _require_staff_user(request)
+    if forbidden:
+        return forbidden
+
+    officer = get_object_or_404(RegionalOfficer, pk=officer_id)
+    selected_region = _normalize_region_slug(
+        request.GET.get("region") or request.POST.get("region") or officer.region_slug
+    )
+    active_tab = "officers"
+
+    if request.method == "POST":
+        form = RegionalOfficerForm(request.POST, request.FILES, instance=officer)
+        if form.is_valid():
+            updated_officer = form.save()
+            messages.success(request, "Regional officer updated successfully.")
+            return redirect(_regional_content_dashboard_url(updated_officer.region_slug, active_tab))
+    else:
+        form = RegionalOfficerForm(instance=officer)
+
+    context = {
+        "form": form,
+        "page_title": "Edit Regional Officer",
+        "submit_label": "Update Officer",
+        "cancel_url": _regional_content_dashboard_url(selected_region, active_tab),
+        "selected_region": selected_region,
+    }
+    return render(request, "papsas_app/dashboard/regional_officer_form.html", context)
+
+
+@login_required
+@require_POST
+def regional_officer_delete(request, officer_id):
+    forbidden = _require_staff_user(request)
+    if forbidden:
+        return forbidden
+
+    officer = get_object_or_404(RegionalOfficer, pk=officer_id)
+    redirect_region = _normalize_region_slug(request.POST.get("region") or officer.region_slug)
+    officer.delete()
+    messages.success(request, "Regional officer deleted.")
+    return redirect(_regional_content_dashboard_url(redirect_region, "officers"))
 
 
 def regional_chapter(request, slug: str):
     """
     Handles:
     - per-region page view count
-    - rendering the correct regional content template
+    - rendering shared, data-driven regional content
     """
-    if slug not in ALLOWED_REGIONS:
+    region_content = REGIONAL_CHAPTERS.get(slug)
+    if not region_content:
         raise Http404("Region not found")
 
     # Per-page visit counter – only increment on GET
@@ -2697,9 +2964,100 @@ def regional_chapter(request, slug: str):
     # Feedback: just read current counts here; mutations happen in regional_feedback
     feedback, _ = RegionalChapterFeedback.objects.get_or_create(slug=slug)
 
-    template = f"papsas_app/regions/{slug}.html"
+    officer_rows = list(
+        RegionalOfficer.objects
+        .filter(region_slug=slug)
+        .annotate(
+            group_order=Case(
+                When(group=RegionalOfficer.GROUP_EXECUTIVE, then=0),
+                When(group=RegionalOfficer.GROUP_BOARD, then=1),
+                When(group=RegionalOfficer.GROUP_ADVISER, then=2),
+                default=99,
+                output_field=models.IntegerField(),
+            )
+        )
+        .order_by("group_order", "display_order", "name", "id")
+    )
+
+    officers = []
+    grouped_officers = {group_key: [] for group_key, _ in RegionalOfficer.GROUP_CHOICES}
+    for officer in officer_rows:
+        officer_data = {
+            "name": officer.name,
+            "position": officer.position,
+            "image": officer.photo.url if officer.photo else None,
+            "group": officer.group,
+        }
+        officers.append(officer_data)
+        grouped_officers.setdefault(officer.group, []).append(officer_data)
+
+    officer_groups = []
+    for group_key, group_label in RegionalOfficer.GROUP_CHOICES:
+        group_items = grouped_officers.get(group_key, [])
+        if group_items:
+            officer_groups.append(
+                {
+                    "key": group_key,
+                    "label": group_label,
+                    "officers": group_items,
+                }
+            )
+
+    db_posts = []
+    db_posts_qs = RegionalPost.objects.filter(region_slug=slug).order_by("display_order", "-created_at", "-id")
+    for post in db_posts_qs:
+        db_posts.append(
+            {
+                "title": post.title,
+                "excerpt": post.excerpt,
+                "body": post.body,
+                "image": post.image.url if post.image else None,
+                "facebook_url": post.facebook_url or None,
+                "date": post.created_at.date().isoformat() if post.created_at else None,
+                "links": [],
+            }
+        )
+
+    posts = db_posts
+
+    db_videos = []
+    db_videos_qs = RegionalVideo.objects.filter(region_slug=slug).order_by("display_order", "-created_at", "-id")
+    for video in db_videos_qs:
+        if video.video_type == RegionalVideo.VIDEO_TYPE_EMBED:
+            src = (video.embed_url or "").strip()
+            video_kind = "embed"
+        else:
+            src = video.video_file.url if video.video_file else ""
+            video_kind = "local"
+
+        if not src:
+            continue
+
+        db_videos.append(
+            {
+                "title": video.title,
+                "caption": video.caption,
+                "src": src,
+                "type": video_kind,
+            }
+        )
+
+    videos = db_videos
+
+    region_display_label = REGIONAL_REGION_MAP.get(
+        slug,
+        region_content.get("region_name", ALLOWED_REGIONS[slug]),
+    )
+    standardized_region_description = f"Regional chapter profile and updates for {region_display_label}."
+
+    template = "papsas_app/regions/detail.html"
     context = {
-        "region_name": ALLOWED_REGIONS[slug],
+        "region_name": region_content.get("region_name", ALLOWED_REGIONS[slug]),
+        "region_description": standardized_region_description,
+        "officers": officers,
+        "officer_groups": officer_groups,
+        "posts": posts,
+        "videos": videos,
         "region_slug": slug,
         "page_visitors": page_counter.count,
         "likes": feedback.likes,

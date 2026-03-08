@@ -9,7 +9,6 @@
     <link rel="stylesheet" href="{% static 'papsas_app/css/alert.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="{% static 'papsas_app/css/regional_content.css' %}">
     <link rel="icon" type="image/jpg" href="/media/papsas_app/images/papsas_logo.png">
 
     <!-- import htmx -->
@@ -133,25 +132,9 @@
                                             Regional Chapters <i class="fa-solid fa-caret-down"></i>
                                         </a>
                                         <ul class="dropdown-content">
-                                            <!-- Luzon -->
-                                            <li><a href="{% url 'regional_chapter' 'car' %}">CAR</a></li>
-                                            <li><a href="{% url 'regional_chapter' 'ncr' %}">NCR</a></li>
-                                            <li><a href="{% url 'regional_chapter' 'region-i' %}">Region I</a></li>
-                                            <li><a href="{% url 'regional_chapter' 'region-ii' %}">Region II</a></li>
-                                            <li><a href="{% url 'regional_chapter' 'region-iii' %}">Region III</a></li>
-                                            <li><a href="{% url 'regional_chapter' 'region-iv' %}">Region IV</a></li>
-                                            <li><a href="{% url 'regional_chapter' 'region-v' %}">Region V</a></li>
-                                            <!-- Visayas -->
-                                            <li><a href="{% url 'regional_chapter' 'region-vi' %}">Region VI</a></li>
-                                            <li><a href="{% url 'regional_chapter' 'region-vii' %}">Region VII</a></li>
-                                            <li><a href="{% url 'regional_chapter' 'region-viii' %}">Region VIII</a></li>
-                                            <!-- Mindanao -->
-                                            <li><a href="{% url 'regional_chapter' 'region-ix' %}">Region IX</a></li>
-                                            <li><a href="{% url 'regional_chapter' 'region-x' %}">Region X</a></li>
-                                            <li><a href="{% url 'regional_chapter' 'region-xi' %}">Region XI</a></li>
-                                            <li><a href="{% url 'regional_chapter' 'region-xii' %}">Region XII</a></li>
-                                            <li><a href="{% url 'regional_chapter' 'region-xiii' %}">Region XIII</a></li>
-                                            <li><a href="{% url 'regional_chapter' 'barmm' %}">BARMM</a></li>
+                                            {% for region_slug, region_label in regional_chapter_choices %}
+                                                <li><a href="{% url 'regional_chapter' region_slug %}">{{ region_label }}</a></li>
+                                            {% endfor %}
                                         </ul>
                                     </li>
                                     <li class="nav__item">
@@ -213,23 +196,9 @@
                                         Regional Chapters <i class="fa-solid fa-caret-down"></i>
                                     </a>
                                     <ul class="dropdown-content">
-                                        <!-- same region list as above -->
-                                        <li><a href="{% url 'regional_chapter' 'car' %}">CAR</a></li>
-                                        <li><a href="{% url 'regional_chapter' 'ncr' %}">NCR</a></li>
-                                        <li><a href="{% url 'regional_chapter' 'region-i' %}">Region I</a></li>
-                                        <li><a href="{% url 'regional_chapter' 'region-ii' %}">Region II</a></li>
-                                        <li><a href="{% url 'regional_chapter' 'region-iii' %}">Region III</a></li>
-                                        <li><a href="{% url 'regional_chapter' 'region-iv' %}">Region IV</a></li>
-                                        <li><a href="{% url 'regional_chapter' 'region-v' %}">Region V</a></li>
-                                        <li><a href="{% url 'regional_chapter' 'region-vi' %}">Region VI</a></li>
-                                        <li><a href="{% url 'regional_chapter' 'region-vii' %}">Region VII</a></li>
-                                        <li><a href="{% url 'regional_chapter' 'region-viii' %}">Region VIII</a></li>
-                                        <li><a href="{% url 'regional_chapter' 'region-ix' %}">Region IX</a></li>
-                                        <li><a href="{% url 'regional_chapter' 'region-x' %}">Region X</a></li>
-                                        <li><a href="{% url 'regional_chapter' 'region-xi' %}">Region XI</a></li>
-                                        <li><a href="{% url 'regional_chapter' 'region-xii' %}">Region XII</a></li>
-                                        <li><a href="{% url 'regional_chapter' 'region-xiii' %}">Region XIII</a></li>
-                                        <li><a href="{% url 'regional_chapter' 'barmm' %}">BARMM</a></li>
+                                        {% for region_slug, region_label in regional_chapter_choices %}
+                                            <li><a href="{% url 'regional_chapter' region_slug %}">{{ region_label }}</a></li>
+                                        {% endfor %}
                                     </ul>
                                 </li>
                                     <li class="nav__item">
@@ -238,7 +207,7 @@
                                         </a>
                                     </li>
                                 <div class="login-container">
-                                    <a class="login-submit nav-login-disabled" aria-disabled="true" tabindex="-1" title="Login is temporarily disabled">Login</a>
+                                    <a href="{% url 'login' %}" class="login-submit">Login</a>
                                 </div>
                             </ul>
 

@@ -1,0 +1,71 @@
+{% extends 'papsas_app/layout.html' %}
+{% load static %}
+
+{% block head %}
+<link rel="stylesheet" href="{% static 'papsas_app/css/regional_content_dashboard.css' %}">
+{% endblock %}
+
+{% block body %}
+<div class="container regional-dashboard-page">
+    <section class="regional-dashboard-form-card">
+        <header class="regional-dashboard-header">
+            <h1>{{ page_title }}</h1>
+            <p>Regional chapter post details.</p>
+        </header>
+
+        <form method="post" enctype="multipart/form-data" class="regional-dashboard-form">
+            {% csrf_token %}
+            <div class="regional-dashboard-grid">
+                <div class="regional-dashboard-field">
+                    <label for="{{ form.region_slug.id_for_label }}">Region</label>
+                    {{ form.region_slug }}
+                    {% for error in form.region_slug.errors %}<p class="regional-dashboard-error">{{ error }}</p>{% endfor %}
+                </div>
+
+                <div class="regional-dashboard-field">
+                    <label for="{{ form.title.id_for_label }}">Title</label>
+                    {{ form.title }}
+                    {% for error in form.title.errors %}<p class="regional-dashboard-error">{{ error }}</p>{% endfor %}
+                </div>
+
+                <div class="regional-dashboard-field regional-dashboard-field--full">
+                    <label for="{{ form.excerpt.id_for_label }}">Body</label>
+                    {{ form.excerpt }}
+                    {% for error in form.excerpt.errors %}<p class="regional-dashboard-error">{{ error }}</p>{% endfor %}
+                </div>
+
+                <div class="regional-dashboard-field">
+                    <label for="{{ form.image.id_for_label }}">Image</label>
+                    {{ form.image }}
+                    {% for error in form.image.errors %}<p class="regional-dashboard-error">{{ error }}</p>{% endfor %}
+                </div>
+
+                <div class="regional-dashboard-field">
+                    <label for="{{ form.facebook_url.id_for_label }}">Facebook URL</label>
+                    {{ form.facebook_url }}
+                    {% for error in form.facebook_url.errors %}<p class="regional-dashboard-error">{{ error }}</p>{% endfor %}
+                </div>
+
+                <div class="regional-dashboard-field">
+                    <label for="{{ form.display_order.id_for_label }}">Display Order</label>
+                    {{ form.display_order }}
+                    {% for error in form.display_order.errors %}<p class="regional-dashboard-error">{{ error }}</p>{% endfor %}
+                </div>
+            </div>
+
+            {% if form.non_field_errors %}
+                <div class="regional-dashboard-error-list">
+                    {% for error in form.non_field_errors %}
+                        <p class="regional-dashboard-error">{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <div class="regional-dashboard-form-actions">
+                <button type="submit" class="regional-dashboard-btn">{{ submit_label }}</button>
+                <a href="{{ cancel_url }}" class="regional-dashboard-btn regional-dashboard-btn--secondary">Cancel</a>
+            </div>
+        </form>
+    </section>
+</div>
+{% endblock %}

@@ -1,0 +1,468 @@
+{% extends 'papsas_app/layout.html' %}
+{% load static %}
+
+{% block head %}
+<link rel="stylesheet" href="{% static 'papsas_app/css/regional_content.css' %}?v=20260307">
+{% endblock %}
+
+{% block body %}
+<main class="main regional-page">
+    <section class="container regional-shell regional-hero-wrap">
+        <div class="regional-hero">
+            <p class="regional-hero__eyebrow">Regional Chapter</p>
+            <h1 class="regional-hero__title">{{ region_name }}</h1>
+            <p class="regional-hero__subtitle">Official chapter leadership, updates, and media highlights.</p>
+            <ul class="regional-hero__stats" aria-label="Regional chapter overview">
+                <li><span>{{ officers|length }}</span> Officers</li>
+                <li><span>{{ posts|length }}</span> Updates</li>
+                <li><span>{{ videos|length }}</span> Videos</li>
+            </ul>
+        </div>
+    </section>
+
+    <section class="container regional-shell region-section regional-description-section">
+        <div class="region-section__panel region-section__panel--intro">
+            <p class="regional-description__text">
+                {{ region_description|default:"Regional chapter updates, officers, posts, and media." }}
+            </p>
+        </div>
+    </section>
+
+    <section class="container regional-shell region-section region-officers">
+        <div class="region-section__panel">
+            <div class="section-heading">
+                <p class="section-heading__label">Leadership</p>
+                <h2>Regional Officers</h2>
+                <p class="section-heading__subtext">Current chapter officers and representatives.</p>
+            </div>
+
+            {% if officer_groups %}
+                {% for officer_group in officer_groups %}
+                    <section class="regional-officer-group">
+                        <h3 class="regional-officer-group__title">{{ officer_group.label }}</h3>
+                        <div class="regional-officers-grid">
+                            {% for officer in officer_group.officers %}
+                                <article class="regional-officer-card">
+                                    <div class="regional-officer-card__media">
+                                        {% if officer.image %}
+                                            <img
+                                                src="{{ officer.image }}"
+                                                alt="{{ officer.name }}"
+                                                class="regional-officer-card__img"
+                                                loading="lazy"
+                                            >
+                                        {% else %}
+                                            <img
+                                                src="{% static 'papsas_app/images/default_dp.jpeg' %}"
+                                                alt="{{ officer.name }}"
+                                                class="regional-officer-card__img"
+                                                loading="lazy"
+                                            >
+                                        {% endif %}
+                                    </div>
+                                    <div class="regional-officer-card__body">
+                                        <h4>{{ officer.name }}</h4>
+                                        {% if officer.position %}
+                                            <p class="regional-officer-card__position">{{ officer.position }}</p>
+                                        {% endif %}
+                                    </div>
+                                </article>
+                            {% endfor %}
+                        </div>
+                    </section>
+                {% endfor %}
+            {% else %}
+                <article class="regional-empty-card">
+                    <p>No officers yet for this region.</p>
+                </article>
+            {% endif %}
+        </div>
+    </section>
+
+    <section class="container regional-shell region-section region-posts">
+        <div class="region-section__panel">
+            <div class="section-heading">
+                <h2>Posts and Updates</h2>
+                <p class="section-heading__subtext">Latest chapter announcements and highlights.</p>
+            </div>
+
+            {% if posts %}
+                <div class="region-news-list">
+                    {% for post in posts %}
+                        <article class="region-news-row {% if not post.image %}region-news-row--no-image{% endif %}">
+                            <div class="region-news-row__media">
+                                {% if post.image %}
+                                    <img
+                                        src="{{ post.image }}"
+                                        alt="{{ post.title }}"
+                                        class="region-news-row__img region-news-row__img--zoomable"
+                                        data-region-zoom-image="true"
+                                        tabindex="0"
+                                        role="button"
+                                        aria-label="Open image for {{ post.title }}"
+                                        loading="lazy"
+                                    >
+                                {% else %}
+                                    <div class="region-news-row__img region-news-row__img--placeholder" aria-hidden="true">No Image</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="region-news-row__content">
+                                <h3 class="region-news-row__title">{{ post.title }}</h3>
+
+                                <div class="region-text-block" data-expandable-block>
+                                    <p class="region-news-row__excerpt region-expandable-text is-collapsed" data-expandable-text data-collapsed-lines="4">{{ post.body|default:post.excerpt }}</p>
+                                    <button type="button" class="region-expand-toggle" data-expand-toggle hidden aria-expanded="false">
+                                        View more
+                                    </button>
+                                </div>
+
+                                <div class="region-news-row__actions">
+                                    {% if post.facebook_url %}
+                                        <a
+                                            class="region-news-row__facebook"
+                                            href="{{ post.facebook_url }}"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                        >
+                                            View on Facebook
+                                        </a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </article>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <article class="regional-empty-card">
+                    <p>No posts yet for this region.</p>
+                </article>
+            {% endif %}
+        </div>
+    </section>
+
+    <section class="container regional-shell region-section region-videos">
+        <div class="region-section__panel">
+            <div class="section-heading">
+                <p class="section-heading__label">Media</p>
+                <h2>Videos</h2>
+                <p class="section-heading__subtext">Recent chapter video highlights and documentation.</p>
+            </div>
+
+            <div class="region-videos-grid {% if videos|length == 1 %}region-videos-grid--single{% endif %}">
+                {% for video in videos %}
+                    <article class="region-video-card">
+                        <div class="region-video-card__media">
+                            {% if video.type == "embed" %}
+                                <iframe
+                                    src="{{ video.src }}"
+                                    allow="autoplay; encrypted-media"
+                                    allowfullscreen
+                                    loading="lazy"
+                                    title="{{ video.title }}"
+                                ></iframe>
+                            {% else %}
+                                <video controls preload="metadata">
+                                    <source src="{{ video.src }}" type="video/mp4">
+                                    Your browser does not support the video tag.
+                                </video>
+                            {% endif %}
+                        </div>
+                        <div class="region-video-card__body">
+                            <h3>{{ video.title }}</h3>
+                            <div class="region-text-block" data-expandable-block>
+                                <p class="region-video-card__caption region-expandable-text is-collapsed" data-expandable-text data-collapsed-lines="3">{{ video.caption }}</p>
+                                <button type="button" class="region-expand-toggle" data-expand-toggle hidden aria-expanded="false">
+                                    View more
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+                {% empty %}
+                    <article class="regional-empty-card">
+                        <p>No videos yet for this region.</p>
+                    </article>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+</main>
+
+<div
+    id="regionalImageLightbox"
+    class="regional-image-lightbox"
+    hidden
+    role="dialog"
+    aria-modal="true"
+    aria-label="Image preview"
+>
+    <button type="button" id="regionalImageLightboxClose" class="regional-image-lightbox__close" aria-label="Close image">
+        ×
+    </button>
+    <img id="regionalImageLightboxImg" class="regional-image-lightbox__img" src="" alt="">
+</div>
+
+<button onclick="scrollToTop()" id="scrollUpButton" title="Go to top">↑</button>
+
+<footer class="footer">
+    <div class="footer__container container">
+        <div class="footer__content">
+            <h3 class="footer__title">
+                Philippine Association of Practitioners of Student Affairs and Services, Inc.
+            </h3>
+            <p class="footer__description">
+                Dedicated to the pursuit of excellence in student affairs and services work.
+            </p>
+
+            <ul class="footer__links">
+                <li><a href="#" class="footer__link">(043) 778 0656</a></li>
+                <li><a href="#" class="footer__link">/papsasinc</a></li>
+                <li><a href="#" class="footer__link">papsasinc.national@gmail.com</a></li>
+                <li><a href="bit.ly/papsasinc" class="footer__link">bit.ly/papsasinc</a></li>
+                <li><span class="footer__link">Visitor: {{ page_visitors }}</span></li>
+
+                {% if region_slug %}
+                    <li class="footer-feedback-item">
+                        <form method="post" action="{% url 'regional_feedback' region_slug %}" class="footer-feedback-form">
+                            {% csrf_token %}
+                            <button
+                                type="submit"
+                                name="action"
+                                value="like"
+                                class="footer__link footer-feedback-button"
+                            >
+                                👍 Like
+                            </button>
+                        </form>
+                        <span class="footer__link">({{ likes|default:0 }})</span>
+                    </li>
+
+                    <li class="footer-feedback-item">
+                        <form method="post" action="{% url 'regional_feedback' region_slug %}" class="footer-feedback-form">
+                            {% csrf_token %}
+                            <button
+                                type="submit"
+                                name="action"
+                                value="dislike"
+                                class="footer__link footer-feedback-button"
+                            >
+                                👎 Dislike
+                            </button>
+                        </form>
+                        <span class="footer__link">({{ dislikes|default:0 }})</span>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+    <div class="footer__bottom">
+        <p>© 2024 PAPSAS, Inc. All Rights Reserved.</p>
+    </div>
+</footer>
+
+<script>
+    window.onscroll = function() {
+        let button = document.getElementById("scrollUpButton");
+        if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+            button.style.display = "block";
+        } else {
+            button.style.display = "none";
+        }
+    };
+
+    function scrollToTop() {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const regionalPage = document.querySelector('.regional-page');
+        if (!regionalPage) {
+            return;
+        }
+
+        const expandableBlocks = Array.from(document.querySelectorAll('[data-expandable-block]'));
+
+        function getLineHeightPx(element) {
+            const styles = window.getComputedStyle(element);
+            const parsedLineHeight = parseFloat(styles.lineHeight);
+            if (!Number.isNaN(parsedLineHeight)) {
+                return parsedLineHeight;
+            }
+
+            const parsedFontSize = parseFloat(styles.fontSize);
+            if (!Number.isNaN(parsedFontSize)) {
+                return parsedFontSize * 1.5;
+            }
+            return 20;
+        }
+
+        function measureExpandedHeight(textElement) {
+            const clone = textElement.cloneNode(true);
+            const rect = textElement.getBoundingClientRect();
+            const width = Math.max(
+                rect.width,
+                textElement.clientWidth,
+                textElement.parentElement ? textElement.parentElement.clientWidth : 0,
+                320
+            );
+
+            clone.classList.remove('is-collapsed', 'is-expanded');
+            clone.style.position = 'absolute';
+            clone.style.left = '-99999px';
+            clone.style.top = '0';
+            clone.style.visibility = 'hidden';
+            clone.style.pointerEvents = 'none';
+            clone.style.maxHeight = 'none';
+            clone.style.height = 'auto';
+            clone.style.overflow = 'visible';
+            clone.style.display = 'block';
+            clone.style.WebkitLineClamp = 'unset';
+            clone.style.webkitLineClamp = 'unset';
+            clone.style.width = `${width}px`;
+
+            document.body.appendChild(clone);
+            const expandedHeight = clone.scrollHeight;
+            clone.remove();
+            return expandedHeight;
+        }
+
+        function applyExpandedState(block, expanded) {
+            const text = block.querySelector('[data-expandable-text]');
+            const toggle = block.querySelector('[data-expand-toggle]');
+            if (!text || !toggle) {
+                return;
+            }
+
+            block.setAttribute('data-expanded', expanded ? 'true' : 'false');
+            text.classList.toggle('is-expanded', expanded);
+            text.classList.toggle('is-collapsed', !expanded);
+            toggle.textContent = expanded ? 'View less' : 'View more';
+            toggle.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+        }
+
+        function hydrateExpandableBlock(block, index) {
+            const text = block.querySelector('[data-expandable-text]');
+            const toggle = block.querySelector('[data-expand-toggle]');
+            if (!text || !toggle) {
+                return;
+            }
+
+            const collapsedLines = parseInt(text.getAttribute('data-collapsed-lines') || '4', 10);
+            text.style.setProperty('--collapsed-lines', String(collapsedLines));
+
+            if (!text.id) {
+                text.id = `region-expandable-text-${index}`;
+            }
+            toggle.setAttribute('aria-controls', text.id);
+
+            const collapsedHeight = getLineHeightPx(text) * collapsedLines;
+            const expandedHeight = measureExpandedHeight(text);
+            const isLongText = expandedHeight > (collapsedHeight + 1);
+
+            if (!isLongText) {
+                text.classList.remove('is-collapsed', 'is-expanded');
+                toggle.hidden = true;
+                toggle.setAttribute('aria-expanded', 'false');
+                toggle.textContent = 'View more';
+                block.setAttribute('data-expanded', 'false');
+                return;
+            }
+
+            toggle.hidden = false;
+            const expanded = block.getAttribute('data-expanded') === 'true';
+            applyExpandedState(block, expanded);
+        }
+
+        expandableBlocks.forEach(function (block, index) {
+            hydrateExpandableBlock(block, index);
+            const toggle = block.querySelector('[data-expand-toggle]');
+            if (!toggle) {
+                return;
+            }
+
+            toggle.addEventListener('click', function () {
+                const expanded = block.getAttribute('data-expanded') === 'true';
+                applyExpandedState(block, !expanded);
+            });
+        });
+
+        let resizeTimer = null;
+        window.addEventListener('resize', function () {
+            window.clearTimeout(resizeTimer);
+            resizeTimer = window.setTimeout(function () {
+                expandableBlocks.forEach(function (block, index) {
+                    hydrateExpandableBlock(block, index);
+                });
+            }, 180);
+        });
+
+        const lightbox = document.getElementById('regionalImageLightbox');
+        const lightboxImage = document.getElementById('regionalImageLightboxImg');
+        const lightboxClose = document.getElementById('regionalImageLightboxClose');
+        const zoomableImages = Array.from(document.querySelectorAll('[data-region-zoom-image="true"]'));
+
+        let previouslyFocusedElement = null;
+
+        function openLightbox(image) {
+            if (!lightbox || !lightboxImage) {
+                return;
+            }
+
+            previouslyFocusedElement = document.activeElement;
+            lightboxImage.src = image.getAttribute('src') || '';
+            lightboxImage.alt = image.getAttribute('alt') || 'Expanded post image';
+            lightbox.hidden = false;
+            document.body.classList.add('regional-lightbox-open');
+            if (lightboxClose) {
+                lightboxClose.focus();
+            }
+        }
+
+        function closeLightbox() {
+            if (!lightbox || lightbox.hidden) {
+                return;
+            }
+
+            lightbox.hidden = true;
+            lightboxImage.src = '';
+            document.body.classList.remove('regional-lightbox-open');
+            if (previouslyFocusedElement && typeof previouslyFocusedElement.focus === 'function') {
+                previouslyFocusedElement.focus();
+            }
+        }
+
+        zoomableImages.forEach(function (image) {
+            image.addEventListener('click', function () {
+                openLightbox(image);
+            });
+            image.addEventListener('keydown', function (event) {
+                if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    openLightbox(image);
+                }
+            });
+        });
+
+        if (lightboxClose) {
+            lightboxClose.addEventListener('click', closeLightbox);
+        }
+
+        if (lightbox) {
+            lightbox.addEventListener('click', function (event) {
+                if (event.target === lightbox) {
+                    closeLightbox();
+                }
+            });
+        }
+
+        document.addEventListener('keydown', function (event) {
+            if (event.key === 'Escape') {
+                closeLightbox();
+            }
+        });
+    });
+</script>
+{% endblock %}

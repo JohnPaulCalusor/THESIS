@@ -75,6 +75,27 @@ events = [
     ('Volunteerism Forum', 'Volunteerism Forum')
 ]
 
+REGION_SLUG_CHOICES = (
+    ("car", "CAR"),
+    ("ncr", "NCR"),
+    ("region-i", "PAPSAS Region I"),
+    ("region-ii", "PAPSAS Region II"),
+    ("region-iii", "PAPSAS Region III"),
+    ("region-iv", "PAPSAS Region IV-A"),
+    ("mimaropa", "PAPSAS MIMAROPA"),
+    ("region-v", "PAPSAS Region V"),
+    ("region-vi", "PAPSAS Region VI"),
+    ("region-vii", "PAPSAS Region VII"),
+    ("region-viii", "PAPSAS Region VIII"),
+    ("nir", "PAPSAS NIR"),
+    ("region-ix", "PAPSAS Region IX"),
+    ("region-x", "PAPSAS Region X"),
+    ("region-xi", "PAPSAS Region XI"),
+    ("region-xii", "PAPSAS Region XII"),
+    ("region-xiii", "PAPSAS Region XIII"),
+    ("barmm", "PAPSAS BARMM"),
+)
+
 
 
 class User(AbstractUser):
@@ -544,6 +565,82 @@ class RegionalChapterFeedback(models.Model):
 
     class Meta:
         ordering = ["slug"]
+
+
+class RegionalPost(models.Model):
+    region_slug = models.CharField(max_length=64, choices=REGION_SLUG_CHOICES, db_index=True)
+    title = models.CharField(max_length=255)
+    excerpt = models.TextField(blank=True)
+    body = models.TextField(blank=True)
+    image = models.ImageField(upload_to="papsas_app/regional/posts", blank=True, null=True)
+    facebook_url = models.URLField(blank=True)
+    display_order = models.PositiveIntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["region_slug", "display_order", "-created_at", "-id"]
+
+    def __str__(self):
+        return f"{self.get_region_slug_display()} - {self.title}"
+
+
+class RegionalVideo(models.Model):
+    VIDEO_TYPE_UPLOAD = "upload"
+    VIDEO_TYPE_EMBED = "embed"
+    VIDEO_TYPE_CHOICES = (
+        (VIDEO_TYPE_UPLOAD, "Upload"),
+        (VIDEO_TYPE_EMBED, "Embed URL"),
+    )
+
+    region_slug = models.CharField(max_length=64, choices=REGION_SLUG_CHOICES, db_index=True)
+    title = models.CharField(max_length=255)
+    caption = models.TextField(blank=True)
+    video_type = models.CharField(max_length=10, choices=VIDEO_TYPE_CHOICES, default=VIDEO_TYPE_UPLOAD)
+    video_file = models.FileField(upload_to="papsas_app/regional/videos", blank=True, null=True)
+    embed_url = models.URLField(blank=True)
+    display_order = models.PositiveIntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["region_slug", "display_order", "-created_at", "-id"]
+
+    def clean(self):
+        super().clean()
+        if self.video_type == self.VIDEO_TYPE_UPLOAD and not self.video_file:
+            raise ValidationError({"video_file": "Upload videos require a video file."})
+        if self.video_type == self.VIDEO_TYPE_EMBED and not self.embed_url:
+            raise ValidationError({"embed_url": "Embed videos require an embed URL."})
+
+    def __str__(self):
+        return f"{self.get_region_slug_display()} - {self.title}"
+
+
+class RegionalOfficer(models.Model):
+    GROUP_EXECUTIVE = "executive"
+    GROUP_BOARD = "board"
+    GROUP_ADVISER = "adviser"
+    GROUP_CHOICES = (
+        (GROUP_EXECUTIVE, "Executive Officers"),
+        (GROUP_BOARD, "Board of Directors"),
+        (GROUP_ADVISER, "Adviser"),
+    )
+
+    region_slug = models.CharField(max_length=64, choices=REGION_SLUG_CHOICES, db_index=True)
+    group = models.CharField(max_length=16, choices=GROUP_CHOICES, default=GROUP_EXECUTIVE, db_index=True)
+    position = models.CharField(max_length=255)
+    name = models.CharField(max_length=255)
+    photo = models.ImageField(upload_to="papsas_app/regional/officers", blank=True, null=True)
+    display_order = models.PositiveIntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["region_slug", "group", "display_order", "name", "id"]
+
+    def __str__(self):
+        return f"{self.get_region_slug_display()} - {self.position}: {self.name}"
 
 
 class VoteSelection(models.Model):

@@ -1,10 +1,27 @@
 from datetime import datetime
 from django import forms
-from .models import Attendance, EventRegistration, Event, User, UserMembership, MembershipTypes, Venue, Achievement, NewsandOffers, EventRating, Election
+from .models import (
+    Attendance,
+    EventRegistration,
+    Event,
+    User,
+    UserMembership,
+    MembershipTypes,
+    Venue,
+    Achievement,
+    NewsandOffers,
+    EventRating,
+    Election,
+    REGION_SLUG_CHOICES,
+    RegionalOfficer,
+    RegionalPost,
+    RegionalVideo,
+)
 from django.core.exceptions import ValidationError
 from django.forms import ModelForm, TextInput, EmailInput
 from django.utils import timezone
 from django.core.validators import MinValueValidator
+from .regional_data import get_public_regional_page_choices
 
 
 class RegistrationForm(forms.ModelForm):
@@ -382,3 +399,98 @@ class ContactForm(forms.Form):
     email = forms.EmailField()  # This will be pre-filled with the user's email
     subject = forms.CharField(max_length=255)
     message = forms.CharField(widget=forms.Textarea)
+
+
+def _dashboard_public_region_choices():
+    model_region_slugs = {slug for slug, _ in REGION_SLUG_CHOICES}
+    return tuple(
+        (slug, label)
+        for slug, label in get_public_regional_page_choices()
+        if slug in model_region_slugs
+    )
+
+
+class RegionalPostForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["region_slug"].choices = _dashboard_public_region_choices()
+
+    class Meta:
+        model = RegionalPost
+        fields = ("region_slug", "title", "excerpt", "image", "facebook_url", "display_order")
+        labels = {
+            "excerpt": "Body",
+        }
+        widgets = {
+            "excerpt": forms.Textarea(attrs={"rows": 3}),
+            "facebook_url": forms.URLInput(attrs={"placeholder": "https://facebook.com/..."}),
+            "display_order": forms.NumberInput(attrs={"min": 0}),
+        }
+
+
+class RegionalOfficerForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["region_slug"].choices = _dashboard_public_region_choices()
+
+    class Meta:
+        model = RegionalOfficer
+        fields = ("region_slug", "group", "position", "name", "photo", "display_order")
+        labels = {
+            "group": "Category",
+        }
+        widgets = {
+            "display_order": forms.NumberInput(attrs={"min": 0}),
+        }
+
+
+class RegionalVideoForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["region_slug"].choices = _dashboard_public_region_choices()
+
+    class Meta:
+        model = RegionalVideo
+        fields = (
+            "region_slug",
+            "title",
+            "caption",
+            "video_type",
+            "video_file",
+            "embed_url",
+            "display_order",
+        )
+        widgets = {
+            "caption": forms.Textarea(attrs={"rows": 3}),
+            "embed_url": forms.URLInput(attrs={"placeholder": "https://www.youtube.com/embed/..."}),
+            "display_order": forms.NumberInput(attrs={"min": 0}),
+        }
+
+    def clean(self):
+        cleaned_data = super().clean()
+        video_type = cleaned_data.get("video_type")
+        video_file = cleaned_data.get("video_file")
+        embed_url = (cleaned_data.get("embed_url") or "").strip()
+
+        if video_type == RegionalVideo.VIDEO_TYPE_UPLOAD:
+            if not video_file and not (self.instance and self.instance.video_file):
+                self.add_error("video_file", "This field is required when video type is Upload.")
+            cleaned_data["embed_url"] = ""
+        elif video_type == RegionalVideo.VIDEO_TYPE_EMBED:
+            if not embed_url:
+                self.add_error("embed_url", "This field is required when video type is Embed URL.")
+
+        return cleaned_data
+
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        if instance.video_type == RegionalVideo.VIDEO_TYPE_UPLOAD:
+            instance.embed_url = ""
+        else:
+            # Keep data consistent when switching from upload to embed.
+            instance.video_file = None
+
+        if commit:
+            instance.save()
+            self.save_m2m()
+        return instance

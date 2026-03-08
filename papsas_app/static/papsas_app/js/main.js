@@ -46,3 +46,9 @@ sr.reveal(`.member-img`, {origin: 'top', delay: 400})
 sr.reveal(`.membership`, {origin: 'top', delay: 400})
 sr.reveal(`.video-papsas`, {origin: 'top', delay: 400})
 
+/* Regional chapters (data-driven detail template) */
+sr.reveal(`.regional-page .regional-hero`, {origin: 'top', delay: 220, distance: '50px'})
+sr.reveal(`.regional-page .region-section`, {origin: 'top', delay: 280, interval: 120})
+sr.reveal(`.regional-page .regional-officer-card`, {origin: 'bottom', delay: 320, interval: 80})
+sr.reveal(`.regional-page .region-news-row`, {origin: 'bottom', delay: 320, interval: 70})
+sr.reveal(`.regional-page .region-video-card`, {origin: 'bottom', delay: 360, interval: 100})

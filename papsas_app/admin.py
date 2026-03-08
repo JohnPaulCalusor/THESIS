@@ -26,6 +26,9 @@ from .models import (
     Achievement,
     EventRating,
     DevicePushToken,
+    RegionalPost,
+    RegionalVideo,
+    RegionalOfficer,
 )
 from .models_position import Position
 
@@ -72,6 +75,33 @@ class PositionAdmin(admin.ModelAdmin):
     list_display = ("id", "election", "title", "winners", "enabled", "sort")
     list_editable = ("winners",)
     list_filter = ("election", "enabled")
+
+
+@admin.register(RegionalPost)
+class RegionalPostAdmin(admin.ModelAdmin):
+    list_display = ("id", "region_slug", "title", "display_order", "created_at", "updated_at")
+    list_filter = ("region_slug",)
+    search_fields = ("title", "excerpt", "body")
+    ordering = ("region_slug", "display_order", "-created_at")
+    readonly_fields = ("created_at", "updated_at")
+
+
+@admin.register(RegionalVideo)
+class RegionalVideoAdmin(admin.ModelAdmin):
+    list_display = ("id", "region_slug", "title", "video_type", "display_order", "created_at", "updated_at")
+    list_filter = ("region_slug", "video_type")
+    search_fields = ("title", "caption", "embed_url")
+    ordering = ("region_slug", "display_order", "-created_at")
+    readonly_fields = ("created_at", "updated_at")
+
+
+@admin.register(RegionalOfficer)
+class RegionalOfficerAdmin(admin.ModelAdmin):
+    list_display = ("id", "region_slug", "group", "position", "name", "display_order", "updated_at")
+    list_filter = ("region_slug", "group")
+    search_fields = ("name", "position")
+    ordering = ("region_slug", "group", "display_order", "name")
+    readonly_fields = ("created_at", "updated_at")
 
 
 # --- Standard model registrations ---

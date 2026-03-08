@@ -1,4 +1,7 @@
 <li class="nav__item"><a href="{% url 'admin_dashboard' %}" class="nav__link">Dashboard</a></li>
+{% if user.is_staff %}
+<li class="nav__item"><a href="{% url 'regional_content_dashboard' %}" class="nav__link">Regional Chapter Content</a></li>
+{% endif %}
 <li class="nav__item dropdown">
     <a href="{% url 'user_table' %}" class="nav__link">Records<i class="fa-solid fa-caret-down"></i></a>
     <ul class="dropdown-content">

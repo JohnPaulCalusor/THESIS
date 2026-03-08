@@ -1,0 +1,227 @@
+{% extends 'papsas_app/layout.html' %}
+{% load static %}
+
+{% block head %}
+<link rel="stylesheet" href="{% static 'papsas_app/css/regional_content_dashboard.css' %}">
+{% endblock %}
+
+{% block body %}
+<div class="container regional-dashboard-page">
+    <section class="regional-dashboard-card">
+        <header class="regional-dashboard-header">
+            <h1>Regional Chapter Content</h1>
+            <p>Manage posts, videos, and officers for each regional chapter page.</p>
+        </header>
+
+        {% if messages %}
+            <div class="regional-dashboard-messages">
+                {% for message in messages %}
+                    <p class="regional-dashboard-message">{{ message }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <form method="get" class="regional-dashboard-filter">
+            <input type="hidden" name="tab" value="{{ active_tab }}">
+            <label for="region-filter">Region</label>
+            <select id="region-filter" name="region">
+                {% for slug, label in region_choices %}
+                    <option value="{{ slug }}" {% if slug == selected_region %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit">Apply</button>
+        </form>
+
+        <nav class="regional-dashboard-tabs" aria-label="Regional content tabs">
+            <a
+                href="{% url 'regional_content_dashboard' %}?region={{ selected_region }}&tab=posts"
+                class="regional-dashboard-tab {% if active_tab == 'posts' %}is-active{% endif %}"
+            >
+                Posts
+            </a>
+            <a
+                href="{% url 'regional_content_dashboard' %}?region={{ selected_region }}&tab=videos"
+                class="regional-dashboard-tab {% if active_tab == 'videos' %}is-active{% endif %}"
+            >
+                Videos
+            </a>
+            <a
+                href="{% url 'regional_content_dashboard' %}?region={{ selected_region }}&tab=officers"
+                class="regional-dashboard-tab {% if active_tab == 'officers' %}is-active{% endif %}"
+            >
+                Officers
+            </a>
+        </nav>
+
+        {% if active_tab == "posts" %}
+            <div class="regional-dashboard-section-head">
+                <h2>Posts for {{ selected_region_label }}</h2>
+                <a href="{% url 'regional_post_add' %}?region={{ selected_region }}&tab=posts" class="regional-dashboard-btn">
+                    Add Post
+                </a>
+            </div>
+
+            {% if posts %}
+                <div class="regional-dashboard-table-wrap">
+                    <table class="regional-dashboard-table">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Date Added</th>
+                                <th>Order</th>
+                                <th>Facebook</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for post in posts %}
+                                <tr>
+                                    <td>{{ post.title }}</td>
+                                    <td>{{ post.created_at|date:"M d, Y H:i" }}</td>
+                                    <td>{{ post.display_order }}</td>
+                                    <td>
+                                        {% if post.facebook_url %}
+                                            <a href="{{ post.facebook_url }}" target="_blank" rel="noopener noreferrer">View Link</a>
+                                        {% else %}
+                                            <span class="regional-dashboard-muted">None</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="regional-dashboard-actions">
+                                        <a
+                                            class="regional-dashboard-action"
+                                            href="{% url 'regional_post_edit' post.id %}?region={{ selected_region }}&tab=posts"
+                                        >
+                                            Edit
+                                        </a>
+                                        <form method="post" action="{% url 'regional_post_delete' post.id %}" onsubmit="return confirm('Delete this post?');">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="region" value="{{ selected_region }}">
+                                            <button type="submit" class="regional-dashboard-action regional-dashboard-action--danger">Delete</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <p class="regional-dashboard-empty">No posts found for this region.</p>
+            {% endif %}
+        {% elif active_tab == "videos" %}
+            <div class="regional-dashboard-section-head">
+                <h2>Videos for {{ selected_region_label }}</h2>
+                <a href="{% url 'regional_video_add' %}?region={{ selected_region }}&tab=videos" class="regional-dashboard-btn">
+                    Add Video
+                </a>
+            </div>
+
+            {% if videos %}
+                <div class="regional-dashboard-table-wrap">
+                    <table class="regional-dashboard-table">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Type</th>
+                                <th>Media</th>
+                                <th>Order</th>
+                                <th>Updated</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for video in videos %}
+                                <tr>
+                                    <td>{{ video.title }}</td>
+                                    <td>{{ video.get_video_type_display }}</td>
+                                    <td>
+                                        {% if video.video_type == 'embed' and video.embed_url %}
+                                            <a href="{{ video.embed_url }}" target="_blank" rel="noopener noreferrer">Embed URL</a>
+                                        {% elif video.video_file %}
+                                            <a href="{{ video.video_file.url }}" target="_blank" rel="noopener noreferrer">Video File</a>
+                                        {% else %}
+                                            <span class="regional-dashboard-muted">Missing</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ video.display_order }}</td>
+                                    <td>{{ video.updated_at|date:"M d, Y H:i" }}</td>
+                                    <td class="regional-dashboard-actions">
+                                        <a
+                                            class="regional-dashboard-action"
+                                            href="{% url 'regional_video_edit' video.id %}?region={{ selected_region }}&tab=videos"
+                                        >
+                                            Edit
+                                        </a>
+                                        <form method="post" action="{% url 'regional_video_delete' video.id %}" onsubmit="return confirm('Delete this video?');">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="region" value="{{ selected_region }}">
+                                            <button type="submit" class="regional-dashboard-action regional-dashboard-action--danger">Delete</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <p class="regional-dashboard-empty">No videos found for this region.</p>
+            {% endif %}
+        {% else %}
+            <div class="regional-dashboard-section-head">
+                <h2>Officers for {{ selected_region_label }}</h2>
+                <a href="{% url 'regional_officer_add' %}?region={{ selected_region }}&tab=officers" class="regional-dashboard-btn">
+                    Add Officer
+                </a>
+            </div>
+
+            {% if officers %}
+                <div class="regional-dashboard-table-wrap">
+                    <table class="regional-dashboard-table">
+                        <thead>
+                            <tr>
+                                <th>Photo</th>
+                                <th>Name</th>
+                                <th>Position</th>
+                                <th>Category</th>
+                                <th>Order</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for officer in officers %}
+                                <tr>
+                                    <td>
+                                        {% if officer.photo %}
+                                            <img src="{{ officer.photo.url }}" alt="{{ officer.name }}" class="regional-dashboard-thumb">
+                                        {% else %}
+                                            <span class="regional-dashboard-muted">No photo</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ officer.name }}</td>
+                                    <td>{{ officer.position }}</td>
+                                    <td>{{ officer.get_group_display }}</td>
+                                    <td>{{ officer.display_order }}</td>
+                                    <td class="regional-dashboard-actions">
+                                        <a
+                                            class="regional-dashboard-action"
+                                            href="{% url 'regional_officer_edit' officer.id %}?region={{ selected_region }}&tab=officers"
+                                        >
+                                            Edit
+                                        </a>
+                                        <form method="post" action="{% url 'regional_officer_delete' officer.id %}" onsubmit="return confirm('Delete this officer?');">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="region" value="{{ selected_region }}">
+                                            <button type="submit" class="regional-dashboard-action regional-dashboard-action--danger">Delete</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <p class="regional-dashboard-empty">No officers found for this region.</p>
+            {% endif %}
+        {% endif %}
+    </section>
+</div>
+{% endblock %}
