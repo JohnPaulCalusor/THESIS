@@ -144,11 +144,6 @@ urlpatterns = [
     path('event/<int:event_id>/rate/', views.rate_event, name='rate_event'),
     #newly added paths for regional chapters
     path("regional-chapters/<slug:slug>/", views.regional_chapter, name="regional_chapter"),
-        path(
-        "regional-chapters/<slug:slug>/",
-        views.regional_chapter,
-        name="regional_chapter",
-    ),
     path(
         "regional-chapters/<slug:slug>/feedback/",
         views.regional_feedback,
