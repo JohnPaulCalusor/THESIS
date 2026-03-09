@@ -12,7 +12,7 @@
 table {
     width: 100%;
     border-collapse: collapse;
-    margin: 20px 0;
+    margin: 18px 0;
     font-size: 14px;
     text-align: center;
     
@@ -21,8 +21,8 @@ table {
     font-weight: 300;
 }
 .title h3{
-    font-size: 30px;
-    margin-top: 30px;
+    font-size: 27px;
+    margin-top: 24px;
     font-weight: 400;
     color: red;
 }
@@ -33,16 +33,16 @@ table {
     text-align: center;
 }
 .data-table-container {
-    max-width: 1600px;
+    max-width: 1460px;
     margin-left: auto; /* Center horizontally */
     margin-right: auto; /* Center horizontally */
-    padding-left: 1.5rem; /* Add some padding for spacing */
-    padding-right: 1.5rem; /* Add some padding for spacing */
+    padding-left: 1.25rem; /* Add some padding for spacing */
+    padding-right: 1.25rem; /* Add some padding for spacing */
 }
 .table-wrapper {
     overflow-x: auto; /* Enable horizontal scrolling */
     width: 100%; /* Ensure it takes the full width of the container */
-    margin-top: 10px;
+    margin-top: 8px;
 }
 
 
@@ -97,14 +97,14 @@ th {
     color: #333;
     font-weight: 400;
     cursor: pointer;
-    padding: 10px;
+    padding: 9px;
 }
 .back-button:hover{
     color: red;
 }
 .back-button{
     text-align: left;
-    font-size: 20px;
+    font-size: 18px;
 }
 tr:nth-child(even) {
     background-color: #f9f9f9;
@@ -176,14 +176,14 @@ td {
 .modal-content {
     background-color: #fff;
     margin: auto;
-    padding: 20px;
+    padding: 18px;
     border-radius: 10px;
     width: 80%;
-    max-width: 600px;
+    max-width: 560px;
     text-align: center;
     overflow-y: auto;
     max-height: 80vh;
-    margin-top: 150px;
+    margin-top: 120px;
 }
 
 
@@ -201,13 +201,13 @@ td {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 24px;
-    margin-bottom: 15px;
+    font-size: 22px;
+    margin-bottom: 12px;
 }
 
 .close-modal {
     cursor: pointer;
-    font-size: 24px;
+    font-size: 22px;
     color: #333;
     margin-left: 10px;
 }
@@ -223,29 +223,29 @@ td {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
-    margin-top: 20px;
+    margin-bottom: 16px;
+    margin-top: 16px;
 }
 
 .table-header h1 {
-    font-size: 24px;
+    font-size: 22px;
     margin: 0;
 }
 
 .btn-add-user {
     background-color: #ff0000;
     color: white;
-    padding: 10px 20px;
+    padding: 9px 18px;
     text-decoration: none;
-    font-size: 16px;
+    font-size: 15px;
     border-radius: 5px;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 7px;
 }
 
 .btn-add-user i {
-    font-size: 18px;
+    font-size: 16px;
 }
 
 .btn-add-user:hover {
@@ -458,7 +458,7 @@ x
 #filter-form .row {
     display: flex;
     flex-wrap: wrap;
-    margin-top: 30px;
+    margin-top: 24px;
     justify-center : center;
     align-items: end;
     
@@ -466,7 +466,7 @@ x
 
 #filter-form .row .col-md-3 {
     margin-right: 15px; /* Add space between inputs */ /* Add vertical space between rows if they wrap */
-    width: 288px;
+    width: 270px;
     margin-top: 5px;
     
 }
@@ -495,8 +495,8 @@ x
 .search-submit{
     background-color: #000;
     display: flex;
-    font-size: 16px;
-    width: 100px;
+    font-size: 15px;
+    width: 92px;
     align-items: center;
     justify-content: center;
     color: #ffffff;
@@ -513,7 +513,7 @@ x
     padding-left: 0;
     list-style: none;
     border-radius: 0.25rem;
-    gap: 10px;
+    gap: 8px;
     color: #ff0000;
 
     
@@ -521,7 +521,7 @@ x
 .pagination a{
     position: relative;
     display: block;
-    padding: 0.5rem 0.75rem;
+    padding: 0.45rem 0.65rem;
     margin-left: -1px;
     line-height: 1.25;
     color: #ff0000;
@@ -540,7 +540,7 @@ x
 .form-group input, .form-group select {
     width: 100%;
     padding: 10px;
-    font-size: 16px;
+    font-size: 15px;
     border: 1px solid #ccc;
     border-radius: 4px;
     box-sizing: border-box;
@@ -564,7 +564,7 @@ x
 }
 .two-forms {
     display: flex;
-    gap: 20px;
+    gap: 18px;
     
   }
   .input-box .input-field{
@@ -579,7 +579,7 @@ x
     font-weight: 300;
   }
   .input-two .input-field{
-    width: 23.1rem;
+    width: 21rem;
     padding: 10px;
     margin: 0;
     font-size: 14px;
@@ -603,5 +603,5 @@ x
 }
 
 .container {
-    padding-inline: 15px;
+    padding-inline: 14px;
 }

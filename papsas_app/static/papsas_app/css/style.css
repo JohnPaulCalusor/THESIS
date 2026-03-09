@@ -18,7 +18,7 @@
   display: flex;
   flex-direction: row;
   align-items: center;
-  margin-left: 1.5rem;
+  margin-left: 1rem;
 }
 
 :disabled {
@@ -33,7 +33,7 @@
 
 /*=============== VARIABLES CSS ===============*/
 :root {
-  --header-height: 3.5rem;
+  --header-height: 3.25rem;
 
   /*========== Colors ==========*/
   /*Color mode HSL(hue, saturation, lightness)*/
@@ -89,15 +89,15 @@ img {
 }
 
 .papsas-logo{
-  width: 200px;
-  margin-left: 100px;
+  width: 176px;
+  margin-left: 56px;
   
 }
 
 
 /*=============== REUSABLE CSS CLASSES ===============*/
 .container {
-  max-width: 1500px;
+  max-width: 1380px;
   margin-left: 1.5rem;
   margin-right: 1.5rem;
 }
@@ -122,6 +122,7 @@ img {
   justify-content: space-between;
   align-items: center;
   background-color: #ffffff;
+  padding: 0 .75rem;
   
 }
 
@@ -144,12 +145,12 @@ img {
 }
 .login-submit{
   background: red; /* Background color for the login container */
-  padding: 10px 20px;
+  padding: 8px 16px;
   border-radius: 25px; /* Adds rounded corners */
   text-align: center;
-  margin-top: -10px;
-  margin-right: 120px;
-  width: 100px;
+  margin-top: 0;
+  margin-right: 56px;
+  width: 96px;
   border: none;
 
 }
@@ -206,6 +207,7 @@ img {
 .nav__link {
   color: var(--text-color);
   font-weight: 200;
+  font-size: .92rem;
   gap: 5px;            
   cursor: pointer;
   display: flex;
@@ -228,9 +230,9 @@ img {
   text-decoration: none;
 }
 .profile{
-  height: 40px;
-  width: 40px;
-  margin-right: 100px;
+  height: 36px;
+  width: 36px;
+  margin-right: 56px;
   object-fit: cover;
   border-radius: 100%;
 }
@@ -242,14 +244,14 @@ img {
 /*=============== HOME ===============*/
 .home {
   background-color: var(--first-color);
-  padding: 5rem 0 2rem;
+  padding: 4.5rem 0 1.8rem;
   display: flex;
 }
 
 .home__container {
   display: grid;
   align-content: center;
-  row-gap: 5rem;
+  row-gap: 4.5rem;
   padding-inline: 15px;
   
 }
@@ -264,17 +266,17 @@ img {
 }
 
 .home__title {
-  font-size: 1.5rem;
+  font-size: 1.4rem;
   margin: .75rem 0;
   color: #ff0a0a;
 }
 
 .home__button {
-  margin-top: 2rem;
+  margin-top: 1.8rem;
   display: inline-block;
   background-color: var(--text-color);
   color: #fff;
-  padding: .80rem 1.5rem;
+  padding: .72rem 1.35rem;
   border-radius: 3rem;
   transition: .4s;
 }
@@ -321,7 +323,7 @@ img {
 /* For medium devices */
 @media screen and (min-width: 768px) {
   .nav-bar {
-    height: calc(var(--header-height) + 1.5rem);
+    height: calc(var(--header-height) + 1.1rem);
   }
   .nav__toggle, 
   .nav__close {
@@ -329,7 +331,7 @@ img {
   }
   .nav__list {
     flex-direction: row;
-    column-gap: 2.5rem;
+    column-gap: 1.5rem;
     display: flex;
     align-items: center;
   }
@@ -389,28 +391,28 @@ img {
 
 .services {
   background-color: var(--first-color);
-  padding: 2rem 0;
-  margin-top: 10rem;
+  padding: 1.8rem 0;
+  margin-top: 9rem;
 }
 
 .services__container {
   display: grid;
   grid-template-columns: repeat(1, 1fr);
-  gap: 2rem;
+  gap: 1.8rem;
   text-align: center;
 }
 .services__title {
-  font-size: 1.8rem;
+  font-size: 1.65rem;
   color: #ff0a0a; /* Title color */
-  margin-bottom: 2rem; /* Space below the title */
+  margin-bottom: 1.8rem; /* Space below the title */
   text-align: center;
-  margin-top: 3rem;
+  margin-top: 2.7rem;
 }
 .service__box {
   border: 1px solid #ddd;
   border-radius: 10px;
   background-color: #f9f9f9;
-  height: 33rem;
+  height: 30rem;
 }
 
 .service__img {
@@ -422,23 +424,23 @@ img {
 }
 
 .service__title {
-  font-size: 1.4rem;
-  margin-top: 1rem;
+  font-size: 1.28rem;
+  margin-top: 0.9rem;
   color: #ff0000;
   font-weight: 600;
 }
 
 .service__description {
   font-size: 1rem;
-  margin: 1rem 0;
-  padding: 1rem;
+  margin: 0.9rem 0;
+  padding: 0.9rem;
   color: #000000;
   font-weight: 300;
 }
 
 .service__button {
   display: inline-block;
-  padding: 0.5rem 1rem;
+  padding: 0.45rem 0.9rem;
   border: none;
   border-radius: 20px;
   background-color: #ff0a0a;
@@ -522,7 +524,7 @@ img {
 .footer {
     background-color: #ffffff;
     color: #000000;
-    padding: 2rem 0;
+    padding: 1.8rem 0;
 }
 
 .footer__container {
@@ -534,18 +536,18 @@ img {
 }
 
 .footer__content {
-    margin-bottom: 2rem;
+    margin-bottom: 1.8rem;
 }
 
 .footer__title {
-    font-size: 1.5rem;
-    margin-bottom: 1rem;
+    font-size: 1.4rem;
+    margin-bottom: 0.9rem;
     color: #ff0000;
 }
 
 .footer__description {
     font-size: 1rem;
-    margin-bottom: 1rem;
+    margin-bottom: 0.9rem;
     font-weight: 300;
 }
 
@@ -554,7 +556,7 @@ img {
     padding: 0;
     margin: 0;
     display: flex;
-    gap: 1.5rem;
+    gap: 1.35rem;
     flex-wrap: wrap;
     
 }
@@ -678,31 +680,31 @@ img {
 
 .offers {
   background-color: var(--first-color);
-  padding: 2rem 0;
-  margin-top: 1rem;
+  padding: 1.8rem 0;
+  margin-top: 0.9rem;
   
 }
 
 .offers__container {
   display: grid;
   grid-template-columns: repeat(1, 1fr);
-  gap: 2rem;
+  gap: 1.8rem;
   text-align: center;
   
 }
 .offers__title {
-  font-size: 1.8rem;
+  font-size: 1.65rem;
   color: #ff0a0a; /* Title color */
-  margin-bottom: 2rem; /* Space below the title */
+  margin-bottom: 1.8rem; /* Space below the title */
   text-align: center;
-  margin-top: 3rem;
+  margin-top: 2.7rem;
   font-weight: 400;
 }
 .offers__box {
   border: 1px solid #ddd;
   border-radius: 10px;
   background-color: #000000;
-  height: 15rem;
+  height: 13.8rem;
   transition: transform 0.3s ease;
 }
 
@@ -715,7 +717,7 @@ img {
 }
 
 .offer__title {
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   color: #ffffff;
   font-weight: 300;
   margin-top: 2px;
@@ -777,18 +779,18 @@ img {
 }
 
 .video-papsas{
-  margin-top: 5rem;
+  margin-top: 4.5rem;
 }
 
 .video_title{
   text-align: center;
-  padding: 20px;
+  padding: 18px;
   
 }
 .video-feed-container {
   display: flex;
   flex-direction: column; /* Set to row to align videos horizontally */
-  gap: 20px;
+  gap: 18px;
   align-items: center;
   background-color: #f3f1f1;
   width: 100%;
@@ -799,11 +801,11 @@ img {
 /* Video post structure */
 .video-post {
   background-color: #f9f9f9;
-  padding: 15px;
+  padding: 14px;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  width: 60%;
-  margin-bottom: 20px;
+  width: 58%;
+  margin-bottom: 18px;
 }
 
 /* Video wrapper */
@@ -816,9 +818,9 @@ img {
   background-color: #000;
 }
 .video-title-container{
-  font-size: 30px;
+  font-size: 27px;
   color: red;
-  margin-top: 30px;
+  margin-top: 27px;
   text-transform: uppercase;
 }
 .video-wrapper video {
@@ -829,17 +831,17 @@ img {
 
 /* Video content (title and caption) */
 .video-content {
-  margin-top: 10px;
+  margin-top: 8px;
 }
 
 .video-title {
-  font-size: 20px;
+  font-size: 18px;
   margin-bottom: 5px;
   color: red;
 }
 
 .video-caption {
-  font-size: 16px;
+  font-size: 15px;
   color: #000000;
   text-align: justify;
   font-weight: 300;
@@ -1105,4 +1107,39 @@ img {
 
 @media (min-width: 820px) and (max-width: 1180px) {
 
+}
+
+/* Keep desktop nav in desktop mode on common laptop/desktop widths. */
+@media (min-width: 1024px) {
+  .nav__menu {
+    position: static;
+    background-color: transparent;
+    left: auto;
+    top: auto;
+    width: auto;
+    padding: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .nav__toggle,
+  .nav__close {
+    display: none !important;
+  }
+
+  .nav__list {
+    flex-direction: row;
+    column-gap: 1.25rem;
+    align-items: center;
+  }
+
+  .papsas-logo {
+    margin-top: 0;
+    margin-left: 56px;
+  }
+
+  .login-submit {
+    margin-left: 0;
+    margin-right: 56px;
+  }
 }
