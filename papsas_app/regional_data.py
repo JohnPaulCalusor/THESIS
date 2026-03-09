@@ -814,8 +814,8 @@ REGIONAL_CHAPTERS = {
         "videos": [],
     },
     "nir": _placeholder_region(
-        "PAPSAS NIR",
-        "Regional chapter profile and updates for the Negros Island Region.",
+        "PAPSAS NEGROS OCCIDENTAL",
+        "Regional chapter profile and updates for Negros Occidental.",
     ),
     "region-ix": _placeholder_region(
         "PAPSAS Region IX",
@@ -1024,6 +1024,7 @@ PUBLIC_REGIONAL_PAGE_CHOICES = (
     ("region-vi", "Region VI"),
     ("region-vii", "Region VII"),
     ("region-viii", "Region VIII"),
+    ("nir", "NEGROS OCCIDENTAL"),
     ("region-ix", "Region IX"),
     ("region-x", "Region X"),
     ("region-xi", "Region XI"),

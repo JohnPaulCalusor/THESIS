@@ -656,6 +656,18 @@ img {
 .dropdown:hover .dropdown-content {
   display: block;
 }
+
+/* Regional Chapters dropdown usability */
+#regionsDropdownLabel + .dropdown-content {
+  min-width: 220px;
+  max-height: min(60vh, 420px);
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+#regionsDropdownLabel + .dropdown-content a {
+  white-space: nowrap;
+}
 .dropdown__icon {
   font-size: 0.5rem;
   margin-left: 5px;
@@ -675,6 +687,10 @@ img {
     margin-left: 0px;
     width: 100%;
     text-align: center;
+  }
+
+  #regionsDropdownLabel + .dropdown-content {
+    max-height: 50vh;
   }
 }
 
