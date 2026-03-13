@@ -41,33 +41,50 @@
     <div class="container">
         <div class="membership_grid">
             {% for mem in memType %}
-                <div class="membership_item">
-                    <div class="titleContainer">
-                        <img src="{{ mem.pubmat.url }}" alt="Signed IRR RA 11053 Anti Hazing Act of 2018">
-                        <h2>{{ mem.type }} </h2>
-                        <p>{{mem.description}}. 
+                <div class="membership_item" data-membership-type="{{ mem.type|lower }}">
+                    <div class="membership_card_media">
+                        <!-- Replace the image source in this slot later for Regular/Special/Affiliate if needed. -->
+                        {% if mem.pubmat %}
+                            <img src="{{ mem.pubmat.url }}" alt="{{ mem.type }} membership image" class="membership_card_image">
+                        {% else %}
+                            <div class="membership_card_placeholder">Image slot</div>
+                        {% endif %}
                     </div>
-                        <br><br><br><br>Membership Fee: Php {{mem.fee}}
-                        {% if mem.duration is None %}
-                            <br>Duration: Lifetime</p>
-                        {% else %}
-                            {% if mem.duration.days == 365 %}
-                                <br>Duration: 1 year</p>
-                            {% elif mem.duration.days == 730 %}
-                                <br>Duration: 2 years</p>
-                            {% endif %}
-                        {% endif %}
-                    <p></p>
-                    {% if user.is_authenticated %}
-                        {% if user.occupation == 'Practitioner' %}
-                            <a href="{% url 'membership_registration' mem.id %}"><button class="membership__button_1">Register</button></a>
-                        {% else %}
-                            <button type="submit" class="membership__button_1" disabled>Not eligible</button>
-                        {% endif %}
-                    {% else %}
-                        <a href="{% url 'login' %}"><button class="membership__button_1">Register</button></a>
-                    {% endif %}
 
+                    <div class="membership_card_body">
+                        <h2 class="membership_card_title">{{ mem.type }}</h2>
+                        <p class="membership_card_description">{{ mem.description }}</p>
+
+                        <div class="membership_card_details">
+                            <p class="membership_card_detail"><strong>Membership Fee:</strong> Php {{ mem.fee }}</p>
+                            <p class="membership_card_detail">
+                                <strong>Duration:</strong>
+                                {% if mem.duration is None %}
+                                    Lifetime
+                                {% else %}
+                                    {% if mem.duration.days == 365 %}
+                                        1 year
+                                    {% elif mem.duration.days == 730 %}
+                                        2 years
+                                    {% else %}
+                                        {{ mem.duration.days }} days
+                                    {% endif %}
+                                {% endif %}
+                            </p>
+                        </div>
+
+                        <div class="membership_card_actions">
+                            {% if user.is_authenticated %}
+                                {% if user.occupation == 'Practitioner' %}
+                                    <a href="{% url 'membership_registration' mem.id %}" class="membership__button_1">Register</a>
+                                {% else %}
+                                    <button type="button" class="membership__button_1" disabled>Not eligible</button>
+                                {% endif %}
+                            {% else %}
+                                <a href="{% url 'login' %}" class="membership__button_1">Register</a>
+                            {% endif %}
+                        </div>
+                    </div>
                 </div>
             {% endfor %}
         </div>
