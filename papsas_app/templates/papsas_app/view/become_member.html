@@ -21,10 +21,14 @@
                 Shipping Fee for ID Card shall be charged to the Member
             </p>
             <!-- Added Button -->
-            {% if request.user.is_authenticated %}
+            {% if membership_joining_open %}
+                {% if request.user.is_authenticated %}
             <a href="#membership-container" class="home__button">Join Now</a>
-            {% else %}
+                {% else %}
             <a href="{% url 'login' %}" class="home__button">Join Now</a>
+                {% endif %}
+            {% else %}
+            <button type="button" class="home__button" disabled style="border: none;">Join Now</button>
             {% endif %}
         </div>
         <div class="member-img">
@@ -74,14 +78,22 @@
                         </div>
 
                         <div class="membership_card_actions">
-                            {% if user.is_authenticated %}
-                                {% if user.occupation == 'Practitioner' %}
-                                    <a href="{% url 'membership_registration' mem.id %}" class="membership__button_1">Register</a>
+                            {% if membership_joining_open %}
+                                {% if user.is_authenticated %}
+                                    {% if user.occupation == 'Practitioner' %}
+                                        <a href="{% url 'membership_registration' mem.id %}" class="membership__button_1">Register</a>
+                                    {% else %}
+                                        <button type="button" class="membership__button_1" disabled>Not eligible</button>
+                                    {% endif %}
                                 {% else %}
-                                    <button type="button" class="membership__button_1" disabled>Not eligible</button>
+                                    <a href="{% url 'login' %}" class="membership__button_1">Register</a>
                                 {% endif %}
                             {% else %}
-                                <a href="{% url 'login' %}" class="membership__button_1">Register</a>
+                                {% if user.is_authenticated and user.occupation != 'Practitioner' %}
+                                    <button type="button" class="membership__button_1" disabled>Not eligible</button>
+                                {% else %}
+                                    <button type="button" class="membership__button_1" disabled>Register</button>
+                                {% endif %}
                             {% endif %}
                         </div>
                     </div>

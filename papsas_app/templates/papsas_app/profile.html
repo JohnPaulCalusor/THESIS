@@ -167,7 +167,11 @@
             </div>
             {% if is_member %}
             <div class="details">
-                <a href=""{% url 'membership_registration' is_member.membership.id %}" " class="change-password-btn">Renew Membership</a>
+                {% if membership_joining_open %}
+                <a href="{% url 'membership_registration' is_member.membership.id %}" class="change-password-btn">Renew Membership</a>
+                {% else %}
+                <button type="button" class="change-password-btn" disabled>Renew Membership</button>
+                {% endif %}
             </div>
             {% endif %}
         </div>
@@ -232,4 +236,3 @@
 
 <script src="{% static 'papsas_app/js/profile.js' %}"></script>
 {% endblock %}
-

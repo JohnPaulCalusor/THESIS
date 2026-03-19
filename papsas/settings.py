@@ -88,6 +88,9 @@ DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL", f"no-reply@{SITE_DOMAI
 LOGIN_URL = env_str("DJANGO_LOGIN_URL", "/login")
 AUTH_USER_MODEL = "papsas_app.User"
 
+# Membership joining is temporarily closed by default.
+MEMBERSHIP_JOINING_OPEN = False
+
 # If behind a reverse proxy (Nginx), trust X-Forwarded-Proto when configured
 _proxy_hdr = env_list("SECURE_PROXY_SSL_HEADER", default="")  # e.g. "HTTP_X_FORWARDED_PROTO https"
 SECURE_PROXY_SSL_HEADER = tuple(_proxy_hdr) if len(_proxy_hdr) == 2 else None

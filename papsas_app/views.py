@@ -740,6 +740,7 @@ def vote(request):
 @login_required(login_url='/login')
 def profile(request, id):
     try:
+        membership_joining_open = getattr(settings, "MEMBERSHIP_JOINING_OPEN", False)
         candidacies = Candidacy.objects.filter( candidate = id )
         attended_event = Attendance.objects.filter( user = id )
         elected_officer = Officer.objects.filter(candidateID__candidate= id)
@@ -762,7 +763,8 @@ def profile(request, id):
             'candidacies' : candidacies,
             'attended_events' : attended_event,
             'elected_officers' : elected_officer,
-            'updateForm' : updateForm
+            'updateForm' : updateForm,
+            'membership_joining_open': membership_joining_open,
         })
     except Exception as e:
         # subject to change
@@ -944,16 +946,19 @@ def become_member(request):
     try:
         user = request.user
         memType = MembershipTypes.objects.all()
+        membership_joining_open = getattr(settings, "MEMBERSHIP_JOINING_OPEN", False)
         if user.is_authenticated:
             if request.user.occupation == 'Practitioner':
                 return render(request, 'papsas_app/view/become_member.html', {
-                    'memType' : memType
+                    'memType' : memType,
+                    'membership_joining_open': membership_joining_open,
                 })
             else:
                 return redirect('index')
         else:
             return render(request, 'papsas_app/view/become_member.html', {
-                'memType' : memType
+                'memType' : memType,
+                'membership_joining_open': membership_joining_open,
             })          
     except Exception as e:
         return HttpResponse(f'Error - {e}')
@@ -1032,6 +1037,11 @@ def update_account(request, id):
 @login_required(login_url='/login')
 def membership_registration(request, mem_id):
     user = request.user
+    membership_joining_open = getattr(settings, "MEMBERSHIP_JOINING_OPEN", False)
+
+    if not membership_joining_open:
+        messages.error(request, 'Membership joining is temporarily unavailable.')
+        return redirect('become_member')
     
     try:
         form = MembershipRegistration(request.user, mem_id)
