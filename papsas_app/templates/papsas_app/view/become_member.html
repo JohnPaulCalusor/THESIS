@@ -21,14 +21,10 @@
                 Shipping Fee for ID Card shall be charged to the Member
             </p>
             <!-- Added Button -->
-            {% if membership_joining_open %}
-                {% if request.user.is_authenticated %}
+            {% if request.user.is_authenticated %}
             <a href="#membership-container" class="home__button">Join Now</a>
-                {% else %}
-            <a href="{% url 'login' %}" class="home__button">Join Now</a>
-                {% endif %}
             {% else %}
-            <button type="button" class="home__button" disabled style="border: none;">Join Now</button>
+            <a href="{% url 'login' %}" class="home__button">Join Now</a>
             {% endif %}
         </div>
         <div class="member-img">
