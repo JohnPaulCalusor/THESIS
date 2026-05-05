@@ -55,9 +55,12 @@
                                             </ul>
                                         </li>
                                         <li class="nav__item"><a href="{% url 'election_portal' %}" class="nav__link">Election</a></li>
-                                        <li class="nav__item">
-                                            <a href="{% url 'nat_con' %}" class="nav__link">30th PAPSAS National Conference and Training Workshop</a>
-                                        </li>
+                                            {% comment %}
+                                            Temporarily hidden because the 30th PAPSAS National Conference and Training Workshop has ended.
+                                            <li class="nav__item">
+                                                <a href="{% url 'nat_con' %}" class="nav__link">30th PAPSAS National Conference and Training Workshop</a>
+                                            </li>
+                                            {% endcomment %}
                                         <li class="nav__item">
                                             <a href="{% url 'logout' %}" class="nav__link">Logout</a>
                                         </li>
@@ -201,11 +204,14 @@
                                         {% endfor %}
                                     </ul>
                                 </li>
+                                    {% comment %}
+                                    Temporarily hidden because the 30th PAPSAS National Conference and Training Workshop has ended.
                                     <li class="nav__item">
                                         <a href="{% url 'nat_con' %}" class="nav__link">
                                             30th PAPSAS National Conference and Training Workshop
                                         </a>
                                     </li>
+                                    {% endcomment %}
                                 <div class="login-container">
                                     <a href="{% url 'login' %}" class="login-submit">Login</a>
                                 </div>
